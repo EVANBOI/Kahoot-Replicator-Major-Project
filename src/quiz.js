@@ -1,3 +1,4 @@
+
 function adminQuizList ( authUserId ) {
     return {quizzes: [
             {
@@ -7,7 +8,7 @@ function adminQuizList ( authUserId ) {
         ]
     }
 }
-   
+
 function adminQuizRemove (authUserId, quizId) {
     return {
         

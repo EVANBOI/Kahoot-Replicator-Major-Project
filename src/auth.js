@@ -1,3 +1,4 @@
+// Function
 
 function adminUserDetailsUpdate (authUserId) {
     return { user:

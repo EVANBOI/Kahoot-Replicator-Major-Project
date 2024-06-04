@@ -1,7 +1,7 @@
 // Function
 
 
-adminAuthLogin (email, password) {
+function adminAuthLogin (email, password) {
     return {
         authUserId: 1
     }

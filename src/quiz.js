@@ -8,6 +8,7 @@ function adminQuizList ( authUserId ) {
     }
 }
 
+
 function adminQuizRemove (authUserId, quizId) {
     return {
         
@@ -23,6 +24,10 @@ function adminQuizInfo (authUserId, quizId) {
         timeLastEdited: 1683125871,
         description: 'This is my quiz',
     }
+}
+
+function adminQuizNameUpdate(authUserId, quizId, name){
+    return {};
 }
 
 function adminQuizDescriptionUpdate (authUserId, quizId, description) {

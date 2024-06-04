@@ -8,7 +8,6 @@ function adminQuizList ( authUserId ) {
     }
 }
 
-
 function adminQuizRemove (authUserId, quizId) {
     return {
         
@@ -31,5 +30,7 @@ function adminQuizNameUpdate(authUserId, quizId, name){
 }
 
 function adminQuizDescriptionUpdate (authUserId, quizId, description) {
-    
+    return {
+
+    };
 }

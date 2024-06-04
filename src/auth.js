@@ -22,7 +22,6 @@ function adminAuthLogin (email, password) {
     return {
         authUserId: 1
     }
-
 }
 
 
@@ -42,5 +41,4 @@ function adminUserDetails (authUserId) {
 
 function adminUserPasswordUpdate(authUserId,oldPassword, newPassword){
     return {};
->>>>>>> src/auth.js
 }

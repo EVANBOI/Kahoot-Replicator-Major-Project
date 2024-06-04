@@ -4,14 +4,14 @@ Group:
 |z5424549  |Zhihao   |
 |z5592967  |Ammay    |
 |z5421149  |Evan     |
-|          |         |
+|z5422458  |Jessie   |
 |          |         |
 
 1. When and where will we schedule meetings (Tuesday 10am-1pm: in-person at Lab, 7:30pm-8:30pm on Teams/Discord)
 
 2. Where will we record our meeting minutes (Gitlab Wiki)
 
-3. Where will we communicate (Teams/Instagram/Discord)?
+3. Where will we communicate? (Teams/Instagram/Discord/Standup)
 
 4. What is a reasonable response time for messages/posts when communicating? (24 Hours)
 

@@ -16,6 +16,3 @@ function adminQuizInfo (authUserId, quizId) {
 }
 
 
-function adminUserPasswordUpdate(authUserId,oldPassword, newPassword){
-    return {};
-}

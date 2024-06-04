@@ -16,3 +16,6 @@ function adminQuizInfo (authUserId, quizId) {
 }
 
 
+function adminQuizNameUpdate(authUserId, quizId, name){
+    return {};
+}

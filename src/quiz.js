@@ -34,3 +34,9 @@ function adminQuizDescriptionUpdate (authUserId, quizId, description) {
 
     };
 }
+
+function adminQuizCreate (authUserId, name, description) {
+    return {
+        quizId: 2
+    }
+}

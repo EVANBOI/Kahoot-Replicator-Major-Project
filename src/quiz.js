@@ -14,3 +14,8 @@ function adminQuizInfo (authUserId, quizId) {
         description: 'This is my quiz',
     }
 }
+
+
+function adminUserPasswordUpdate(authUserId,oldPassword, newPassword){
+    return {};
+}

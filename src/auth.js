@@ -33,3 +33,8 @@ function adminUserDetails (authUserId) {
         }
     }
 }
+
+
+function adminUserPasswordUpdate(authUserId,oldPassword, newPassword){
+    return {};
+}

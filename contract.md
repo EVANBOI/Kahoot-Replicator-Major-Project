@@ -5,7 +5,7 @@ Group:
 |z5592967  |Ammay    |
 |z5421149  |Evan     |
 |z5422458  |Jessie   |
-|          |         |
+|z5547015  |Chang    |
 
 1. When and where will we schedule meetings (Tuesday 10am-1pm: in-person at Lab, 7:30pm-8:30pm on Teams/Discord)
 

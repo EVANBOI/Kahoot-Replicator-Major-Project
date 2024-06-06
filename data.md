@@ -3,14 +3,14 @@ let data = {
     // TODO: insert your data structure that contains 
     // users + quizzes here
     user: {
-        email: zhihaobalabala@unsw.edu.au,
-        password: hduiqhdiuqw, 
-        nameFirst: Zhihao, 
-        nameLast: Cao,
+        email: 'zhihaobalabala@unsw.edu.au',
+        password: 'hduiqhdiuqw', 
+        nameFirst: 'Zhihao', 
+        nameLast: 'Cao',
         UserId: 1, 
         numSuccessfulLogins: 10,
         numFailedPasswordsSinceLastLogin: 999999,
-    },
+    }, 
     quiz: {
         quizId: 1,
         name: 'My Quiz',

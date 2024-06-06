@@ -21,6 +21,7 @@ function adminAuthRegister (email, password, nameFirst, nameLast) {
  * @param {string} email - unique email of a user
  * @param {string} nameFirst - first name of a user
  * @param {string} nameLast - last name of a user
+ * @returns {} - empty object
  */
 function adminUserDetailsUpdate (authUserId, email, nameFirst, nameLast) {
     return { 
@@ -46,7 +47,7 @@ function adminAuthLogin (email, password) {
  * "name" is the first and last name concatenated with a single space between them.
  * 
  * @param {number} authUserId - unique id of a user
- * @returns {{user: object}}
+ * @returns {{user: {userId: number, name: string, email: string, numSuccessfulLogins: number, numFailedPasswordsSinceLastLogin: number}}}
  */
 function adminUserDetails (authUserId) {
 
@@ -67,6 +68,7 @@ function adminUserDetails (authUserId) {
  * @param {number} authUserId - unique id of a user
  * @param {string} oldPassword - current password of a user's account
  * @param {string} newPassword - new password to replace old password
+ * @returns {} - empty object
  */
 function adminUserPasswordUpdate(authUserId,oldPassword, newPassword){
     return {

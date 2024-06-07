@@ -65,4 +65,5 @@ with the user's details.
 The quizzes array stores various quizzes across different COMPSCI courses. Each
 index is defined by 3 properties; course, quizNumber and quizQuestions. 
 QuizQuestions contains all the questions and answers of that particular quiz. 
+Additionally, we can determine the number of points allocated to each question. 
 

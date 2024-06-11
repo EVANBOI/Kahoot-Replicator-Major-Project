@@ -7,7 +7,7 @@
  * @param {string} nameLast - last name of a user
  * @returns {{authUserId: number}}
  */
-function adminAuthRegister (email, password, nameFirst, nameLast) {
+export function adminAuthRegister (email, password, nameFirst, nameLast) {
     return {
         authUserId: 1
     }
@@ -23,7 +23,7 @@ function adminAuthRegister (email, password, nameFirst, nameLast) {
  * @param {string} nameLast - last name of a user
  * @returns {} - empty object
  */
-function adminUserDetailsUpdate (authUserId, email, nameFirst, nameLast) {
+export function adminUserDetailsUpdate (authUserId, email, nameFirst, nameLast) {
     return { 
 
     }
@@ -36,7 +36,7 @@ function adminUserDetailsUpdate (authUserId, email, nameFirst, nameLast) {
  * @param {string} password - password for a user's account
  * @returns {{authUserId: number}}
  */
-function adminAuthLogin (email, password) {
+export function adminAuthLogin (email, password) {
     return {
         authUserId: 1
     }
@@ -49,7 +49,7 @@ function adminAuthLogin (email, password) {
  * @param {number} authUserId - unique id of a user
  * @returns {{user: {userId: number, name: string, email: string, numSuccessfulLogins: number, numFailedPasswordsSinceLastLogin: number}}}
  */
-function adminUserDetails (authUserId) {
+export function adminUserDetails (authUserId) {
 
     return {user:
         {
@@ -70,7 +70,7 @@ function adminUserDetails (authUserId) {
  * @param {string} newPassword - new password to replace old password
  * @returns {} - empty object
  */
-function adminUserPasswordUpdate(authUserId,oldPassword, newPassword){
+export function adminUserPasswordUpdate(authUserId,oldPassword, newPassword){
     return {
 
     };

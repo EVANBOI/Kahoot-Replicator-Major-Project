@@ -1,5 +1,5 @@
 import { clear } from "../other.js"
-import { setData, getData } from "../dataStore.js"
+import { getData } from "../dataStore.js"
 
 
 describe('Function clear tests', () => {

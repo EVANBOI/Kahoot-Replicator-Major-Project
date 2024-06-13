@@ -3,6 +3,9 @@
  * @returns {} - empty object
  */
 export function clear () {
+    setData({
+        users: [],
+    })
     return {
 
     };

@@ -7,7 +7,7 @@ const REGISTRATED = { authUserId: expect.any(Number) };
 
 const VALID_INPUTS = {
     EMAIL: 'admin@email.com',
-    PASSWORD: 'password',
+    PASSWORD: 'password1',
     FIRSTNAME: 'Idk',
     LASTNAME: 'Idk'
 }
@@ -16,15 +16,15 @@ beforeEach(() => {
     clear();
 })
 
-describe('Successful registration testa', () => {
+describe('Successful registration tests', () => {
     test('All inputs are valid', () => {
         expect(adminAuthRegister(VALID_INPUTS.EMAIL, 
             VALID_INPUTS.PASSWORD, 
             VALID_INPUTS.FIRSTNAME, 
-            VALID_INPUTS.LASTNAME)).toStrictEqual(REGISTRATED)
+            VALID_INPUTS.LASTNAME)).toStrictEqual(REGISTRATED);
     });
 
-    describe('Successful First Name tests', () => {
+    describe('More cases for successful First Name tests', () => {
         test.each([
             {
                 testName: 'First name with hyphen',
@@ -46,7 +46,7 @@ describe('Successful registration testa', () => {
         });
     });
 
-    describe('Successful Last Name tests', () => {
+    describe('More cases for successful Last Name tests', () => {
         test.each([
             {
                 testName: 'Last name with hyphen',
@@ -78,13 +78,13 @@ describe('Email unsuccessful tests', () => {
         expect(adminAuthRegister(VALID_INPUTS.EMAIL, 
             VALID_INPUTS.PASSWORD, 
             VALID_INPUTS.FIRSTNAME, 
-            VALID_INPUTS.LASTNAME)).toStrictEqual({ ERROR })
+            VALID_INPUTS.LASTNAME)).toStrictEqual({ error: 'Email address is used by another user.' })
     }) 
     test('Input is not an email', () => {
         expect(adminAuthRegister('123', 
             VALID_INPUTS.PASSWORD, 
             VALID_INPUTS.FIRSTNAME, 
-            VALID_INPUTS.LASTNAME)).toStrictEqual({ ERROR })
+            VALID_INPUTS.LASTNAME)).toStrictEqual({ error: 'Email does not satisfy this: validator.isEmail function' })
     });
 })
 
@@ -99,22 +99,36 @@ describe('First Name unsuccessful tests', () => {
             nameFirst: 'He@l+o',
         },
         {
+            testName: "First name with character error first and then length error",
+            nameFirst: 'H1!!@ sdofih ooiuoisf ohl309fivn3 4uybd88y+++...'
+        }, 
+        {
+            testName: 'First name with length error first and then character error',
+            nameFirst: 'lsdkfjghsfljfadskadshajakdadsfafdfsdaakfh!!++ 99'
+        }
+    ])("Test $#: $testName", ({ nameFirst }) => {
+        expect(adminAuthRegister(VALID_INPUTS.EMAIL, 
+            VALID_INPUTS.PASSWORD, 
+            nameFirst, 
+            VALID_INPUTS.LASTNAME)).toStrictEqual({ 
+                error: 'NameFirst contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes.' });
+    });
+
+    test.each([
+        {
             testName: "First name is less than 2 characters",
             nameFirst: 'JJ'
         },
         {
             testName: "First name is more than 20 characters",
             nameFirst: 'Isthismorethantwentycharactersprobablyhopefullysurely'
-        },
-        {
-            testName: "First name with multiple errors",
-            nameFirst: 'H1!!@ sdofih ooiuoisf ohl309fivn3 4uybd88y+++...'
         }
     ])("Test $#: $testName", ({ nameFirst }) => {
         expect(adminAuthRegister(VALID_INPUTS.EMAIL, 
             VALID_INPUTS.PASSWORD, 
             nameFirst, 
-            VALID_INPUTS.LASTNAME)).toStrictEqual(ERROR);
+            VALID_INPUTS.LASTNAME)).toStrictEqual({ 
+                error: 'NameFirst is less than 2 characters or more than 20 characters.' });
     });
 })
 
@@ -129,22 +143,35 @@ describe('Last Name unsuccessful tests', () => {
             nameLast: 'w, oa.h'
         },
         {
+            testName: "Last name with character error first and then length error",
+            nameFirst: 'H1!!@ sdofih ooiuoisf ohl309fivn3 4uybd88y+++...'
+        }, 
+        {
+            testName: 'Last name with length error first and then character error',
+            nameFirst: 'lsdkfjghsfljfadskadshajakdadsfafdfsdaakfh!!++ 99'
+        }
+    ])("Test $#: $testName", ({ nameLast }) => {
+        expect(adminAuthRegister(VALID_INPUTS.EMAIL, 
+            VALID_INPUTS.PASSWORD, 
+            VALID_INPUTS.FIRSTNAME, 
+            nameLast)).toStrictEqual({ 
+                error: 'NameLast contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes.' });
+    });
+    test.each([
+        {
             testName: "Last name is less than 2 characters",
             nameFirst: 'JJ'
         },
         {
             testName: "Last name is more than 20 characters",
             nameFirst: 'Isthismorethantwentycharactersprobablyhopefullysurely'
-        },
-        {
-            testName: "Last name with multiple errors",
-            nameFirst: 'H1!!@ sdofih ooiuoisf ohl309fivn3 4uybd88y+++...'
         }
     ])("Test $#: $testName", ({ nameLast }) => {
         expect(adminAuthRegister(VALID_INPUTS.EMAIL, 
             VALID_INPUTS.PASSWORD, 
             VALID_INPUTS.FIRSTNAME, 
-            nameLast)).toStrictEqual(ERROR)
+            nameLast)).toStrictEqual({ 
+                error: 'NameLast is less than 2 characters or more than 20 characters.' });
     });
 })
 
@@ -152,8 +179,20 @@ describe('Password unsuccesful tests', () => {
     test.each([
         {
             testName: 'Password with less than 8 characters',
-            pasword: 'pass1'
+            password: 'pass1'
         },
+        {
+            testNmae: 'Password with less than 8 characters and only letters',
+            password: 'pass'
+        }
+    ])('Test $#: $testName', ({ password }) => {
+        expect(adminAuthRegister(VALID_INPUTS.EMAIL, 
+            password, 
+            VALID_INPUTS.FIRSTNAME, 
+            VALID_INPUTS.LASTNAME)).toStrictEqual({ error: 'Password is less than 8 characters.'});
+    });
+
+    test.each([
         {
             testName: 'Password with only letters',
             pasword: 'password'
@@ -161,15 +200,11 @@ describe('Password unsuccesful tests', () => {
         {
             testNmae: 'Password with only numbers',
             password: '12345678'
-        }, 
-        {
-            testName: 'Password with less than 8 characters and only letters',
-            password: 'pass'
         }
     ])('Test $#: $testName', ({ password }) => {
         expect(adminAuthRegister(VALID_INPUTS.EMAIL, 
             password, 
             VALID_INPUTS.FIRSTNAME, 
-            VALID_INPUTS.LASTNAME)).toStrictEqual(ERROR);
+            VALID_INPUTS.LASTNAME)).toStrictEqual({ error: 'Password does not contain at least one number and at least one letter.'});
     });
 })

@@ -1,5 +1,5 @@
 // YOU SHOULD MODIFY THIS OBJECT BELOW ONLY
-let data = {};
+export let data = {};
 
 // YOU SHOULD MODIFY THIS OBJECT ABOVE ONLY
 
@@ -20,13 +20,12 @@ Example usage
 */
 
 // Use get() to access the data
-function getData() {
+export function getData() {
   return data;
 }
 
 // Use set(newData) to pass in the entire data object, with modifications made
-function setData(newData) {
+export function setData(newData) {
   data = newData;
 }
 
-export { getData, setData };

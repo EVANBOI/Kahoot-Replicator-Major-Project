@@ -43,6 +43,7 @@ export function adminAuthRegister (email, password, nameFirst, nameLast) {
         password: password,
         name: `${nameFirst} ${nameLast}`
     });
+    setData(dataBase);
     return {
         authUserId: id
     }
@@ -110,5 +111,3 @@ export function adminUserPasswordUpdate(authUserId,oldPassword, newPassword){
 
     };
 }
-
-setData(dataBase);

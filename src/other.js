@@ -4,10 +4,10 @@ import { setData } from "./dataStore.js"
  * @returns {} - empty object
  */
 export function clear () {
-    setData({
-        users: [],
-        quizzes: [],
-    })
+    let store = getData();
+    store.users = [];
+    store.quizzes = [];
+    setData(store);
     return {
 
     };

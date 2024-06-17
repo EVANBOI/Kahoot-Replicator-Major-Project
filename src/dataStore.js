@@ -1,5 +1,8 @@
 // YOU SHOULD MODIFY THIS OBJECT BELOW ONLY
-export let data = {};
+export let data = {
+  users: [],
+  quizzes: []
+};
 
 // YOU SHOULD MODIFY THIS OBJECT ABOVE ONLY
 

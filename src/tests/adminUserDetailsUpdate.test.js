@@ -97,7 +97,7 @@ describe('error tests', () => {
             error: 'First name too long',
             authUserId: VALID_USERID1, 
             email: NEW_VALID_EMAIL, 
-            nameFirst: 'Toooooooooooooooooooooooooolong', 
+            nameFirst: 'l'.repeat(30), 
             nameLast: VALID_INPUTS_1.LASTNAME
         },
         {
@@ -108,18 +108,18 @@ describe('error tests', () => {
             nameLast: VALID_INPUTS_1.LASTNAME
         },
         {
-            error: 'Last name too long',
+            error: 'Last name too short',
             authUserId: VALID_USERID1, 
             email: NEW_VALID_EMAIL, 
             nameFirst: VALID_INPUTS_1.FIRSTNAME, 
             nameLast: 's'
         },
         {
-            error: 'Last name too short',
+            error: 'Last name too long',
             authUserId: VALID_USERID1, 
             email: NEW_VALID_EMAIL, 
             nameFirst: VALID_INPUTS_1.FIRSTNAME, 
-            nameLast: 'Toooooooooooooooooooooooooolong'
+            nameLast: 'l'.repeat(30)
         },
     ]) ('$error', ({authUserId, email, nameFirst, nameLast}) => {
         expect(adminUserDetailsUpdate(authUserId, email, nameFirst, nameLast)).toStrictEqual(ERROR);

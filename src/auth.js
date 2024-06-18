@@ -66,13 +66,16 @@ export function adminUserDetailsUpdate (authUserId, email, nameFirst, nameLast) 
         return { error: 'UserId provided is invalid' }
     }
 
+
     const person = dataBase.users.find(person => person.email === email);
+    // to cover the case when we do not make change of the email
+    // (the update email === original email)
     if (person && person.userId !== authUserId) {
         return { error: 'Email address is used by another user.'};
     }
 
     const nameRange = /^[a-zA-Z-' ]*$/
-    if (validator.isEmail(email) == false) {
+    if (!validator.isEmail(email)) {
         return { error: 'Email does not satisfy this: https://www.npmjs.com/package/validator (validator.isEmail function).'}
     }else if (!nameRange.test(nameFirst)) {
         return { error: 'NameFirst contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes.'}

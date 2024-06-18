@@ -61,7 +61,7 @@ export function adminAuthRegister (email, password, nameFirst, nameLast) {
 export function adminUserDetailsUpdate (authUserId, email, nameFirst, nameLast) {
     let dataBase = getData();
 
-    const person2 = dataBase.users.find(person => person.UserId === authUserId);
+    const person2 = dataBase.users.find(person => person.userId === authUserId);
     if (!person2) {
         return { error: 'UserId provided is invalid' }
     }

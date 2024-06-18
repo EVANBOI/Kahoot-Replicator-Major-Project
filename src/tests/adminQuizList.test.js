@@ -1,12 +1,15 @@
 import { adminAuthRegister } from "../auth.js";
 import { adminQuizList, adminQuizCreate } from "../quiz.js";
 import { clear } from "../other.js";
+
+const ERROR = { error: expect.any(String) };
+
 beforeEach(() => {
     clear();
 })
 
 test.failing('User id is not valid', () => {
-    expect(adminQuizList(10)).toStrictEqual({ error: expect.any(String) })
+    expect(adminQuizList(10)).toStrictEqual({ ERROR })
 });
 
 describe('Valid user with only no quizzes', () => {

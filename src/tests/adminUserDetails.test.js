@@ -11,9 +11,8 @@ test('should return user details for a valid authUserId', () => {
     const registerResponse = adminAuthRegister('test.email@domain.com', 'password123', 'Hayden', 'Smith');
     console.log('Register Response:', registerResponse);
     
-    const authUserId = registerResponse;
     console.log('authUserID:', authUserId);
-    const result = adminUserDetails(registerResponse);
+    const result = adminUserDetails(registerResponse).UserId;
     console.log('blahblhablhablhablha',adminUserDetails(1));
     console.log('User Details Result:', result);
 

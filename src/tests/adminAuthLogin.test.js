@@ -9,7 +9,7 @@ beforeEach(() => {
 
 
 test('return an error for a non-existent email address', () => {
-    expect(adminAuthLogin(" ", "abcde12345")).toStrictEqual({ error: expect.any(String)});
+    expect(adminAuthLogin(" ", "abcde12345")).toStrictEqual({ error: expect.any(String) });
 });
 
 describe('when registering an authUserId', () => {

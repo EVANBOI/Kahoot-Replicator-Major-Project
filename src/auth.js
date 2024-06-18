@@ -40,7 +40,9 @@ export function adminAuthRegister (email, password, nameFirst, nameLast) {
         userId: id,
         email: email,
         password: password,
-        name: `${nameFirst} ${nameLast}`
+        name: `${nameFirst} ${nameLast}`,
+        numSuccessfulLogins: 1,
+        numFailedPasswordsSinceLastLogin: 0
     });
     setData(dataBase);
     return {

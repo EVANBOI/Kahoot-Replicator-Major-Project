@@ -35,8 +35,14 @@ export function adminQuizCreate (authUserId, name, description) {
         return { error: 'authUserId is not a valid user' };
     } else if (nameUsed) {
         return {error: 'name has already been used by the user'};
+    } else if (!/^[a-zA-Z0-9 ]+$/.test(name)) {
+        return { 
+            error: 'name contains invalid characters. Valid characters are alphanumeric and spaces' 
+        };
     } else if (name.length < 3 || name.length > 30) {
-        return { error: 'name is either less than 3 characters long or more than 30 charcters long'};
+        return { 
+            error: 'name is either less than 3 characters long or more than 30 charcters long'
+        };
     } else if (description.length > 100) {
         return { error: 'description is more than 100 characters in length'};
     }

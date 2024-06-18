@@ -1,21 +1,12 @@
 import { adminAuthRegister, adminUserDetailsUpdate, adminUserDetails } from "../auth.js";
 import { clear } from "../other.js";
 
-// make some value initialised correctly
-clear();
-
 const VALID_INPUTS_1 = {
     EMAIL: 'admin@email.com',
     PASSWORD: 'password1',
     FIRSTNAME: 'Idk',
     LASTNAME: 'Idk',
 }
-const VALID_USERID1 = adminAuthRegister(
-    VALID_INPUTS_1.EMAIL, 
-    VALID_INPUTS_1.PASSWORD, 
-    VALID_INPUTS_1.FIRSTNAME, 
-    VALID_INPUTS_1.LASTNAME
-).authUserId
 
 const VALID_INPUTS_2 = {
     EMAIL: 'user@email.com',
@@ -29,6 +20,7 @@ const ERROR = {
 }
 
 const NEW_VALID_EMAIL = 'newValidEmail@gmail.com'
+let VALID_USERID1;
 
 beforeEach(() => {
     clear();
@@ -36,12 +28,12 @@ beforeEach(() => {
 
 describe('error tests', () => {
     beforeEach(() => {
-        adminAuthRegister(
+        VALID_USERID1 = adminAuthRegister(
             VALID_INPUTS_1.EMAIL, 
             VALID_INPUTS_1.PASSWORD, 
             VALID_INPUTS_1.FIRSTNAME, 
             VALID_INPUTS_1.LASTNAME
-        );
+        ).authUserId;
     })
 
 
@@ -136,12 +128,12 @@ describe('error tests', () => {
 
 describe('Successful update', () => {
     beforeEach(() => {
-        adminAuthRegister(
+        VALID_USERID1 = adminAuthRegister(
             VALID_INPUTS_1.EMAIL, 
             VALID_INPUTS_1.PASSWORD, 
             VALID_INPUTS_1.FIRSTNAME, 
             VALID_INPUTS_1.LASTNAME
-        );
+        ).authUserId;
     })
 
     test('correct return value', () => {

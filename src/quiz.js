@@ -18,7 +18,7 @@ export function adminQuizList ( authUserId ) {
  * Given basic details about a new quiz, create one for the logged in user.
  * 
  * @param {number} authUserId - unique id of a user
- * @param {string} name - name of a user
+ * @param {string} name - name of the quiz
  * @param {string} description - description of a quiz
  * @returns {{quizId: number}}
  */

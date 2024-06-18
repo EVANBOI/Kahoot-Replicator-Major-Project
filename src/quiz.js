@@ -1,3 +1,4 @@
+import { getData, setData } from "./dataStore.js"
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
  * 
@@ -5,13 +6,13 @@
  * @returns {{quizzes: {quizId: number, name: string}}} - an object containing identifiers of all quizzes
  */
 export function adminQuizList ( authUserId ) {
-    return {quizzes: [
-            {
-            quizId: 1,
-            name: 'My Quiz',
-            }
-        ]
+    const dataBase = getData();
+    const userExists = dataBase.users.find(current => current.authUserId === authUserId);
+    if (!userExists) {
+        return { error: 'AuthUserId is not a valid user.' }
     }
+    const quizzes = dataBase.quizzes.filter(current => current.authUserId === authUserId);
+    return { quizzes: quizzes }
 }
 
 /**

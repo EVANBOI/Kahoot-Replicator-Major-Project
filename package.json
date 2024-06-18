@@ -1,8 +1,9 @@
 {
     "scripts": {
         "test": "jest",
-        "test1": "jest adminAuthRegister.test.js",
-        "test2": "jest adminQuizList.test.js"
+        "testj": "jest adminAuthRegister.test.js",
+        "testj1": "jest adminQuizList.test.js",
+        "test!": "jest adminQuizCreate.test.js"
     },
     "dependencies": {
         "validator": "^13.7.0"
@@ -11,7 +12,7 @@
         "@babel/cli": "^7.22.5",
         "@babel/core": "^7.22.5",
         "@babel/preset-env": "^7.22.5",
-        "jest": "^28.1.0"
+        "jest": "^29.6.4"
     },
     "type": "module"
 }

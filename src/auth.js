@@ -1,6 +1,5 @@
 import { getData, setData } from "./dataStore.js";
 import validator from 'validator';
-let dataBase = getData();
 
 /**
  * Given an admin user's details, creates an account for them.
@@ -12,10 +11,10 @@ let dataBase = getData();
  * @returns {{authUserId: number}}
  */
 export function adminAuthRegister (email, password, nameFirst, nameLast) {
-    for(const person of dataBase.users) {
-        if(person.email === email) {
-            return { error: 'Email address is used by another user.'};
-        }
+    let dataBase = getData();
+    const person = dataBase.users.find(person => person.email === email)
+    if (person) {
+        return { error: 'Email address is used by another user.'};
     }
     const nameRange = /^[a-zA-Z-' ]*$/
     const passwordLetterRange = /^[a-zA-Z]/;

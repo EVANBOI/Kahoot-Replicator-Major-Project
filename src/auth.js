@@ -1,3 +1,6 @@
+import {data, getData, setData} from './dataStore.js';
+
+
 /**
  * Given an admin user's details, creates an account for them.
  * 
@@ -6,8 +9,10 @@
  * @param {string} nameFirst - first name of a user
  * @param {string} nameLast - last name of a user
  * @returns {{authUserId: number}}
- */
+ */    
+
 export function adminAuthRegister (email, password, nameFirst, nameLast) {
+
     return {
         authUserId: 1
     }
@@ -24,6 +29,7 @@ export function adminAuthRegister (email, password, nameFirst, nameLast) {
  * @returns {} - empty object
  */
 export function adminUserDetailsUpdate (authUserId, email, nameFirst, nameLast) {
+
     return { 
 
     }
@@ -37,6 +43,7 @@ export function adminUserDetailsUpdate (authUserId, email, nameFirst, nameLast) 
  * @returns {{authUserId: number}}
  */
 export function adminAuthLogin (email, password) {
+
     return {
         authUserId: 1
     }
@@ -49,19 +56,31 @@ export function adminAuthLogin (email, password) {
  * @param {number} authUserId - unique id of a user
  * @returns {{user: {userId: number, name: string, email: string, numSuccessfulLogins: number, numFailedPasswordsSinceLastLogin: number}}}
  */
-export function adminUserDetails (authUserId) {
+
+
+function adminUserDetails (authUserId) {
+    
+
+    const store = getData();
+
+    const user = store.users.find(user => user.authUserId === authUserId);
+    if (!user) {
+        return { error: 'AuthUserId is not a valid user.' };
+    }
 
     return {user:
         {
-            userId: 1,
-            name: 'Hayden Smith',
-            email: 'hayden.smith@unsw.edu.au',
-            numSuccessfulLogins: 3,
-            numFailedPasswordsSinceLastLogin: 1,
+            userId: user.userId,
+            name: `${user.nameFirst} ${user.nameLast}`,
+            email: user.email,
+            numSuccessfulLogins: user.numSuccessfulLogins,
+            numFailedPasswordsSinceLastLogin: user.numFailedPasswordsSinceLastLogin,
         }
-    }
+    };
 }
+console.log(adminUserDetails(1));
 
+export {adminUserDetails};
 /**
  * Given details relating to a password change, update the password of a logged in user.
  * 
@@ -75,3 +94,4 @@ export function adminUserPasswordUpdate(authUserId,oldPassword, newPassword){
 
     };
 }
+

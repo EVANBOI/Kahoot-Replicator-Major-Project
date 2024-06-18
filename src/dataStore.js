@@ -1,6 +1,14 @@
 // YOU SHOULD MODIFY THIS OBJECT BELOW ONLY
 export let data = {
-  users: [],
+  users: [ {
+    authUserId: 1,
+    userId: 1,
+    email: 'admin@example.com',
+    nameFirst: 'Admin',
+    nameLast: 'User',
+    numSuccessfulLogins: 10,
+    numFailedPasswordsSinceLastLogin: 2}
+  ],
   quizzes: []
 };
 

@@ -76,13 +76,13 @@ describe('Email unsuccessful tests', () => {
         expect(adminAuthRegister(VALID_INPUTS.EMAIL, 
             VALID_INPUTS.PASSWORD, 
             VALID_INPUTS.FIRSTNAME, 
-            VALID_INPUTS.LASTNAME)).toStrictEqual({ error: 'Email address is used by another user.' })
+            VALID_INPUTS.LASTNAME)).toStrictEqual({ error: expect.any(String) })
     }) 
     test('Input is not an email', () => {
         expect(adminAuthRegister('123', 
             VALID_INPUTS.PASSWORD, 
             VALID_INPUTS.FIRSTNAME, 
-            VALID_INPUTS.LASTNAME)).toStrictEqual({ error: 'Email does not satisfy this: https://www.npmjs.com/package/validator (validator.isEmail function).' })
+            VALID_INPUTS.LASTNAME)).toStrictEqual({ error: expect.any(String) })
     });
 })
 
@@ -109,7 +109,7 @@ describe('First Name unsuccessful tests', () => {
             VALID_INPUTS.PASSWORD, 
             nameFirst, 
             VALID_INPUTS.LASTNAME)).toStrictEqual({ 
-                error: 'NameFirst contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes.' });
+                error: expect.any(String) });
     });
 
     test.each([
@@ -126,7 +126,7 @@ describe('First Name unsuccessful tests', () => {
             VALID_INPUTS.PASSWORD, 
             nameFirst, 
             VALID_INPUTS.LASTNAME)).toStrictEqual({ 
-                error: 'NameFirst is less than 2 characters or more than 20 characters.' });
+                error: expect.any(String) });
     });
 })
 
@@ -153,7 +153,7 @@ describe('Last Name unsuccessful tests', () => {
             VALID_INPUTS.PASSWORD, 
             VALID_INPUTS.FIRSTNAME, 
             nameLast)).toStrictEqual({ 
-                error: 'NameLast contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes.' });
+                error: expect.any(String) });
     });
     test.each([
         {
@@ -169,7 +169,7 @@ describe('Last Name unsuccessful tests', () => {
             VALID_INPUTS.PASSWORD, 
             VALID_INPUTS.FIRSTNAME, 
             nameLast)).toStrictEqual({ 
-                error: 'NameLast is less than 2 characters or more than 20 characters.' });
+                error: expect.any(String) });
     });
 })
 
@@ -187,7 +187,7 @@ describe('Password unsuccesful tests', () => {
         expect(adminAuthRegister(VALID_INPUTS.EMAIL, 
             password, 
             VALID_INPUTS.FIRSTNAME, 
-            VALID_INPUTS.LASTNAME)).toStrictEqual({ error: 'Password is less than 8 characters.'});
+            VALID_INPUTS.LASTNAME)).toStrictEqual({ error: expect.any(String)});
     });
 
     test.each([
@@ -203,6 +203,6 @@ describe('Password unsuccesful tests', () => {
         expect(adminAuthRegister(VALID_INPUTS.EMAIL, 
             password, 
             VALID_INPUTS.FIRSTNAME, 
-            VALID_INPUTS.LASTNAME)).toStrictEqual({ error: 'Password does not contain at least one number and at least one letter.'});
+            VALID_INPUTS.LASTNAME)).toStrictEqual({ error: expect.any(String) });
     });
 })

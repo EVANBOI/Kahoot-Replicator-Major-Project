@@ -3,17 +3,16 @@ import {clear} from '../other.js';
 
 // Clear the state before each test
 beforeEach(() => {
-    clear();
+   clear();
 });
 
 test('should return user details for a valid authUserId', () => {
     // Register a user to set up the initial state
     const registerResponse = adminAuthRegister('test.email@domain.com', 'password123', 'Hayden', 'Smith');
     console.log('Register Response:', registerResponse);
-    
+    const authUserId = registerResponse.authUserId;
     console.log('authUserID:', authUserId);
-    const result = adminUserDetails(registerResponse).UserId;
-    console.log('blahblhablhablhablha',adminUserDetails(1));
+    const result = adminUserDetails(authUserId);
     console.log('User Details Result:', result);
 
     expect(result).toEqual({

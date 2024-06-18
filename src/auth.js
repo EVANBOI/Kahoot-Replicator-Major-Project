@@ -41,9 +41,12 @@ export function adminAuthRegister (email, password, nameFirst, nameLast) {
         userId: id,
         email: email,
         password: password,
-        name: `${nameFirst} ${nameLast}`
+        name: `${nameFirst} ${nameLast}`,
+        numSuccessfulLogins: 1,
+        numFailedPasswordsSinceLastLogin: 0
     });
     setData(dataBase);
+    console.log(dataBase);
     return {
         authUserId: id
     }
@@ -94,7 +97,7 @@ function adminUserDetails (authUserId) {
 
     const store = getData();
 
-    const user = store.users.find(user => user.authUserId === authUserId);
+    const user = store.users.find(user => user.userId === authUserId);
     if (!user) {
         return { error: 'AuthUserId is not a valid user.' };
     }
@@ -102,15 +105,13 @@ function adminUserDetails (authUserId) {
     return {user:
         {
             userId: user.userId,
-            name: `${user.nameFirst} ${user.nameLast}`,
+            name: user.name,
             email: user.email,
             numSuccessfulLogins: user.numSuccessfulLogins,
             numFailedPasswordsSinceLastLogin: user.numFailedPasswordsSinceLastLogin,
         }
     };
 }
-console.log(adminUserDetails(1));
-
 export {adminUserDetails};
 /**
  * Given details relating to a password change, update the password of a logged in user.

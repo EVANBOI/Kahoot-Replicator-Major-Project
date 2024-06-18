@@ -1,7 +1,8 @@
 {
     "scripts": {
         "test": "jest",
-        "test1": "jest adminAuthRegister.test.js"
+        "test1": "jest adminAuthRegister.test.js",
+        "testammay": "jest adminUserDetails.test.js"
     },
     "dependencies": {
         "validator": "^13.7.0"

@@ -24,7 +24,7 @@ describe ('when registering an AuthUserId', () => {
         }, 
         {
             testName: 'Name is more than 30 characters long',
-            name: 'a'.repeat(30)
+            name: 'a'.repeat(31)
         }
     ])("Test $#: $testName", ({ name }) => {
         expect(adminQuizCreate(Id.authUserId, name, 'Pointers')).toStrictEqual({ error: expect.any(String) });
@@ -42,23 +42,23 @@ describe ('when registering an AuthUserId', () => {
     test.failing.each([
         {
             testName: 'Description is more than 100 characters in length',
-            description: 'a'.repeat(100)
+            description: 'a'.repeat(101)
         },
         {
             testName: 'Description is more than 100 characters in length',
-            description: 'b'.repeat(100)
+            description: 'b'.repeat(101)
         } 
     ]) ("Test $#: $testName", ({ description }) => {
         expect(adminQuizCreate(Id.authUserId, 'Quiz 1', description)).toStrictEqual({ error: expect.any(String) });
     })
     test.failing('Description is an empty string', () => {
-        expect(adminQuizCreate(Id.authUserId, 'Quiz 1', ' ')).toStrictEqual({ quizId: expect.any(String) });
+        expect(adminQuizCreate(Id.authUserId, 'Quiz 1', ' ')).toStrictEqual({ quizId: expect.any(Number) });
     })
 
     test.failing('Sucessfully give two quizIds', () => {
         Id2 = adminAuthRegister('zhihao.cao@unsw.edu.au', 'qwerty67890', 'Zhihao', 'Cao');
-        expect(adminQuizCreate(Id.authUserId, 'Quiz 1', ' ')).toStrictEqual({ quizId: expect.any(String)});
-        expect(adminQuizCreate(Id2.authUserId, 'Quiz 2', 'Linked Lists')).toStrictEqual({ quizId: expect.any(String) });
+        expect(adminQuizCreate(Id.authUserId, 'Quiz 1', ' ')).toStrictEqual({ quizId: expect.any(Number)});
+        expect(adminQuizCreate(Id2.authUserId, 'Quiz 2', 'Linked Lists')).toStrictEqual({ quizId: expect.any(Number) });
         expect(adminQuizCreate(Id.authUserId, 'Quiz 1', ' ')).not.toStrictEqual(expect(adminQuizCreate(Id2.authUserId, 'Quiz 2', 'Linked Lists')));
     })
 })

@@ -145,12 +145,12 @@ describe('Successful update', () => {
         ).toStrictEqual({ });
     })
 
-    test('correct update First name', () => {
-        adminUserDetailsUpdate(VALID_USERID1, VALID_INPUTS_1.EMAIL, 'ValidFN', VALID_INPUTS_1.LASTNAME);
+    test('correct update First name with all valid letters', () => {
+        adminUserDetailsUpdate(VALID_USERID1, VALID_INPUTS_1.EMAIL, "ValidFN-' ", VALID_INPUTS_1.LASTNAME);
         expect(adminUserDetails(VALID_USERID1)).toStrictEqual({
             user: {
                 userId: VALID_USERID1,
-                name: `ValidFN ${VALID_INPUTS_1.LASTNAME}`,
+                name: `ValidFN-'  ${VALID_INPUTS_1.LASTNAME}`,
                 email: VALID_INPUTS_1.EMAIL,
                 numSuccessfulLogins: expect.any(Number),
                 numFailedPasswordsSinceLastLogin: expect.any(Number),
@@ -158,12 +158,12 @@ describe('Successful update', () => {
         });
     })
 
-    test('correct update Last name', () => {
-        adminUserDetailsUpdate(VALID_USERID1, VALID_INPUTS_1.EMAIL, VALID_INPUTS_1.FIRSTNAME, 'ValidFN');
+    test('correct update Last name with all valid letters', () => {
+        adminUserDetailsUpdate(VALID_USERID1, VALID_INPUTS_1.EMAIL, VALID_INPUTS_1.FIRSTNAME, "ValidFN-' ");
         expect(adminUserDetails(VALID_USERID1)).toStrictEqual({
             user: {
                 userId: VALID_USERID1,
-                name: `${VALID_INPUTS_1.FIRSTNAME} ValidFN`,
+                name: `${VALID_INPUTS_1.FIRSTNAME} ValidFN-' `,
                 email: VALID_INPUTS_1.EMAIL,
                 numSuccessfulLogins: expect.any(Number),
                 numFailedPasswordsSinceLastLogin: expect.any(Number),

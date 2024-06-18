@@ -51,7 +51,7 @@ describe ('when registering an AuthUserId', () => {
     ]) ("Test $#: $testName", ({ description }) => {
         expect(adminQuizCreate(Id.authUserId, 'Quiz 1', description)).toStrictEqual({ error: expect.any(String) });
     })
-    test.failing('Description is an empty string', () => {
+    test('Description is an empty string', () => {
         expect(adminQuizCreate(Id.authUserId, 'Quiz 1', ' ')).toStrictEqual({ quizId: expect.any(Number) });
     })
 

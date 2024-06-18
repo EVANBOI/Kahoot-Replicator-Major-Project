@@ -8,8 +8,8 @@ beforeEach(() => {
     clear();
 })
 
-test.failing('User id is not valid', () => {
-    expect(adminQuizList(10)).toStrictEqual({ ERROR })
+test('User id is not valid', () => {
+    expect(adminQuizList(10)).toStrictEqual(ERROR)
 });
 
 describe('Valid user with only no quizzes', () => {
@@ -17,37 +17,37 @@ describe('Valid user with only no quizzes', () => {
     beforeEach(() => {
         user1Id = adminAuthRegister('admin@unsw.edu.au', 'Password1', 'JJ', 'HH')
     })
-    test.failing('There is only one user in database', () => {
-        expect(adminQuizList(user1Id)).toStrictEqual({ quizzes: [] });
+    test('There is only one user in database', () => {
+        expect(adminQuizList(user1Id.authUserId)).toStrictEqual({ quizzes: [] });
     });
 
-    test.failing('There are multiple users in database', () => {
+    test('There are multiple users in database', () => {
         adminAuthRegister('admin2@unsw.edu.au', 'Password1', 'JJz', 'HHz');
         adminAuthRegister('admin3@unsw.edu.au', 'Password1', 'JJf', 'HHf');
-        expect(adminQuizList(user1Id)).toStrictEqual({ quizzes: [] });
+        expect(adminQuizList(user1Id.authUserId)).toStrictEqual({ quizzes: [] });
     });
 })
 
 describe('Valid user with only one quiz', () => {
     let user1Id, quiz1Id;
     beforeEach(() => {
-        user1Id = adminAuthRegister('admin@unsw.edu.au', 'Password1', 'JJ', 'HH')
-        quiz1Id = adminQuizCreate(user1Id, 'Quiz');
+        user1Id = adminAuthRegister('admin@unsw.edu.au', 'Password1', 'JJ', 'HH');
+        quiz1Id = adminQuizCreate(user1Id.authUserId, 'Quiz', '');
     })
-    test.failing('There is only one user in database', () => {
-        expect(adminQuizList(user1Id)).toStrictEqual({ quizzes: [
+    test('There is only one user in database', () => {
+        expect(adminQuizList(user1Id.authUserId)).toStrictEqual({ quizzes: [
             {
-                quizId: quiz1Id
+                quizId: quiz1Id.quizId
             }
         ] });
     });
 
-    test.failing('There are multiple users in database', () => {
+    test('There are multiple users in database', () => {
         adminAuthRegister('admin2@unsw.edu.au', 'Password1', 'JJz', 'HHz');
         adminAuthRegister('admin3@unsw.edu.au', 'Password1', 'JJf', 'HHf');
-        expect(adminQuizList(user1Id)).toStrictEqual({ quizzes: [
+        expect(adminQuizList(user1Id.authUserId)).toStrictEqual({ quizzes: [
             {
-                quizId: quiz1Id
+                quizId: quiz1Id.quizId
             }
         ] });
     });
@@ -56,33 +56,33 @@ describe('Valid user with multiple quizzes', () => {
     let quiz1Id, quiz2Id, quiz3Id, user1Id;
     beforeEach(() => {
         user1Id = adminAuthRegister('admin@unsw.edu.au', 'Password1', 'JJ', 'HH');
-        quiz1Id = adminQuizCreate(user1Id, 'Quiz 1');
-        quiz2Id = adminQuizCreate(user1Id, 'Quiz 2');
-        quiz3Id = adminQuizCreate(user1Id, 'Quiz 3');
+        quiz1Id = adminQuizCreate(user1Id.authUserId, 'Quiz1', '');
+        quiz2Id = adminQuizCreate(user1Id.authUserId, 'Quiz2', '');
+        quiz3Id = adminQuizCreate(user1Id.authUserId, 'Quiz3', '');
     })
-    test.failing('There is only one user in database', () => {
-        expect(adminQuizList(user1Id)).toStrictEqual({ quizzes: [
+    test('There is only one user in database', () => {
+        expect(adminQuizList(user1Id.authUserId)).toStrictEqual({ quizzes: [
             {
-                quizId: quiz1Id
+                quizId: quiz1Id.quizId
             },
             {
-                quizId: quiz2Id
+                quizId: quiz2Id.quizId
             },
             {
-                quizId: quiz3Id
+                quizId: quiz3Id.quizId
             }
         ] });
     });
 
-    test.failing('There are multiple users in database', () => {
+    test('There are multiple users in database', () => {
         adminAuthRegister('admin2@unsw.edu.au', 'Password1', 'JJz', 'HHz');
         adminAuthRegister('admin3@unsw.edu.au', 'Password1', 'JJf', 'HHf');
-        expect(adminQuizList(user1Id)).toStrictEqual({ quizzes: [
+        expect(adminQuizList(user1Id.authUserId)).toStrictEqual({ quizzes: [
             {
-                quizId: quiz1Id
+                quizId: quiz1Id.quizId
             },
             {
-                quizId: quiz2Id
+                quizId: quiz2Id.quizId
             },
             {
                 quizId: quiz3Id

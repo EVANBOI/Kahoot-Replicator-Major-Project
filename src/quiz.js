@@ -6,13 +6,15 @@ import { getData, setData } from "./dataStore.js"
  * @param {number} authUserId - unique id of a user
  * @returns {{quizzes: {quizId: number, name: string}}} - an object containing identifiers of all quizzes
  */
+
 export function adminQuizList ( authUserId ) {
     const dataBase = getData();
-    const userExists = dataBase.users.find(current => current.authUserId === authUserId);
+    const userExists = dataBase.users.find(current => current.userId === authUserId);
     if (!userExists) {
         return { error: 'AuthUserId is not a valid user.' }
     }
-    const quizzes = dataBase.quizzes.filter(current => current.authUserId === authUserId);
+    const quizzes = dataBase.quizzes.filter(current => current.userId === authUserId);
+    console.log(quizzes);
     return { quizzes: quizzes }
 }
 

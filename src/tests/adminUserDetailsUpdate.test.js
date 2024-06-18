@@ -45,7 +45,7 @@ describe('error tests', () => {
     })
 
 
-    test('AuthUserId is not a valid user', ()=> {
+    test('UserId is not a valid user', ()=> {
         const INVALID_ID = VALID_USERID1 + 1;
         expect(adminUserDetailsUpdate(
             INVALID_ID, 

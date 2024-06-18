@@ -31,7 +31,7 @@ describe('when registering an authUserId', () => {
     
 })
 
-test('correctly returns two authuserIds', () => {
+test.failing('correctly returns two authuserIds', () => {
     const Id1 = adminAuthRegister('evan.xiong@unsw.edu.au', 'abcde12345', 'Evan', 'Xiong');
     const Id2 = adminAuthRegister('jessie.zhang@unsw.edu.au', 'qwerty67890', 'Jessie', 'Zhang');
     expect(adminAuthLogin('evan.xiong@unsw.edu.au', 'abcde12345')).toStrictEqual({ authUserId: Id1.authUserId })

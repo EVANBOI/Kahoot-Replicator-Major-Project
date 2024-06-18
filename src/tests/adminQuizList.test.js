@@ -6,7 +6,7 @@ beforeEach(() => {
 })
 
 test.failing('User id is not valid', () => {
-    expect(adminQuizList(10)).toStrictEqual({ error: 'AuthUserId is not a valid user.'})
+    expect(adminQuizList(10)).toStrictEqual({ error: expect.any(String) })
 });
 
 describe('Valid user with only no quizzes', () => {

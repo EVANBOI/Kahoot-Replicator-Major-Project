@@ -1,3 +1,6 @@
+import { getData, setData } from "./dataStore.js";
+import validator from 'validator';
+
 /**
  * Given an admin user's details, creates an account for them.
  * 
@@ -8,8 +11,40 @@
  * @returns {{authUserId: number}}
  */
 export function adminAuthRegister (email, password, nameFirst, nameLast) {
+    let dataBase = getData();
+    const person = dataBase.users.find(person => person.email === email)
+    if (person) {
+        return { error: 'Email address is used by another user.'};
+    }
+    const nameRange = /^[a-zA-Z-' ]*$/
+    const passwordLetterRange = /^[a-zA-Z]/;
+    const passwordNumberRange = /\d/;
+    if (validator.isEmail(email) == false) {
+        return { error: 'Email does not satisfy this: https://www.npmjs.com/package/validator (validator.isEmail function).'}
+    }else if (!nameRange.test(nameFirst)) {
+        return { error: 'NameFirst contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes.'}
+    } else if (nameFirst.length < 2 || nameFirst.length > 20) {
+        return { error: 'NameFirst is less than 2 characters or more than 20 characters.'}
+    } else if (!nameRange.test(nameLast)) {
+        return { error: 'NameLast contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes.'};
+    } else if (nameLast.length < 2 || nameLast.length > 20) {
+        return { error: 'NameLast is less than 2 characters or more than 20 characters.'}
+    } else if (password.length < 8) {
+        return { error : 'Password is less than 8 characters.'};
+    } else if (!passwordLetterRange.test(password) || !passwordNumberRange.test(password)) {
+        return { error: 'Password does not contain at least one number and at least one letter.'}
+    }
+
+    const id = dataBase.users.length + 1;
+    dataBase.users.push({
+        userId: id,
+        email: email,
+        password: password,
+        name: `${nameFirst} ${nameLast}`
+    });
+    setData(dataBase);
     return {
-        authUserId: 1
+        authUserId: id
     }
 }
 

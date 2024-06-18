@@ -19,6 +19,8 @@ const ERROR = {
     error: expect.any(String)
 }
 
+const NEW_VALID_EMAIL = 'newValidEmail@gmail.com'
+
 beforeEach(() => {
     clear();
 })
@@ -42,7 +44,7 @@ describe('error tests', () => {
         const INVALID_ID = VALID_ID_1.authUserId + VALID_ID_2.authUserId + 100;
         expect(adminUserDetailsUpdate(
             INVALID_ID, 
-            VALID_INPUTS_1.EMAIL, 
+            NEW_VALID_EMAIL, 
             VALID_INPUTS_1.FIRSTNAME, 
             VALID_INPUTS_1.LASTNAME)
         ).toStrictEqual(ERROR);
@@ -71,7 +73,7 @@ describe('error tests', () => {
         const INVALID_FIRSTNAME = '!Invalid*Name'
         expect(adminUserDetailsUpdate(
             VALID_ID_1, 
-            VALID_INPUTS_1.EMAIL, 
+            NEW_VALID_EMAIL, 
             INVALID_FIRSTNAME, 
             VALID_INPUTS_1.LASTNAME)
         ).toStrictEqual(ERROR);
@@ -81,7 +83,7 @@ describe('error tests', () => {
         const INVALID_LASTNAME = '!Invalid*Name'
         expect(adminUserDetailsUpdate(
             VALID_ID_1, 
-            VALID_INPUTS_1.EMAIL, 
+            NEW_VALID_EMAIL, 
             VALID_INPUTS_1.FIRSTNAME, 
             INVALID_LASTNAME)
         ).toStrictEqual(ERROR);
@@ -91,28 +93,28 @@ describe('error tests', () => {
         {
             error: 'First name too long',
             authUserId: VALID_ID_1, 
-            email: VALID_INPUTS_1.EMAIL, 
+            email: NEW_VALID_EMAIL, 
             nameFirst: 'Toooooooooooooooooooooooooolong', 
             nameLast: VALID_INPUTS_1.LASTNAME
         },
         {
             error: 'First name too short',
             authUserId: VALID_ID_1, 
-            email: VALID_INPUTS_1.EMAIL, 
+            email: NEW_VALID_EMAIL, 
             nameFirst: 's', 
             nameLast: VALID_INPUTS_1.LASTNAME
         },
         {
             error: 'Last name too long',
             authUserId: VALID_ID_1, 
-            email: VALID_INPUTS_1.EMAIL, 
+            email: NEW_VALID_EMAIL, 
             nameFirst: VALID_INPUTS_1.FIRSTNAME, 
             nameLast: 's'
         },
         {
             error: 'Last name too short',
             authUserId: VALID_ID_1, 
-            email: VALID_INPUTS_1.EMAIL, 
+            email: NEW_VALID_EMAIL, 
             nameFirst: VALID_INPUTS_1.FIRSTNAME, 
             nameLast: 'Toooooooooooooooooooooooooolong'
         },
@@ -120,3 +122,22 @@ describe('error tests', () => {
         expect(adminUserDetailsUpdate(authUserId, email, nameFirst, nameLast)).toStrictEqual(ERROR);
     })
 })
+
+describe('Successful update', () => {
+    test('correct return value', () => {
+        const VALID_ID_1 = adminAuthRegister(
+            VALID_INPUTS_1.EMAIL, 
+            VALID_INPUTS_1.PASSWORD, 
+            VALID_INPUTS_1.FIRSTNAME, 
+            VALID_INPUTS_1.LASTNAME
+        );
+        expect(adminUserDetailsUpdate(
+            VALID_ID_1.authUserId, 
+            NEW_VALID_EMAIL, 
+            VALID_INPUTS_1.FIRSTNAME, 
+            VALID_INPUTS_1.LASTNAME)
+        ).toStrictEqual({ });
+    })
+
+})
+

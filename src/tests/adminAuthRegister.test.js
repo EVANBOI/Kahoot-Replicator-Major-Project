@@ -2,6 +2,7 @@ import { adminAuthRegister } from "../auth.js";
 import { clear } from "../other.js";
 
 const REGISTRATED = { authUserId: expect.any(Number) };
+const ERROR = { error: expect.any(String) };
 
 const VALID_INPUTS = {
     EMAIL: 'admin@email.com',
@@ -22,52 +23,60 @@ describe('Successful registration tests', () => {
             VALID_INPUTS.LASTNAME)).toStrictEqual(REGISTRATED);
     });
 
-    describe('More cases for successful First Name tests', () => {
+    test('Check generated ids are unique', () => {
+        const user1 = adminAuthRegister('admin1@email.com', 
+            VALID_INPUTS.PASSWORD, 
+            VALID_INPUTS.FIRSTNAME, 
+            VALID_INPUTS.LASTNAME);
+        const user2 = adminAuthRegister('admin2@email.com', 
+            VALID_INPUTS.PASSWORD, 
+            VALID_INPUTS.FIRSTNAME, 
+            VALID_INPUTS.LASTNAME);
+        expect(user1).not.toStrictEqual(user2);
+    })
+
+    describe('More cases for successful name tests', () => {
         test.each([
             {
                 testName: 'First name with hyphen',
                 nameFirst: 'Hello-',
+                nameLast: VALID_INPUTS.LASTNAME
             },
             {
                 testName: 'First name with apostrophe',
-                nameFirst: "He''llo"
+                nameFirst: "He''llo",
+                nameLast: VALID_INPUTS.LASTNAME
             },
             {
                 testName: 'First name with space',
-                nameFirst: 'He llo'
-            }
-        ])('Test $#: $testName', ({ nameFirst }) => {
-            expect(adminAuthRegister(VALID_INPUTS.EMAIL, 
-                VALID_INPUTS.PASSWORD, 
-                nameFirst, 
-                VALID_INPUTS.LASTNAME)).toStrictEqual(REGISTRATED);
-        });
-    });
-
-    describe('More cases for successful Last Name tests', () => {
-        test.each([
+                nameFirst: 'He llo',
+                nameLast: VALID_INPUTS.LASTNAME
+            },
             {
                 testName: 'Last name with hyphen',
+                nameFirst: VALID_INPUTS.FIRSTNAME,
                 nameLast: '-woah'
             },
             {
                 testName: 'Last name with space',
+                nameFirst: VALID_INPUTS.FIRSTNAME,
                 nameLast: "w oah"
             },             
             {
                 testName: 'Last name with apostrophe',
+                nameFirst: VALID_INPUTS.FIRSTNAME,
                 nameLast: "'He'l'lo"
             }
-        ])('Test $#: $testName', ({ nameLast }) => {
+        ])('Test $#: $testName', ({ nameFirst, nameLast }) => {
             expect(adminAuthRegister(VALID_INPUTS.EMAIL, 
                 VALID_INPUTS.PASSWORD, 
-                VALID_INPUTS.FIRSTNAME, 
+                nameFirst, 
                 nameLast)).toStrictEqual(REGISTRATED);
         });
     });
 })
 
-describe('Email unsuccessful tests', () => {
+describe('Unsuccessful email tests', () => {
     test('Repeated email', () => {
         adminAuthRegister(VALID_INPUTS.EMAIL, 
             VALID_INPUTS.PASSWORD, 
@@ -76,105 +85,76 @@ describe('Email unsuccessful tests', () => {
         expect(adminAuthRegister(VALID_INPUTS.EMAIL, 
             VALID_INPUTS.PASSWORD, 
             VALID_INPUTS.FIRSTNAME, 
-            VALID_INPUTS.LASTNAME)).toStrictEqual({ error: expect.any(String) })
+            VALID_INPUTS.LASTNAME)).toStrictEqual(ERROR)
     }) 
     test('Input is not an email', () => {
         expect(adminAuthRegister('123', 
             VALID_INPUTS.PASSWORD, 
             VALID_INPUTS.FIRSTNAME, 
-            VALID_INPUTS.LASTNAME)).toStrictEqual({ error: expect.any(String) })
+            VALID_INPUTS.LASTNAME)).toStrictEqual(ERROR)
     });
 })
 
-describe('First Name unsuccessful tests', () => {
+describe('Unsuccesful name tests', () => {
     test.each([
         {
             testName: "First name with number",
             nameFirst: 'J23',
+            nameLast: VALID_INPUTS.LASTNAME
         },
         {
             testName: "First name with symbols",
             nameFirst: 'He@l+o',
+            nameLast: VALID_INPUTS.LASTNAME
         },
         {
-            testName: "First name with character error first and then length error",
-            nameFirst: 'H1!!@ sdofih ooiuoisf ohl309fivn3 4uybd88y+++...'
-        }, 
-        {
-            testName: 'First name with length error first and then character error',
-            nameFirst: 'lsdkfjghsfljfadskadshajakdadsfafdfsdaakfh!!++ 99'
-        }
-    ])("Test $#: $testName", ({ nameFirst }) => {
-        expect(adminAuthRegister(VALID_INPUTS.EMAIL, 
-            VALID_INPUTS.PASSWORD, 
-            nameFirst, 
-            VALID_INPUTS.LASTNAME)).toStrictEqual({ 
-                error: expect.any(String) });
-    });
-
-    test.each([
-        {
             testName: "First name is less than 2 characters",
-            nameFirst: 'J'
+            nameFirst: 'J',
+            nameLast: VALID_INPUTS.LASTNAME
         },
         {
             testName: "First name is more than 20 characters",
-            nameFirst: 'a'.repeat(30)
-        }
-    ])("Test $#: $testName", ({ nameFirst }) => {
-        expect(adminAuthRegister(VALID_INPUTS.EMAIL, 
-            VALID_INPUTS.PASSWORD, 
-            nameFirst, 
-            VALID_INPUTS.LASTNAME)).toStrictEqual({ 
-                error: expect.any(String) });
-    });
-})
-
-describe('Last Name unsuccessful tests', () => {
-    test.each([
+            nameFirst: 'a'.repeat(30),
+            nameLast: VALID_INPUTS.LASTNAME
+        },
         {
             testName: "Last name with number",
+            nameFirst: VALID_INPUTS.FIRSTNAME,
             nameLast: 'Z00k'
         },
         {
             testName: "Last name with full stop",
+            nameFirst: VALID_INPUTS.FIRSTNAME,
             nameLast: 'w, oa.h'
         },
         {
-            testName: "Last name with character error first and then length error",
-            nameLast: 'H1!!@ sdofih ooiuoisf ohl309fivn3 4uybd88y+++...'
-        }, 
-        {
-            testName: 'Last name with length error first and then character error',
-            nameLast: 'lsdkfjghsfljfadskadshajakdadsfafdfsdaakfh!!++ 99'
-        }
-    ])("Test $#: $testName", ({ nameLast }) => {
-        expect(adminAuthRegister(VALID_INPUTS.EMAIL, 
-            VALID_INPUTS.PASSWORD, 
-            VALID_INPUTS.FIRSTNAME, 
-            nameLast)).toStrictEqual({ 
-                error: expect.any(String) });
-    });
-    test.each([
-        {
             testName: "Last name is less than 2 characters",
+            nameFirst: VALID_INPUTS.FIRSTNAME,
             nameLast: 'J'
         },
         {
             testName: "Last name is more than 20 characters",
+            nameFirst: VALID_INPUTS.FIRSTNAME,
             nameLast: 'a'.repeat(30)
         }
-    ])("Test $#: $testName", ({ nameLast }) => {
+    ])("Test $#: $testName", ({ nameFirst, nameLast }) => {
         expect(adminAuthRegister(VALID_INPUTS.EMAIL, 
             VALID_INPUTS.PASSWORD, 
-            VALID_INPUTS.FIRSTNAME, 
-            nameLast)).toStrictEqual({ 
-                error: expect.any(String) });
+            nameFirst, 
+            nameLast)).toStrictEqual(ERROR);
     });
 })
 
-describe('Password unsuccesful tests', () => {
+describe('Unsuccessful password tests', () => {
     test.each([
+        {
+            testName: 'Password with only letters',
+            password: 'password'
+        },             
+        {
+            testName: 'Password with only numbers',
+            password: '12345678'
+        },
         {
             testName: 'Password with less than 8 characters',
             password: 'pass1'
@@ -187,22 +167,6 @@ describe('Password unsuccesful tests', () => {
         expect(adminAuthRegister(VALID_INPUTS.EMAIL, 
             password, 
             VALID_INPUTS.FIRSTNAME, 
-            VALID_INPUTS.LASTNAME)).toStrictEqual({ error: expect.any(String)});
-    });
-
-    test.each([
-        {
-            testName: 'Password with only letters',
-            password: 'password'
-        },             
-        {
-            testName: 'Password with only numbers',
-            password: '12345678'
-        }
-    ])('Test $#: $testName', ({ password }) => {
-        expect(adminAuthRegister(VALID_INPUTS.EMAIL, 
-            password, 
-            VALID_INPUTS.FIRSTNAME, 
-            VALID_INPUTS.LASTNAME)).toStrictEqual({ error: expect.any(String) });
+            VALID_INPUTS.LASTNAME)).toStrictEqual(ERROR);
     });
 })

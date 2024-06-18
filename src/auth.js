@@ -40,7 +40,9 @@ export function adminAuthRegister (email, password, nameFirst, nameLast) {
         userId: id,
         email: email,
         password: password,
-        name: `${nameFirst} ${nameLast}`
+        name: `${nameFirst} ${nameLast}`,
+        numSuccessfulLogins: 1,
+        numFailedPasswordsSinceLastLogin: 0
     });
     setData(dataBase);
     return {
@@ -106,8 +108,20 @@ export function adminUserDetailsUpdate (authUserId, email, nameFirst, nameLast) 
  * @returns {{authUserId: number}}
  */
 export function adminAuthLogin (email, password) {
+
+    let dataBase = getData();
+
+    const validEmail = dataBase.users.find(user => user.email === email);
+    const correctPassword = dataBase.users.find(user => user.email === email 
+                                                && user.password === password);
+    if (!validEmail) { // if validEmail is undefined, the condition is true
+        return { error: 'email address does not exist'};
+    } else if (!correctPassword) {
+        return { error: 'password is not correct for the given email'};
+    }
+
     return {
-        authUserId: 1
+        authUserId: correctPassword.userId
     }
 }
 

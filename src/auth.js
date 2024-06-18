@@ -70,8 +70,35 @@ export function adminUserDetails (authUserId) {
  * @param {string} newPassword - new password to replace old password
  * @returns {} - empty object
  */
+import { getData, setData } from './dataStore';
 export function adminUserPasswordUpdate(authUserId,oldPassword, newPassword){
-    return {
-
+    const data = global.data || getData();
+    const user = data.users.find(user => user.userId === authUserId);
+    
+    if(!user){
+        return {error : 'AuthUserId is not a valid user.'};
+    }
+    if(user.password !== oldPassword){
+        return{ error : "Old Password is not the correct old password"};
+    }
+    if(oldPassword === newPassword){
+        return{ error : 'Old Password and New Password match exactly'};
+    }
+    if(user.usedPasswords.includes(newPassword)){
+        return {error : 'New Password has already been used before by this user'};
+    }
+    if(newPassword.length < 8){
+        return{error : ' Password should more than 8 characters'};
+    }
+    if(!/\d/.test(newPassword) || !/[a-zA-z]/.test(newPassword)){
+        return{error : ' Password need contain at least one number and at least one letter'};
     };
+    
+    user.password = newPassword;
+    user.usedPasswords.push(newPassword);
+    return {};
+
+
 }
+
+

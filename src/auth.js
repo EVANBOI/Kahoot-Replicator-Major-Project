@@ -1,5 +1,6 @@
 import { getData, setData } from "./dataStore.js";
 import validator from 'validator';
+import { findUserWithId } from "./helpers.js";
 
 /**
  * Given an admin user's details, creates an account for them.
@@ -46,7 +47,6 @@ export function adminAuthRegister (email, password, nameFirst, nameLast) {
         numFailedPasswordsSinceLastLogin: 0
     });
     setData(dataBase);
-    console.log(dataBase);
     return {
         authUserId: id
     }
@@ -97,7 +97,7 @@ function adminUserDetails (authUserId) {
 
     const store = getData();
 
-    const user = store.users.find(user => user.userId === authUserId);
+    const user = findUserWithId(authUserId);
     if (!user) {
         return { error: 'AuthUserId is not a valid user.' };
     }

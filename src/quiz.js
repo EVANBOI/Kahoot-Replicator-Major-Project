@@ -1,4 +1,5 @@
 import {data, getData, setData} from './dataStore.js';
+import { findQuizWithId, findUserWithId } from './helpers.js';
 
 
 /**
@@ -40,18 +41,24 @@ export function adminQuizCreate (authUserId, name, description) {
  */
 export function adminQuizRemove (authUserId, quizId) {
     const store = getData();
-    const user = store.users.find(user => user.authUserId === authUserId);
+    const user = findUserWithId(authUserId);
 
     if (!user) {
         return { error: 'AuthUserId is not a valid user.' };
     }
 
-    const quizIndex = store.quizzes.findIndex(quiz => quiz.quizId === quizId && quiz.authUserId === authUserId);
+    const quiz = findQuizWithId(quizId);
 
-    if (quizIndex === -1) {
-        return { error: 'Quiz ID does not refer to a valid quiz or the quiz does not belong to the user.' };
+    if (!quiz) {
+        return { error: `Quiz with ID '${quizId}' not found` };
     }
 
+
+    if (quiz.userId !== authUserId) {
+        return { error: `Quiz with ID ${quizId} is not owned by ${authUserId} (actual owner: ${quiz.userId})` };
+    }
+
+    const quizIndex = store.quizzes.findIndex(quiz => quiz.quizId === quizId);
     store.quizzes.splice(quizIndex, 1);
     setData(store);
     return {

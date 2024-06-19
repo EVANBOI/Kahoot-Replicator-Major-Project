@@ -9,11 +9,8 @@ beforeEach(() => {
 test('should return user details for a valid authUserId', () => {
     // Register a user to set up the initial state
     const registerResponse = adminAuthRegister('test.email@domain.com', 'password123', 'Hayden', 'Smith');
-    console.log('Register Response:', registerResponse);
     const authUserId = registerResponse.authUserId;
-    console.log('authUserID:', authUserId);
     const result = adminUserDetails(authUserId);
-    console.log('User Details Result:', result);
 
     expect(result).toEqual({
         user: {
@@ -29,6 +26,5 @@ test('should return user details for a valid authUserId', () => {
 test('should return an error for an invalid authUserId', () => {
     const invalidAuthUserId = -1;
     const result = adminUserDetails(invalidAuthUserId);
-    console.log('Invalid User Details Result:', result);
     expect(result).toStrictEqual({ error: expect.any(String) });
 });

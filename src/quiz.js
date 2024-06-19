@@ -160,7 +160,7 @@ export function adminQuizNameUpdate(authUserId, quizId, name) {
     if (!quiz) {
         return { error: 'Quiz ID does not refer to a valid quiz.' };
     }
-    if (quiz.createrId !== authUserId) {
+    if (quiz.creatorId !== authUserId) {
         return { error: 'Quiz ID does not refer to a quiz that this user owns.' };
     }
     if (!namePattern.test(name)) {  
@@ -169,7 +169,7 @@ export function adminQuizNameUpdate(authUserId, quizId, name) {
     if (name.length < 3 || name.length > 30) {
         return { error: 'Name is either less than 3 characters long or more than 30 characters long.' };
     }
-    const nameUsed = database.quizzes.find(q => q.createrId === authUserId && q.name === name);
+    const nameUsed = database.quizzes.find(q => q.creatorId === authUserId && q.name === name);
     if (nameUsed) {
         return { error: 'Name is already used by the current logged in user for another quiz.' };
     }

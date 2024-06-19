@@ -94,7 +94,7 @@ export function adminQuizRemove (authUserId, quizId) {
     }
 
 
-    if (quiz.userId !== authUserId) {
+    if (quiz.creatorId !== authUserId) {
         return { error: `Quiz with ID ${quizId} is not owned by ${authUserId} (actual owner: ${quiz.userId})` };
     }
 

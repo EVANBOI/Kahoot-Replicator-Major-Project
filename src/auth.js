@@ -168,10 +168,7 @@ export function adminUserPasswordUpdate(authUserId,oldPassword, newPassword){
         return { error: 'Old Password and New Password match exactly' };
     }
     
-    if (!user.passwordUsedThisYear) {
-        user.passwordUsedThisYear = [];
-    }
-
+    user.passwordUsedThisYear = user.passwordUsedThisYear || [];
     if (user.passwordUsedThisYear.find(pw => pw === newPassword)) {
         return { error: 'New Password has already been used before by this user' };
     }
@@ -184,7 +181,7 @@ export function adminUserPasswordUpdate(authUserId,oldPassword, newPassword){
     }
 
     user.password = newPassword;
-    user.passwordUsedThisYear.push(newPassword);
+    user.passwordUsedThisYear.push(oldPassword);
     setData(dataBase);
 
     return {};

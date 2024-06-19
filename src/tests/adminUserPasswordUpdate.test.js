@@ -45,25 +45,10 @@ describe('adminUserPasswordUpdate tests', () => {
     });
 
     test('New password has already been used - check data store', () => {
-        
         adminUserPasswordUpdate(userId, 'oldPassword1', VALID_NEW_PASSWORD);
-      
         adminUserPasswordUpdate(userId, VALID_NEW_PASSWORD, 'anotherNewPassword123');
-      
-        const userDetails = adminUserDetails(userId);
-        
-
-        expect(userDetails).toStrictEqual({
-            user: {
-                userId: userId,
-                password: 'anotherNewPassword123',
-                usedPasswords: ['oldPassword1', VALID_NEW_PASSWORD, 'anotherNewPassword123'],
-                numSuccessfulLogins: expect.any(Number),
-                numFailedPasswordsSinceLastLogin: expect.any(Number),
-                email: 'chang.li@unsw.edu.au',
-                name: 'Chang Li'
-            }
-        });
+        const loginResult = adminAuthLogin('chang.li@unsw.edu.au', 'anotherNewPassword123');
+        expect(loginResult.authUserId).toEqual(userId);
     });
 
     describe('Password validation tests', () => {

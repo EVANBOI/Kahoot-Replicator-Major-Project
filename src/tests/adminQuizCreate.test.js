@@ -13,15 +13,15 @@ describe ('when registering an AuthUserId', () => {
         Id = adminAuthRegister('evan.xiong@unsw.edu.au', 'abcde12345', 'Evan', 'Xiong');
     });
 
-    test.failing('AuthUserId is not a valid user', () => {
+    test('AuthUserId is not a valid user', () => {
         expect(adminQuizCreate(Id.authUserId + 1, 'Quiz 1', 'Pointers')).toStrictEqual({ error: expect.any(String) });
     })
 
-    test.failing('Name contains invalid characters', () => {
+    test('Name contains invalid characters', () => {
         expect(adminQuizCreate(Id.authUserId, '汉', 'Pointers')).toStrictEqual({ error: expect.any(String) });
     })
 
-    test.failing.each([ 
+    test.each([ 
         {
             testName: 'Name is less than 3 characters long',
             name: 'A'
@@ -34,13 +34,13 @@ describe ('when registering an AuthUserId', () => {
         expect(adminQuizCreate(Id.authUserId, name, 'Pointers')).toStrictEqual({ error: expect.any(String) });
     })
 
-    test.failing('Name is already used by the current logged in user', () => {
+    test('Name is already used by the current logged in user', () => {
         expect(adminQuizCreate(Id.authUserId, 'Quiz 1', 'Pointers')).toStrictEqual({ quizId: expect.any(Number) });
         expect(adminQuizCreate(Id.authUserId, 'Quiz 1', 'Linked Lists')).toStrictEqual({ error: expect.any(String) });
         
     });
 
-    test.failing.each([
+    test.each([
         {
             testName: 'Description is more than 100 characters in length',
             description: 'a'.repeat(101)
@@ -61,8 +61,8 @@ describe ('when registering an AuthUserId', () => {
         expect(adminQuizCreate(Id.authUserId, 'Quiz 1', ' ')).toStrictEqual({ quizId: expect.any(Number) });
     })
 
-    test.failing('Sucessfully give two quizIds', () => {
-        Id2 = adminAuthRegister('zhihao.cao@unsw.edu.au', 'qwerty67890', 'Zhihao', 'Cao');
+    test('Sucessfully give two quizIds', () => {
+        const Id2 = adminAuthRegister('zhihao.cao@unsw.edu.au', 'qwerty67890', 'Zhihao', 'Cao');
         expect(adminQuizCreate(Id.authUserId, 'Quiz 1', ' ')).toStrictEqual({ quizId: expect.any(Number)});
         expect(adminQuizCreate(Id2.authUserId, 'Quiz 2', 'Linked Lists')).toStrictEqual({ quizId: expect.any(Number) });
         expect(adminQuizCreate(Id.authUserId, 'Quiz 1', ' ')).not.toStrictEqual(expect(adminQuizCreate(Id2.authUserId, 'Quiz 2', 'Linked Lists')));

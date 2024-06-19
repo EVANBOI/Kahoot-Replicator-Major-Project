@@ -1,7 +1,8 @@
 {
     "scripts": {
         "test": "jest",
-        "test1": "jest adminAuthRegister.test.js",
+        "testj": "jest adminAuthRegister.test.js",
+        "testj1": "jest adminQuizList.test.js",
         "test!": "jest adminQuizCreate.test.js"
     },
     "dependencies": {

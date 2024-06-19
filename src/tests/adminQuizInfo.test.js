@@ -36,11 +36,11 @@ describe('error tests', () => {
     });
 
     test('AuthUserId is not a valid user.', () => {
-        expec(adminQuizInfo(VALID_USER_ID + 1, VALID_QUIZ_ID)).toStrictEqual(ERROR);
+        expect(adminQuizInfo(VALID_USER_ID + 1, VALID_QUIZ_ID)).toStrictEqual(ERROR);
     });
 
     test('QuizId is not a valid quiz.', () => {
-        expec(adminQuizInfo(VALID_USER_ID, VALID_QUIZ_ID + 1)).toStrictEqual(ERROR);
+        expect(adminQuizInfo(VALID_USER_ID, VALID_QUIZ_ID + 1)).toStrictEqual(ERROR);
     });
 
     test('Visitor is not creator', () => {

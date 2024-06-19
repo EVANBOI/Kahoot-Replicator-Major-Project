@@ -178,9 +178,8 @@ export function adminUserPasswordUpdate(authUserId,oldPassword, newPassword){
     };
     
     user.password = newPassword;
-    user.usedPasswords = user.usedPasswords || [];
     user.usedPasswords.push(newPassword);
-    setData(dataBase);
+    setData(database);
 
     return {};
 

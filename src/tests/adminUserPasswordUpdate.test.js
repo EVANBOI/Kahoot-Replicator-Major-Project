@@ -10,13 +10,9 @@ let userId;
 
 beforeEach(() => {
     clear();
-    const user = adminAuthRegister('chang.li@unsw.edu.au', 'oldPassword1', 'Chang', 'Li');
-    userId = user.authUserId;
-    adminAuthLogin('chang.li@unsw.edu.au', 'oldPassword1');
 });
 
 describe('adminUserPasswordUpdate tests', () => {
-    let userId;
     beforeEach(() => {
         const user = adminAuthRegister('chang.li@unsw.edu.au', 'oldPassword1', 'Chang', 'Li');
         userId = user.authUserId;
@@ -44,10 +40,18 @@ describe('adminUserPasswordUpdate tests', () => {
         expect(result).toEqual({ error: expect.any(String) });
     });
 
-    test('New password has already been used', () => {
-        adminUserPasswordUpdate(userId, 'oldPassword1', VALID_NEW_PASSWORD);  
+    test('New password has already been used - check return value', () => {
+        adminUserPasswordUpdate(userId, 'oldPassword1', VALID_NEW_PASSWORD);
         const result = adminUserPasswordUpdate(userId, VALID_NEW_PASSWORD, VALID_NEW_PASSWORD);
         expect(result).toEqual({ error: expect.any(String) });
+    });
+
+    test('New password has already been used - check data store', () => {
+        adminUserPasswordUpdate(userId, 'oldPassword1', VALID_NEW_PASSWORD);
+        const result = adminUserPasswordUpdate(userId, VALID_NEW_PASSWORD, 'anotherNewPassword123');
+        expect(result).toEqual({});
+        const secondResult = adminUserPasswordUpdate(userId, 'anotherNewPassword123', VALID_NEW_PASSWORD);
+        expect(secondResult).toEqual({ error: expect.any(String) });
     });
 
     describe('Password validation tests', () => {

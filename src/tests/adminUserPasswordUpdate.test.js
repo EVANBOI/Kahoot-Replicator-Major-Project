@@ -1,5 +1,5 @@
 import {clear} from '../other.js';
-import { adminUserPasswordUpdate,adminAuthRegister,adminAuthLogin} from '../auth.js';
+import { adminUserPasswordUpdate,adminAuthRegister,adminAuthLogin ,adminUserDetails} from '../auth.js';
 
 const VALID_NEW_PASSWORD = 'newPassword123';
 const SHORT_PASSWORD = 'short';
@@ -22,7 +22,7 @@ describe('adminUserPasswordUpdate tests', () => {
         const result = adminUserPasswordUpdate(userId, 'oldPassword1', VALID_NEW_PASSWORD);
         expect(result).toEqual({});
         const userDetails = adminUserDetails(userId);
-        expect(userDetails.user.password).toEqual(VALID_NEW_PASSWORD);  // Ensure the password has been updated
+        expect(userDetails.user.password).toEqual(VALID_NEW_PASSWORD);  
     });
 
     test('Invalid user ID', () => {

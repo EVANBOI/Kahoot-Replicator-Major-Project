@@ -167,12 +167,15 @@ export function adminUserPasswordUpdate(authUserId,oldPassword, newPassword){
     if (oldPassword === newPassword) {
         return { error: 'Old Password and New Password match exactly' };
     }
-    user.usedPasswords = user.usedPasswords || [];
-    for (let usedPassword of user.usedPasswords) {
-        if (usedPassword === newPassword) {
-            return { error: 'New Password has already been used before by this user' };
-        }
+    
+    if (!user.passwordUsedThisYear) {
+        user.passwordUsedThisYear = [];
     }
+
+    if (user.passwordUsedThisYear.find(pw => pw === newPassword)) {
+        return { error: 'New Password has already been used before by this user' };
+    }
+
     if (newPassword.length < 8) {
         return { error: 'Password should be more than 8 characters' };
     }
@@ -181,7 +184,7 @@ export function adminUserPasswordUpdate(authUserId,oldPassword, newPassword){
     }
 
     user.password = newPassword;
-    user.usedPasswords.push(newPassword);
+    user.passwordUsedThisYear.push(newPassword);
     setData(dataBase);
 
     return {};

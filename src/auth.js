@@ -45,7 +45,7 @@ export function adminAuthRegister (email, password, nameFirst, nameLast) {
         name: `${nameFirst} ${nameLast}`,
         numSuccessfulLogins: 1,
         numFailedPasswordsSinceLastLogin: 0,
-        passwordUsedThisYear: []
+        passwordUsedThisYear: [] // this property should be updated year by year, clear it annually
     });
     setData(dataBase);
     return {
@@ -144,9 +144,6 @@ export function adminAuthLogin (email, password) {
 
 
 function adminUserDetails (authUserId) {
-    
-
-    const store = getData();
 
     const user = findUserWithId(authUserId);
     if (!user) {
@@ -187,7 +184,6 @@ export function adminUserPasswordUpdate(authUserId,oldPassword, newPassword){
         return { error: 'Old Password and New Password match exactly' };
     }
     
-    user.passwordUsedThisYear = user.passwordUsedThisYear || [];
     if (user.passwordUsedThisYear.find(pw => pw === newPassword)) {
         return { error: 'New Password has already been used before by this user' };
     }

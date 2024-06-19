@@ -1,4 +1,4 @@
-import {data, getData, setData} from './dataStore.js';
+import { getData, setData} from './dataStore.js';
 import { findQuizWithId, findUserWithId } from './helpers.js';
 
 
@@ -8,14 +8,19 @@ import { findQuizWithId, findUserWithId } from './helpers.js';
  * @param {number} authUserId - unique id of a user
  * @returns {{quizzes: {quizId: number, name: string}}} - an object containing identifiers of all quizzes
  */
+
 export function adminQuizList ( authUserId ) {
-    return {quizzes: [
-            {
-            quizId: 1,
-            name: 'My Quiz',
-            }
-        ]
+    const dataBase = getData();
+    const userExists = dataBase.users.find(user => user.userId === authUserId);
+    if (!userExists) {
+        return { error: 'AuthUserId is not a valid user.' }
     }
+    const quizzes = dataBase.quizzes.filter(quiz => quiz.creatorId === authUserId);
+    const details = quizzes.map(quiz => ({
+        quizId: quiz.quizId,
+        name: quiz.name
+    }))
+    return { quizzes: details }
 }
 
 /**
@@ -53,7 +58,7 @@ export function adminQuizCreate (authUserId, name, description) {
     const timestamp2 = Math.floor(Date.now() / 1000);
     const id = database.quizzes.length + 1;
     database.quizzes.push({
-        createrId: validUser.userId,
+        creatorId: validUser.userId,
         quizId: id,
         name: name,
         timeCreated: timestamp1,
@@ -89,7 +94,7 @@ export function adminQuizRemove (authUserId, quizId) {
     }
 
 
-    if (quiz.userId !== authUserId) {
+    if (quiz.creatorId !== authUserId) {
         return { error: `Quiz with ID ${quizId} is not owned by ${authUserId} (actual owner: ${quiz.userId})` };
     }
 
@@ -110,12 +115,28 @@ export function adminQuizRemove (authUserId, quizId) {
  *            timeLastEdited: number, description: string}}
  */
 export function adminQuizInfo (authUserId, quizId) {
+
+    const user = findUserWithId(authUserId);
+    const quiz = findQuizWithId(quizId);
+    if (!user) {
+        return { error: 'AuthUserId is not a valid user.' };
+    }
+
+    if (!quiz) {
+        return { error: `Quiz with ID '${quizId}' not found` };
+    }
+
+    if (quiz.creatorId !== authUserId) {
+        return { error: `Quiz with ID ${quizId} is not owned by ${authUserId} (actual owner: ${quiz.userId})` };
+    } 
+
+
     return {
-        quizId: 1,
-        name: 'My Quiz',
-        timeCreated: 1683125870,
-        timeLastEdited: 1683125871,
-        description: 'This is my quiz',
+        quizId: quiz.quizId,
+        name: quiz.name,
+        timeCreated: quiz.timeCreated,
+        timeLastEdited: quiz.timeLastEdited,
+        description: quiz.description,
     }
 }
 

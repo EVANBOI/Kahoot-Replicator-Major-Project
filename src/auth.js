@@ -42,7 +42,8 @@ export function adminAuthRegister (email, password, nameFirst, nameLast) {
         password: password,
         name: `${nameFirst} ${nameLast}`,
         numSuccessfulLogins: 1,
-        numFailedPasswordsSinceLastLogin: 0
+        numFailedPasswordsSinceLastLogin: 0,
+        passwordUsedThisYear: []
     });
     setData(dataBase);
     return {

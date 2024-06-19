@@ -147,6 +147,7 @@ export function adminQuizInfo (authUserId, quizId) {
  * @param {string} name- name of a user
  * @returns {} - empty object
  */
+
 export function adminQuizNameUpdate(authUserId, quizId, name) {
     const database = getData();
     const user = database.users.find(user => user.userId === authUserId);

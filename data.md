@@ -7,7 +7,7 @@ let data = {
         password: 'hduiqhdiuqw', 
         nameFirst: 'Zhihao', 
         nameLast: 'Cao',
-        UserId: 1, 
+        userId: 1, 
         numSuccessfulLogins: 10,
         numFailedPasswordsSinceLastLogin: 999999,
         // averageRank: 0.25,

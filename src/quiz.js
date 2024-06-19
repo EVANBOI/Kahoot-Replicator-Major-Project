@@ -11,13 +11,16 @@ import { findQuizWithId, findUserWithId } from './helpers.js';
 
 export function adminQuizList ( authUserId ) {
     const dataBase = getData();
-    const userExists = dataBase.users.find(current => current.userId === authUserId);
+    const userExists = dataBase.users.find(user => user.userId === authUserId);
     if (!userExists) {
         return { error: 'AuthUserId is not a valid user.' }
     }
-    const quizzes = dataBase.quizzes.filter(current => current.userId === authUserId);
-    console.log(quizzes);
-    return { quizzes: quizzes }
+    const quizzes = dataBase.quizzes.filter(quiz => quiz.creatorId === authUserId);
+    const details = quizzes.map(quiz => ({
+        quizId: quiz.quizId,
+        name: quiz.name
+    }))
+    return { quizzes: details }
 }
 
 /**
@@ -55,7 +58,7 @@ export function adminQuizCreate (authUserId, name, description) {
     const timestamp2 = Math.floor(Date.now() / 1000);
     const id = database.quizzes.length + 1;
     database.quizzes.push({
-        createrId: validUser.userId,
+        creatorId: validUser.userId,
         quizId: id,
         name: name,
         timeCreated: timestamp1,

@@ -37,7 +37,8 @@ describe('Valid user with only one quiz', () => {
     test('There is only one user in database', () => {
         expect(adminQuizList(user1Id.authUserId)).toStrictEqual({ quizzes: [
             {
-                quizId: quiz1Id.quizId
+                quizId: quiz1Id.quizId,
+                name: 'Quiz'
             }
         ] });
     });
@@ -47,7 +48,8 @@ describe('Valid user with only one quiz', () => {
         adminAuthRegister('admin3@unsw.edu.au', 'Password1', 'JJf', 'HHf');
         expect(adminQuizList(user1Id.authUserId)).toStrictEqual({ quizzes: [
             {
-                quizId: quiz1Id.quizId
+                quizId: quiz1Id.quizId,
+                name: 'Quiz'
             }
         ] });
     });
@@ -63,13 +65,16 @@ describe('Valid user with multiple quizzes', () => {
     test('There is only one user in database', () => {
         expect(adminQuizList(user1Id.authUserId)).toStrictEqual({ quizzes: [
             {
-                quizId: quiz1Id.quizId
+                quizId: quiz1Id.quizId,
+                name: 'Quiz1'
             },
             {
-                quizId: quiz2Id.quizId
+                quizId: quiz2Id.quizId,
+                name: 'Quiz2'
             },
             {
-                quizId: quiz3Id.quizId
+                quizId: quiz3Id.quizId,
+                name: 'Quiz3'
             }
         ] });
     });
@@ -79,14 +84,17 @@ describe('Valid user with multiple quizzes', () => {
         adminAuthRegister('admin3@unsw.edu.au', 'Password1', 'JJf', 'HHf');
         expect(adminQuizList(user1Id.authUserId)).toStrictEqual({ quizzes: [
             {
-                quizId: quiz1Id.quizId
+                quizId: quiz1Id.quizId,
+                name: 'Quiz1'
             },
             {
-                quizId: quiz2Id.quizId
+                quizId: quiz2Id.quizId,
+                name: 'Quiz2'
             },
             {
-                quizId: quiz3Id
-            }
+                quizId: quiz3Id.quizId,
+                name: 'Quiz3'
+            } 
         ] });
     });
 })

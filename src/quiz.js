@@ -51,6 +51,7 @@ export function adminQuizCreate (authUserId, name, description) {
     const timestamp2 = Math.floor(Date.now() / 1000);
     const id = database.quizzes.length + 1;
     database.quizzes.push({
+        createrId: validUser.userId,
         quizId: id,
         name: name,
         timeCreated: timestamp1,

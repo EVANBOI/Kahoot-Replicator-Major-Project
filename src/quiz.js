@@ -126,7 +126,33 @@ export function adminQuizInfo (authUserId, quizId) {
  * @param {string} name- name of a user
  * @returns {} - empty object
  */
-export function adminQuizNameUpdate(authUserId, quizId, name){
+export function adminQuizNameUpdate(authUserId, quizId, name) {
+    const database = getData();
+    const user = database.users.find(user => user.userId === authUserId);
+    const quiz = database.quizzes.find(quiz => quiz.quizId === quizId);
+
+    if (!user) {
+        return { error: 'AuthUserId is not a valid user.' };
+    }
+    if (!quiz) {
+        return { error: 'Quiz ID does not refer to a valid quiz.' };
+    }
+    if (quiz.createrId !== authUserId) {
+        return { error: 'Quiz ID does not refer to a quiz that this user owns.' };
+    }
+    if (!/^[a-zA-Z0-9 ]+$/.test(name)) {
+        return { error: 'Name contains invalid characters. Valid characters are alphanumeric and spaces.' };
+    }
+    if (name.length < 3 || name.length > 30) {
+        return { error: 'Name is either less than 3 characters long or more than 30 characters long.' };
+    }
+    const nameUsed = database.quizzes.find(q => q.createrId === authUserId && q.name === name);
+    if (nameUsed) {
+        return { error: 'Name is already used by the current logged in user for another quiz.' };
+    }
+
+    quiz.name = name;
+    setData(database);
     return {};
 }
 

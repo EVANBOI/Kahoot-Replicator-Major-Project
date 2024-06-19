@@ -115,8 +115,19 @@ export function adminQuizNameUpdate(authUserId, quizId, name){
  * @returns {} - empty object
  */
 export function adminQuizDescriptionUpdate (authUserId, quizId, description) {
-    return {
+    let dataBase = getData();
+    const validUser = dataBase.users.find(user => user.userId === authUserId);
+    const validQuizId = dataBase.quizzes.find(quiz => quiz.quizId === quizId);
+    if (!validUser) {
+        return { error: 'AuthUserId is not a valid user.' };
+    } else if (!validQuizId) {
+        return { error: 'Quiz ID does not refer to a valid quiz.' };
+    } else if (validUser.authUserId !== validQuizId.createrId) {
+        return { error: 'Quiz ID does not refer to a quiz that this user owns.'};
+    } else if (description.length > 100) {
+        return { error: 'Description is more than 100 characters in length' };
+    }
 
-    };
+    validQuizId.description = description;
+    return { };
 }
-

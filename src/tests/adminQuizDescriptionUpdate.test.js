@@ -57,7 +57,7 @@ beforeEach(() => {
 
 describe('Error cases', () => {
     describe('No users exists in database', () => {
-        test.failing('Invalid userId', () => {
+        test('Invalid userId', () => {
             expect(adminQuizDescriptionUpdate(VALID_INPUT.users.length + 1, 
                 VALID_INPUT.quizzes.quizId, 
                 VALID_INPUT.quizzes.description)).toStrictEqual(ERROR);
@@ -78,7 +78,7 @@ describe('Error cases', () => {
             }
         })
 
-        test.failing.each([
+        test.each([
             {
                 testName: 'User id does not exist',
                 authUserId: users.length + 1,
@@ -125,6 +125,7 @@ describe('Successful function run', () => {
             adminQuizCreate(quiz.authUserId, quiz.name, quiz.description);
         }
     })
+    
     test('Check return type', () => {
         expect(adminQuizDescriptionUpdate(1, 1, 'changed')).toStrictEqual({ });
     })

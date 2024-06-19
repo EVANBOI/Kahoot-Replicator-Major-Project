@@ -1,5 +1,6 @@
 import { clear } from "../other.js"
 import { adminAuthRegister, adminUserDetails } from "../auth.js";
+import { adminQuizCreate, adminQuizInfo } from "../quiz.js"
 
 const VALID_USER = {
     EMAIL: 'admin@email.com',
@@ -7,6 +8,12 @@ const VALID_USER = {
     FIRSTNAME: 'Idk',
     LASTNAME: 'Idk',
 }
+
+const VALID_QUIZ = {
+    NAME: 'ValidQuizName', 
+    DESCRIPTION: 'ValidDescription'
+}
+
 
 const ERROR = {
     error: expect.any(String)
@@ -29,8 +36,21 @@ describe('Function clear tests', () => {
         expect(adminUserDetails(VALID_USER_ID)).toStrictEqual(ERROR);
     });
 
-    test.todo('correct clear the quiz store', () => {
-
+    test('correct clear the quiz store', () => {
+        const VALID_USER_ID = adminAuthRegister(
+            VALID_USER.EMAIL, 
+            VALID_USER.PASSWORD, 
+            VALID_USER.FIRSTNAME, 
+            VALID_USER.LASTNAME
+        ).authUserId;
+        const VALID_QUIZ_ID = adminQuizCreate(
+            VALID_USER_ID, 
+            VALID_QUIZ.NAME, 
+            VALID_QUIZ.DESCRIPTION
+        ).quizId;
+        
+        clear();
+        expect(adminQuizInfo(VALID_USER_ID, VALID_QUIZ_ID)).toStrictEqual(ERROR);
     })
 
 });

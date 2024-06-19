@@ -1,46 +1,32 @@
 import {clear} from '../other.js';
 import { adminUserPasswordUpdate,adminAuthRegister,adminAuthLogin} from '../auth.js';
 
-
-
-
 const VALID_NEW_PASSWORD = 'newPassword123';
 const SHORT_PASSWORD = 'short';
 const NO_NUMBER_PASSWORD = 'password';
 const NO_LETTER_PASSWORD = '12345678';
 
-
 let userId;
-
 
 beforeEach(() => {
     clear();
     const user = adminAuthRegister('chang.li@unsw.edu.au', 'oldPassword1', 'Chang', 'Li');
     userId = user.authUserId;
     adminAuthLogin('chang.li@unsw.edu.au', 'oldPassword1');
-    global.dataBase = {
-        users: [
-            {
-                userId: userId,
-                password: 'oldPassword1',
-                usedPasswords: ['oldPassword1']
-            }
-        ],
-        quizzes: []
-    };
-    
 });
 
 describe('adminUserPasswordUpdate tests', () => {
-    beforeEach(()=>{
+    let userId;
+    beforeEach(() => {
         const user = adminAuthRegister('chang.li@unsw.edu.au', 'oldPassword1', 'Chang', 'Li');
         userId = user.authUserId;
     });
 
-
-   test('Successful password update', () => {
+    test('Successful password update', () => {
         const result = adminUserPasswordUpdate(userId, 'oldPassword1', VALID_NEW_PASSWORD);
         expect(result).toEqual({});
+        const userDetails = adminUserDetails(userId);
+        expect(userDetails.user.password).toEqual(VALID_NEW_PASSWORD);  // Ensure the password has been updated
     });
 
     test('Invalid user ID', () => {
@@ -59,8 +45,8 @@ describe('adminUserPasswordUpdate tests', () => {
     });
 
     test('New password has already been used', () => {
-        global.dataBase.users[0].usedPasswords.push(VALID_NEW_PASSWORD);
-        const result = adminUserPasswordUpdate(userId, 'oldPassword1', VALID_NEW_PASSWORD);
+        adminUserPasswordUpdate(userId, 'oldPassword1', VALID_NEW_PASSWORD);  
+        const result = adminUserPasswordUpdate(userId, VALID_NEW_PASSWORD, VALID_NEW_PASSWORD);
         expect(result).toEqual({ error: expect.any(String) });
     });
 

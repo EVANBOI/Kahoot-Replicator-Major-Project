@@ -117,8 +117,12 @@ export function adminAuthLogin (email, password) {
     if (!validEmail) { // if validEmail is undefined, the condition is true
         return { error: 'email address does not exist'};
     } else if (!correctPassword) {
+        validEmail.numFailedPasswordsSinceLastLogin += 1;
         return { error: 'password is not correct for the given email'};
     }
+
+    correctPassword.numFailedPasswordsSinceLastLogin = 0;
+    correctPassword.numSuccessfulLogins += 1;
 
     return {
         authUserId: correctPassword.userId

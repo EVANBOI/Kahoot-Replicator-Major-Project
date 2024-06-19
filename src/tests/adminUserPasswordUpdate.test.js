@@ -1,5 +1,5 @@
 import {clear} from '../other.js';
-import { adminUserPasswordUpdate,adminAuthRegister} from '../auth.js';
+import { adminUserPasswordUpdate,adminAuthRegister,adminAuthLogin} from '../auth.js';
 
 
 
@@ -12,12 +12,13 @@ const NO_LETTER_PASSWORD = '12345678';
 
 let userId;
 
+
 beforeEach(() => {
-    // Reset the state of our data so that each test can run independently
     clear();
     const user = adminAuthRegister('chang.li@unsw.edu.au', 'oldPassword1', 'Chang', 'Li');
     userId = user.authUserId;
-    global.data = {
+    adminAuthLogin('chang.li@unsw.edu.au', 'oldPassword1');
+    global.dataBase = {
         users: [
             {
                 userId: userId,
@@ -27,10 +28,10 @@ beforeEach(() => {
         ],
         quizzes: []
     };
+    
 });
 
 describe('adminUserPasswordUpdate tests', () => {
-    let userId;
     beforeEach(()=>{
         const user = adminAuthRegister('chang.li@unsw.edu.au', 'oldPassword1', 'Chang', 'Li');
         userId = user.authUserId;
@@ -58,7 +59,7 @@ describe('adminUserPasswordUpdate tests', () => {
     });
 
     test('New password has already been used', () => {
-        global.data.users[0].usedPasswords.push(VALID_NEW_PASSWORD);
+        global.dataBase.users[0].usedPasswords.push(VALID_NEW_PASSWORD);
         const result = adminUserPasswordUpdate(userId, 'oldPassword1', VALID_NEW_PASSWORD);
         expect(result).toEqual({ error: expect.any(String) });
     });

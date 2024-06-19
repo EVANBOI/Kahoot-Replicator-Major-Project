@@ -153,10 +153,10 @@ export function adminUserDetails (authUserId) {
  * @param {string} newPassword - new password to replace old password
  * @returns {} - empty object
  */
-import { getData, setData } from './dataStore';
+
 export function adminUserPasswordUpdate(authUserId,oldPassword, newPassword){
-    const data = global.data || getData();
-    const user = data.users.find(user => user.userId === authUserId);
+    const dataBase =  getData();
+    const user = dataBase.users.find(user => user.userId === authUserId);
     
     if(!user){
         return {error : 'AuthUserId is not a valid user.'};
@@ -178,7 +178,10 @@ export function adminUserPasswordUpdate(authUserId,oldPassword, newPassword){
     };
     
     user.password = newPassword;
+    user.usedPasswords = user.usedPasswords || [];
     user.usedPasswords.push(newPassword);
+    setData(dataBase);
+
     return {};
 
 

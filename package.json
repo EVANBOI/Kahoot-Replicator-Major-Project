@@ -2,6 +2,7 @@
     "scripts": {
         "test": "jest",
         "testj": "jest adminAuthRegister.test.js",
+        "testj1": "jest adminQuizList.test.js",
         "testj2": "jest adminQuizDescriptionUpdate.test.js",
         "test!": "jest adminQuizCreate.test.js",
         "testl": "jest adminAuthLogin.test.js"

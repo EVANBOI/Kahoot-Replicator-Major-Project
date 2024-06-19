@@ -172,9 +172,39 @@ export {adminUserDetails};
  * @param {string} newPassword - new password to replace old password
  * @returns {} - empty object
  */
-export function adminUserPasswordUpdate(authUserId,oldPassword, newPassword){
-    return {
 
-    };
+export function adminUserPasswordUpdate(authUserId,oldPassword, newPassword){
+    const dataBase =  getData();
+    const user = dataBase.users.find(user => user.userId === authUserId);
+    
+    if(!user){
+        return {error : 'AuthUserId is not a valid user.'};
+    }
+    if(user.password !== oldPassword){
+        return{ error : "Old Password is not the correct old password"};
+    }
+    if (oldPassword === newPassword) {
+        return { error: 'Old Password and New Password match exactly' };
+    }
+    
+    user.passwordUsedThisYear = user.passwordUsedThisYear || [];
+    if (user.passwordUsedThisYear.find(pw => pw === newPassword)) {
+        return { error: 'New Password has already been used before by this user' };
+    }
+
+    if (newPassword.length < 8) {
+        return { error: 'Password should be more than 8 characters' };
+    }
+    if (!/\d/.test(newPassword) || !/[a-zA-Z]/.test(newPassword)) {
+        return { error: 'Password needs to contain at least one number and at least one letter' };
+    }
+
+    user.password = newPassword;
+    user.passwordUsedThisYear.push(oldPassword);
+    setData(dataBase);
+
+    return {};
+
 }
+
 

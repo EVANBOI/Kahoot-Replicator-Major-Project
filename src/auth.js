@@ -164,25 +164,27 @@ export function adminUserPasswordUpdate(authUserId,oldPassword, newPassword){
     if(user.password !== oldPassword){
         return{ error : "Old Password is not the correct old password"};
     }
-    if(oldPassword === newPassword){
-        return{ error : 'Old Password and New Password match exactly'};
+    if (oldPassword === newPassword) {
+        return { error: 'Old Password and New Password match exactly' };
     }
-    if(user.usedPasswords.includes(newPassword)){
-        return {error : 'New Password has already been used before by this user'};
+    user.usedPasswords = user.usedPasswords || [];
+    for (let usedPassword of user.usedPasswords) {
+        if (usedPassword === newPassword) {
+            return { error: 'New Password has already been used before by this user' };
+        }
     }
-    if(newPassword.length < 8){
-        return{error : ' Password should more than 8 characters'};
+    if (newPassword.length < 8) {
+        return { error: 'Password should be more than 8 characters' };
     }
-    if(!/\d/.test(newPassword) || !/[a-zA-z]/.test(newPassword)){
-        return{error : ' Password need contain at least one number and at least one letter'};
-    };
-    
+    if (!/\d/.test(newPassword) || !/[a-zA-Z]/.test(newPassword)) {
+        return { error: 'Password needs to contain at least one number and at least one letter' };
+    }
+
     user.password = newPassword;
     user.usedPasswords.push(newPassword);
-    setData(database);
+    setData(dataBase);
 
     return {};
-
 
 }
 

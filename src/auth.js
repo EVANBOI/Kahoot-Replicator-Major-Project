@@ -1,5 +1,6 @@
 import { getData, setData } from "./dataStore.js";
 import validator from 'validator';
+import { findUserWithId } from "./helpers.js";
 
 /**
  * Given an admin user's details, creates an account for them.
@@ -9,7 +10,8 @@ import validator from 'validator';
  * @param {string} nameFirst - first name of a user
  * @param {string} nameLast - last name of a user
  * @returns {{authUserId: number}}
- */
+ */    
+
 export function adminAuthRegister (email, password, nameFirst, nameLast) {
     let dataBase = getData();
     const person = dataBase.users.find(person => person.email === email)
@@ -139,19 +141,29 @@ export function adminAuthLogin (email, password) {
  * @param {number} authUserId - unique id of a user
  * @returns {{user: {userId: number, name: string, email: string, numSuccessfulLogins: number, numFailedPasswordsSinceLastLogin: number}}}
  */
-export function adminUserDetails (authUserId) {
+
+
+function adminUserDetails (authUserId) {
+    
+
+    const store = getData();
+
+    const user = findUserWithId(authUserId);
+    if (!user) {
+        return { error: 'AuthUserId is not a valid user.' };
+    }
 
     return {user:
         {
-            userId: 1,
-            name: 'Hayden Smith',
-            email: 'hayden.smith@unsw.edu.au',
-            numSuccessfulLogins: 3,
-            numFailedPasswordsSinceLastLogin: 1,
+            userId: user.userId,
+            name: user.name,
+            email: user.email,
+            numSuccessfulLogins: user.numSuccessfulLogins,
+            numFailedPasswordsSinceLastLogin: user.numFailedPasswordsSinceLastLogin,
         }
-    }
+    };
 }
-
+export {adminUserDetails};
 /**
  * Given details relating to a password change, update the password of a logged in user.
  * 
@@ -165,3 +177,4 @@ export function adminUserPasswordUpdate(authUserId,oldPassword, newPassword){
 
     };
 }
+

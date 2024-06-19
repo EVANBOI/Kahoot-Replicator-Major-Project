@@ -1,4 +1,6 @@
-import { getData, setData } from "./dataStore.js"
+import {data, getData, setData} from './dataStore.js';
+import { findQuizWithId, findUserWithId } from './helpers.js';
+
 
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
@@ -73,6 +75,27 @@ export function adminQuizCreate (authUserId, name, description) {
  * @returns {} - empty object
  */
 export function adminQuizRemove (authUserId, quizId) {
+    const store = getData();
+    const user = findUserWithId(authUserId);
+
+    if (!user) {
+        return { error: 'AuthUserId is not a valid user.' };
+    }
+
+    const quiz = findQuizWithId(quizId);
+
+    if (!quiz) {
+        return { error: `Quiz with ID '${quizId}' not found` };
+    }
+
+
+    if (quiz.userId !== authUserId) {
+        return { error: `Quiz with ID ${quizId} is not owned by ${authUserId} (actual owner: ${quiz.userId})` };
+    }
+
+    const quizIndex = store.quizzes.findIndex(quiz => quiz.quizId === quizId);
+    store.quizzes.splice(quizIndex, 1);
+    setData(store);
     return {
         
     }

@@ -44,7 +44,8 @@ export function adminAuthRegister (email, password, nameFirst, nameLast) {
         password: password,
         name: `${nameFirst} ${nameLast}`,
         numSuccessfulLogins: 1,
-        numFailedPasswordsSinceLastLogin: 0
+        numFailedPasswordsSinceLastLogin: 0,
+        passwordUsedThisYear: []
     });
     setData(dataBase);
     return {
@@ -119,8 +120,14 @@ export function adminAuthLogin (email, password) {
     if (!validEmail) { // if validEmail is undefined, the condition is true
         return { error: 'email address does not exist'};
     } else if (!correctPassword) {
+        validEmail.numFailedPasswordsSinceLastLogin += 1;
+        setData(dataBase);
         return { error: 'password is not correct for the given email'};
     }
+
+    correctPassword.numFailedPasswordsSinceLastLogin = 0;
+    correctPassword.numSuccessfulLogins += 1;
+    setData(dataBase);
 
     return {
         authUserId: correctPassword.userId

@@ -131,6 +131,7 @@ export function adminQuizNameUpdate(authUserId, quizId, name) {
     const user = database.users.find(user => user.userId === authUserId);
     const quiz = database.quizzes.find(quiz => quiz.quizId === quizId);
 
+    const namePattern = /^[a-zA-Z0-9 ]+$/;
     if (!user) {
         return { error: 'AuthUserId is not a valid user.' };
     }
@@ -140,7 +141,7 @@ export function adminQuizNameUpdate(authUserId, quizId, name) {
     if (quiz.createrId !== authUserId) {
         return { error: 'Quiz ID does not refer to a quiz that this user owns.' };
     }
-    if (!/^[a-zA-Z0-9 ]+$/.test(name)) {
+    if (!namePattern.test(name)) {  
         return { error: 'Name contains invalid characters. Valid characters are alphanumeric and spaces.' };
     }
     if (name.length < 3 || name.length > 30) {

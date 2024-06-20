@@ -35,8 +35,8 @@ export function adminQuizCreate (authUserId, name, description) {
 
     let database = getData();
     const validUser = database.users.find(user => user.userId === authUserId);
-    const nameUsed = database.quizzes.find(quizName => quizName.name === name 
-                                            && quizName.creatorId === authUserId);
+    const nameUsed = database.quizzes.find(quiz => quiz.name === name && 
+                                        quiz.creatorId === authUserId);
 
     if (!validUser) {
         return { error: 'authUserId is not a valid user' };
@@ -54,22 +54,22 @@ export function adminQuizCreate (authUserId, name, description) {
         return { error: 'description is more than 100 characters in length'};
     }
 
-    const timestamp1 = Math.floor(Date.now() / 1000);
-    const timestamp2 = Math.floor(Date.now() / 1000);
+    const timeStamp1 = Math.floor(Date.now() / 1000);
+    const timeStamp2 = Math.floor(Date.now() / 1000);
     const id = database.quizzes.length + 1;
     database.quizzes.push({
         creatorId: validUser.userId,
         quizId: id,
         name: name,
-        timeCreated: timestamp1,
-        timeLastEdited: timestamp2,
+        timeCreated: timeStamp1,
+        timeLastEdited: timeStamp2,
         description: description
     })
     setData(database);
 
     return {
         quizId: id
-    }
+    };
 }
 
 /**

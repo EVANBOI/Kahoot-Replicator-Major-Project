@@ -65,7 +65,19 @@ describe ('when registering an AuthUserId', () => {
         const Id2 = adminAuthRegister('zhihao.cao@unsw.edu.au', 'qwerty67890', 'Zhihao', 'Cao');
         expect(adminQuizCreate(Id.authUserId, 'Quiz 1', ' ')).toStrictEqual({ quizId: expect.any(Number)});
         expect(adminQuizCreate(Id2.authUserId, 'Quiz 2', 'Linked Lists')).toStrictEqual({ quizId: expect.any(Number) });
-        expect(adminQuizCreate(Id.authUserId, 'Quiz 1', ' ')).not.toStrictEqual(expect(adminQuizCreate(Id2.authUserId, 'Quiz 2', 'Linked Lists')));
+        expect(adminQuizCreate(Id.authUserId, 
+                            'Quiz 1', 
+                            ' ')).not.toStrictEqual(expect(adminQuizCreate(Id2.authUserId, 
+                                                                        'Quiz 2', 
+                                                                        'Linked Lists')));
+    })
+
+    test('Sucessfully give two quizIds for the same user', () => {
+        expect(adminQuizCreate(Id.authUserId, 'Quiz 1', ' ')).toStrictEqual({ quizId: expect.any(Number)});
+        expect(adminQuizCreate(Id.authUserId, 'Quiz 2', 'Linked Lists')).toStrictEqual({ quizId: expect.any(Number) });
+        expect(adminQuizCreate(Id.authUserId, 
+                            'Quiz 1', ' ')).not.toStrictEqual(expect(adminQuizCreate(Id.authUserId, 
+                                                                                    'Quiz 2', 'Linked Lists')));
     })
 })
 

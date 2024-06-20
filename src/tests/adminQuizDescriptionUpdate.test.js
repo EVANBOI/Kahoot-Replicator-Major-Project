@@ -26,26 +26,20 @@ const VALID_INPUT = {
     quizzes: [
         {
             name: 'Heyhey',
-            authUserId: 1,
+            creatorId: 1,
             quizId: 1,
-            timeCreated: 11,
-            timeLastEdited: 12,
             description: 'This is a quiz 1'
         },
         {
-            name: 'Heyhey',
-            authUserId: 1,
+            name: 'Heyhey1',
+            creatorId: 1,
             quizId: 2,
-            timeCreated: 11,
-            timeLastEdited: 12,
             description: 'This is a quiz 2'
         },
         {
             name: 'Heyhey',
-            authUserId: 2,
+            creatorId: 2,
             quizId: 3,
-            timeCreated: 11,
-            timeLastEdited: 12,
             description: 'This is a quiz 3'
         }
     ]    
@@ -74,37 +68,37 @@ describe('Error cases', () => {
                     user.nameFirst);
             }
             for (const quiz of quizzes) {
-                adminQuizCreate(quiz.authUserId, quiz.name, quiz.description);
+                adminQuizCreate(quiz.creatorId, quiz.name, quiz.description);
             }
         })
 
         test.each([
             {
                 testName: 'User id does not exist',
-                authUserId: users.length + 1,
+                creatorId: users.length + 1,
                 quizId: quizzes.length,
                 description: 'Changed'
             },
             {
                 testName: 'Quiz id does not exist',
-                authUserId: users.length,
+                creatorId: users.length,
                 quizId: quizzes.length + 1,
                 description: 'Changed'
             },
             {
                 testName: 'Description is more than 100 characters',
-                authUserId: users.length,
+                creatorId: users.length,
                 quizId: quizzes.length,
                 description: 'a'.repeat(150)
             },
             {
                 testName: 'User does not own quiz to be updated',
-                authUserId: 1,
+                creatorId: 1,
                 quizId: 3,
                 description: 'Changed'
             }
-        ])('Test $#: $testName', ({ authUserId, quizId, description }) => {
-            expect(adminQuizDescriptionUpdate(authUserId, 
+        ])('Test $#: $testName', ({ creatorId, quizId, description }) => {
+            expect(adminQuizDescriptionUpdate(creatorId, 
                 quizId, 
                 description)).toStrictEqual(ERROR)
         })
@@ -122,71 +116,81 @@ describe('Successful function run', () => {
                 user.nameFirst);
         }
         for (const quiz of quizzes) {
-            adminQuizCreate(quiz.authUserId, quiz.name, quiz.description);
+            let quizId = adminQuizCreate(quiz.creatorId, quiz.name, quiz.description);
         }
     })
-    
+
     test('Check return type', () => {
         expect(adminQuizDescriptionUpdate(1, 1, 'changed')).toStrictEqual({ });
     })
 
-    test.failing('Quiz  is updated once', () => {
+    test('Quiz  is updated once', () => {
         adminQuizDescriptionUpdate(1, 1, 'changed');
         expect(adminQuizInfo(1, 1)).toStrictEqual({
             quizId: 1,
             name: 'Heyhey',
-            timeCreated: 11,
-            timeLastEdited: 12,
+            timeCreated: expect.any(Number),
+            timeLastEdited: expect.any(Number),
             description: 'changed'
         })
     })
 
-    test.failing.each([
+    test.each([
         {
             testName: 'User updates same quiz multiple times',
-            authUserId1: 1,
+            creatorId1: 1,
             quizId1: 1,
+            name1: 'Heyhey',
             description1: 'changed once',
-            authUserId2: 1,
+            creatorId2: 1,
             quizId2: 1,
+            name2: 'Heyhey',
             description2: 'changed twice'
         },
         {
             testName: 'User updates multiple quizzes',
-            authUserId1: 1,
+            creatorId1: 1,
             quizId1: 1,
+            name1: 'Heyhey',
             description1: 'first quiz',
-            authUserId2: 1,
+            creatorId2: 1,
             quizId2: 2,
+            name2: 'Heyhey1',
             description2: 'second quiz'
         },
         {
             testName: 'Different users updates different quizzes',
-            authUserId1: 1,
+            creatorId1: 1,
             quizId1: 1,
+            name1: 'Heyhey',
             description1: 'first quiz',
-            authUserId2: 2,
+            creatorId2: 2,
             quizId2: 3,
+            name2: 'Heyhey',
             description2: 'third quiz'
         }
-    ])('Test $#: $testName', ({ authUserId1, 
-        authUserId2, 
+    ])('Test $#: $testName', ({ creatorId1, 
+        creatorId2, 
         quizId1, 
         quizId2, 
+        name1,
+        name2,
         description1, 
         description2 }) => {
-        expect(adminQuizInfo(authUserId1, quizId1)).toStrictEqual({
+        adminQuizDescriptionUpdate(creatorId1, quizId1, description1);
+        expect(adminQuizInfo(creatorId1, quizId1)).toStrictEqual({
             quizId: quizId1,
-            name: 'Heyhey',
-            timeCreated: 11,
-            timeLastEdited: 12,
+            name: name1,
+            timeCreated: expect.any(Number),
+            timeLastEdited: expect.any(Number),
             description: description1
         })
-        expect(adminQuizInfo(authUserId2, quizId2)).toStrictEqual({
+        adminQuizDescriptionUpdate(creatorId2, quizId2, description2);
+        expect(adminQuizInfo(creatorId2, quizId2)).toStrictEqual({
             quizId: quizId2,
-            name: 'Heyhey',
-            timeCreated: 11,
-            timeLastEdited: 12,
+            name: name2,
+            timeCreated: expect.any(Number),
+            timeLastEdited: expect.any(Number),
             description: description2
         })
     })

@@ -9,7 +9,7 @@ beforeEach(() => {
 });
 
 // Failing due to missing implementation for adminQuizCreate
-test.failing('should successfully remove a quiz', () => {
+test('should successfully remove a quiz', () => {
     // Register a user
     const registerResponse = adminAuthRegister('test.email@domain.com', 'password123', 'Hayden', 'Smith');
     console.log('Register Response:', registerResponse);

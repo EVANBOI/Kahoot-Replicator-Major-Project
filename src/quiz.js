@@ -33,10 +33,10 @@ export function adminQuizList ( authUserId ) {
  */
 export function adminQuizCreate (authUserId, name, description) {
 
-    let dataBase = getData();
-    const validUser = dataBase.users.find(user => user.userId === authUserId);
-    const nameUsed = dataBase.quizzes.find(quizName => quizName.name === name 
-                                            && quizName.creatorId === authUserId);
+    let database = getData();
+    const validUser = database.users.find(user => user.userId === authUserId);
+    const nameUsed = database.quizzes.find(quiz => quiz.name === name && 
+                                        quiz.creatorId === authUserId);
 
     if (!validUser) {
         return { error: 'authUserId is not a valid user' };
@@ -56,16 +56,16 @@ export function adminQuizCreate (authUserId, name, description) {
 
     const timeStamp1 = Math.floor(Date.now() / 1000);
     const timeStamp2 = Math.floor(Date.now() / 1000);
-    const id = dataBase.quizzes.length + 1;
-    dataBase.quizzes.push({
-        createrId: validUser.userId,
+    const id = database.quizzes.length + 1;
+    database.quizzes.push({
+        creatorId: validUser.userId,
         quizId: id,
         name: name,
         timeCreated: timeStamp1,
         timeLastEdited: timeStamp2,
         description: description
     })
-    setData(dataBase);
+    setData(database);
 
     return {
         quizId: id

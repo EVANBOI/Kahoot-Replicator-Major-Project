@@ -36,7 +36,7 @@ export function adminQuizCreate (authUserId, name, description) {
     let database = getData();
     const validUser = database.users.find(user => user.userId === authUserId);
     const nameUsed = database.quizzes.find(quizName => quizName.name === name 
-                                            && quizName.quizId === authUserId);
+                                            && quizName.creatorId === authUserId);
 
     if (!validUser) {
         return { error: 'authUserId is not a valid user' };
@@ -127,7 +127,7 @@ export function adminQuizInfo (authUserId, quizId) {
     }
 
     if (quiz.creatorId !== authUserId) {
-        return { error: `Quiz with ID ${quizId} is not owned by ${authUserId} (actual owner: ${quiz.userId})` };
+        return { error: `Quiz with ID ${quizId} is not owned by ${authUserId} (actual owner: ${quiz.creatorId})` };
     } 
 
 
@@ -188,8 +188,20 @@ export function adminQuizNameUpdate(authUserId, quizId, name) {
  * @returns {} - empty object
  */
 export function adminQuizDescriptionUpdate (authUserId, quizId, description) {
-    return {
+    let dataBase = getData();
+    const validUser = dataBase.users.find(user => user.userId === authUserId);
+    const validQuizId = dataBase.quizzes.find(quiz => quiz.quizId === quizId);
+    if (!validUser) {
+        return { error: 'AuthUserId is not a valid user.' };
+    } else if (!validQuizId) {
+        return { error: 'Quiz ID does not refer to a valid quiz.' };
+    } else if (authUserId !== validQuizId.creatorId) {
+        return { error: 'Quiz ID does not refer to a quiz that this user owns.'};
+    } else if (description.length > 100) {
+        return { error: 'Description is more than 100 characters in length' };
+    }
 
-    };
+    validQuizId.description = description;
+    setData(dataBase);
+    return { };
 }
-

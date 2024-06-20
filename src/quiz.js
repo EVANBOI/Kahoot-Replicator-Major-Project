@@ -35,8 +35,8 @@ export function adminQuizCreate (authUserId, name, description) {
 
     let database = getData();
     const validUser = database.users.find(user => user.userId === authUserId);
-    const nameUsed = database.quizzes.find(quizName => quizName.name === name 
-                                            && quizName.quizId === authUserId);
+    const nameUsed = database.quizzes.find(quiz => quiz.name === name && 
+                                        quiz.creatorId === authUserId);
 
     if (!validUser) {
         return { error: 'authUserId is not a valid user' };
@@ -54,22 +54,22 @@ export function adminQuizCreate (authUserId, name, description) {
         return { error: 'description is more than 100 characters in length'};
     }
 
-    const timestamp1 = Math.floor(Date.now() / 1000);
-    const timestamp2 = Math.floor(Date.now() / 1000);
+    const timeStamp1 = Math.floor(Date.now() / 1000);
+    const timeStamp2 = Math.floor(Date.now() / 1000);
     const id = database.quizzes.length + 1;
     database.quizzes.push({
         creatorId: validUser.userId,
         quizId: id,
         name: name,
-        timeCreated: timestamp1,
-        timeLastEdited: timestamp2,
+        timeCreated: timeStamp1,
+        timeLastEdited: timeStamp2,
         description: description
     })
     setData(database);
 
     return {
         quizId: id
-    }
+    };
 }
 
 /**
@@ -127,7 +127,7 @@ export function adminQuizInfo (authUserId, quizId) {
     }
 
     if (quiz.creatorId !== authUserId) {
-        return { error: `Quiz with ID ${quizId} is not owned by ${authUserId} (actual owner: ${quiz.userId})` };
+        return { error: `Quiz with ID ${quizId} is not owned by ${authUserId} (actual owner: ${quiz.creatorId})` };
     } 
 
 
@@ -147,7 +147,35 @@ export function adminQuizInfo (authUserId, quizId) {
  * @param {string} name- name of a user
  * @returns {} - empty object
  */
-export function adminQuizNameUpdate(authUserId, quizId, name){
+
+export function adminQuizNameUpdate(authUserId, quizId, name) {
+    const database = getData();
+    const user = database.users.find(user => user.userId === authUserId);
+    const quiz = database.quizzes.find(quiz => quiz.quizId === quizId);
+
+    const namePattern = /^[a-zA-Z0-9 ]+$/;
+    if (!user) {
+        return { error: 'AuthUserId is not a valid user.' };
+    }
+    if (!quiz) {
+        return { error: 'Quiz ID does not refer to a valid quiz.' };
+    }
+    if (quiz.creatorId !== authUserId) {
+        return { error: 'Quiz ID does not refer to a quiz that this user owns.' };
+    }
+    if (!namePattern.test(name)) {  
+        return { error: 'Name contains invalid characters. Valid characters are alphanumeric and spaces.' };
+    }
+    if (name.length < 3 || name.length > 30) {
+        return { error: 'Name is either less than 3 characters long or more than 30 characters long.' };
+    }
+    const nameUsed = database.quizzes.find(q => q.creatorId === authUserId && q.name === name);
+    if (nameUsed) {
+        return { error: 'Name is already used by the current logged in user for another quiz.' };
+    }
+
+    quiz.name = name;
+    setData(database);
     return {};
 }
 
@@ -160,8 +188,20 @@ export function adminQuizNameUpdate(authUserId, quizId, name){
  * @returns {} - empty object
  */
 export function adminQuizDescriptionUpdate (authUserId, quizId, description) {
-    return {
+    let dataBase = getData();
+    const validUser = dataBase.users.find(user => user.userId === authUserId);
+    const validQuizId = dataBase.quizzes.find(quiz => quiz.quizId === quizId);
+    if (!validUser) {
+        return { error: 'AuthUserId is not a valid user.' };
+    } else if (!validQuizId) {
+        return { error: 'Quiz ID does not refer to a valid quiz.' };
+    } else if (authUserId !== validQuizId.creatorId) {
+        return { error: 'Quiz ID does not refer to a quiz that this user owns.'};
+    } else if (description.length > 100) {
+        return { error: 'Description is more than 100 characters in length' };
+    }
 
-    };
+    validQuizId.description = description;
+    setData(dataBase);
+    return { };
 }
-

@@ -8,8 +8,8 @@ beforeEach(() => {
 
 
 
-test.failing('return an error for a non-existent email address', () => {
-    expect(adminAuthLogin(" ", "abcde12345")).toStrictEqual({ error: expect.any(String)});
+test('return an error for a non-existent email address', () => {
+    expect(adminAuthLogin(" ", "abcde12345")).toStrictEqual({ error: expect.any(String) });
 });
 
 describe('when registering an authUserId', () => {
@@ -18,7 +18,7 @@ describe('when registering an authUserId', () => {
         Id = adminAuthRegister('evan.xiong@unsw.edu.au', 'abcde12345', 'Evan', 'Xiong');
     });
 
-    test.failing('return an error for a password that is not correct for the given email', () => {
+    test('return an error for a password that is not correct for the given email', () => {
         let wrong_password = 'abcde12345' + 'a';
         expect(adminAuthLogin('evan.xiong@unsw.edu.au', wrong_password)).toStrictEqual( { error: expect.any(String) });
     });

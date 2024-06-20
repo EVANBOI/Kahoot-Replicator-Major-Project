@@ -1,8 +1,11 @@
 {
     "scripts": {
         "test": "jest",
-        "test1": "jest adminAuthRegister.test.js",
-        "test!": "jest adminQuizCreate.test.js"
+        "testj": "jest adminAuthRegister.test.js",
+        "testj1": "jest adminQuizList.test.js",
+        "testj2": "jest adminQuizDescriptionUpdate.test.js",
+        "test!": "jest adminQuizCreate.test.js",
+        "testl": "jest adminAuthLogin.test.js"
     },
     "dependencies": {
         "validator": "^13.7.0"

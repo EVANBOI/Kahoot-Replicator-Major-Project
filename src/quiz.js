@@ -26,9 +26,9 @@ export function adminQuizList ( authUserId ) {
  */
 export function adminQuizCreate (authUserId, name, description) {
 
-    let database = getData();
-    const validUser = database.users.find(user => user.userId === authUserId);
-    const nameUsed = database.quizzes.find(quizName => quizName.name === name 
+    let dataBase = getData();
+    const validUser = dataBase.users.find(user => user.userId === authUserId);
+    const nameUsed = dataBase.quizzes.find(quizName => quizName.name === name 
                                             && quizName.quizId === authUserId);
 
     if (!validUser) {
@@ -47,22 +47,22 @@ export function adminQuizCreate (authUserId, name, description) {
         return { error: 'description is more than 100 characters in length'};
     }
 
-    const timestamp1 = Math.floor(Date.now() / 1000);
-    const timestamp2 = Math.floor(Date.now() / 1000);
-    const id = database.quizzes.length + 1;
-    database.quizzes.push({
+    const timeStamp1 = Math.floor(Date.now() / 1000);
+    const timeStamp2 = Math.floor(Date.now() / 1000);
+    const id = dataBase.quizzes.length + 1;
+    dataBase.quizzes.push({
         createrId: validUser.userId,
         quizId: id,
         name: name,
-        timeCreated: timestamp1,
-        timeLastEdited: timestamp2,
+        timeCreated: timeStamp1,
+        timeLastEdited: timeStamp2,
         description: description
     })
-    setData(database);
+    setData(dataBase);
 
     return {
         quizId: id
-    }
+    };
 }
 
 /**

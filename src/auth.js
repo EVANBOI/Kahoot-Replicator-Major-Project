@@ -81,13 +81,13 @@ export function adminUserDetailsUpdate (authUserId, email, nameFirst, nameLast) 
 
     const nameRange = /^[a-zA-Z-' ]*$/
     if (!validator.isEmail(email)) {
-        return { error: 'Email does not satisfy this: https://www.npmjs.com/package/validator (validator.isEmail function).'}
+        return { error: 'Email is not valid'}
     }else if (!nameRange.test(nameFirst)) {
-        return { error: 'NameFirst contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes.'}
+        return { error: 'NameFirst contains invalid characters'}
     } else if (nameFirst.length < 2 || nameFirst.length > 20) {
         return { error: 'NameFirst is less than 2 characters or more than 20 characters.'}
     } else if (!nameRange.test(nameLast)) {
-        return { error: 'NameLast contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes.'};
+        return { error: 'NameLast contains invalid characters'};
     } else if (nameLast.length < 2 || nameLast.length > 20) {
         return { error: 'NameLast is less than 2 characters or more than 20 characters.'}
     }
@@ -136,9 +136,13 @@ export function adminAuthLogin (email, password) {
 /**
  * Given an admin user's authUserId, return details about the user.
  * "name" is the first and last name concatenated with a single space between them.
- * 
  * @param {number} authUserId - unique id of a user
- * @returns {{user: {userId: number, name: string, email: string, numSuccessfulLogins: number, numFailedPasswordsSinceLastLogin: number}}}
+ * @returns {{user: 
+ *              {userId: number,
+ *               name: string, 
+ *               email: string,
+ *               numSuccessfulLogins: number, 
+ *               numFailedPasswordsSinceLastLogin: number}}}
  */
 
 

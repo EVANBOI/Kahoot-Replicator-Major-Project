@@ -47,7 +47,7 @@ const VALID_INPUT = {
 
 beforeEach(() => {
     clear();
-}) 
+})
 
 describe('Error cases', () => {
     describe('No users exists in database', () => {
@@ -55,7 +55,7 @@ describe('Error cases', () => {
             expect(adminQuizDescriptionUpdate(VALID_INPUT.users.length + 1, 
                 VALID_INPUT.quizzes.quizId, 
                 VALID_INPUT.quizzes.description)).toStrictEqual(ERROR);
-        })
+        });
     })
     describe('users and quizzes exist', () => {
         let users = VALID_INPUT.users;
@@ -100,10 +100,10 @@ describe('Error cases', () => {
         ])('Test $#: $testName', ({ creatorId, quizId, description }) => {
             expect(adminQuizDescriptionUpdate(creatorId, 
                 quizId, 
-                description)).toStrictEqual(ERROR)
-        })
+                description)).toStrictEqual(ERROR);
+        });
     })
-});
+})
 
 describe('Successful function run', () => {
     let users = VALID_INPUT.users;
@@ -116,13 +116,13 @@ describe('Successful function run', () => {
                 user.nameFirst);
         }
         for (const quiz of quizzes) {
-            let quizId = adminQuizCreate(quiz.creatorId, quiz.name, quiz.description);
+            adminQuizCreate(quiz.creatorId, quiz.name, quiz.description);
         }
     })
 
     test('Check return type', () => {
         expect(adminQuizDescriptionUpdate(1, 1, 'changed')).toStrictEqual({ });
-    })
+    });
 
     test('Quiz  is updated once', () => {
         adminQuizDescriptionUpdate(1, 1, 'changed');
@@ -132,8 +132,8 @@ describe('Successful function run', () => {
             timeCreated: expect.any(Number),
             timeLastEdited: expect.any(Number),
             description: 'changed'
-        })
-    })
+        });
+    });
 
     test.each([
         {
@@ -177,6 +177,7 @@ describe('Successful function run', () => {
         name2,
         description1, 
         description2 }) => {
+        // The second time a quiz is updated
         adminQuizDescriptionUpdate(creatorId1, quizId1, description1);
         expect(adminQuizInfo(creatorId1, quizId1)).toStrictEqual({
             quizId: quizId1,
@@ -184,7 +185,9 @@ describe('Successful function run', () => {
             timeCreated: expect.any(Number),
             timeLastEdited: expect.any(Number),
             description: description1
-        })
+        });
+
+        // The second time a quiz is updated
         adminQuizDescriptionUpdate(creatorId2, quizId2, description2);
         expect(adminQuizInfo(creatorId2, quizId2)).toStrictEqual({
             quizId: quizId2,
@@ -192,6 +195,6 @@ describe('Successful function run', () => {
             timeCreated: expect.any(Number),
             timeLastEdited: expect.any(Number),
             description: description2
-        })
-    })
+        });
+    });
 })

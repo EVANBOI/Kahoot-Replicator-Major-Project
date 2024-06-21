@@ -10,6 +10,7 @@ import { findUserWithId } from "./helpers.js";
  * @param {string} nameFirst - first name of a user
  * @param {string} nameLast - last name of a user
  * @returns {{authUserId: number}}
+ * @returns {{error: string}} an error
  */    
 
 export function adminAuthRegister (email, password, nameFirst, nameLast) {
@@ -22,19 +23,19 @@ export function adminAuthRegister (email, password, nameFirst, nameLast) {
     const passwordLetterRange = /^[a-zA-Z]/;
     const passwordNumberRange = /\d/;
     if (validator.isEmail(email) == false) {
-        return { error: 'Email does not satisfy this: https://www.npmjs.com/package/validator (validator.isEmail function).'}
+        return { error: 'Email is not a valid email'};
     }else if (!nameRange.test(nameFirst)) {
-        return { error: 'NameFirst contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes.'}
+        return { error: 'NameFirst contains invalid characters'}
     } else if (nameFirst.length < 2 || nameFirst.length > 20) {
-        return { error: 'NameFirst is less than 2 characters or more than 20 characters.'}
+        return { error: 'NameFirst is less than 2 characters or more than 20 characters.'};
     } else if (!nameRange.test(nameLast)) {
-        return { error: 'NameLast contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes.'};
+        return { error: 'NameFirst contains invalid characters'};
     } else if (nameLast.length < 2 || nameLast.length > 20) {
-        return { error: 'NameLast is less than 2 characters or more than 20 characters.'}
+        return { error: 'NameLast is less than 2 characters or more than 20 characters.'};
     } else if (password.length < 8) {
         return { error : 'Password is less than 8 characters.'};
     } else if (!passwordLetterRange.test(password) || !passwordNumberRange.test(password)) {
-        return { error: 'Password does not contain at least one number and at least one letter.'}
+        return { error: 'Password does not contain at least one number and at least one letter.'};
     }
 
     const id = dataBase.users.length + 1;
@@ -45,7 +46,7 @@ export function adminAuthRegister (email, password, nameFirst, nameLast) {
         name: `${nameFirst} ${nameLast}`,
         numSuccessfulLogins: 1,
         numFailedPasswordsSinceLastLogin: 0,
-        passwordUsedThisYear: [] // this property should be updated year by year, clear it annually
+        passwordUsedThisYear: []
     });
     setData(dataBase);
     return {
@@ -71,7 +72,6 @@ export function adminUserDetailsUpdate (authUserId, email, nameFirst, nameLast) 
         return { error: 'UserId provided is invalid' }
     }
 
-
     const person = dataBase.users.find(person => person.email === email);
     // to cover the case when we do not make change of the email
     // (the update email === original email)
@@ -96,7 +96,6 @@ export function adminUserDetailsUpdate (authUserId, email, nameFirst, nameLast) 
     user.email = email;
     user.name = `${nameFirst} ${nameLast}`;
     setData(dataBase);
-
 
     return { 
 
@@ -199,8 +198,7 @@ export function adminUserPasswordUpdate(authUserId,oldPassword, newPassword){
     user.passwordUsedThisYear.push(oldPassword);
     setData(dataBase);
 
-    return {};
+    return {
 
+    };
 }
-
-

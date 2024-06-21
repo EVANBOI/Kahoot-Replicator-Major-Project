@@ -9,13 +9,13 @@ beforeEach(() => {
 })
 
 test('User id is not valid', () => {
-    expect(adminQuizList(10)).toStrictEqual(ERROR)
+    expect(adminQuizList(10)).toStrictEqual(ERROR);
 });
 
 describe('Valid user with only no quizzes', () => {
     let user1Id;
     beforeEach(() => {
-        user1Id = adminAuthRegister('admin@unsw.edu.au', 'Password1', 'JJ', 'HH')
+        user1Id = adminAuthRegister('admin@unsw.edu.au', 'Password1', 'JJ', 'HH');
     })
     test('There is only one user in database', () => {
         expect(adminQuizList(user1Id.authUserId)).toStrictEqual({ quizzes: [] });
@@ -54,6 +54,7 @@ describe('Valid user with only one quiz', () => {
         ] });
     });
 })
+
 describe('Valid user with multiple quizzes', () => {
     let quiz1Id, quiz2Id, quiz3Id, user1Id;
     beforeEach(() => {

@@ -9,7 +9,7 @@ const VALID_INPUTS = {
     PASSWORD: 'password1',
     FIRSTNAME: 'Idk',
     LASTNAME: 'Idk'
-}
+};
 
 beforeEach(() => {
     clear();
@@ -73,7 +73,7 @@ describe('Successful registration tests', () => {
                 nameFirst, 
                 nameLast)).toStrictEqual(REGISTRATED);
         });
-    });
+    })
 })
 
 describe('Unsuccessful email tests', () => {
@@ -81,17 +81,17 @@ describe('Unsuccessful email tests', () => {
         adminAuthRegister(VALID_INPUTS.EMAIL, 
             VALID_INPUTS.PASSWORD, 
             VALID_INPUTS.FIRSTNAME, 
-            VALID_INPUTS.LASTNAME)
+            VALID_INPUTS.LASTNAME);
         expect(adminAuthRegister(VALID_INPUTS.EMAIL, 
             VALID_INPUTS.PASSWORD, 
             VALID_INPUTS.FIRSTNAME, 
-            VALID_INPUTS.LASTNAME)).toStrictEqual(ERROR)
+            VALID_INPUTS.LASTNAME)).toStrictEqual(ERROR);
     }) 
     test('Input is not an email', () => {
         expect(adminAuthRegister('123', 
             VALID_INPUTS.PASSWORD, 
             VALID_INPUTS.FIRSTNAME, 
-            VALID_INPUTS.LASTNAME)).toStrictEqual(ERROR)
+            VALID_INPUTS.LASTNAME)).toStrictEqual(ERROR);
     });
 })
 

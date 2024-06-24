@@ -6,7 +6,7 @@
         "lint-fix": "eslint --fix 'src/**/*.{ts,js}'",
         "start": "ts-node -T src/server.ts",
         "cleanup-sync-request": "pkill -f node_modules/sync-rpc/lib/worker.js > /dev/null 2>&1",
-        "posttest": "npm run cleanup-sync-request || true"
+        "posttest": "npm run cleanup-sync-request || true",
         "testj": "jest adminAuthRegister.test.js",
         "testj1": "jest adminQuizList.test.js",
         "testj2": "jest adminQuizDescriptionUpdate.test.js",

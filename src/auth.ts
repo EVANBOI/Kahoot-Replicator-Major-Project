@@ -1,8 +1,7 @@
 import { getData, setData } from "./dataStore.js";
 import validator from 'validator';
 import { findUserWithId } from "./helpers.js";
-import { UserUpdateResult } from "./types.js";
-
+import { UserRegistrationResult } from "./types.ts";
 /**
  * Given an admin user's details, creates an account for them.
  * 
@@ -14,7 +13,11 @@ import { UserUpdateResult } from "./types.js";
  * @returns {{error: string}} an error
  */    
 
-export function adminAuthRegister (email, password, nameFirst, nameLast) {
+export function adminAuthRegister (
+    email: string, 
+    password: string, 
+    nameFirst: string, 
+    nameLast: string): UserRegistrationResult{
     let dataBase = getData();
     const person = dataBase.users.find(person => person.email === email)
     if (person) {
@@ -65,12 +68,7 @@ export function adminAuthRegister (email, password, nameFirst, nameLast) {
  * @param {string} nameLast - last name of a user
  * @returns {} - empty object
  */
-export function adminUserDetailsUpdate (
-    authUserId: number, 
-    email: string, 
-    nameFirst: string, 
-    nameLast: string
-): UserUpdateResult {
+export function adminUserDetailsUpdate (authUserId, email, nameFirst, nameLast) {
     let dataBase = getData();
 
     const person2 = dataBase.users.find(person => person.userId === authUserId);
@@ -103,7 +101,9 @@ export function adminUserDetailsUpdate (
     user.name = `${nameFirst} ${nameLast}`;
     setData(dataBase);
 
-    return {}
+    return { 
+
+    }
 }
 
 /**

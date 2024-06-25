@@ -33,6 +33,14 @@ export type Data = {
     users: User[],
     quizzes: Quiz[]
 }
+
+export type QuizListDetails = ErrorMessage | {
+    quizzes: {
+        quizId: number
+        name: string,
+    }[]
+} // need to check if this works correctly
+
 export type QuizInfoResult = ErrorMessage | {
     quizId: number,
     name: string,

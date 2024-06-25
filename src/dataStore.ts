@@ -1,5 +1,6 @@
+import { Data } from "./types.ts"
 // YOU SHOULD MODIFY THIS OBJECT BELOW ONLY
-export let data = {
+export let data: Data = {
   users: [],
   quizzes: []
 };
@@ -23,12 +24,12 @@ Example usage
 */
 
 // Use get() to access the data
-export function getData() {
+export function getData(): Data {
   return data;
 }
 
 // Use set(newData) to pass in the entire data object, with modifications made
-export function setData(newData) {
+export function setData(newData: Data) {
   data = newData;
 }
 

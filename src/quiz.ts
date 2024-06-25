@@ -1,6 +1,6 @@
 import { getData, setData} from './dataStore.js';
 import { findQuizWithId, findUserWithId } from './helpers.js';
-import { QuizInfoResult } from "./types.js"
+import { EmptyObject, QuizInfoResult,  QuizListDetails } from "./types.js"
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
  * 
@@ -9,7 +9,7 @@ import { QuizInfoResult } from "./types.js"
  * @returns {{error: string}} an error
  */
 
-export function adminQuizList ( authUserId ) {
+export function adminQuizList ( authUserId: number ): QuizListDetails {
     const database = getData();
     const userExists = database.users.find(user => user.userId === authUserId);
     if (!userExists) {
@@ -193,7 +193,10 @@ export function adminQuizNameUpdate(authUserId, quizId, name) {
  * @returns {} - empty object
  * @returns {{error: string}} an error
  */
-export function adminQuizDescriptionUpdate (authUserId, quizId, description) {
+export function adminQuizDescriptionUpdate (
+    authUserId: number, 
+    quizId: number, 
+    description: string): EmptyObject {
     let database = getData();
     const validUser = database.users.find(user => user.userId === authUserId);
     const validQuizId = database.quizzes.find(quiz => quiz.quizId === quizId);

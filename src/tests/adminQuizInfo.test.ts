@@ -14,8 +14,8 @@ const VALID_QUIZ = {
     DESCRIPTION: 'ValidDescription'
 }
 
-let VALID_USER_ID;
-let VALID_QUIZ_ID;
+let VALID_USER_ID: number;
+let VALID_QUIZ_ID: number;
 
 const ERROR = {
     error: expect.any(String)

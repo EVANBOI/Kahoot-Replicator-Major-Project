@@ -1,6 +1,6 @@
 import { getData, setData} from './dataStore.js';
 import { findQuizWithId, findUserWithId } from './helpers.js';
-
+import { QuizInfoResult } from "./types.js"
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
  * 
@@ -117,7 +117,7 @@ export function adminQuizRemove (authUserId, quizId) {
  *            timeLastEdited: number, description: string}}
  * @returns {{error: string}} an error
  */
-export function adminQuizInfo (authUserId, quizId) {
+export function adminQuizInfo (authUserId: number, quizId: number): QuizInfoResult {
 
     const user = findUserWithId(authUserId);
     const quiz = findQuizWithId(quizId);

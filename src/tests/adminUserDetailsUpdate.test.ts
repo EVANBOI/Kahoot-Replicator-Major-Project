@@ -1,5 +1,5 @@
-import { adminAuthRegister, adminUserDetailsUpdate, adminUserDetails } from "../auth.js";
-import { clear } from "../other.js";
+import { adminAuthRegister, adminUserDetailsUpdate, adminUserDetails } from "../auth";
+import { clear } from "../other";
 
 const VALID_INPUTS_1 = {
     EMAIL: 'admin@email.com',
@@ -20,7 +20,7 @@ const ERROR = {
 }
 
 const NEW_VALID_EMAIL = 'newValidEmail@gmail.com'
-let VALID_USERID1;
+let VALID_USERID1: number;
 
 beforeEach(() => {
     clear();

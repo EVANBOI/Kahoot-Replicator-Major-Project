@@ -1,7 +1,7 @@
 import { getData, setData } from "./dataStore.js";
 import validator from 'validator';
 import { findUserWithId } from "./helpers.js";
-import { Data, User, UserRegistrationResult } from "./types";
+import { Data, User, UserRegistrationResult, PasswordUpdateResult  } from "./types";
 /**
  * Given an admin user's details, creates an account for them.
  * 
@@ -180,24 +180,22 @@ export {adminUserDetails};
  * @returns {} - empty object
  */
 
-export function adminUserPasswordUpdate(authUserId,oldPassword, newPassword){
-    const dataBase =  getData();
-    const user = dataBase.users.find(user => user.userId === authUserId);
-    
-    if(!user){
-        return {error : 'AuthUserId is not a valid user.'};
+export function adminUserPasswordUpdate(authUserId: number, oldPassword: string, newPassword: string): PasswordUpdateResult {
+    const dataBase: Data = getData();
+    const user: User | undefined = dataBase.users.find(user => user.userId === authUserId);
+
+    if (!user) {
+        return { error: 'AuthUserId is not a valid user.' };
     }
-    if(user.password !== oldPassword){
-        return{ error : "Old Password is not the correct old password"};
+    if (user.password !== oldPassword) {
+        return { error: 'Old Password is not the correct old password' };
     }
     if (oldPassword === newPassword) {
         return { error: 'Old Password and New Password match exactly' };
     }
-    
-    if (user.passwordUsedThisYear.find(pw => pw === newPassword)) {
+    if (user.passwordUsedThisYear.includes(newPassword)) {
         return { error: 'New Password has already been used before by this user' };
     }
-
     if (newPassword.length < 8) {
         return { error: 'Password should be more than 8 characters' };
     }
@@ -209,7 +207,5 @@ export function adminUserPasswordUpdate(authUserId,oldPassword, newPassword){
     user.passwordUsedThisYear.push(oldPassword);
     setData(dataBase);
 
-    return {
-
-    };
+    return {}; 
 }

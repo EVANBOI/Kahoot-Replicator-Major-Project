@@ -1,0 +1,29 @@
+# 忽略所有日志文件
+*.log
+
+# 忽略 node_modules 文件夹
+node_modules/
+
+# 忽略编译输出文件夹
+dist/
+
+# 忽略二进制文件
+*.bin
+*.exe
+*.dll
+
+# 忽略临时文件
+*.tmp
+*.temp
+
+# 忽略VS Code的配置文件
+.vscode/
+
+# 忽略备份文件
+*.bak
+
+# 忽略 npm 缓存
+.npm/
+
+# 忽略 nvm 目录
+.nvm/

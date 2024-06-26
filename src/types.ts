@@ -53,3 +53,5 @@ export type QuizCreateDetails = ErrorMessage | {
     quizId: number
 }
 
+export type PasswordUpdateResult = EmptyObject | ErrorMessage;
+

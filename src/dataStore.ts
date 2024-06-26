@@ -1,4 +1,4 @@
-import { Data } from "./types.ts"
+import { Data } from "./types"
 // YOU SHOULD MODIFY THIS OBJECT BELOW ONLY
 export let data: Data = {
   users: [],

@@ -1,7 +1,7 @@
 import { getData, setData } from "./dataStore.js";
 import validator from 'validator';
 import { findUserWithId } from "./helpers.js";
-import { UserRegistrationResult } from "./types.ts";
+import { Data, User, UserRegistrationResult } from "./types";
 /**
  * Given an admin user's details, creates an account for them.
  * 
@@ -69,7 +69,7 @@ export function adminAuthRegister (
  * @returns {} - empty object
  */
 export function adminUserDetailsUpdate (authUserId, email, nameFirst, nameLast) {
-    let dataBase = getData();
+    const dataBase = getData();
 
     const person2 = dataBase.users.find(person => person.userId === authUserId);
     if (!person2) {
@@ -113,13 +113,16 @@ export function adminUserDetailsUpdate (authUserId, email, nameFirst, nameLast) 
  * @param {string} password - password for a user's account
  * @returns {{authUserId: number}}
  */
-export function adminAuthLogin (email, password) {
+export function adminAuthLogin (
+    email : string, 
+    password: string): UserRegistrationResult {
 
-    let dataBase = getData();
+    const dataBase: Data = getData();
 
-    const validEmail = dataBase.users.find(user => user.email === email);
-    const correctPassword = dataBase.users.find(user => user.email === email 
-                                                && user.password === password);
+    const validEmail: User = dataBase.users.find(user => user.email === email);
+    const correctPassword: User = dataBase.users.find(user => 
+        user.email === email 
+        && user.password === password);
     if (!validEmail) { // if validEmail is undefined, the condition is true
         return { error: 'email address does not exist'};
     } else if (!correctPassword) {

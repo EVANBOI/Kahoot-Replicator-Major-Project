@@ -1,6 +1,6 @@
-import { getData, setData} from './dataStore.js';
-import { findQuizWithId, findUserWithId } from './helpers.js';
-import { EmptyObject, QuizInfoResult,  QuizListDetails } from "./types.js"
+import { getData, setData} from './dataStore';
+import { findQuizWithId, findUserWithId } from './helpers';
+import { Data, EmptyObject, ErrorMessage, Quiz, QuizCreateDetails, QuizInfoResult,  QuizListDetails, User } from "./types"
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
  * 
@@ -32,11 +32,14 @@ export function adminQuizList ( authUserId: number ): QuizListDetails {
  * @returns {{quizId: number}}
  * @returns {{error: string}} an error
  */
-export function adminQuizCreate (authUserId, name, description) {
+export function adminQuizCreate (
+    authUserId: number, 
+    name: string, 
+    description: string): QuizCreateDetails {
 
-    let database = getData();
-    const validUser = database.users.find(user => user.userId === authUserId);
-    const nameUsed = database.quizzes.find(quiz => quiz.name === name && 
+    const database: Data = getData();
+    const validUser: User = database.users.find(user => user.userId === authUserId);
+    const nameUsed: Quiz = database.quizzes.find(quiz => quiz.name === name && 
                                         quiz.creatorId === authUserId);
 
     if (!validUser) {
@@ -55,9 +58,9 @@ export function adminQuizCreate (authUserId, name, description) {
         return { error: 'description is more than 100 characters in length'};
     }
 
-    const timeStamp1 = Math.floor(Date.now() / 1000);
-    const timeStamp2 = Math.floor(Date.now() / 1000);
-    const id = database.quizzes.length + 1;
+    const timeStamp1: number = Math.floor(Date.now() / 1000);
+    const timeStamp2: number = Math.floor(Date.now() / 1000);
+    const id: number = database.quizzes.length + 1;
     database.quizzes.push({
         creatorId: validUser.userId,
         quizId: id,

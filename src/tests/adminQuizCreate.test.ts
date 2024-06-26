@@ -1,6 +1,7 @@
-import { adminAuthRegister } from '../auth.js';
-import { adminQuizCreate } from '../quiz.js';
-import { clear } from '../other.js';
+import { adminAuthRegister } from '../auth';
+import { adminQuizCreate } from '../quiz';
+import { clear } from '../other';
+import { UserRegistrationResult } from '../types';
 
 beforeEach(() => {
     clear();
@@ -8,7 +9,7 @@ beforeEach(() => {
 
 describe ('when registering an AuthUserId', () => {
 
-    let Id;
+    let Id: UserRegistrationResult;
     beforeEach(() => {
         Id = adminAuthRegister('evan.xiong@unsw.edu.au', 'abcde12345', 'Evan', 'Xiong');
     });

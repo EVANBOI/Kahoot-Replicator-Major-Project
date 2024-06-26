@@ -49,3 +49,7 @@ export type QuizInfoResult = ErrorMessage | {
     description: string
 }
 
+export type QuizCreateDetails = ErrorMessage | {
+    quizId: number
+}
+

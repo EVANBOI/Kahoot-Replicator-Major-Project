@@ -1,5 +1,6 @@
-import { adminAuthRegister, adminAuthLogin } from '../auth.js';
-import { clear } from '../other.js';
+import { adminAuthRegister, adminAuthLogin } from '../auth';
+import { clear } from '../other';
+import { UserRegistrationResult } from '../types';
 
 beforeEach(() => {
     // Reset the state of our data so that each tests can run independently
@@ -13,7 +14,7 @@ test('return an error for a non-existent email address', () => {
 });
 
 describe('when registering an authUserId', () => {
-    let Id;
+    let Id: UserRegistrationResult;
     beforeEach(() => {
         Id = adminAuthRegister('evan.xiong@unsw.edu.au', 'abcde12345', 'Evan', 'Xiong');
     });
@@ -32,8 +33,8 @@ describe('when registering an authUserId', () => {
 })
 
 test('correctly returns two authuserIds', () => {
-    const Id1 = adminAuthRegister('evan.xiong@unsw.edu.au', 'abcde12345', 'Evan', 'Xiong');
-    const Id2 = adminAuthRegister('jessie.zhang@unsw.edu.au', 'qwerty67890', 'Jessie', 'Zhang');
+    const Id1: UserRegistrationResult = adminAuthRegister('evan.xiong@unsw.edu.au', 'abcde12345', 'Evan', 'Xiong');
+    const Id2: UserRegistrationResult = adminAuthRegister('jessie.zhang@unsw.edu.au', 'qwerty67890', 'Jessie', 'Zhang');
     expect(adminAuthLogin('evan.xiong@unsw.edu.au', 'abcde12345')).toStrictEqual({ authUserId: Id1.authUserId })
     expect(adminAuthLogin('jessie.zhang@unsw.edu.au', 'qwerty67890')).toStrictEqual({ authUserId: Id2.authUserId })
     expect(Id1).not.toStrictEqual(expect(Id2));

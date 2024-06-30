@@ -214,6 +214,7 @@ export function adminQuizDescriptionUpdate (
     }
 
     validQuizId.description = description;
+    validQuizId.timeLastEdited = Math.floor(Date.now() / 1000);
     setData(database);
     return { 
 

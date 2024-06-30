@@ -1,7 +1,7 @@
 import { getData, setData } from "./dataStore.js";
 import validator from 'validator';
 import { findUserWithId } from "./helpers.js";
-import { Data, User, UserRegistrationResult, PasswordUpdateResult  } from "./types";
+import { Data, User, UserRegistrationResult, PasswordUpdateResult, UserUpdateResult  } from "./types";
 /**
  * Given an admin user's details, creates an account for them.
  * 
@@ -68,7 +68,12 @@ export function adminAuthRegister (
  * @param {string} nameLast - last name of a user
  * @returns {} - empty object
  */
-export function adminUserDetailsUpdate (authUserId, email, nameFirst, nameLast) {
+export function adminUserDetailsUpdate (
+    authUserId: number, 
+    email: string, 
+    nameFirst: string, 
+    nameLast: string
+    ): UserUpdateResult {
     const dataBase = getData();
 
     const person2 = dataBase.users.find(person => person.userId === authUserId);

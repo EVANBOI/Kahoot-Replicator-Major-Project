@@ -1,8 +1,8 @@
-import { clear } from "../other.js";
-import { adminAuthRegister } from "../auth.js";
+import { clear } from "../other.ts";
+import { adminAuthRegister } from "../auth.ts";
 import { adminQuizCreate, 
     adminQuizDescriptionUpdate, 
-    adminQuizInfo } from "../quiz.js";
+    adminQuizInfo } from "../quiz.ts";
 export function ok<T>(item: T | { error: string }): T {
     return item as T;
 }

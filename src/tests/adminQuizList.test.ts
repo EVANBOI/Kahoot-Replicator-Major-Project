@@ -1,7 +1,7 @@
-import { adminAuthRegister } from "../auth.ts";
-import { adminQuizList, adminQuizCreate } from "../quiz.ts";
-import { clear } from "../other.ts";
-import { ok } from "./adminQuizDescriptionUpdate.test.ts";
+import { adminAuthRegister } from "../auth";
+import { adminQuizList, adminQuizCreate } from "../quiz";
+import { clear } from "../other";
+import { ok } from "./adminQuizDescriptionUpdate.test";
 const ERROR = { error: expect.any(String) };
 
 beforeEach(() => {

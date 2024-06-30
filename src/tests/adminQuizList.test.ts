@@ -1,18 +1,26 @@
+<<<<<<< HEAD:src/tests/adminQuizList.test.ts
 import { adminAuthRegister } from "../auth";
 import { adminQuizList, adminQuizCreate } from "../quiz";
 import { clear } from "../other";
 import { ok } from "./adminQuizDescriptionUpdate.test";
+=======
+import { adminAuthRegister } from '../auth.js';
+import { adminQuizList, adminQuizCreate } from '../quiz.js';
+import { clear } from '../other.js';
+
+>>>>>>> master:src/tests/adminQuizList.test.js
 const ERROR = { error: expect.any(String) };
 
 beforeEach(() => {
-    clear();
-})
+  clear();
+});
 
 test('User id is not valid', () => {
-    expect(adminQuizList(10)).toStrictEqual(ERROR);
+  expect(adminQuizList(10)).toStrictEqual(ERROR);
 });
 
 describe('Valid user with only no quizzes', () => {
+<<<<<<< HEAD:src/tests/adminQuizList.test.ts
     let userId: number;
     beforeEach(() => {
         userId = ok(adminAuthRegister('admin@unsw.edu.au', 'Password1', 'JJ', 'HH')).authUserId;
@@ -42,8 +50,41 @@ describe('Valid user with only one quiz', () => {
                 name: 'Quiz'
             }
         ] });
-    });
+=======
+  let user1Id;
+  beforeEach(() => {
+    user1Id = adminAuthRegister('admin@unsw.edu.au', 'Password1', 'JJ', 'HH');
+  });
+  test('There is only one user in database', () => {
+    expect(adminQuizList(user1Id.authUserId)).toStrictEqual({ quizzes: [] });
+  });
 
+  test('There are multiple users in database', () => {
+    adminAuthRegister('admin2@unsw.edu.au', 'Password1', 'JJz', 'HHz');
+    adminAuthRegister('admin3@unsw.edu.au', 'Password1', 'JJf', 'HHf');
+    expect(adminQuizList(user1Id.authUserId)).toStrictEqual({ quizzes: [] });
+  });
+});
+
+describe('Valid user with only one quiz', () => {
+  let user1Id, quiz1Id;
+  beforeEach(() => {
+    user1Id = adminAuthRegister('admin@unsw.edu.au', 'Password1', 'JJ', 'HH');
+    quiz1Id = adminQuizCreate(user1Id.authUserId, 'Quiz', '');
+  });
+  test('There is only one user in database', () => {
+    expect(adminQuizList(user1Id.authUserId)).toStrictEqual({
+      quizzes: [
+        {
+          quizId: quiz1Id.quizId,
+          name: 'Quiz'
+        }
+      ]
+>>>>>>> master:src/tests/adminQuizList.test.js
+    });
+  });
+
+<<<<<<< HEAD:src/tests/adminQuizList.test.ts
     test('There are multiple users in database', () => {
         adminAuthRegister('admin2@unsw.edu.au', 'Password1', 'JJz', 'HHz');
         adminAuthRegister('admin3@unsw.edu.au', 'Password1', 'JJf', 'HHf');
@@ -53,10 +94,24 @@ describe('Valid user with only one quiz', () => {
                 name: 'Quiz'
             }
         ] });
+=======
+  test('There are multiple users in database', () => {
+    adminAuthRegister('admin2@unsw.edu.au', 'Password1', 'JJz', 'HHz');
+    adminAuthRegister('admin3@unsw.edu.au', 'Password1', 'JJf', 'HHf');
+    expect(adminQuizList(user1Id.authUserId)).toStrictEqual({
+      quizzes: [
+        {
+          quizId: quiz1Id.quizId,
+          name: 'Quiz'
+        }
+      ]
+>>>>>>> master:src/tests/adminQuizList.test.js
     });
-})
+  });
+});
 
 describe('Valid user with multiple quizzes', () => {
+<<<<<<< HEAD:src/tests/adminQuizList.test.ts
     let user1Id: number;
     let quiz1Id: number, quiz2Id: number, quiz3Id:number;
     beforeEach(() => {
@@ -80,8 +135,35 @@ describe('Valid user with multiple quizzes', () => {
                 name: 'Quiz3'
             }
         ] });
+=======
+  let quiz1Id, quiz2Id, quiz3Id, user1Id;
+  beforeEach(() => {
+    user1Id = adminAuthRegister('admin@unsw.edu.au', 'Password1', 'JJ', 'HH');
+    quiz1Id = adminQuizCreate(user1Id.authUserId, 'Quiz1', '');
+    quiz2Id = adminQuizCreate(user1Id.authUserId, 'Quiz2', '');
+    quiz3Id = adminQuizCreate(user1Id.authUserId, 'Quiz3', '');
+  });
+  test('There is only one user in database', () => {
+    expect(adminQuizList(user1Id.authUserId)).toStrictEqual({
+      quizzes: [
+        {
+          quizId: quiz1Id.quizId,
+          name: 'Quiz1'
+        },
+        {
+          quizId: quiz2Id.quizId,
+          name: 'Quiz2'
+        },
+        {
+          quizId: quiz3Id.quizId,
+          name: 'Quiz3'
+        }
+      ]
+>>>>>>> master:src/tests/adminQuizList.test.js
     });
+  });
 
+<<<<<<< HEAD:src/tests/adminQuizList.test.ts
     test('There are multiple users in database', () => {
         adminAuthRegister('admin2@unsw.edu.au', 'Password1', 'JJz', 'HHz');
         adminAuthRegister('admin3@unsw.edu.au', 'Password1', 'JJf', 'HHf');
@@ -99,5 +181,26 @@ describe('Valid user with multiple quizzes', () => {
                 name: 'Quiz3'
             } 
         ] });
+=======
+  test('There are multiple users in database', () => {
+    adminAuthRegister('admin2@unsw.edu.au', 'Password1', 'JJz', 'HHz');
+    adminAuthRegister('admin3@unsw.edu.au', 'Password1', 'JJf', 'HHf');
+    expect(adminQuizList(user1Id.authUserId)).toStrictEqual({
+      quizzes: [
+        {
+          quizId: quiz1Id.quizId,
+          name: 'Quiz1'
+        },
+        {
+          quizId: quiz2Id.quizId,
+          name: 'Quiz2'
+        },
+        {
+          quizId: quiz3Id.quizId,
+          name: 'Quiz3'
+        }
+      ]
+>>>>>>> master:src/tests/adminQuizList.test.js
     });
-})
+  });
+});

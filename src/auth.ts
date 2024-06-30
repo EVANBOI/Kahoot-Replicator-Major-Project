@@ -152,7 +152,6 @@ export function adminAuthLogin (
  *               numFailedPasswordsSinceLastLogin: number}}}
  */
 
-
 function adminUserDetails (authUserId) {
 
     const user = findUserWithId(authUserId);

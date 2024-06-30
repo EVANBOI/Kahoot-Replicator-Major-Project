@@ -1,11 +1,6 @@
-<<<<<<< HEAD:src/tests/adminUserDetailsUpdate.test.ts
-import { adminAuthRegister, adminUserDetailsUpdate, adminUserDetails } from "../auth";
-import { clear } from "../other";
-import { AuthUserIdObject } from "../types"
-=======
-import { adminAuthRegister, adminUserDetailsUpdate, adminUserDetails } from '../auth.js';
-import { clear } from '../other.js';
->>>>>>> master:src/tests/adminUserDetailsUpdate.test.js
+import { adminAuthRegister, adminUserDetailsUpdate, adminUserDetails } from '../auth';
+import { clear } from '../other';
+import { AuthUserIdObject } from '../types';
 
 const VALID_INPUTS_1 = {
   EMAIL: 'admin@email.com',
@@ -25,39 +20,23 @@ const ERROR = {
   error: expect.any(String)
 };
 
-<<<<<<< HEAD:src/tests/adminUserDetailsUpdate.test.ts
-const NEW_VALID_EMAIL = 'newValidEmail@gmail.com'
-let VALID_USERID1: number;
-=======
 const NEW_VALID_EMAIL = 'newValidEmail@gmail.com';
-let VALID_USERID1;
->>>>>>> master:src/tests/adminUserDetailsUpdate.test.js
+let VALID_USERID1: number;
 
 beforeEach(() => {
   clear();
 });
 
 describe('error tests', () => {
-<<<<<<< HEAD:src/tests/adminUserDetailsUpdate.test.ts
-    beforeEach(() => {
-        const register = adminAuthRegister(
-            VALID_INPUTS_1.EMAIL, 
-            VALID_INPUTS_1.PASSWORD, 
-            VALID_INPUTS_1.FIRSTNAME, 
-            VALID_INPUTS_1.LASTNAME
-        ) as AuthUserIdObject
-        VALID_USERID1 = register.authUserId;
-    })
-=======
   beforeEach(() => {
-    VALID_USERID1 = adminAuthRegister(
+    const register = adminAuthRegister(
       VALID_INPUTS_1.EMAIL,
       VALID_INPUTS_1.PASSWORD,
       VALID_INPUTS_1.FIRSTNAME,
       VALID_INPUTS_1.LASTNAME
-    ).authUserId;
+    ) as AuthUserIdObject;
+    VALID_USERID1 = register.authUserId;
   });
->>>>>>> master:src/tests/adminUserDetailsUpdate.test.js
 
   test('UserId is not a valid user', () => {
     const INVALID_ID = VALID_USERID1 + 1;
@@ -149,26 +128,15 @@ describe('error tests', () => {
 });
 
 describe('Successful update', () => {
-<<<<<<< HEAD:src/tests/adminUserDetailsUpdate.test.ts
-    beforeEach(() => {
-        const register = adminAuthRegister(
-            VALID_INPUTS_1.EMAIL, 
-            VALID_INPUTS_1.PASSWORD, 
-            VALID_INPUTS_1.FIRSTNAME, 
-            VALID_INPUTS_1.LASTNAME
-        ) as AuthUserIdObject
-        VALID_USERID1 = register.authUserId;
-    })
-=======
   beforeEach(() => {
-    VALID_USERID1 = adminAuthRegister(
+    const register = adminAuthRegister(
       VALID_INPUTS_1.EMAIL,
       VALID_INPUTS_1.PASSWORD,
       VALID_INPUTS_1.FIRSTNAME,
       VALID_INPUTS_1.LASTNAME
-    ).authUserId;
+    ) as AuthUserIdObject;
+    VALID_USERID1 = register.authUserId;
   });
->>>>>>> master:src/tests/adminUserDetailsUpdate.test.js
 
   test('correct return value', () => {
     expect(adminUserDetailsUpdate(

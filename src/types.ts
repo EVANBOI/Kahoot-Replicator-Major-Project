@@ -1,4 +1,4 @@
-export type EmptyObject = { };
+export type EmptyObject = Record<string, never>;
 
 export type ErrorMessage = { error: string };
 
@@ -40,7 +40,6 @@ export type UserUpdateResult = EmptyObject | ErrorMessage;
 
 export type UserRegistrationResult = ErrorMessage | AuthUserIdObject
 
-
 export type QuizListDetails = ErrorMessage | {
     quizzes: {
         quizId: number
@@ -59,4 +58,3 @@ export type QuizInfoResult = ErrorMessage | {
 export type QuizCreateDetails = ErrorMessage | QuizIdObject
 
 export type PasswordUpdateResult = EmptyObject | ErrorMessage;
-

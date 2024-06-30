@@ -1,10 +1,5 @@
-<<<<<<< HEAD:src/tests/adminAuthRegister.test.ts
-import { adminAuthRegister } from "../auth";
-import { clear } from "../other";
-=======
-import { adminAuthRegister } from '../auth.js';
-import { clear } from '../other.js';
->>>>>>> master:src/tests/adminAuthRegister.test.js
+import { adminAuthRegister } from '../auth';
+import { clear } from '../other';
 
 const REGISTRATED = { authUserId: expect.any(Number) };
 const ERROR = { error: expect.any(String) };

@@ -8,21 +8,13 @@ beforeEach(() => {
 });
 
 describe('when registering an AuthUserId', () => {
-  let Id;
+  let Id: UserRegistrationResult;
   beforeEach(() => {
     Id = adminAuthRegister('evan.xiong@unsw.edu.au', 'abcde12345', 'Evan', 'Xiong');
   });
-
-<<<<<<< HEAD:src/tests/adminQuizCreate.test.ts
-    let Id: UserRegistrationResult;
-    beforeEach(() => {
-        Id = adminAuthRegister('evan.xiong@unsw.edu.au', 'abcde12345', 'Evan', 'Xiong');
-    });
-=======
   test('AuthUserId is not a valid user', () => {
     expect(adminQuizCreate(Id.authUserId + 1, 'Quiz 1', 'Pointers')).toStrictEqual({ error: expect.any(String) });
   });
->>>>>>> master:src/tests/adminQuizCreate.test.js
 
   test('Name contains invalid characters', () => {
     expect(adminQuizCreate(Id.authUserId, '汉', 'Pointers')).toStrictEqual({ error: expect.any(String) });

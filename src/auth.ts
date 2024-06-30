@@ -1,14 +1,7 @@
-<<<<<<< HEAD:src/auth.ts
-import { getData, setData } from "./dataStore";
+import { getData, setData } from './dataStore';
 import validator from 'validator';
-import { findUserWithId } from "./helpers";
-import { Data, User, UserRegistrationResult, PasswordUpdateResult, UserUpdateResult  } from "./types";
-=======
-import { getData, setData } from './dataStore.js';
-import validator from 'validator';
-import { findUserWithId } from './helpers.js';
-
->>>>>>> master:src/auth.js
+import { findUserWithId } from './helpers';
+import { Data, User, UserRegistrationResult, PasswordUpdateResult, UserUpdateResult } from './types';
 /**
  * Given an admin user's details, creates an account for them.
  *
@@ -20,37 +13,11 @@ import { findUserWithId } from './helpers.js';
  * @returns {{error: string}} an error
  */
 
-<<<<<<< HEAD:src/auth.ts
 export function adminAuthRegister (
-    email: string, 
-    password: string, 
-    nameFirst: string, 
-    nameLast: string): UserRegistrationResult{
-    let dataBase = getData();
-    const person = dataBase.users.find(person => person.email === email)
-    if (person) {
-        return { error: 'Email address is used by another user.'};
-    }
-    const nameRange = /^[a-zA-Z-' ]*$/
-    const passwordLetterRange = /^[a-zA-Z]/;
-    const passwordNumberRange = /\d/;
-    if (validator.isEmail(email) == false) {
-        return { error: 'Email is not a valid email'};
-    }else if (!nameRange.test(nameFirst)) {
-        return { error: 'NameFirst contains invalid characters'}
-    } else if (nameFirst.length < 2 || nameFirst.length > 20) {
-        return { error: 'NameFirst is less than 2 characters or more than 20 characters.'};
-    } else if (!nameRange.test(nameLast)) {
-        return { error: 'NameFirst contains invalid characters'};
-    } else if (nameLast.length < 2 || nameLast.length > 20) {
-        return { error: 'NameLast is less than 2 characters or more than 20 characters.'};
-    } else if (password.length < 8) {
-        return { error : 'Password is less than 8 characters.'};
-    } else if (!passwordLetterRange.test(password) || !passwordNumberRange.test(password)) {
-        return { error: 'Password does not contain at least one number and at least one letter.'};
-    }
-=======
-export function adminAuthRegister (email, password, nameFirst, nameLast) {
+  email: string,
+  password: string,
+  nameFirst: string,
+  nameLast: string): UserRegistrationResult {
   const dataBase = getData();
   const person = dataBase.users.find(person => person.email === email);
   if (person) {
@@ -74,7 +41,6 @@ export function adminAuthRegister (email, password, nameFirst, nameLast) {
   } else if (!passwordLetterRange.test(password) || !passwordNumberRange.test(password)) {
     return { error: 'Password does not contain at least one number and at least one letter.' };
   }
->>>>>>> master:src/auth.js
 
   const id = dataBase.users.length + 1;
   dataBase.users.push({
@@ -102,18 +68,13 @@ export function adminAuthRegister (email, password, nameFirst, nameLast) {
  * @param {string} nameLast - last name of a user
  * @returns {} - empty object
  */
-<<<<<<< HEAD:src/auth.ts
 export function adminUserDetailsUpdate (
-    authUserId: number, 
-    email: string, 
-    nameFirst: string, 
-    nameLast: string
-    ): UserUpdateResult {
-    const dataBase = getData();
-=======
-export function adminUserDetailsUpdate (authUserId, email, nameFirst, nameLast) {
+  authUserId: number,
+  email: string,
+  nameFirst: string,
+  nameLast: string
+): UserUpdateResult {
   const dataBase = getData();
->>>>>>> master:src/auth.js
 
   const person2 = dataBase.users.find(person => person.userId === authUserId);
   if (!person2) {
@@ -157,39 +118,19 @@ export function adminUserDetailsUpdate (authUserId, email, nameFirst, nameLast) 
  * @param {string} password - password for a user's account
  * @returns {{authUserId: number}}
  */
-<<<<<<< HEAD:src/auth.ts
 export function adminAuthLogin (
-    email : string, 
-    password: string): UserRegistrationResult {
+  email : string,
+  password: string): UserRegistrationResult {
+  const dataBase: Data = getData();
 
-    const dataBase: Data = getData();
-
-    const validEmail: User = dataBase.users.find(user => user.email === email);
-    const correctPassword: User = dataBase.users.find(user => 
-        user.email === email 
-        && user.password === password);
-    if (!validEmail) { // if validEmail is undefined, the condition is true
-        return { error: 'email address does not exist'};
-    } else if (!correctPassword) {
-        validEmail.numFailedPasswordsSinceLastLogin += 1;
-        setData(dataBase);
-        return { error: 'password is not correct for the given email'};
-    }
-
-    correctPassword.numFailedPasswordsSinceLastLogin = 0;
-    correctPassword.numSuccessfulLogins += 1;
-=======
-export function adminAuthLogin (email, password) {
-  const dataBase = getData();
-
-  const validEmail = dataBase.users.find(user => user.email === email);
-  const correctPassword = dataBase.users.find(user => user.email === email &&
-                                                user.password === password);
+  const validEmail: User = dataBase.users.find(user => user.email === email);
+  const correctPassword: User = dataBase.users.find(user =>
+    user.email === email &&
+        user.password === password);
   if (!validEmail) { // if validEmail is undefined, the condition is true
     return { error: 'email address does not exist' };
   } else if (!correctPassword) {
     validEmail.numFailedPasswordsSinceLastLogin += 1;
->>>>>>> master:src/auth.js
     setData(dataBase);
     return { error: 'password is not correct for the given email' };
   }
@@ -242,33 +183,9 @@ export { adminUserDetails };
  * @returns {} - empty object
  */
 
-<<<<<<< HEAD:src/auth.ts
 export function adminUserPasswordUpdate(authUserId: number, oldPassword: string, newPassword: string): PasswordUpdateResult {
-    const dataBase: Data = getData();
-    const user: User | undefined = dataBase.users.find(user => user.userId === authUserId);
-
-    if (!user) {
-        return { error: 'AuthUserId is not a valid user.' };
-    }
-    if (user.password !== oldPassword) {
-        return { error: 'Old Password is not the correct old password' };
-    }
-    if (oldPassword === newPassword) {
-        return { error: 'Old Password and New Password match exactly' };
-    }
-    if (user.passwordUsedThisYear.includes(newPassword)) {
-        return { error: 'New Password has already been used before by this user' };
-    }
-    if (newPassword.length < 8) {
-        return { error: 'Password should be more than 8 characters' };
-    }
-    if (!/\d/.test(newPassword) || !/[a-zA-Z]/.test(newPassword)) {
-        return { error: 'Password needs to contain at least one number and at least one letter' };
-    }
-=======
-export function adminUserPasswordUpdate(authUserId, oldPassword, newPassword) {
-  const dataBase = getData();
-  const user = dataBase.users.find(user => user.userId === authUserId);
+  const dataBase: Data = getData();
+  const user: User | undefined = dataBase.users.find(user => user.userId === authUserId);
 
   if (!user) {
     return { error: 'AuthUserId is not a valid user.' };
@@ -279,16 +196,9 @@ export function adminUserPasswordUpdate(authUserId, oldPassword, newPassword) {
   if (oldPassword === newPassword) {
     return { error: 'Old Password and New Password match exactly' };
   }
->>>>>>> master:src/auth.js
-
-  if (user.passwordUsedThisYear.find(pw => pw === newPassword)) {
+  if (user.passwordUsedThisYear.includes(newPassword)) {
     return { error: 'New Password has already been used before by this user' };
   }
-
-<<<<<<< HEAD:src/auth.ts
-    return {}; 
-}
-=======
   if (newPassword.length < 8) {
     return { error: 'Password should be more than 8 characters' };
   }
@@ -296,12 +206,9 @@ export function adminUserPasswordUpdate(authUserId, oldPassword, newPassword) {
     return { error: 'Password needs to contain at least one number and at least one letter' };
   }
 
-  user.password = newPassword;
-  user.passwordUsedThisYear.push(oldPassword);
-  setData(dataBase);
+  if (user.passwordUsedThisYear.find(pw => pw === newPassword)) {
+    return { error: 'New Password has already been used before by this user' };
+  }
 
-  return {
-
-  };
+  return {};
 }
->>>>>>> master:src/auth.js

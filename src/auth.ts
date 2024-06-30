@@ -1,6 +1,6 @@
-import { getData, setData } from "./dataStore.js";
+import { getData, setData } from "./dataStore";
 import validator from 'validator';
-import { findUserWithId } from "./helpers.js";
+import { findUserWithId } from "./helpers";
 import { Data, User, UserRegistrationResult, PasswordUpdateResult, UserUpdateResult  } from "./types";
 /**
  * Given an admin user's details, creates an account for them.

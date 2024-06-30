@@ -1,6 +1,7 @@
 import { adminAuthRegister } from '../auth.js';
 import { adminQuizCreate, adminQuizInfo } from '../quiz.js';
 import { clear } from '../other.js';
+import { AuthUserIdObject, QuizIdObject } from "../types"
 
 const VALID_USER = {
     EMAIL: 'admin@email.com',
@@ -27,12 +28,13 @@ beforeEach(() => {
 
 describe('error tests', () => {
     beforeEach(() => {
-        VALID_USER_ID = adminAuthRegister(
+        const register = adminAuthRegister(
             VALID_USER.EMAIL, 
             VALID_USER.PASSWORD, 
             VALID_USER.FIRSTNAME, 
             VALID_USER.LASTNAME
-        ).authUserId;
+        ) as AuthUserIdObject
+        VALID_USER_ID = register.authUserId;
     });
 
     test('AuthUserId is not a valid user.', () => {
@@ -44,30 +46,34 @@ describe('error tests', () => {
     });
 
     test('Visitor is not creator', () => {
-        VALID_QUIZ_ID = adminQuizCreate(VALID_USER_ID, VALID_QUIZ.NAME, VALID_QUIZ.DESCRIPTION).quizId;
-        const ANOTHETR_USER_ID = adminAuthRegister(
+        const newQuiz = adminQuizCreate(VALID_USER_ID, VALID_QUIZ.NAME, VALID_QUIZ.DESCRIPTION) as QuizIdObject;
+        VALID_QUIZ_ID = newQuiz.quizId;
+        const otherUser =  adminAuthRegister(
             'validAnotherEmail@gmail.com', 
             VALID_USER.PASSWORD, 
             VALID_USER.FIRSTNAME, 
             VALID_USER.LASTNAME
-        ).authUserId;
+        ) as AuthUserIdObject;
+        const ANOTHETR_USER_ID = otherUser.authUserId;
         expect(adminQuizInfo(ANOTHETR_USER_ID, VALID_QUIZ_ID)).toStrictEqual(ERROR);
     });
 })
 
 describe('success tests', () => {
     beforeEach(() => {
-        VALID_USER_ID = adminAuthRegister(
+        const User = adminAuthRegister(
             VALID_USER.EMAIL, 
             VALID_USER.PASSWORD, 
             VALID_USER.FIRSTNAME, 
             VALID_USER.LASTNAME
-        ).authUserId;
-        VALID_QUIZ_ID = adminQuizCreate(
+        ) as AuthUserIdObject
+        VALID_USER_ID = User.authUserId;
+        const Quiz = adminQuizCreate(
             VALID_USER_ID, 
             VALID_QUIZ.NAME, 
             VALID_QUIZ.DESCRIPTION
-        ).quizId;
+        ) as QuizIdObject
+        VALID_QUIZ_ID = Quiz.quizId;
     });
 
     test('correct return value', () => {

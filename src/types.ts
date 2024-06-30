@@ -2,14 +2,6 @@ export type EmptyObject = { };
 
 export type ErrorMessage = { error: string };
 
-export type ClearResult = EmptyObject;
-
-export type UserUpdateResult = EmptyObject | ErrorMessage;
-
-export type UserRegistrationResult = ErrorMessage | {
-    authUserId: number
-}
-
 export type User = {
     userId: number,
     email: string,
@@ -34,6 +26,21 @@ export type Data = {
     quizzes: Quiz[]
 }
 
+export type QuizIdObject = {
+    quizId: number
+}
+
+export type AuthUserIdObject = {
+    authUserId: number
+}
+
+export type ClearResult = EmptyObject;
+
+export type UserUpdateResult = EmptyObject | ErrorMessage;
+
+export type UserRegistrationResult = ErrorMessage | AuthUserIdObject
+
+
 export type QuizListDetails = ErrorMessage | {
     quizzes: {
         quizId: number
@@ -49,9 +56,7 @@ export type QuizInfoResult = ErrorMessage | {
     description: string
 }
 
-export type QuizCreateDetails = ErrorMessage | {
-    quizId: number
-}
+export type QuizCreateDetails = ErrorMessage | QuizIdObject
 
 export type PasswordUpdateResult = EmptyObject | ErrorMessage;
 

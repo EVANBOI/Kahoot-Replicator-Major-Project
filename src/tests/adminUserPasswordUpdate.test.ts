@@ -1,7 +1,6 @@
 import { clear } from '../other';
 import { adminUserPasswordUpdate, adminAuthRegister, adminAuthLogin } from '../auth';
-import { PasswordUpdateResult } from '../types';
-import { AuthUserIdObject } from '../types';
+import { PasswordUpdateResult, AuthUserIdObject, ErrorMessage } from '../types';
 
 const VALID_NEW_PASSWORD = 'newPassword123';
 const SHORT_PASSWORD = 'short';
@@ -16,7 +15,10 @@ beforeEach(() => {
 
 describe('adminUserPasswordUpdate tests', () => {
   beforeEach(() => {
-    const user = adminAuthRegister('chang.li@unsw.edu.au', 'oldPassword1', 'Chang', 'Li') as AuthUserIdObject;
+    const user = adminAuthRegister('chang.li@unsw.edu.au', 'oldPassword1', 'Chang', 'Li') as AuthUserIdObject | ErrorMessage;
+    if ('error' in user) {
+      throw new Error(user.error);
+    }
     userId = user.authUserId;
   });
 
@@ -41,15 +43,27 @@ describe('adminUserPasswordUpdate tests', () => {
   });
 
   test('New password has already been used - check return value', () => {
-    adminUserPasswordUpdate(userId, 'oldPassword1', VALID_NEW_PASSWORD);
-    const result: PasswordUpdateResult = adminUserPasswordUpdate(userId, VALID_NEW_PASSWORD, VALID_NEW_PASSWORD);
-    expect(result).toEqual({ error: 'New Password has already been used before by this user' });
+    const firstUpdateResult = adminUserPasswordUpdate(userId, 'oldPassword1', VALID_NEW_PASSWORD);
+    expect(firstUpdateResult).toEqual({});
+
+    const secondUpdateResult: PasswordUpdateResult = adminUserPasswordUpdate(userId, VALID_NEW_PASSWORD, 'anotherNewPassword123');
+    expect(secondUpdateResult).toEqual({});
+
+    const thirdUpdateResult: PasswordUpdateResult = adminUserPasswordUpdate(userId, 'anotherNewPassword123', VALID_NEW_PASSWORD);
+    expect(thirdUpdateResult).toEqual({ error: 'New Password has already been used before by this user' });
   });
 
   test('New password has already been used - check data store', () => {
-    adminUserPasswordUpdate(userId, 'oldPassword1', VALID_NEW_PASSWORD);
-    adminUserPasswordUpdate(userId, VALID_NEW_PASSWORD, 'anotherNewPassword123');
-    const loginResult = adminAuthLogin('chang.li@unsw.edu.au', 'anotherNewPassword123') as AuthUserIdObject;
+    const firstUpdateResult = adminUserPasswordUpdate(userId, 'oldPassword1', VALID_NEW_PASSWORD);
+    expect(firstUpdateResult).toEqual({});
+
+    const secondUpdateResult = adminUserPasswordUpdate(userId, VALID_NEW_PASSWORD, 'anotherNewPassword123');
+    expect(secondUpdateResult).toEqual({});
+
+    const loginResult = adminAuthLogin('chang.li@unsw.edu.au', 'anotherNewPassword123') as AuthUserIdObject | ErrorMessage;
+    if ('error' in loginResult) {
+      throw new Error(loginResult.error);
+    }
     expect(loginResult.authUserId).toEqual(userId);
   });
 

@@ -151,10 +151,10 @@ export function adminQuizInfo (authUserId: number, quizId: number): QuizInfoResu
  * @returns {} - empty object
  * @returns {{error: string}} an error
  */
-export function adminQuizNameUpdate(authUserId: number, quizId: number, name: string): ErrorMessage | EmptyObject {
-  const database = getData();
-  const user = database.users.find(user => user.userId === authUserId);
-  const quiz = database.quizzes.find(quiz => quiz.quizId === quizId);
+export function adminQuizNameUpdate(authUserId: number, quizId: number, name: string): EmptyObject | ErrorMessage {
+  const database: Data = getData();
+  const user: User | undefined = database.users.find(user => user.userId === authUserId);
+  const quiz: Quiz | undefined = database.quizzes.find(quiz => quiz.quizId === quizId);
 
   const namePattern = /^[a-zA-Z0-9 ]+$/;
   if (!user) {

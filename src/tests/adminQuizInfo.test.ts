@@ -1,6 +1,6 @@
-import { adminAuthRegister } from '../auth.js';
-import { adminQuizCreate, adminQuizInfo } from '../quiz.js';
-import { clear } from '../other.js';
+import { adminAuthRegister } from '../auth';
+import { adminQuizCreate, adminQuizInfo } from '../quiz';
+import { clear } from '../other';
 import { AuthUserIdObject, QuizIdObject } from '../types';
 
 const VALID_USER = {

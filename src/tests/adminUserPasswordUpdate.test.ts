@@ -15,10 +15,7 @@ beforeEach(() => {
 
 describe('adminUserPasswordUpdate tests', () => {
   beforeEach(() => {
-    const user = adminAuthRegister('chang.li@unsw.edu.au', 'oldPassword1', 'Chang', 'Li') as AuthUserIdObject | ErrorMessage;
-    if ('error' in user) {
-      throw new Error(user.error);
-    }
+    const user = adminAuthRegister('chang.li@unsw.edu.au', 'oldPassword1', 'Chang', 'Li') as AuthUserIdObject;
     userId = user.authUserId;
   });
 

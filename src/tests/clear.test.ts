@@ -3,7 +3,6 @@ import { adminAuthRegister, adminUserDetails } from '../auth';
 import { adminQuizCreate, adminQuizInfo } from '../quiz';
 import { AuthUserIdObject, QuizIdObject } from '../types';
 
-
 const VALID_USER = {
   EMAIL: 'admin@email.com',
   PASSWORD: 'password1',
@@ -32,13 +31,13 @@ describe('Function clear tests', () => {
       VALID_USER.FIRSTNAME,
       VALID_USER.LASTNAME
     ) as AuthUserIdObject;
-    const VALID_USER_ID = register.authUserId
+    const VALID_USER_ID = register.authUserId;
     clear();
     expect(adminUserDetails(VALID_USER_ID)).toStrictEqual(ERROR);
   });
 
   test('correct clear the quiz store', () => {
-    const register =  adminAuthRegister(
+    const register = adminAuthRegister(
       VALID_USER.EMAIL,
       VALID_USER.PASSWORD,
       VALID_USER.FIRSTNAME,

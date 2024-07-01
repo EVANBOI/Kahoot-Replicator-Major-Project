@@ -1,7 +1,7 @@
 import { adminAuthRegister } from '../auth';
 import { adminQuizCreate } from '../quiz';
 import { clear } from '../other';
-import { AuthUserIdObject, UserRegistrationResult } from '../types';
+import { AuthUserIdObject } from '../types';
 import { ok } from '../helpers';
 
 beforeEach(() => {

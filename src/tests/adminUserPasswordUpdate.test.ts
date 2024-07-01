@@ -1,6 +1,6 @@
 import { clear } from '../other';
 import { adminUserPasswordUpdate, adminAuthRegister, adminAuthLogin } from '../auth';
-import { PasswordUpdateResult, AuthUserIdObject, ErrorMessage } from '../types';
+import { PasswordUpdateResult, AuthUserIdObject } from '../types';
 
 const VALID_NEW_PASSWORD = 'newPassword123';
 const SHORT_PASSWORD = 'short';
@@ -57,10 +57,7 @@ describe('adminUserPasswordUpdate tests', () => {
     const secondUpdateResult = adminUserPasswordUpdate(userId, VALID_NEW_PASSWORD, 'anotherNewPassword123');
     expect(secondUpdateResult).toEqual({});
 
-    const loginResult = adminAuthLogin('chang.li@unsw.edu.au', 'anotherNewPassword123') as AuthUserIdObject | ErrorMessage;
-    if ('error' in loginResult) {
-      throw new Error(loginResult.error);
-    }
+    const loginResult = adminAuthLogin('chang.li@unsw.edu.au', 'anotherNewPassword123') as AuthUserIdObject;
     expect(loginResult.authUserId).toEqual(userId);
   });
 

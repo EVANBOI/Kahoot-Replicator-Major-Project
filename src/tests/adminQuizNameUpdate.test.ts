@@ -1,7 +1,7 @@
 import { clear } from '../other';
 import { adminAuthRegister } from '../auth';
 import { adminQuizCreate, adminQuizNameUpdate, adminQuizInfo } from '../quiz';
-import { AuthUserIdObject, QuizIdObject, ErrorMessage, QuizInfoResult } from '../types';
+import { AuthUserIdObject, QuizIdObject, ErrorMessage } from '../types';
 import { ok } from '../helpers';
 
 let authUserId: number;

@@ -1,6 +1,6 @@
 import { adminAuthRegister, adminAuthLogin } from '../auth';
 import { clear } from '../other';
-import { AuthUserIdObject, UserRegistrationResult } from '../types';
+import { AuthUserIdObject } from '../types';
 import { ok } from '../helpers';
 
 beforeEach(() => {
@@ -13,14 +13,14 @@ test('return an error for a non-existent email address', () => {
 });
 
 describe('when registering an authUserId', () => {
-  let Id: AuthUserIdObject; 
+  let Id: AuthUserIdObject;
   beforeEach(() => {
     Id = ok(adminAuthRegister('evan.xiong@unsw.edu.au', 'abcde12345', 'Evan', 'Xiong'));
   });
 
   test('return an error for a password that is not correct for the given email', () => {
     const wrongPassword = 'abcde12345' + 'a';
-    expect(adminAuthLogin('evan.xiong@unsw.edu.au', wrongPassword)).toStrictEqual({ error: expect.any(String)});
+    expect(adminAuthLogin('evan.xiong@unsw.edu.au', wrongPassword)).toStrictEqual({ error: expect.any(String) });
   });
 
   test('correctly returns their authUserId', () => {

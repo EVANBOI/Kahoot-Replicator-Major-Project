@@ -1,6 +1,6 @@
 import { adminAuthRegister, adminUserDetails } from '../auth';
 import { clear } from '../other';
-import { AuthUserIdObject, User } from '../types';
+import { AuthUserIdObject } from '../types';
 // Clear the state before each test
 beforeEach(() => {
   clear();

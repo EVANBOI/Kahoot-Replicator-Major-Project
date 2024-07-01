@@ -36,7 +36,7 @@ beforeEach(() => {
 
 describe('error tests', () => {
     beforeEach(() => {
-        const res = request(
+        const userRegiserRes = request(
             'POST', 
             SERVER_URL + '/v1/admin/auth/register', 
             {
@@ -49,7 +49,7 @@ describe('error tests', () => {
                 timeout: TIMEOUT_MS
             }
         )  
-        VALID_TOKEN = JSON.parse(res.body.toString()).authUserId;
+        VALID_TOKEN = JSON.parse(userRegiserRes.body.toString()).authUserId;
     })
 
 
@@ -73,6 +73,20 @@ describe('error tests', () => {
     });
     
     test('Email is currently used by another user', () => {
+        const userRegiserRes = request(
+            'POST', 
+            SERVER_URL + '/v1/admin/auth/register', 
+            {
+                json: {
+                    email: VALID_INPUTS_2.EMAIL,
+                    password: VALID_INPUTS_2.PASSWORD,
+                    nameFirst: VALID_INPUTS_2.FIRSTNAME,
+                    nameLast: VALID_INPUTS_2.LASTNAME
+                },
+                timeout: TIMEOUT_MS
+            }
+        )  
+
         adminAuthRegister(
             VALID_INPUTS_2.EMAIL, 
             VALID_INPUTS_2.PASSWORD, 

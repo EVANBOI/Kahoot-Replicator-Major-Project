@@ -1,6 +1,6 @@
 import { getData, setData } from './dataStore';
 import { findQuizWithId, findUserWithId } from './helpers';
-import { Data, EmptyObject, ErrorMessage, Quiz, QuizCreateDetails, QuizInfoResult, QuizListDetails, User } from './types';
+import { Data, EmptyObject, ErrorMessage, Quiz, QuizCreateDetails, QuizInfoResult, QuizListDetails, QuizRemoveResult, User } from './types';
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
  *
@@ -83,7 +83,7 @@ export function adminQuizCreate (
  * @returns {} - empty object
  * @returns {{error: string}} an error
  */
-export function adminQuizRemove (authUserId, quizId) {
+export function adminQuizRemove (authUserId: number, quizId: number): QuizRemoveResult {
   const store = getData();
   const user = findUserWithId(authUserId);
 
@@ -98,7 +98,7 @@ export function adminQuizRemove (authUserId, quizId) {
   }
 
   if (quiz.creatorId !== authUserId) {
-    return { error: `Quiz with ID ${quizId} is not owned by ${authUserId} (actual owner: ${quiz.userId})` };
+    return { error: `Quiz with ID ${quizId} is not owned by ${authUserId} (actual owner: ${quiz.creatorId})` };
   }
 
   const quizIndex = store.quizzes.findIndex(quiz => quiz.quizId === quizId);

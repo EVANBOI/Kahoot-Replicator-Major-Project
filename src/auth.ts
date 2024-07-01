@@ -1,7 +1,7 @@
 import { getData, setData } from './dataStore';
 import validator from 'validator';
 import { findUserWithId } from './helpers';
-import { Data, User, UserRegistrationResult, PasswordUpdateResult, UserUpdateResult } from './types';
+import { Data, User, UserRegistrationResult, PasswordUpdateResult, UserUpdateResult, UserdetailsResults, Userdetails } from './types';
 /**
  * Given an admin user's details, creates an account for them.
  *
@@ -156,7 +156,7 @@ export function adminAuthLogin (
  *               numFailedPasswordsSinceLastLogin: number}}}
  */
 
-function adminUserDetails (authUserId) {
+function adminUserDetails (authUserId: number): Userdetails{
   const user = findUserWithId(authUserId);
   if (!user) {
     return { error: 'AuthUserId is not a valid user.' };
@@ -173,6 +173,7 @@ function adminUserDetails (authUserId) {
         }
   };
 }
+
 export { adminUserDetails };
 /**
  * Given details relating to a password change, update the password of a logged in user.

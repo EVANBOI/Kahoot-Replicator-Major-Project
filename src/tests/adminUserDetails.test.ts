@@ -1,6 +1,6 @@
-import { adminAuthRegister, adminUserDetails } from '../auth.js';
-import { clear } from '../other.js';
-
+import { adminAuthRegister, adminUserDetails } from '../auth';
+import { clear } from '../other';
+import { AuthUserIdObject, User } from '../types';
 // Clear the state before each test
 beforeEach(() => {
   clear();
@@ -8,17 +8,9 @@ beforeEach(() => {
 
 test('should return user details for a valid authUserId', (): void => {
   // Register a user to set up the initial state
-  const registerResponse = adminAuthRegister('test.email@domain.com', 'password123', 'Hayden', 'Smith') as { authUserId: number };
+  const registerResponse = adminAuthRegister('test.email@domain.com', 'password123', 'Hayden', 'Smith') as AuthUserIdObject;
   const authUserId: number = registerResponse.authUserId;
-  const result = adminUserDetails(authUserId) as {
-    user: {
-      userId: number;
-      name: string;
-      email: string;
-      numSuccessfulLogins: number;
-      numFailedPasswordsSinceLastLogin: number;
-    }
-  };
+  const result = adminUserDetails(authUserId);
 
   expect(result).toEqual({
     user: {

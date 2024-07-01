@@ -11,7 +11,13 @@ export type User = {
     numFailedPasswordsSinceLastLogin: number,
     passwordUsedThisYear: string[]
 }
-
+export type UserdetailsResults = {
+    userId: number,
+    name: string,
+    email: string,
+    numSuccessfulLogins: number,
+    numFailedPasswordsSinceLastLogin: number,
+}
 export type Quiz = {
     creatorId: number,
     quizId: number,
@@ -58,3 +64,7 @@ export type QuizInfoResult = ErrorMessage | {
 export type QuizCreateDetails = ErrorMessage | QuizIdObject
 
 export type PasswordUpdateResult = EmptyObject | ErrorMessage;
+
+export type QuizRemoveResult = EmptyObject | ErrorMessage;
+
+export type Userdetails = ErrorMessage | {user: UserdetailsResults}

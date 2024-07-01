@@ -1,7 +1,8 @@
-import { clear } from '../other.js';
-import { adminAuthRegister } from '../auth.js';
-import { adminQuizCreate, adminQuizNameUpdate, adminQuizInfo } from '../quiz.js';
+import { clear } from '../other';
+import { adminAuthRegister } from '../auth';
+import { adminQuizCreate, adminQuizNameUpdate, adminQuizInfo } from '../quiz';
 import { AuthUserIdObject, QuizIdObject, ErrorMessage, QuizInfoResult } from '../types';
+import { ok } from '../helpers';
 
 let authUserId: number;
 let quizId: number;
@@ -63,7 +64,7 @@ describe('adminQuizNameUpdate tests', () => {
 
   test('Successful quiz name update - functionality', () => {
     adminQuizNameUpdate(authUserId, quizId, 'New Quiz Name');
-    const updatedQuiz = adminQuizInfo(authUserId, quizId) as QuizInfoResult;
+    const updatedQuiz = ok(adminQuizInfo(authUserId, quizId));
     expect(updatedQuiz.name).toEqual('New Quiz Name');
   });
 });

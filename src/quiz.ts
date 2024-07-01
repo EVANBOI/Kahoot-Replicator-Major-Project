@@ -151,7 +151,7 @@ export function adminQuizInfo (authUserId: number, quizId: number): QuizInfoResu
  * @returns {} - empty object
  * @returns {{error: string}} an error
  */
-export function adminQuizNameUpdate(authUserId, quizId, name) {
+export function adminQuizNameUpdate(authUserId: number, quizId: number, name: string): ErrorMessage | EmptyObject {
   const database = getData();
   const user = database.users.find(user => user.userId === authUserId);
   const quiz = database.quizzes.find(quiz => quiz.quizId === quizId);
@@ -194,7 +194,7 @@ export function adminQuizNameUpdate(authUserId, quizId, name) {
 export function adminQuizDescriptionUpdate (
   authUserId: number,
   quizId: number,
-  description: string): EmptyObject {
+  description: string): EmptyObject | ErrorMessage {
   const database = getData();
   const validUser = database.users.find(user => user.userId === authUserId);
   const validQuizId = database.quizzes.find(quiz => quiz.quizId === quizId);

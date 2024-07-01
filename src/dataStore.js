@@ -31,4 +31,3 @@ export function getData() {
 export function setData(newData) {
   data = newData;
 }
-

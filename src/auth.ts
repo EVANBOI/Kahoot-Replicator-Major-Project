@@ -210,6 +210,8 @@ export function adminUserPasswordUpdate(authUserId: number, oldPassword: string,
   if (user.passwordUsedThisYear.find(pw => pw === newPassword)) {
     return { error: 'New Password has already been used before by this user' };
   }
-
+  user.passwordUsedThisYear.push(oldPassword); 
+  user.password = newPassword; 
+  setData(dataBase); 
   return {};
 }

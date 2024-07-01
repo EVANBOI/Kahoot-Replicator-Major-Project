@@ -5,9 +5,6 @@ import {
   adminQuizDescriptionUpdate,
   adminQuizInfo
 } from '../quiz';
-export function ok<T>(item: T | { error: string }): T {
-  return item as T;
-}
 
 const ERROR = { error: expect.any(String) };
 

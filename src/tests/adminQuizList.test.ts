@@ -1,7 +1,7 @@
 import { adminAuthRegister } from '../auth';
 import { adminQuizList, adminQuizCreate } from '../quiz';
 import { clear } from '../other';
-import { ok } from './adminQuizDescriptionUpdate.test';
+import { ok } from '../helpers';
 const ERROR = { error: expect.any(String) };
 
 beforeEach(() => {

@@ -7,3 +7,7 @@ export function findUserWithId(authUserId: number) {
 export function findQuizWithId(quizId: number) {
   return getData().quizzes.find(q => q.quizId === quizId);
 }
+
+export function ok<T>(item: T | { error: string }): T {
+  return item as T;
+}

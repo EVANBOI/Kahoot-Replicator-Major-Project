@@ -1,6 +1,7 @@
 import { clear } from '../other';
 import { adminUserPasswordUpdate, adminAuthRegister, adminAuthLogin } from '../auth';
 import { PasswordUpdateResult } from '../types';
+import { AuthUserIdObject } from '../types';
 
 const VALID_NEW_PASSWORD = 'newPassword123';
 const SHORT_PASSWORD = 'short';
@@ -15,7 +16,7 @@ beforeEach(() => {
 
 describe('adminUserPasswordUpdate tests', () => {
   beforeEach(() => {
-    const user = adminAuthRegister('chang.li@unsw.edu.au', 'oldPassword1', 'Chang', 'Li');
+    const user = adminAuthRegister('chang.li@unsw.edu.au', 'oldPassword1', 'Chang', 'Li') as AuthUserIdObject;
     userId = user.authUserId;
   });
 
@@ -48,7 +49,7 @@ describe('adminUserPasswordUpdate tests', () => {
   test('New password has already been used - check data store', () => {
     adminUserPasswordUpdate(userId, 'oldPassword1', VALID_NEW_PASSWORD);
     adminUserPasswordUpdate(userId, VALID_NEW_PASSWORD, 'anotherNewPassword123');
-    const loginResult = adminAuthLogin('chang.li@unsw.edu.au', 'anotherNewPassword123');
+    const loginResult = adminAuthLogin('chang.li@unsw.edu.au', 'anotherNewPassword123') as AuthUserIdObject;
     expect(loginResult.authUserId).toEqual(userId);
   });
 

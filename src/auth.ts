@@ -121,10 +121,10 @@ export function adminUserDetailsUpdate (
 export function adminAuthLogin (
   email : string,
   password: string): UserRegistrationResult {
-  const dataBase: Data = getData();
+  const dataBase = getData();
 
-  const validEmail: User = dataBase.users.find(user => user.email === email);
-  const correctPassword: User = dataBase.users.find(user =>
+  const validEmail = dataBase.users.find(user => user.email === email);
+  const correctPassword = dataBase.users.find(user =>
     user.email === email &&
         user.password === password);
   if (!validEmail) { // if validEmail is undefined, the condition is true

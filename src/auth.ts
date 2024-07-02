@@ -1,6 +1,6 @@
 import { getData, setData } from './dataStore';
 import validator from 'validator';
-import { findUserWithId } from './helpers';
+import { findUserWithId, findUserBySessionId } from './helpers';
 import { Data, User, UserRegistrationResult, PasswordUpdateResult, UserUpdateResult, Userdetails } from './types';
 import ShortUniqueId from 'short-unique-id';
 const uid = new ShortUniqueId({ dictionary: 'number' });
@@ -70,23 +70,26 @@ export function adminAuthRegister (
  * @returns {} - empty object
  */
 export function adminUserDetailsUpdate (
-  authUserId: number,
+  sessionId: number,
   email: string,
   nameFirst: string,
   nameLast: string
 ): UserUpdateResult {
   const dataBase = getData();
 
-  const person2 = dataBase.users.find(person => person.userId === authUserId);
+  const person2 = findUserBySessionId(sessionId);
   if (!person2) {
-    return { error: 'UserId provided is invalid' };
+    return { error: 'sessionId provided is invalid' };
   }
 
-  const person = dataBase.users.find(person => person.email === email);
   // to cover the case when we do not make change of the email
   // (the update email === original email)
-  if (person && person.userId !== authUserId) {
-    return { error: 'Email address is used by another user.' };
+  const person = dataBase.users.find(person => person.email === email);
+  if (person) {
+    const isCorrectOwner = person.token.find(token => token.sessionId === sessionId);
+    if (!isCorrectOwner) {
+       return { error: 'Email address is used by another user.' };
+    }
   }
 
   const nameRange = /^[a-zA-Z-' ]*$/;

@@ -62,6 +62,10 @@ export type QuizInfoResult = ErrorMessage | {
     description: string
 }
 
+export type SessionIdObject = {
+    sessionId: number
+  };
+
 export type QuizCreateDetails = ErrorMessage | QuizIdObject
 
 export type PasswordUpdateResult = EmptyObject | ErrorMessage;
@@ -69,3 +73,5 @@ export type PasswordUpdateResult = EmptyObject | ErrorMessage;
 export type QuizRemoveResult = EmptyObject | ErrorMessage;
 
 export type Userdetails = ErrorMessage | {user: UserdetailsResults}
+
+export type QuizNameUpdateResult = EmptyObject | ErrorMessage;

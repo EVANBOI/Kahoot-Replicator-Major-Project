@@ -1,6 +1,6 @@
 import { getData, setData } from './dataStore';
 import { findQuizWithId, findUserWithId, findUserBySessionId } from './helpers';
-import { Data, EmptyObject, ErrorMessage, Quiz, QuizCreateDetails, QuizInfoResult, QuizListDetails, QuizRemoveResult, User } from './types';
+import { Data, EmptyObject, ErrorMessage, Quiz, QuizCreateDetails, QuizInfoResult, QuizListDetails, QuizRemoveResult, QuizNameUpdateResult,User } from './types';
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
  *
@@ -151,15 +151,16 @@ export function adminQuizInfo (sessionId: number, quizId: number): QuizInfoResul
  * @returns {} - empty object
  * @returns {{error: string}} an error
  */
-export function adminQuizNameUpdate(authUserId: number, quizId: number, name: string): EmptyObject | ErrorMessage {
+export function adminQuizNameUpdate(sessionId: number, quizId: number, name: string): EmptyObject | ErrorMessage {
+  const user = findUserBySessionId(sessionId);
+  if(!user){
+    return {error :'sessionId is not valid.'};
+  }
+  const authUserId = user.userId;
   const database: Data = getData();
-  const user: User | undefined = database.users.find(user => user.userId === authUserId);
   const quiz: Quiz | undefined = database.quizzes.find(quiz => quiz.quizId === quizId);
 
   const namePattern = /^[a-zA-Z0-9 ]+$/;
-  if (!user) {
-    return { error: 'AuthUserId is not a valid user.' };
-  }
   if (!quiz) {
     return { error: 'Quiz ID does not refer to a valid quiz.' };
   }
@@ -181,6 +182,7 @@ export function adminQuizNameUpdate(authUserId: number, quizId: number, name: st
   setData(database);
   return {};
 }
+
 
 /**
  * Update the description of the relevant quiz.

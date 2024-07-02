@@ -4,7 +4,7 @@ import { adminQuizCreate, adminQuizNameUpdate, adminQuizInfo } from '../quiz';
 import { SessionIdObject, QuizIdObject, ErrorMessage } from '../types';
 import { ok } from '../helpers';
 
-let sessionId: number;
+let sessionId: string;
 let quizId: number;
 
 beforeEach(() => {
@@ -20,7 +20,7 @@ describe('adminQuizNameUpdate tests', () => {
   });
 
   test('Invalid session ID', () => {
-    const result = adminQuizNameUpdate(sessionId + 42, quizId, 'New Quiz Name') as ErrorMessage;
+    const result = adminQuizNameUpdate(sessionId + 'invalid', quizId, 'New Quiz Name') as ErrorMessage;
     expect(result).toEqual({ error: 'sessionId is not valid.' });
   });
 

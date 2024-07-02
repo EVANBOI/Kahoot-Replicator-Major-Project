@@ -155,7 +155,7 @@ export function adminQuizInfo (sessionId: string, quizId: number): QuizInfoResul
 export function adminQuizNameUpdate(sessionId: string, quizId: number, name: string): EmptyObject | ErrorMessage {
   const user = findUserBySessionId(sessionId);
   if(!user){
-    return {error :'sessionId is not valid.'};
+    return { error :'sessionId is not valid.' };
   }
   const authUserId = user.userId;
   const database: Data = getData();

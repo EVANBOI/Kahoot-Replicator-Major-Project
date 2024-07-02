@@ -45,7 +45,7 @@ export type ClearResult = EmptyObject;
 
 export type UserUpdateResult = EmptyObject | ErrorMessage;
 
-export type UserRegistrationResult = ErrorMessage | SessionId
+export type UserRegistrationResult = ErrorMessage | SessionId;
 
 export type QuizListDetails = ErrorMessage | {
     quizzes: {
@@ -63,7 +63,7 @@ export type QuizInfoResult = ErrorMessage | {
 }
 
 export type SessionIdObject = {
-    sessionId: number
+    sessionId: string
   };
 
 export type QuizCreateDetails = ErrorMessage | QuizIdObject

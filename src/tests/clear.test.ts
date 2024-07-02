@@ -1,7 +1,7 @@
 import { clear } from '../other';
 import { adminAuthRegister, adminUserDetails } from '../auth';
 import { adminQuizCreate, adminQuizInfo } from '../quiz';
-import { AuthUserIdObject, QuizIdObject } from '../types';
+import { QuizIdObject, SessionId } from '../types';
 
 const VALID_USER = {
   EMAIL: 'admin@email.com',
@@ -30,10 +30,10 @@ describe('Function clear tests', () => {
       VALID_USER.PASSWORD,
       VALID_USER.FIRSTNAME,
       VALID_USER.LASTNAME
-    ) as AuthUserIdObject;
-    const VALID_USER_ID = register.authUserId;
+    ) as SessionId;
+    const VALID_TOKEN = register.sessionId;
     clear();
-    expect(adminUserDetails(VALID_USER_ID)).toStrictEqual(ERROR);
+    expect(adminUserDetails(VALID_TOKEN)).toStrictEqual(ERROR);
   });
 
   test('correct clear the quiz store', () => {
@@ -42,16 +42,16 @@ describe('Function clear tests', () => {
       VALID_USER.PASSWORD,
       VALID_USER.FIRSTNAME,
       VALID_USER.LASTNAME
-    ) as AuthUserIdObject;
-    const VALID_USER_ID = register.authUserId;
+    ) as SessionId;
+    const VALID_TOKEN = register.sessionId;
     const create = adminQuizCreate(
-      VALID_USER_ID,
+      VALID_TOKEN,
       VALID_QUIZ.NAME,
       VALID_QUIZ.DESCRIPTION
     ) as QuizIdObject;
     const VALID_QUIZ_ID = create.quizId;
 
     clear();
-    expect(adminQuizInfo(VALID_USER_ID, VALID_QUIZ_ID)).toStrictEqual(ERROR);
+    expect(adminQuizInfo(VALID_TOKEN, VALID_QUIZ_ID)).toStrictEqual(ERROR);
   });
 });

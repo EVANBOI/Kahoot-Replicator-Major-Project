@@ -184,12 +184,12 @@ export { adminUserDetails };
  * @returns {} - empty object
  */
 
-export function adminUserPasswordUpdate(authUserId: number, oldPassword: string, newPassword: string): PasswordUpdateResult {
+export function adminUserPasswordUpdate(sessionId: string, oldPassword: string, newPassword: string): PasswordUpdateResult {
   const dataBase: Data = getData();
-  const user: User | undefined = dataBase.users.find(user => user.userId === authUserId);
+  const user = findUserBySessionId(sessionId);
 
   if (!user) {
-    return { error: 'AuthUserId is not a valid user.' };
+    return { error: 'sessionId is not valid.' };
   }
   if (user.password !== oldPassword) {
     return { error: 'Old Password is not the correct old password' };

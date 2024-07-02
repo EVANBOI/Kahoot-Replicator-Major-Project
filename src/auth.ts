@@ -2,6 +2,8 @@ import { getData, setData } from './dataStore';
 import validator from 'validator';
 import { findUserWithId } from './helpers';
 import { Data, User, UserRegistrationResult, PasswordUpdateResult, UserUpdateResult, Userdetails } from './types';
+import ShortUniqueId from 'short-unique-id';
+const uid = new ShortUniqueId({ dictionary: 'number' });
 /**
  * Given an admin user's details, creates an account for them.
  *
@@ -12,7 +14,6 @@ import { Data, User, UserRegistrationResult, PasswordUpdateResult, UserUpdateRes
  * @returns {{authUserId: number}}
  * @returns {{error: string}} an error
  */
-
 export function adminAuthRegister (
   email: string,
   password: string,
@@ -26,7 +27,7 @@ export function adminAuthRegister (
   const nameRange = /^[a-zA-Z-' ]*$/;
   const passwordLetterRange = /^[a-zA-Z]/;
   const passwordNumberRange = /\d/;
-  if (validator.isEmail(email) === false) {
+  if (!validator.isEmail(email)) {
     return { error: 'Email is not a valid email' };
   } else if (!nameRange.test(nameFirst)) {
     return { error: 'NameFirst contains invalid characters' };
@@ -43,8 +44,10 @@ export function adminAuthRegister (
   }
 
   const id = dataBase.users.length + 1;
+  const sessionId = { sessionId: parseInt(uid.rnd()) };
   dataBase.users.push({
     userId: id,
+    token:[sessionId],
     email: email,
     password: password,
     name: `${nameFirst} ${nameLast}`,
@@ -53,9 +56,7 @@ export function adminAuthRegister (
     passwordUsedThisYear: []
   });
   setData(dataBase);
-  return {
-    authUserId: id
-  };
+  return sessionId;
 }
 
 /**
@@ -101,14 +102,11 @@ export function adminUserDetailsUpdate (
     return { error: 'NameLast is less than 2 characters or more than 20 characters.' };
   }
 
-  const user = dataBase.users.find(user => user.userId === authUserId);
-  user.email = email;
-  user.name = `${nameFirst} ${nameLast}`;
+  person2.email = email;
+  person2.name = `${nameFirst} ${nameLast}`;
   setData(dataBase);
 
-  return {
-
-  };
+  return {};
 }
 
 /**
@@ -137,11 +135,10 @@ export function adminAuthLogin (
 
   correctPassword.numFailedPasswordsSinceLastLogin = 0;
   correctPassword.numSuccessfulLogins += 1;
+  const sessionId = { sessionId: parseInt(uid.rnd()) };
   setData(dataBase);
 
-  return {
-    authUserId: correctPassword.userId
-  };
+  return sessionId;
 }
 
 /**

@@ -1,9 +1,10 @@
 export type EmptyObject = Record<string, never>;
 
 export type ErrorMessage = { error: string };
-
+export type SessionId = { sessionId: number }
 export type User = {
     userId: number,
+    token: SessionId[],
     email: string,
     password: string,
     name: string,
@@ -37,7 +38,7 @@ export type QuizIdObject = {
 }
 
 export type AuthUserIdObject = {
-    authUserId: number
+    sessionId: number
 }
 
 export type ClearResult = EmptyObject;

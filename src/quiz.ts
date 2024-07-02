@@ -1,21 +1,22 @@
 import { getData, setData } from './dataStore';
-import { findQuizWithId, findUserWithId } from './helpers';
+import { findQuizWithId, findUserWithId, findUserWithToken } from './helpers';
 import { Data, EmptyObject, ErrorMessage, Quiz, QuizCreateDetails, QuizInfoResult, QuizListDetails, QuizRemoveResult, User } from './types';
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
  *
- * @param {number} authUserId - unique id of a user
+ * @param {number} sessionId - unique id of a session
  * @returns {{quizzes: {quizId: number, name: string}}} - an object containing identifiers of all quizzes
  * @returns {{error: string}} an error
  */
 
-export function adminQuizList (authUserId: number): QuizListDetails {
+export function adminQuizList (sessionId: string): QuizListDetails {
   const database = getData();
-  const userExists = database.users.find(user => user.userId === authUserId);
-  if (!userExists) {
+  const user = findUserWithToken(sessionId);
+  if (!user) {
     return { error: 'AuthUserId is not a valid user.' };
   }
-  const quizzes = database.quizzes.filter(quiz => quiz.creatorId === authUserId);
+  const creatorId = user.userId;
+  const quizzes = database.quizzes.filter(quiz => quiz.creatorId === creatorId);
   const details = quizzes.map(quiz => ({
     quizId: quiz.quizId,
     name: quiz.name

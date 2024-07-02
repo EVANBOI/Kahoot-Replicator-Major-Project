@@ -44,7 +44,7 @@ export function adminAuthRegister (
   }
 
   const id = dataBase.users.length + 1;
-  const sessionId = { sessionId: parseInt(uid.rnd()) };
+  const sessionId = { sessionId: uid.rnd() };
   dataBase.users.push({
     userId: id,
     token:[sessionId],
@@ -135,7 +135,7 @@ export function adminAuthLogin (
 
   correctPassword.numFailedPasswordsSinceLastLogin = 0;
   correctPassword.numSuccessfulLogins += 1;
-  const sessionId = { sessionId: parseInt(uid.rnd()) };
+  const sessionId = { sessionId: uid.rnd() };
   setData(dataBase);
 
   return sessionId;

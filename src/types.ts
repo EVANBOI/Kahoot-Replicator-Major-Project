@@ -1,7 +1,7 @@
 export type EmptyObject = Record<string, never>;
 
 export type ErrorMessage = { error: string };
-export type SessionId = { sessionId: number }
+export type SessionId = { sessionId: string }
 export type User = {
     userId: number,
     token: SessionId[],
@@ -38,14 +38,14 @@ export type QuizIdObject = {
 }
 
 export type AuthUserIdObject = {
-    sessionId: number
+    sessionId: string
 }
 
 export type ClearResult = EmptyObject;
 
 export type UserUpdateResult = EmptyObject | ErrorMessage;
 
-export type UserRegistrationResult = ErrorMessage | AuthUserIdObject
+export type UserRegistrationResult = ErrorMessage | SessionId
 
 export type QuizListDetails = ErrorMessage | {
     quizzes: {

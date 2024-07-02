@@ -1,5 +1,0 @@
-import { Data } from './types';
-export let DATA_STRUCTURE: Data = {
-    users: [],
-    quizzes: []
-  };

@@ -1,5 +1,6 @@
-import { adminAuthRegister, adminUserDetailsUpdate, adminUserDetails } from '../auth.js';
-import { clear } from '../other.js';
+import { adminAuthRegister, adminUserDetailsUpdate, adminUserDetails } from '../auth';
+import { clear } from '../other';
+import { AuthUserIdObject } from '../types';
 
 const VALID_INPUTS_1 = {
   EMAIL: 'admin@email.com',
@@ -20,7 +21,7 @@ const ERROR = {
 };
 
 const NEW_VALID_EMAIL = 'newValidEmail@gmail.com';
-let VALID_USERID1;
+let VALID_USERID1: number;
 
 beforeEach(() => {
   clear();
@@ -28,12 +29,13 @@ beforeEach(() => {
 
 describe('error tests', () => {
   beforeEach(() => {
-    VALID_USERID1 = adminAuthRegister(
+    const register = adminAuthRegister(
       VALID_INPUTS_1.EMAIL,
       VALID_INPUTS_1.PASSWORD,
       VALID_INPUTS_1.FIRSTNAME,
       VALID_INPUTS_1.LASTNAME
-    ).authUserId;
+    ) as AuthUserIdObject;
+    VALID_USERID1 = register.authUserId;
   });
 
   test('UserId is not a valid user', () => {
@@ -127,12 +129,13 @@ describe('error tests', () => {
 
 describe('Successful update', () => {
   beforeEach(() => {
-    VALID_USERID1 = adminAuthRegister(
+    const register = adminAuthRegister(
       VALID_INPUTS_1.EMAIL,
       VALID_INPUTS_1.PASSWORD,
       VALID_INPUTS_1.FIRSTNAME,
       VALID_INPUTS_1.LASTNAME
-    ).authUserId;
+    ) as AuthUserIdObject;
+    VALID_USERID1 = register.authUserId;
   });
 
   test('correct return value', () => {

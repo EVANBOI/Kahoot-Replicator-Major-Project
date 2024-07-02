@@ -1,5 +1,5 @@
-import { adminAuthRegister } from '../auth.js';
-import { clear } from '../other.js';
+import { adminAuthRegister } from '../auth';
+import { clear } from '../other';
 
 const REGISTRATED = { authUserId: expect.any(Number) };
 const ERROR = { error: expect.any(String) };

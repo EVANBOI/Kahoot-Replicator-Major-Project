@@ -1,6 +1,6 @@
-import { getData, setData } from './dataStore.js';
-import { findQuizWithId, findUserWithId } from './helpers.js';
-
+import { getData, setData } from './dataStore';
+import { findQuizWithId, findUserWithId } from './helpers';
+import { Data, EmptyObject, ErrorMessage, Quiz, QuizCreateDetails, QuizInfoResult, QuizListDetails, QuizRemoveResult, User } from './types';
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
  *
@@ -9,7 +9,7 @@ import { findQuizWithId, findUserWithId } from './helpers.js';
  * @returns {{error: string}} an error
  */
 
-export function adminQuizList (authUserId) {
+export function adminQuizList (authUserId: number): QuizListDetails {
   const database = getData();
   const userExists = database.users.find(user => user.userId === authUserId);
   if (!userExists) {
@@ -32,7 +32,10 @@ export function adminQuizList (authUserId) {
  * @returns {{quizId: number}}
  * @returns {{error: string}} an error
  */
-export function adminQuizCreate (authUserId, name, description) {
+export function adminQuizCreate (
+  authUserId: number,
+  name: string,
+  description: string): QuizCreateDetails {
   const database = getData();
   const validUser = database.users.find(user => user.userId === authUserId);
   const nameUsed = database.quizzes.find(quiz => quiz.name === name &&
@@ -80,7 +83,7 @@ export function adminQuizCreate (authUserId, name, description) {
  * @returns {} - empty object
  * @returns {{error: string}} an error
  */
-export function adminQuizRemove (authUserId, quizId) {
+export function adminQuizRemove (authUserId: number, quizId: number): QuizRemoveResult {
   const store = getData();
   const user = findUserWithId(authUserId);
 
@@ -95,7 +98,7 @@ export function adminQuizRemove (authUserId, quizId) {
   }
 
   if (quiz.creatorId !== authUserId) {
-    return { error: `Quiz with ID ${quizId} is not owned by ${authUserId} (actual owner: ${quiz.userId})` };
+    return { error: `Quiz with ID ${quizId} is not owned by ${authUserId} (actual owner: ${quiz.creatorId})` };
   }
 
   const quizIndex = store.quizzes.findIndex(quiz => quiz.quizId === quizId);
@@ -115,7 +118,8 @@ export function adminQuizRemove (authUserId, quizId) {
  *            timeLastEdited: number, description: string}}
  * @returns {{error: string}} an error
  */
-export function adminQuizInfo (authUserId, quizId) {
+
+export function adminQuizInfo (authUserId: number, quizId: number): QuizInfoResult {
   const user = findUserWithId(authUserId);
   const quiz = findQuizWithId(quizId);
   if (!user) {
@@ -147,10 +151,10 @@ export function adminQuizInfo (authUserId, quizId) {
  * @returns {} - empty object
  * @returns {{error: string}} an error
  */
-export function adminQuizNameUpdate(authUserId, quizId, name) {
-  const database = getData();
-  const user = database.users.find(user => user.userId === authUserId);
-  const quiz = database.quizzes.find(quiz => quiz.quizId === quizId);
+export function adminQuizNameUpdate(authUserId: number, quizId: number, name: string): EmptyObject | ErrorMessage {
+  const database: Data = getData();
+  const user: User | undefined = database.users.find(user => user.userId === authUserId);
+  const quiz: Quiz | undefined = database.quizzes.find(quiz => quiz.quizId === quizId);
 
   const namePattern = /^[a-zA-Z0-9 ]+$/;
   if (!user) {
@@ -175,9 +179,7 @@ export function adminQuizNameUpdate(authUserId, quizId, name) {
 
   quiz.name = name;
   setData(database);
-  return {
-
-  };
+  return {};
 }
 
 /**
@@ -189,7 +191,10 @@ export function adminQuizNameUpdate(authUserId, quizId, name) {
  * @returns {} - empty object
  * @returns {{error: string}} an error
  */
-export function adminQuizDescriptionUpdate (authUserId, quizId, description) {
+export function adminQuizDescriptionUpdate (
+  authUserId: number,
+  quizId: number,
+  description: string): EmptyObject | ErrorMessage {
   const database = getData();
   const validUser = database.users.find(user => user.userId === authUserId);
   const validQuizId = database.quizzes.find(quiz => quiz.quizId === quizId);
@@ -204,8 +209,7 @@ export function adminQuizDescriptionUpdate (authUserId, quizId, description) {
   }
 
   validQuizId.description = description;
+  validQuizId.timeLastEdited = Math.floor(Date.now() / 1000);
   setData(database);
-  return {
-
-  };
+  return {};
 }

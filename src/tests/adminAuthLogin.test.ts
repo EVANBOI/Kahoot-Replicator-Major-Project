@@ -1,5 +1,7 @@
-import { adminAuthRegister, adminAuthLogin } from '../auth.js';
-import { clear } from '../other.js';
+import { adminAuthRegister, adminAuthLogin } from '../auth';
+import { clear } from '../other';
+import { AuthUserIdObject } from '../types';
+import { ok } from '../helpers';
 
 beforeEach(() => {
   // Reset the state of our data so that each tests can run independently
@@ -11,9 +13,9 @@ test('return an error for a non-existent email address', () => {
 });
 
 describe('when registering an authUserId', () => {
-  let Id;
+  let Id: AuthUserIdObject;
   beforeEach(() => {
-    Id = adminAuthRegister('evan.xiong@unsw.edu.au', 'abcde12345', 'Evan', 'Xiong');
+    Id = ok(adminAuthRegister('evan.xiong@unsw.edu.au', 'abcde12345', 'Evan', 'Xiong'));
   });
 
   test('return an error for a password that is not correct for the given email', () => {
@@ -27,8 +29,16 @@ describe('when registering an authUserId', () => {
 });
 
 test('correctly returns two authuserIds', () => {
-  const Id1 = adminAuthRegister('evan.xiong@unsw.edu.au', 'abcde12345', 'Evan', 'Xiong');
-  const Id2 = adminAuthRegister('jessie.zhang@unsw.edu.au', 'qwerty67890', 'Jessie', 'Zhang');
+  const Id1: AuthUserIdObject = ok(adminAuthRegister('evan.xiong@unsw.edu.au', 'abcde12345', 'Evan', 'Xiong'));
+  const Id2: AuthUserIdObject = ok(adminAuthRegister('jessie.zhang@unsw.edu.au', 'qwerty67890', 'Jessie', 'Zhang'));
+  expect(adminAuthLogin('evan.xiong@unsw.edu.au', 'abcde12345')).toStrictEqual({ authUserId: Id1.authUserId });
+  expect(adminAuthLogin('jessie.zhang@unsw.edu.au', 'qwerty67890')).toStrictEqual({ authUserId: Id2.authUserId });
+  expect(Id1).not.toStrictEqual(expect(Id2));
+});
+
+test('correctly returns two authuserIds', () => {
+  const Id1: AuthUserIdObject = ok(adminAuthRegister('evan.xiong@unsw.edu.au', 'abcde12345', 'Evan', 'Xiong'));
+  const Id2: AuthUserIdObject = ok(adminAuthRegister('jessie.zhang@unsw.edu.au', 'qwerty67890', 'Jessie', 'Zhang'));
   expect(adminAuthLogin('evan.xiong@unsw.edu.au', 'abcde12345')).toStrictEqual({ authUserId: Id1.authUserId });
   expect(adminAuthLogin('jessie.zhang@unsw.edu.au', 'qwerty67890')).toStrictEqual({ authUserId: Id2.authUserId });
   expect(Id1).not.toStrictEqual(expect(Id2));

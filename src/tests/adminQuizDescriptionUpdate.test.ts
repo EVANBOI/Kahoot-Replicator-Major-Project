@@ -1,10 +1,10 @@
-import { clear } from '../other.js';
-import { adminAuthRegister } from '../auth.js';
+import { clear } from '../other';
+import { adminAuthRegister } from '../auth';
 import {
   adminQuizCreate,
   adminQuizDescriptionUpdate,
   adminQuizInfo
-} from '../quiz.js';
+} from '../quiz';
 
 const ERROR = { error: expect.any(String) };
 
@@ -54,9 +54,7 @@ beforeEach(() => {
 describe('Error cases', () => {
   describe('No users exists in database', () => {
     test('Invalid userId', () => {
-      expect(adminQuizDescriptionUpdate(VALID_INPUT.users.length + 1,
-        VALID_INPUT.quizzes.quizId,
-        VALID_INPUT.quizzes.description)).toStrictEqual(ERROR);
+      expect(adminQuizDescriptionUpdate(0, 1, 'there is no data in database')).toStrictEqual(ERROR);
     });
   });
   describe('users and quizzes exist', () => {
@@ -126,7 +124,7 @@ describe('Successful function run', () => {
     expect(adminQuizDescriptionUpdate(1, 1, 'changed')).toStrictEqual({ });
   });
 
-  test('Quiz  is updated once', () => {
+  test('Quiz is updated once', () => {
     adminQuizDescriptionUpdate(1, 1, 'changed');
     expect(adminQuizInfo(1, 1)).toStrictEqual({
       quizId: 1,
@@ -181,7 +179,6 @@ describe('Successful function run', () => {
     description1,
     description2
   }) => {
-    // The second time a quiz is updated
     adminQuizDescriptionUpdate(creatorId1, quizId1, description1);
     expect(adminQuizInfo(creatorId1, quizId1)).toStrictEqual({
       quizId: quizId1,
@@ -190,8 +187,6 @@ describe('Successful function run', () => {
       timeLastEdited: expect.any(Number),
       description: description1
     });
-
-    // The second time a quiz is updated
     adminQuizDescriptionUpdate(creatorId2, quizId2, description2);
     expect(adminQuizInfo(creatorId2, quizId2)).toStrictEqual({
       quizId: quizId2,

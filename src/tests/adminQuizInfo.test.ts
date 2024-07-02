@@ -1,7 +1,7 @@
 import { adminAuthRegister } from '../auth';
 import { adminQuizCreate, adminQuizInfo } from '../quiz';
 import { clear } from '../other';
-import { AuthUserIdObject, QuizIdObject } from '../types';
+import { QuizIdObject, SessionId } from '../types';
 
 const VALID_USER = {
   EMAIL: 'admin@email.com',
@@ -15,7 +15,7 @@ const VALID_QUIZ = {
   DESCRIPTION: 'ValidDescription'
 };
 
-let VALID_USER_ID: number;
+let VALID_TOKEN: number;
 let VALID_QUIZ_ID: number;
 
 const ERROR = {
@@ -33,29 +33,29 @@ describe('error tests', () => {
       VALID_USER.PASSWORD,
       VALID_USER.FIRSTNAME,
       VALID_USER.LASTNAME
-    ) as AuthUserIdObject;
-    VALID_USER_ID = register.authUserId;
+    ) as SessionId;
+    VALID_TOKEN = register.sessionId;
   });
 
   test('AuthUserId is not a valid user.', () => {
-    expect(adminQuizInfo(VALID_USER_ID + 1, VALID_QUIZ_ID)).toStrictEqual(ERROR);
+    expect(adminQuizInfo(VALID_TOKEN + 1, VALID_QUIZ_ID)).toStrictEqual(ERROR);
   });
 
   test('QuizId is not a valid quiz.', () => {
-    expect(adminQuizInfo(VALID_USER_ID, VALID_QUIZ_ID + 1)).toStrictEqual(ERROR);
+    expect(adminQuizInfo(VALID_TOKEN, VALID_QUIZ_ID + 1)).toStrictEqual(ERROR);
   });
 
   test('Visitor is not creator', () => {
-    const newQuiz = adminQuizCreate(VALID_USER_ID, VALID_QUIZ.NAME, VALID_QUIZ.DESCRIPTION) as QuizIdObject;
+    const newQuiz = adminQuizCreate(VALID_TOKEN, VALID_QUIZ.NAME, VALID_QUIZ.DESCRIPTION) as QuizIdObject;
     VALID_QUIZ_ID = newQuiz.quizId;
     const otherUser = adminAuthRegister(
       'validAnotherEmail@gmail.com',
       VALID_USER.PASSWORD,
       VALID_USER.FIRSTNAME,
       VALID_USER.LASTNAME
-    ) as AuthUserIdObject;
-    const ANOTHETR_USER_ID = otherUser.authUserId;
-    expect(adminQuizInfo(ANOTHETR_USER_ID, VALID_QUIZ_ID)).toStrictEqual(ERROR);
+    ) as SessionId;
+    const ANOTHETR_SESSION_ID = otherUser.sessionId;
+    expect(adminQuizInfo(ANOTHETR_SESSION_ID, VALID_QUIZ_ID)).toStrictEqual(ERROR);
   });
 });
 
@@ -66,10 +66,10 @@ describe('success tests', () => {
       VALID_USER.PASSWORD,
       VALID_USER.FIRSTNAME,
       VALID_USER.LASTNAME
-    ) as AuthUserIdObject;
-    VALID_USER_ID = User.authUserId;
+    ) as SessionId;
+    VALID_TOKEN = User.sessionId;
     const Quiz = adminQuizCreate(
-      VALID_USER_ID,
+      VALID_TOKEN,
       VALID_QUIZ.NAME,
       VALID_QUIZ.DESCRIPTION
     ) as QuizIdObject;
@@ -77,7 +77,7 @@ describe('success tests', () => {
   });
 
   test('correct return value', () => {
-    expect(adminQuizInfo(VALID_USER_ID, VALID_QUIZ_ID)).toStrictEqual({
+    expect(adminQuizInfo(VALID_TOKEN, VALID_QUIZ_ID)).toStrictEqual({
       quizId: VALID_QUIZ_ID,
       name: VALID_QUIZ.NAME,
       timeCreated: expect.any(Number),

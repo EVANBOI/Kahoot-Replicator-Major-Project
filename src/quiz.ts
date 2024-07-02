@@ -1,5 +1,5 @@
 import { getData, setData } from './dataStore';
-import { findQuizWithId, findUserWithId } from './helpers';
+import { findQuizWithId, findUserWithId, findUserBySessionId } from './helpers';
 import { Data, EmptyObject, ErrorMessage, Quiz, QuizCreateDetails, QuizInfoResult, QuizListDetails, QuizRemoveResult, User } from './types';
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
@@ -119,19 +119,19 @@ export function adminQuizRemove (authUserId: number, quizId: number): QuizRemove
  * @returns {{error: string}} an error
  */
 
-export function adminQuizInfo (authUserId: number, quizId: number): QuizInfoResult {
-  const user = findUserWithId(authUserId);
+export function adminQuizInfo (sessionId: number, quizId: number): QuizInfoResult {
+  const user = findUserBySessionId(sessionId);
   const quiz = findQuizWithId(quizId);
   if (!user) {
-    return { error: 'AuthUserId is not a valid user.' };
+    return { error: 'sessionId is not a valid.' };
   }
 
   if (!quiz) {
     return { error: `Quiz with ID '${quizId}' not found` };
   }
 
-  if (quiz.creatorId !== authUserId) {
-    return { error: `Quiz with ID ${quizId} is not owned by ${authUserId} (actual owner: ${quiz.creatorId})` };
+  if (quiz.creatorId !== user.userId) {
+    return { error: `Quiz with ID ${quizId} is not owned by ${user.userId} (actual owner: ${quiz.creatorId})` };
   }
 
   return {

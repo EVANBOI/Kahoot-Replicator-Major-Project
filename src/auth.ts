@@ -156,7 +156,7 @@ export function adminAuthLogin (
  *               numFailedPasswordsSinceLastLogin: number}}}
  */
 
-function adminUserDetails (authUserId: number): Userdetails {
+function adminUserDetails (authUserId: number): UserRegistrationResult {
   const user = findUserWithId(authUserId);
   if (!user) {
     return { error: 'AuthUserId is not a valid user.' };

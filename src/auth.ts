@@ -76,8 +76,7 @@ export function adminUserDetailsUpdate (
   nameLast: string
 ): UserUpdateResult {
   const dataBase = getData();
-
-  const person2 = findUserBySessionId(sessionId);
+  const person2 = findUserBySessionId(dataBase, sessionId);
   if (!person2) {
     return { error: 'sessionId provided is invalid' };
   }
@@ -186,7 +185,7 @@ export { adminUserDetails };
 
 export function adminUserPasswordUpdate(sessionId: string, oldPassword: string, newPassword: string): PasswordUpdateResult {
   const dataBase: Data = getData();
-  const user = findUserBySessionId(sessionId);
+  const user = findUserBySessionId(dataBase, sessionId);
 
   if (!user) {
     return { error: 'sessionId is not valid.' };

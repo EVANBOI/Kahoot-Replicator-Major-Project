@@ -15,7 +15,7 @@ const VALID_QUIZ = {
   DESCRIPTION: 'ValidDescription'
 };
 
-let VALID_TOKEN: number;
+let VALID_TOKEN: string;
 let VALID_QUIZ_ID: number;
 
 const ERROR = {

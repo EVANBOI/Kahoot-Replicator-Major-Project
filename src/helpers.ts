@@ -13,8 +13,8 @@ export function ok<T>(item: T | { error: string }): T {
   return item as T;
 }
 
-export function findUserBySessionId(sessionIdToFind: string): User | undefined {
-  return getData().users.find(user =>
+export function findUserBySessionId(dataBase: Data, sessionIdToFind: string): User | undefined {
+  return dataBase.users.find(user =>
       user.token.some(token => token.sessionId === sessionIdToFind)
   );
 }

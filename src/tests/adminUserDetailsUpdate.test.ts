@@ -21,7 +21,7 @@ const ERROR = {
 };
 
 const NEW_VALID_EMAIL = 'newValidEmail@gmail.com';
-let VALID_TOKEN: number;
+let VALID_TOKEN: string;
 
 beforeEach(() => {
   clear();
@@ -148,7 +148,11 @@ describe('Successful update', () => {
   });
 
   test('correct update First name with all valid letters', () => {
-    adminUserDetailsUpdate(VALID_TOKEN, VALID_INPUTS_1.EMAIL, "ValidFN-' ", VALID_INPUTS_1.LASTNAME);
+    expect(adminUserDetailsUpdate(
+      VALID_TOKEN, 
+      VALID_INPUTS_1.EMAIL, 
+      "ValidFN-' ", 
+      VALID_INPUTS_1.LASTNAME)).toStrictEqual({ });
     expect(adminUserDetails(VALID_TOKEN)).toStrictEqual({
       user: {
         userId: expect.any(Number),

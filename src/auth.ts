@@ -156,16 +156,18 @@ export function adminAuthLogin (
  *               numFailedPasswordsSinceLastLogin: number}}}
  */
 
-function adminUserDetails (authUserId: number): UserRegistrationResult {
-  const user = findUserWithId(authUserId);
+export function adminUserDetails (sessionId: string): Userdetails {
+  const user = findUserBySessionId(sessionId);
   if (!user) {
     return { error: 'AuthUserId is not a valid user.' };
   }
+
 
   return {
     user:
         {
           userId: user.userId,
+          token: [{sessionId}],
           name: user.name,
           email: user.email,
           numSuccessfulLogins: user.numSuccessfulLogins,
@@ -174,7 +176,7 @@ function adminUserDetails (authUserId: number): UserRegistrationResult {
   };
 }
 
-export { adminUserDetails };
+
 /**
  * Given details relating to a password change, update the password of a logged in user.
  *

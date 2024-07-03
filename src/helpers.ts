@@ -18,3 +18,10 @@ export function findUserBySessionId(sessionIdToFind: string): User | undefined {
       user.token.some(token => token.sessionId === sessionIdToFind)
   );
 }
+
+/*export function findQuizBySessionId(sessionIdToFind: string): User | undefined {
+  return getData().quizzes.find(q =>
+      q.token.some(token => token.sessionId === sessionIdToFind)
+  );
+}
+*/

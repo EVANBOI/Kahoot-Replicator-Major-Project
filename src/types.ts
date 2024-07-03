@@ -14,6 +14,7 @@ export type User = {
 }
 export type UserdetailsResults = {
     userId: number,
+    token: SessionId[],
     name: string,
     email: string,
     numSuccessfulLogins: number,

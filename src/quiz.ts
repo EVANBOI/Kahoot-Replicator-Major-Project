@@ -84,9 +84,9 @@ export function adminQuizCreate (
  * @returns {} - empty object
  * @returns {{error: string}} an error
  */
-export function adminQuizRemove (authUserId: number, quizId: number): QuizRemoveResult {
+export function adminQuizRemove (sessionId: string, quizId: number): QuizRemoveResult {
   const store = getData();
-  const user = findUserWithId(authUserId);
+  const user = findUserBySessionId(sessionId);
 
   if (!user) {
     return { error: 'AuthUserId is not a valid user.' };
@@ -98,8 +98,8 @@ export function adminQuizRemove (authUserId: number, quizId: number): QuizRemove
     return { error: `Quiz with ID '${quizId}' not found` };
   }
 
-  if (quiz.creatorId !== authUserId) {
-    return { error: `Quiz with ID ${quizId} is not owned by ${authUserId} (actual owner: ${quiz.creatorId})` };
+  if (quiz.creatorId !== user.userId) {
+    return { error: `Quiz with ID ${quizId} is not owned by ${user.userId} (actual owner: ${quiz.creatorId})` };
   }
 
   const quizIndex = store.quizzes.findIndex(quiz => quiz.quizId === quizId);

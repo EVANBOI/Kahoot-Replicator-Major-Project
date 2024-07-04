@@ -73,6 +73,12 @@ export type PasswordUpdateResult = EmptyObject | ErrorMessage;
 
 export type QuizRemoveResult = EmptyObject | ErrorMessage;
 
-export type Userdetails = ErrorMessage | {user: UserdetailsResults}
+export type Userdetails = ErrorMessage | {user: {
+    userId: number,
+    name: string,
+    email: string,
+    numSuccessfulLogins: number,
+    numFailedPasswordsSinceLastLogin: number,
+}}
 
 export type QuizNameUpdateResult = EmptyObject | ErrorMessage;

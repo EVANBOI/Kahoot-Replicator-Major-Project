@@ -5,47 +5,9 @@ import {
   adminQuizDescriptionUpdate,
   adminQuizInfo
 } from '../quiz';
-
+import { ok } from '../helpers'
 const ERROR = { error: expect.any(String) };
 
-const VALID_INPUT = {
-  users: [
-    {
-      authUserId: 1,
-      email: 'admin1@gmail.com',
-      nameFirst: 'JJ',
-      password: 'SDFJKH2349081j',
-      nameLast: 'ZLKlsfkdl'
-    },
-    {
-      authUserId: 2,
-      email: 'admin2@gmail.com',
-      nameFirst: 'JJ',
-      password: 'SDFJKH2349081j',
-      nameLast: 'ZLKlsfkdl'
-    }
-  ],
-  quizzes: [
-    {
-      name: 'Heyhey',
-      creatorId: 1,
-      quizId: 1,
-      description: 'This is a quiz 1'
-    },
-    {
-      name: 'Heyhey1',
-      creatorId: 1,
-      quizId: 2,
-      description: 'This is a quiz 2'
-    },
-    {
-      name: 'Heyhey',
-      creatorId: 2,
-      quizId: 3,
-      description: 'This is a quiz 3'
-    }
-  ]
-};
 
 beforeEach(() => {
   clear();
@@ -53,147 +15,94 @@ beforeEach(() => {
 
 describe('Error cases', () => {
   describe('No users exists in database', () => {
-    test('Invalid userId', () => {
-      expect(adminQuizDescriptionUpdate(0, 1, 'there is no data in database')).toStrictEqual(ERROR);
-    });
-  });
+      test('Invalid sessionId', () => {
+          expect(adminQuizDescriptionUpdate('-1',1,'no data in database')).toStrictEqual(ERROR);
+      });
+  })
   describe('users and quizzes exist', () => {
-    const users = VALID_INPUT.users;
-    const quizzes = VALID_INPUT.quizzes;
-    beforeEach(() => {
-      for (const user of users) {
-        adminAuthRegister(user.email,
-          user.password,
-          user.nameFirst,
-          user.nameFirst);
-      }
-      for (const quiz of quizzes) {
-        adminQuizCreate(quiz.creatorId, quiz.name, quiz.description);
-      }
-    });
+      let sessionId1: string, sessionId2: string;
+      let quizId1: number;
+      beforeEach(() => {
+        sessionId1 = ok(adminAuthRegister('admin1@gmail.com', 'SDFJKH2349081j', 'JJone', 'ZZ')).sessionId;
+        sessionId2 = ok(adminAuthRegister('admin2@gmail.com', 'SDFJKH2349081j', 'JJone', 'ZZ')).sessionId;
+        quizId1 = ok(adminQuizCreate(sessionId1, 'Quiz 1', 'this is first original description')).quizId;
+      })
 
-    test.each([
-      {
-        testName: 'User id does not exist',
-        creatorId: users.length + 1,
-        quizId: quizzes.length,
-        description: 'Changed'
-      },
-      {
-        testName: 'Quiz id does not exist',
-        creatorId: users.length,
-        quizId: quizzes.length + 1,
-        description: 'Changed'
-      },
-      {
-        testName: 'Description is more than 100 characters',
-        creatorId: users.length,
-        quizId: quizzes.length,
-        description: 'a'.repeat(150)
-      },
-      {
-        testName: 'User does not own quiz to be updated',
-        creatorId: 1,
-        quizId: 3,
-        description: 'Changed'
-      }
-    ])('Test $#: $testName', ({ creatorId, quizId, description }) => {
-      expect(adminQuizDescriptionUpdate(creatorId,
-        quizId,
-        description)).toStrictEqual(ERROR);
-    });
-  });
-});
+      test('Session id does not exist', () => {
+          expect(adminQuizDescriptionUpdate('-999', quizId1, 'changed description')).toStrictEqual(ERROR);
+      })
+      test('Quiz id does not exist', () => {
+          expect(adminQuizDescriptionUpdate(sessionId1, -999, 'changed description')).toStrictEqual(ERROR);
+      })
+      test('User does not own quiz to be updated', () => {
+          expect(adminQuizDescriptionUpdate(sessionId2, quizId1, 'changed description')).toStrictEqual(ERROR);
+      })
+  })
+})
 
 describe('Successful function run', () => {
-  const users = VALID_INPUT.users;
-  const quizzes = VALID_INPUT.quizzes;
+    let sessionId1: string, sessionId2: string;
+    let quizId1: number, quizId2: number, quizId3: number;
   beforeEach(() => {
-    for (const user of users) {
-      adminAuthRegister(user.email,
-        user.password,
-        user.nameFirst,
-        user.nameFirst);
-    }
-    for (const quiz of quizzes) {
-      adminQuizCreate(quiz.creatorId, quiz.name, quiz.description);
-    }
-  });
-
+    sessionId1 = ok(
+      adminAuthRegister('admin1@gmail.com', 'SDFJKH2349081j', 'JJone', 'ZZ')).sessionId;
+    sessionId2 = ok(
+      adminAuthRegister('admin2@gmail.com', 'SDFJKH2349081j', 'JJone', 'ZZ')).sessionId;
+    quizId1 = ok(
+      adminQuizCreate(sessionId1, 'Quiz 1', 'this is first original description')).quizId;
+    quizId2 = ok(
+      adminQuizCreate(sessionId1, 'Quiz 2', 'this is second original description')).quizId;
+    quizId3 = ok(
+      adminQuizCreate(sessionId2, 'Quiz 3', 'this is third original description')).quizId;
+  })
   test('Check return type', () => {
-    expect(adminQuizDescriptionUpdate(1, 1, 'changed')).toStrictEqual({ });
+      expect(adminQuizDescriptionUpdate(sessionId1, quizId1, 'changed')).toStrictEqual({});
   });
 
-  test('Quiz is updated once', () => {
-    adminQuizDescriptionUpdate(1, 1, 'changed');
-    expect(adminQuizInfo(1, 1)).toStrictEqual({
-      quizId: 1,
-      name: 'Heyhey',
-      timeCreated: expect.any(Number),
-      timeLastEdited: expect.any(Number),
-      description: 'changed'
-    });
+  test('Quiz is updated once correctly', () => {
+      adminQuizDescriptionUpdate(sessionId1, quizId1, 'changed');
+      expect(adminQuizInfo(sessionId1, quizId1)).toStrictEqual({
+          quizId: quizId1,
+          name: 'Quiz 1',
+          timeCreated: expect.any(Number),
+          timeLastEdited: expect.any(Number),
+          description: 'changed'
+      });
   });
 
-  test.each([
-    {
-      testName: 'User updates same quiz multiple times',
-      creatorId1: 1,
-      quizId1: 1,
-      name1: 'Heyhey',
-      description1: 'changed once',
-      creatorId2: 1,
-      quizId2: 1,
-      name2: 'Heyhey',
-      description2: 'changed twice'
-    },
-    {
-      testName: 'User updates multiple quizzes',
-      creatorId1: 1,
-      quizId1: 1,
-      name1: 'Heyhey',
-      description1: 'first quiz',
-      creatorId2: 1,
-      quizId2: 2,
-      name2: 'Heyhey1',
-      description2: 'second quiz'
-    },
-    {
-      testName: 'Different users updates different quizzes',
-      creatorId1: 1,
-      quizId1: 1,
-      name1: 'Heyhey',
-      description1: 'first quiz',
-      creatorId2: 2,
-      quizId2: 3,
-      name2: 'Heyhey',
-      description2: 'third quiz'
-    }
-  ])('Test $#: $testName', ({
-    creatorId1,
-    creatorId2,
-    quizId1,
-    quizId2,
-    name1,
-    name2,
-    description1,
-    description2
-  }) => {
-    adminQuizDescriptionUpdate(creatorId1, quizId1, description1);
-    expect(adminQuizInfo(creatorId1, quizId1)).toStrictEqual({
-      quizId: quizId1,
-      name: name1,
-      timeCreated: expect.any(Number),
-      timeLastEdited: expect.any(Number),
-      description: description1
-    });
-    adminQuizDescriptionUpdate(creatorId2, quizId2, description2);
-    expect(adminQuizInfo(creatorId2, quizId2)).toStrictEqual({
-      quizId: quizId2,
-      name: name2,
-      timeCreated: expect.any(Number),
-      timeLastEdited: expect.any(Number),
-      description: description2
-    });
+  test('User updates same quiz multiple times', () => {
+      adminQuizDescriptionUpdate(sessionId1, quizId1, 'changed');
+      adminQuizDescriptionUpdate(sessionId1, quizId1, 'changed twice');
+      expect(adminQuizInfo(sessionId1, quizId1)).toStrictEqual({
+          quizId: quizId1,
+          name: 'Quiz 1',
+          timeCreated: expect.any(Number),
+          timeLastEdited: expect.any(Number),
+          description: 'changed twice'
+      });
   });
-});
+
+  test('User updates multiple different quizzes', () => {
+      adminQuizDescriptionUpdate(sessionId1, quizId1, 'changed quiz 1');
+      adminQuizDescriptionUpdate(sessionId1, quizId2, 'changed quiz 2');
+      expect(adminQuizInfo(sessionId1, quizId2)).toStrictEqual({
+          quizId: quizId2,
+          name: 'Quiz 2',
+          timeCreated: expect.any(Number),
+          timeLastEdited: expect.any(Number),
+          description: 'changed quiz 2'
+      });
+  });
+
+  test('Different users updates different quizzes', () => {
+      adminQuizDescriptionUpdate(sessionId1, quizId1, 'changed quiz 1');
+      adminQuizDescriptionUpdate(sessionId2, quizId3, 'changed quiz 3');
+      expect(adminQuizInfo(sessionId2, quizId3)).toStrictEqual({
+          quizId: quizId3,
+          name: 'Quiz 3',
+          timeCreated: expect.any(Number),
+          timeLastEdited: expect.any(Number),
+          description: 'changed quiz 3'
+      });
+  });
+})

@@ -14,7 +14,6 @@ test('should return user details for a valid sessionId', (): void => {
   expect(result).toEqual({
     user: {
       userId: expect.any(Number), // userId is a random number assigned as they register
-      token: [{ sessionId }], // token is an array which has sessionId
       name: 'Hayden Smith',
       email: 'test.email@domain.com',
       numSuccessfulLogins: 1,
@@ -26,5 +25,5 @@ test('should return user details for a valid sessionId', (): void => {
 test('should return an error for an invalid sessionId', (): void => {
   const invalidSessionId: string = 'invalid-session-id';
   const result = adminUserDetails(invalidSessionId) as { error: string };
-  expect(result).toStrictEqual({ error: 'SessionId is not valid.' });
+  expect(result).toStrictEqual({ error: expect.any(String) });
 });

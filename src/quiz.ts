@@ -86,7 +86,7 @@ export function adminQuizCreate (
  */
 export function adminQuizRemove (sessionId: string, quizId: number): QuizRemoveResult {
   const store = getData();
-  const user = findUserBySessionId(sessionId);
+  const user = findUserBySessionId(store, sessionId);
 
   if (!user) {
     return { error: 'AuthUserId is not a valid user.' };

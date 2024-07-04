@@ -1,7 +1,7 @@
 import { adminAuthRegister } from '../auth';
 import { clear } from '../other';
 
-const REGISTRATED = { sessionId: expect.any(Number) };
+const REGISTRATED = { sessionId: expect.any(String) };
 const ERROR = { error: expect.any(String) };
 
 const VALID_INPUTS = {

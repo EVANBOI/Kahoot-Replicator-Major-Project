@@ -1,4 +1,4 @@
-import { getData, setData } from './dataStore';
+import { dataStore, getData, setData } from './dataStore';
 import { findQuizWithId, findUserWithId, findUserBySessionId } from './helpers';
 import { Data, EmptyObject, ErrorMessage, Quiz, QuizCreateDetails, QuizInfoResult, QuizListDetails, QuizRemoveResult, QuizNameUpdateResult,User } from './types';
 /**
@@ -11,7 +11,7 @@ import { Data, EmptyObject, ErrorMessage, Quiz, QuizCreateDetails, QuizInfoResul
 
 export function adminQuizList (sessionId: string): QuizListDetails {
   const database = getData();
-  const user = findUserBySessionId(sessionId);
+  const user = findUserBySessionId(database, sessionId);
   if (!user) {
     return { error: 'AuthUserId is not a valid user.' };
   }
@@ -27,23 +27,23 @@ export function adminQuizList (sessionId: string): QuizListDetails {
 /**
  * Given basic details about a new quiz, create one for the logged in user.
  *
- * @param {number} authUserId - unique id of a user
+ * @param {number} sessionId - unique id of a user
  * @param {string} name - name of the quiz
  * @param {string} description - description of a quiz
  * @returns {{quizId: number}}
  * @returns {{error: string}} an error
  */
 export function adminQuizCreate (
-  authUserId: number,
+  sessionId: string,
   name: string,
   description: string): QuizCreateDetails {
   const database = getData();
-  const validUser = database.users.find(user => user.userId === authUserId);
+  const user = findUserBySessionId(database, sessionId);
   const nameUsed = database.quizzes.find(quiz => quiz.name === name &&
-                                        quiz.creatorId === authUserId);
+                                        quiz.creatorId === user?.userId);
 
-  if (!validUser) {
-    return { error: 'authUserId is not a valid user' };
+  if (!user) {
+    return { error: 'Session ID is not valid' };
   } else if (nameUsed) {
     return { error: 'name has already been used by the user' };
   } else if (!/^[a-zA-Z0-9 ]+$/.test(name)) {
@@ -62,7 +62,7 @@ export function adminQuizCreate (
   const timeStamp2 = Math.floor(Date.now() / 1000);
   const id = database.quizzes.length + 1;
   database.quizzes.push({
-    creatorId: validUser.userId,
+    creatorId: user.userId,
     quizId: id,
     name: name,
     timeCreated: timeStamp1,
@@ -79,32 +79,29 @@ export function adminQuizCreate (
 /**
  * Given a particular quiz, permanently remove the quiz.
  *
- * @param {number} authUserId - unique id of a user
+ * @param {number} sessionId - unique id of a user
  * @param {number} quizId - unique id of a quiz
  * @returns {} - empty object
  * @returns {{error: string}} an error
  */
 export function adminQuizRemove (sessionId: string, quizId: number): QuizRemoveResult {
-  const store = getData();
-  const user = findUserBySessionId(sessionId);
+  const database = getData();
+  const user = findUserBySessionId(database, sessionId);
 
   if (!user) {
     return { error: 'AuthUserId is not a valid user.' };
   }
-
   const quiz = findQuizWithId(quizId);
-
   if (!quiz) {
     return { error: `Quiz with ID '${quizId}' not found` };
   }
-
   if (quiz.creatorId !== user.userId) {
     return { error: `Quiz with ID ${quizId} is not owned by ${user.userId} (actual owner: ${quiz.creatorId})` };
   }
 
-  const quizIndex = store.quizzes.findIndex(quiz => quiz.quizId === quizId);
-  store.quizzes.splice(quizIndex, 1);
-  setData(store);
+  const quizIndex = database.quizzes.findIndex(quiz => quiz.quizId === quizId);
+  database.quizzes.splice(quizIndex, 1);
+  setData(database);
   return {
 
   };
@@ -113,15 +110,15 @@ export function adminQuizRemove (sessionId: string, quizId: number): QuizRemoveR
 /**
  * Get all of the relevant information about the current quiz.
  *
- * @param {number} authUserId - unique id of a user
+ * @param {number} sessionId - unique id of a user
  * @param {number} quizId - unique id of a quiz
  * @returns {{quizId: number, name: string, timeCreated: number,
  *            timeLastEdited: number, description: string}}
  * @returns {{error: string}} an error
  */
-
 export function adminQuizInfo (sessionId: string, quizId: number): QuizInfoResult {
-  const user = findUserBySessionId(sessionId);
+  const database = getData();
+  const user = findUserBySessionId(database, sessionId);
   const quiz = findQuizWithId(quizId);
   if (!user) {
     return { error: 'sessionId is not a valid.' };
@@ -146,19 +143,19 @@ export function adminQuizInfo (sessionId: string, quizId: number): QuizInfoResul
 
 /**
  * Update the name of the relevant quiz.
- * @param {number} authUserId - unique id of a user
+ * @param {number} sessionId - unique session id of a user
  * @param {number} quizId - unique id of a quiz
  * @param {string} name- name of a user
  * @returns {} - empty object
  * @returns {{error: string}} an error
  */
 export function adminQuizNameUpdate(sessionId: string, quizId: number, name: string): EmptyObject | ErrorMessage {
-  const user = findUserBySessionId(sessionId);
+  const database = getData();
+  const user = findUserBySessionId(database, sessionId);
   if(!user){
-    return { error :'sessionId is not valid.' };
+    return {error :'sessionId is not valid.'};
   }
   const authUserId = user.userId;
-  const database: Data = getData();
   const quiz: Quiz | undefined = database.quizzes.find(quiz => quiz.quizId === quizId);
 
   const namePattern = /^[a-zA-Z0-9 ]+$/;
@@ -195,17 +192,17 @@ export function adminQuizNameUpdate(sessionId: string, quizId: number, name: str
  * @returns {{error: string}} an error
  */
 export function adminQuizDescriptionUpdate (
-  authUserId: number,
+  sessionId: string,
   quizId: number,
   description: string): EmptyObject | ErrorMessage {
   const database = getData();
-  const validUser = database.users.find(user => user.userId === authUserId);
+  const user = findUserBySessionId(database, sessionId);
   const validQuizId = database.quizzes.find(quiz => quiz.quizId === quizId);
-  if (!validUser) {
+  if (!user) {
     return { error: 'AuthUserId is not a valid user.' };
   } else if (!validQuizId) {
     return { error: 'Quiz ID does not refer to a valid quiz.' };
-  } else if (authUserId !== validQuizId.creatorId) {
+  } else if (user.userId !== validQuizId.creatorId) {
     return { error: 'Quiz ID does not refer to a quiz that this user owns.' };
   } else if (description.length > 100) {
     return { error: 'Description is more than 100 characters in length' };

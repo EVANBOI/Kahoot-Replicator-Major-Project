@@ -53,11 +53,17 @@ beforeEach(() => {
 
 describe('Error cases', () => {
   describe('No users exists in database', () => {
-    test('Invalid userId', () => {
-      expect(adminQuizDescriptionUpdate(0, 1, 'there is no data in database')).toStrictEqual(ERROR);
+    test('Invalid sessionId', () => {
+      expect(adminQuizDescriptionUpdate('-0', 1, 'there is no data in database')).toStrictEqual(ERROR);
     });
   });
   describe('users and quizzes exist', () => {
+    let user1Id: string;
+    let quiz1Id: number;
+    beforeEach(() => {
+      user1Id = ok(adminAuthRegister('admin@unsw.edu.au', 'Password1', 'JJ', 'HH')).sessionId;
+      quiz1Id = ok(adminQuizCreate(user1Id, 'Quiz', '')).quizId;
+    });
     const users = VALID_INPUT.users;
     const quizzes = VALID_INPUT.quizzes;
     beforeEach(() => {

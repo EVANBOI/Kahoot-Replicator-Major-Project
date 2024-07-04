@@ -156,7 +156,8 @@ export function adminAuthLogin (
  */
 
 export function adminUserDetails (sessionId: string): Userdetails {
-  const user = findUserBySessionId(sessionId);
+  const dataBase = getData();
+  const user = findUserBySessionId(dataBase, sessionId);
   if (!user) {
     return { error: 'AuthUserId is not a valid user.' };
   }

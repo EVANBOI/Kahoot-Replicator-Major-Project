@@ -1,4 +1,4 @@
-import { getData, setData } from './dataStore';
+import { dataStore, getData, setData } from './dataStore';
 import { findQuizWithId, findUserWithId, findUserBySessionId } from './helpers';
 import { Data, EmptyObject, ErrorMessage, Quiz, QuizCreateDetails, QuizInfoResult, QuizListDetails, QuizRemoveResult, QuizNameUpdateResult,User } from './types';
 /**
@@ -11,7 +11,7 @@ import { Data, EmptyObject, ErrorMessage, Quiz, QuizCreateDetails, QuizInfoResul
 
 export function adminQuizList (sessionId: string): QuizListDetails {
   const database = getData();
-  const user = findUserBySessionId(sessionId);
+  const user = findUserBySessionId(database, sessionId);
   if (!user) {
     return { error: 'AuthUserId is not a valid user.' };
   }
@@ -85,8 +85,9 @@ export function adminQuizCreate (
  * @returns {{error: string}} an error
  */
 export function adminQuizRemove (sessionId: string, quizId: number): QuizRemoveResult {
-  const store = getData();
-  const user = findUserBySessionId(sessionId);
+
+  const dataBase = getData();
+  const user = findUserBySessionId(dataBase, sessionId);
 
   if (!user) {
     return { error: 'AuthUserId is not a valid user.' };
@@ -102,9 +103,9 @@ export function adminQuizRemove (sessionId: string, quizId: number): QuizRemoveR
     return { error: `Quiz with ID ${quizId} is not owned by ${user.userId} (actual owner: ${quiz.creatorId})` };
   }
 
-  const quizIndex = store.quizzes.findIndex(quiz => quiz.quizId === quizId);
-  store.quizzes.splice(quizIndex, 1);
-  setData(store);
+  const quizIndex = dataBase.quizzes.findIndex(quiz => quiz.quizId === quizId);
+  dataBase.quizzes.splice(quizIndex, 1);
+  setData(dataBase);
   return {
 
   };

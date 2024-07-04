@@ -1,10 +1,10 @@
 import { clear } from '../other';
 import { adminAuthRegister } from '../auth';
 import { adminQuizCreate, adminQuizNameUpdate, adminQuizInfo } from '../quiz';
-import { AuthUserIdObject, QuizIdObject, ErrorMessage } from '../types';
+import { SessionIdObject, QuizIdObject, ErrorMessage } from '../types';
 import { ok } from '../helpers';
 
-let authUserId: number;
+let sessionId: string;
 let quizId: number;
 
 beforeEach(() => {
@@ -13,58 +13,58 @@ beforeEach(() => {
 
 describe('adminQuizNameUpdate tests', () => {
   beforeEach(() => {
-    const user = adminAuthRegister('changli@unsw.edu.au', 'Password123', 'Chang', 'Li') as AuthUserIdObject;
-    authUserId = user.authUserId;
-    const quiz = adminQuizCreate(authUserId, 'My Quiz', 'This is a description.') as QuizIdObject;
+    const user = adminAuthRegister('changli@unsw.edu.au', 'Password123', 'Chang', 'Li') as SessionIdObject;
+    sessionId = user.sessionId;
+    const quiz = adminQuizCreate(sessionId, 'My Quiz', 'This is a description.') as QuizIdObject;
     quizId = quiz.quizId;
   });
 
-  test('Invalid user ID', () => {
-    const result = adminQuizNameUpdate(999, quizId, 'New Quiz Name') as ErrorMessage;
-    expect(result).toEqual({ error: 'AuthUserId is not a valid user.' });
+  test('Invalid session ID', () => {
+    const result = adminQuizNameUpdate(sessionId + 'invalid', quizId, 'New Quiz Name') as ErrorMessage;
+    expect(result).toEqual({ error: 'sessionId is not valid.' });
   });
 
   test('Invalid quiz ID', () => {
-    const result = adminQuizNameUpdate(authUserId, 999, 'New Quiz Name') as ErrorMessage;
+    const result = adminQuizNameUpdate(sessionId, quizId + 42, 'New Quiz Name') as ErrorMessage;
     expect(result).toEqual({ error: 'Quiz ID does not refer to a valid quiz.' });
   });
 
   test('Quiz not owned by user', () => {
-    const anotherUser = adminAuthRegister('another.user@unsw.edu.au', 'Password123', 'Another', 'User') as AuthUserIdObject;
-    const result = adminQuizNameUpdate(anotherUser.authUserId, quizId, 'New Quiz Name') as ErrorMessage;
+    const anotherUser = adminAuthRegister('another.user@unsw.edu.au', 'Password123', 'Another', 'User') as SessionIdObject;
+    const result = adminQuizNameUpdate(anotherUser.sessionId, quizId, 'New Quiz Name') as ErrorMessage;
     expect(result).toEqual({ error: 'Quiz ID does not refer to a quiz that this user owns.' });
   });
 
   test('Name contains invalid characters', () => {
-    const result = adminQuizNameUpdate(authUserId, quizId, 'Invalid@Name') as ErrorMessage;
+    const result = adminQuizNameUpdate(sessionId, quizId, 'Invalid@Name') as ErrorMessage;
     expect(result).toEqual({ error: 'Name contains invalid characters. Valid characters are alphanumeric and spaces.' });
   });
 
   test('Name too short', () => {
-    const result = adminQuizNameUpdate(authUserId, quizId, 'AB') as ErrorMessage;
+    const result = adminQuizNameUpdate(sessionId, quizId, 'AB') as ErrorMessage;
     expect(result).toEqual({ error: 'Name is either less than 3 characters long or more than 30 characters long.' });
   });
 
   test('Name too long', () => {
     const longName = 'A'.repeat(31);
-    const result = adminQuizNameUpdate(authUserId, quizId, longName) as ErrorMessage;
+    const result = adminQuizNameUpdate(sessionId, quizId, longName) as ErrorMessage;
     expect(result).toEqual({ error: 'Name is either less than 3 characters long or more than 30 characters long.' });
   });
 
   test('Name already used by user', () => {
-    adminQuizCreate(authUserId, 'Existing Quiz', 'Another description.');
-    const result = adminQuizNameUpdate(authUserId, quizId, 'Existing Quiz') as ErrorMessage;
+    adminQuizCreate(sessionId, 'Existing Quiz', 'Another description.');
+    const result = adminQuizNameUpdate(sessionId, quizId, 'Existing Quiz') as ErrorMessage;
     expect(result).toEqual({ error: 'Name is already used by the current logged in user for another quiz.' });
   });
 
   test('Successful quiz name update - correct return value', () => {
-    const result = adminQuizNameUpdate(authUserId, quizId, 'New Quiz Name');
+    const result = adminQuizNameUpdate(sessionId, quizId, 'New Quiz Name');
     expect(result).toEqual({});
   });
 
   test('Successful quiz name update - functionality', () => {
-    adminQuizNameUpdate(authUserId, quizId, 'New Quiz Name');
-    const updatedQuiz = ok(adminQuizInfo(authUserId, quizId));
+    adminQuizNameUpdate(sessionId, quizId, 'New Quiz Name');
+    const updatedQuiz = ok(adminQuizInfo(sessionId, quizId));
     expect(updatedQuiz.name).toEqual('New Quiz Name');
   });
 });

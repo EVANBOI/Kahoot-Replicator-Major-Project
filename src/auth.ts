@@ -1,7 +1,9 @@
 import { getData, setData } from './dataStore';
 import validator from 'validator';
-import { findUserWithId } from './helpers';
-import { Data, User, UserRegistrationResult, PasswordUpdateResult, UserUpdateResult, Userdetails } from './types';
+import { findUserBySessionId } from './helpers';
+import { Data, UserRegistrationResult, PasswordUpdateResult, UserUpdateResult, Userdetails } from './types';
+import ShortUniqueId from 'short-unique-id';
+const uid = new ShortUniqueId({ dictionary: 'number' });
 /**
  * Given an admin user's details, creates an account for them.
  *
@@ -12,7 +14,6 @@ import { Data, User, UserRegistrationResult, PasswordUpdateResult, UserUpdateRes
  * @returns {{authUserId: number}}
  * @returns {{error: string}} an error
  */
-
 export function adminAuthRegister (
   email: string,
   password: string,
@@ -26,7 +27,7 @@ export function adminAuthRegister (
   const nameRange = /^[a-zA-Z-' ]*$/;
   const passwordLetterRange = /^[a-zA-Z]/;
   const passwordNumberRange = /\d/;
-  if (validator.isEmail(email) === false) {
+  if (!validator.isEmail(email)) {
     return { error: 'Email is not a valid email' };
   } else if (!nameRange.test(nameFirst)) {
     return { error: 'NameFirst contains invalid characters' };
@@ -43,8 +44,10 @@ export function adminAuthRegister (
   }
 
   const id = dataBase.users.length + 1;
+  const sessionId = { sessionId: uid.rnd() };
   dataBase.users.push({
     userId: id,
+    token: [sessionId],
     email: email,
     password: password,
     name: `${nameFirst} ${nameLast}`,
@@ -53,9 +56,7 @@ export function adminAuthRegister (
     passwordUsedThisYear: []
   });
   setData(dataBase);
-  return {
-    authUserId: id
-  };
+  return sessionId;
 }
 
 /**
@@ -69,23 +70,25 @@ export function adminAuthRegister (
  * @returns {} - empty object
  */
 export function adminUserDetailsUpdate (
-  authUserId: number,
+  sessionId: string,
   email: string,
   nameFirst: string,
   nameLast: string
 ): UserUpdateResult {
   const dataBase = getData();
-
-  const person2 = dataBase.users.find(person => person.userId === authUserId);
+  const person2 = findUserBySessionId(dataBase, sessionId);
   if (!person2) {
-    return { error: 'UserId provided is invalid' };
+    return { error: 'sessionId provided is invalid' };
   }
 
-  const person = dataBase.users.find(person => person.email === email);
   // to cover the case when we do not make change of the email
   // (the update email === original email)
-  if (person && person.userId !== authUserId) {
-    return { error: 'Email address is used by another user.' };
+  const person = dataBase.users.find(person => person.email === email);
+  if (person) {
+    const isCorrectOwner = person.token.find(token => token.sessionId === sessionId);
+    if (!isCorrectOwner) {
+      return { error: 'Email address is used by another user.' };
+    }
   }
 
   const nameRange = /^[a-zA-Z-' ]*$/;
@@ -101,14 +104,11 @@ export function adminUserDetailsUpdate (
     return { error: 'NameLast is less than 2 characters or more than 20 characters.' };
   }
 
-  const user = dataBase.users.find(user => user.userId === authUserId);
-  user.email = email;
-  user.name = `${nameFirst} ${nameLast}`;
+  person2.email = email;
+  person2.name = `${nameFirst} ${nameLast}`;
   setData(dataBase);
 
-  return {
-
-  };
+  return {};
 }
 
 /**
@@ -137,11 +137,10 @@ export function adminAuthLogin (
 
   correctPassword.numFailedPasswordsSinceLastLogin = 0;
   correctPassword.numSuccessfulLogins += 1;
+  const sessionId = { sessionId: uid.rnd() };
   setData(dataBase);
 
-  return {
-    authUserId: correctPassword.userId
-  };
+  return sessionId;
 }
 
 /**
@@ -156,8 +155,9 @@ export function adminAuthLogin (
  *               numFailedPasswordsSinceLastLogin: number}}}
  */
 
-function adminUserDetails (authUserId: number): Userdetails {
-  const user = findUserWithId(authUserId);
+export function adminUserDetails (sessionId: string): Userdetails {
+  const database = getData();
+  const user = findUserBySessionId(database, sessionId);
   if (!user) {
     return { error: 'AuthUserId is not a valid user.' };
   }
@@ -174,7 +174,6 @@ function adminUserDetails (authUserId: number): Userdetails {
   };
 }
 
-export { adminUserDetails };
 /**
  * Given details relating to a password change, update the password of a logged in user.
  *
@@ -184,12 +183,12 @@ export { adminUserDetails };
  * @returns {} - empty object
  */
 
-export function adminUserPasswordUpdate(authUserId: number, oldPassword: string, newPassword: string): PasswordUpdateResult {
+export function adminUserPasswordUpdate(sessionId: string, oldPassword: string, newPassword: string): PasswordUpdateResult {
   const dataBase: Data = getData();
-  const user: User | undefined = dataBase.users.find(user => user.userId === authUserId);
+  const user = findUserBySessionId(dataBase, sessionId);
 
   if (!user) {
-    return { error: 'AuthUserId is not a valid user.' };
+    return { error: 'sessionId is not valid.' };
   }
   if (user.password !== oldPassword) {
     return { error: 'Old Password is not the correct old password' };

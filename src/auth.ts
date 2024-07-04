@@ -1,7 +1,7 @@
 import { getData, setData } from './dataStore';
 import validator from 'validator';
-import { findUserWithId, findUserBySessionId } from './helpers';
-import { Data, User, UserRegistrationResult, PasswordUpdateResult, UserUpdateResult, Userdetails } from './types';
+import { findUserBySessionId } from './helpers';
+import { Data, UserRegistrationResult, PasswordUpdateResult, UserUpdateResult, Userdetails } from './types';
 import ShortUniqueId from 'short-unique-id';
 const uid = new ShortUniqueId({ dictionary: 'number' });
 /**
@@ -47,7 +47,7 @@ export function adminAuthRegister (
   const sessionId = { sessionId: uid.rnd() };
   dataBase.users.push({
     userId: id,
-    token:[sessionId],
+    token: [sessionId],
     email: email,
     password: password,
     name: `${nameFirst} ${nameLast}`,
@@ -87,7 +87,7 @@ export function adminUserDetailsUpdate (
   if (person) {
     const isCorrectOwner = person.token.find(token => token.sessionId === sessionId);
     if (!isCorrectOwner) {
-       return { error: 'Email address is used by another user.' };
+      return { error: 'Email address is used by another user.' };
     }
   }
 
@@ -173,7 +173,6 @@ export function adminUserDetails (sessionId: string): Userdetails {
         }
   };
 }
-
 
 /**
  * Given details relating to a password change, update the password of a logged in user.

@@ -1,5 +1,5 @@
 import { clear } from '../other';
-import { adminUserPasswordUpdate, adminAuthRegister, adminAuthLogin } from '../auth';
+import { adminUserPasswordUpdate, adminAuthRegister } from '../auth';
 import { PasswordUpdateResult, SessionIdObject } from '../types';
 
 const VALID_NEW_PASSWORD = 'newPassword123';

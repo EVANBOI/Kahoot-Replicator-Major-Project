@@ -149,9 +149,9 @@ describe('Successful update', () => {
 
   test('correct update First name with all valid letters', () => {
     expect(adminUserDetailsUpdate(
-      VALID_TOKEN, 
-      VALID_INPUTS_1.EMAIL, 
-      "ValidFN-' ", 
+      VALID_TOKEN,
+      VALID_INPUTS_1.EMAIL,
+      "ValidFN-' ",
       VALID_INPUTS_1.LASTNAME)).toStrictEqual({ });
     expect(adminUserDetails(VALID_TOKEN)).toStrictEqual({
       user: {

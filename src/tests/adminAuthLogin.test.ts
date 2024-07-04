@@ -1,6 +1,6 @@
 import { adminAuthRegister, adminAuthLogin } from '../auth';
 import { clear } from '../other';
-import { AuthUserIdObject, SessionIdObject } from '../types';
+import { AuthUserIdObject } from '../types';
 import { ok } from '../helpers';
 
 beforeEach(() => {
@@ -13,9 +13,8 @@ test('return an error for a non-existent email address', () => {
 });
 
 describe('when registering an authUserId', () => {
-  let Id: AuthUserIdObject;
   beforeEach(() => {
-    Id = ok(adminAuthRegister('evan.xiong@unsw.edu.au', 'abcde12345', 'Evan', 'Xiong'));
+    ok(adminAuthRegister('evan.xiong@unsw.edu.au', 'abcde12345', 'Evan', 'Xiong'));
   });
 
   test('return an error for a password that is not correct for the given email', () => {

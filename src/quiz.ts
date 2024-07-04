@@ -1,6 +1,6 @@
-import { dataStore, getData, setData } from './dataStore';
-import { findQuizWithId, findUserWithId, findUserBySessionId } from './helpers';
-import { Data, EmptyObject, ErrorMessage, Quiz, QuizCreateDetails, QuizInfoResult, QuizListDetails, QuizRemoveResult, QuizNameUpdateResult,User } from './types';
+import { getData, setData } from './dataStore';
+import { findQuizWithId, findUserBySessionId } from './helpers';
+import { EmptyObject, ErrorMessage, Quiz, QuizCreateDetails, QuizInfoResult, QuizListDetails, QuizRemoveResult } from './types';
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
  *
@@ -152,8 +152,8 @@ export function adminQuizInfo (sessionId: string, quizId: number): QuizInfoResul
 export function adminQuizNameUpdate(sessionId: string, quizId: number, name: string): EmptyObject | ErrorMessage {
   const database = getData();
   const user = findUserBySessionId(database, sessionId);
-  if(!user){
-    return {error :'sessionId is not valid.'};
+  if (!user) {
+    return { error: 'sessionId is not valid.' };
   }
   const authUserId = user.userId;
   const quiz: Quiz | undefined = database.quizzes.find(quiz => quiz.quizId === quizId);
@@ -180,7 +180,6 @@ export function adminQuizNameUpdate(sessionId: string, quizId: number, name: str
   setData(database);
   return {};
 }
-
 
 /**
  * Update the description of the relevant quiz.

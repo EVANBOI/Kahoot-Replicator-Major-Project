@@ -96,9 +96,9 @@ export const adminQuizList = (sessionId: string) => {
 };
 
 export const adminQuizDescriptionUpdate = (
-    sessionId: string,
-    quizId: number,
-    description: string) => {
-  return requestHelper('PUT', `/v1/admin/quiz/${quizId}/description`, 
+  sessionId: string,
+  quizId: number,
+  description: string) => {
+  return requestHelper('PUT', `/v1/admin/quiz/${quizId}/description`,
     { sessionId, description });
 };

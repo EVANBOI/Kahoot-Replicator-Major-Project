@@ -59,7 +59,7 @@ app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
     res.status(401);
   }
   return res.json(result);
-})
+});
 
 app.put('/v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {
   const { sessionId, description } = req.body;
@@ -69,17 +69,17 @@ app.put('/v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {
   const validQuizId = database.quizzes.find(quiz => quiz.quizId === quizId);
   const result = adminQuizDescriptionUpdate(sessionId, quizId, description);
   if (description.length > 100) {
-    return res.status(400).json(result)
-    //return res.json({ error: 'Description exceeds 100 characters.' });
+    return res.status(400).json(result);
+    // return res.json({ error: 'Description exceeds 100 characters.' });
   } else if (!user) {
-    return res.status(401).json(result)
-    //return res.json({ error: 'Description exceeds 100 characters.' });
+    return res.status(401).json(result);
+    // return res.json({ error: 'Description exceeds 100 characters.' });
   } else if (!validQuizId || validQuizId.creatorId !== user?.userId) {
-    return res.status(403).json(result)
+    return res.status(403).json(result);
   }
-  
+
   return res.json(result);
-})
+});
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================

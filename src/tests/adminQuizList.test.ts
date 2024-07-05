@@ -2,7 +2,7 @@ import { adminAuthRegister, adminQuizList } from '../wrappers';
 import { adminQuizCreate } from '../quiz';
 import { clear } from '../other';
 import { ok } from '../helpers';
-const ERROR = { 
+const ERROR = {
   statusCode: 401,
   jsonBody: { error: expect.any(String) }
 };
@@ -23,7 +23,7 @@ describe('Valid session id with only no quizzes', () => {
   });
   test('There is only one user in database', () => {
     expect(adminQuizList(sessionId)).toStrictEqual({
-      statusCode: 200, 
+      statusCode: 200,
       jsonBody: { quizzes: [] }
     });
   });
@@ -32,7 +32,7 @@ describe('Valid session id with only no quizzes', () => {
     adminAuthRegister('admin2@unsw.edu.au', 'Password1', 'JJz', 'HHz');
     adminAuthRegister('admin3@unsw.edu.au', 'Password1', 'JJf', 'HHf');
     expect(adminQuizList(sessionId)).toStrictEqual({
-      statusCode: 200, 
+      statusCode: 200,
       jsonBody: { quizzes: [] }
     });
   });
@@ -64,7 +64,7 @@ describe('Valid user with only one quiz', () => {
   test('There are multiple users in database', () => {
     adminAuthRegister('admin2@unsw.edu.au', 'Password1', 'JJz', 'HHz');
     adminAuthRegister('admin3@unsw.edu.au', 'Password1', 'JJf', 'HHf');
-    expect(adminQuizList(sessionId1)).toStrictEqual({ 
+    expect(adminQuizList(sessionId1)).toStrictEqual({
       statusCode: 200,
       jsonBody: {
         quizzes: [

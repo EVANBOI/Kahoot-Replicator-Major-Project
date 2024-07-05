@@ -9,6 +9,7 @@ import fs from 'fs';
 import path from 'path';
 import process from 'process';
 import { adminAuthRegister } from './auth';
+import { adminQuizList } from './quiz';
 
 // Set up web app
 const app = express();
@@ -49,6 +50,14 @@ app.post('/v1/admin/auth/register', (req: Request, res: Response) => {
   return res.json(result);
 });
 
+app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
+  const sessionId = req.query.sessionId as string;
+  const result = adminQuizList(sessionId);
+  if ('error' in result) {
+    res.status(401);
+  }
+  return res.json(result);
+})
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================

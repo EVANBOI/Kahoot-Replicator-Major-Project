@@ -79,23 +79,22 @@ Did you res.json(undefined)?`,
   return bodyObject;
 };
 
-
-//============================================================================//
+//= ===========================================================================//
 // Wrappers
 
 export const adminAuthRegister = (
-    email: string, 
-    nameFirst: string, 
-    nameLast: string, 
-    password: string) => {
-    return requestHelper('POST', '/v1/admin/auth/register', 
-        { email, nameFirst, nameLast, password });
+  email: string,
+  password: string,
+  nameFirst: string,
+  nameLast: string) => {
+  return requestHelper('POST', '/v1/admin/auth/register',
+    { email, nameFirst, nameLast, password });
 };
-  
+
 export const adminQuizList = (sessionId: string) => {
-    return requestHelper('GET', '/v1/admin/quiz/list', { sessionId })
-}
+  return requestHelper('GET', '/v1/admin/quiz/list', { sessionId });
+};
 
 export const adminQuizDescriptionUpdate = (quizId: number) => {
-    return requestHelper('PUT', `/v1/admin/quia/${quizId}/description`, {})
-}
+  return requestHelper('PUT', `/v1/admin/quia/${quizId}/description`, {});
+};

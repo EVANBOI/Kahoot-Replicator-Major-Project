@@ -7,7 +7,7 @@ const SERVER_URL = `${url}:${port}`;
 // ========================================================================= //
 
 // Our custom return types - you can pick your own if you wish!
-interface RequestHelperReturnType {
+export interface RequestHelperReturnType {
   statusCode: number;
   jsonBody?: Record<string, any>;
   error?: string;
@@ -99,3 +99,16 @@ export const adminQuizList = (sessionId: string) => {
 export const adminQuizDescriptionUpdate = (quizId: number) => {
     return requestHelper('PUT', `/v1/admin/quia/${quizId}/description`, {})
 }
+
+export const adminUserPasswordUpdate = (
+  sessionId: string,
+  oldPassword: string,
+  newPassword: string
+) => {
+  return requestHelper('PUT', '/v1/admin/user/password', {
+    sessionId,
+    oldPassword,
+    newPassword,
+  });
+};
+

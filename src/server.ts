@@ -9,7 +9,9 @@ import fs from 'fs';
 import path from 'path';
 import process from 'process';
 import { adminAuthRegister } from './auth';
-import { adminQuizList } from './quiz';
+import { adminQuizList, adminQuizDescriptionUpdate } from './quiz';
+import { findUserBySessionId } from './helpers';
+import { getData } from './dataStore';
 
 // Set up web app
 const app = express();
@@ -56,6 +58,26 @@ app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
   if ('error' in result) {
     res.status(401);
   }
+  return res.json(result);
+})
+
+app.put('/v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {
+  const { sessionId, description } = req.body;
+  const quizId = parseInt(req.params.quizid);
+  const database = getData(); // allowed to use getData from datastore??
+  const user = findUserBySessionId(database, sessionId);
+  const validQuizId = database.quizzes.find(quiz => quiz.quizId === quizId);
+  const result = adminQuizDescriptionUpdate(sessionId, quizId, description);
+  if (description.length > 100) {
+    return res.status(400).json(result)
+    //return res.json({ error: 'Description exceeds 100 characters.' });
+  } else if (!user) {
+    return res.status(401).json(result)
+    //return res.json({ error: 'Description exceeds 100 characters.' });
+  } else if (!validQuizId || validQuizId.creatorId !== user?.userId) {
+    return res.status(403).json(result)
+  }
+  
   return res.json(result);
 })
 // ====================================================================

@@ -99,6 +99,6 @@ export const adminQuizDescriptionUpdate = (
     sessionId: string,
     quizId: number,
     description: string) => {
-  return requestHelper('PUT', `/v1/admin/quia/${quizId}/description`, 
+  return requestHelper('PUT', `/v1/admin/quiz/${quizId}/description`, 
     { sessionId, description });
 };

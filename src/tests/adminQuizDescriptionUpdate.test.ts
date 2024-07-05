@@ -5,11 +5,6 @@ import {
   adminQuizInfo
 } from '../quiz';
 import { ok } from '../helpers';
-import { notDeepEqual } from 'assert';
-const ERROR = { 
-  statusCode: 401,
-  jsonBody: { error: expect.any(String) }
-};
 
 beforeEach(() => {
   clear();
@@ -18,7 +13,11 @@ beforeEach(() => {
 describe('Error cases', () => {
   describe('No users exists in database', () => {
     test.failing('Invalid sessionId', () => {
-      expect(adminQuizDescriptionUpdate('-1', 1, 'no data in database')).toStrictEqual(ERROR);
+      expect(adminQuizDescriptionUpdate('-1', 1, 'no data in database'))
+      .toStrictEqual({ 
+        statusCode: 401,
+        jsonBody: { error: expect.any(String) }
+      });
     });
   });
   describe('users and quizzes exist', () => {
@@ -41,13 +40,32 @@ describe('Error cases', () => {
     });
 
     test.failing('Session id does not exist', () => {
-      expect(adminQuizDescriptionUpdate('-999', quizId1, 'changed description')).toStrictEqual(ERROR);
+      expect(adminQuizDescriptionUpdate('-999', quizId1, 'changed description'))
+      .toStrictEqual({ 
+        statusCode: 401,
+        jsonBody: { error: expect.any(String) }
+      });
     });
     test.failing('Quiz id does not exist', () => {
-      expect(adminQuizDescriptionUpdate(sessionId1, -999, 'changed description')).toStrictEqual(ERROR);
+      expect(adminQuizDescriptionUpdate(sessionId1, -999, 'changed description'))
+      .toStrictEqual({ 
+        statusCode: 403,
+        jsonBody: { error: expect.any(String) }
+      });
     });
     test.failing('User does not own quiz to be updated', () => {
-      expect(adminQuizDescriptionUpdate(sessionId2, quizId1, 'changed description')).toStrictEqual(ERROR);
+      expect(adminQuizDescriptionUpdate(sessionId2, quizId1, 'changed description'))
+      .toStrictEqual({ 
+        statusCode: 403,
+        jsonBody: { error: expect.any(String) }
+      });
+    });
+    test.failing('Description length is more than 100 characters', () => {
+      expect(adminQuizDescriptionUpdate(sessionId2, quizId1, 'changed description'))
+      .toStrictEqual({ 
+        statusCode: 400,
+        jsonBody: { error: expect.any(String) }
+      });
     });
   });
 });
@@ -97,6 +115,17 @@ describe('Successful function run', () => {
     expect(quizInfo.timeCreated).toBeLessThanOrEqual((quizInfo.timeLastEdited));
   })
 
+  test.failing('Description update is an empty string', () => {
+    adminQuizDescriptionUpdate(sessionId1, quizId1, '');
+    const quizInfo = adminQuizInfo(sessionId1, quizId1)
+    expect(quizInfo).toStrictEqual({
+      quizId: quizId1,
+      name: 'Quiz 1',
+      timeCreated: expect.any(Number),
+      timeLastEdited: expect.any(Number),
+      description: 'changed'
+    });
+  });
   test.failing('User updates same quiz multiple times', () => {
     adminQuizDescriptionUpdate(sessionId1, quizId1, 'changed');
     adminQuizDescriptionUpdate(sessionId1, quizId1, 'changed twice');

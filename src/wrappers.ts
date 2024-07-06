@@ -100,7 +100,7 @@ export const adminQuizDescriptionUpdate = (quizId: number) => {
     return requestHelper('PUT', `/v1/admin/quia/${quizId}/description`, {})
 }
 
-export const requestAdminUserDetailsUpdate = (
+export const adminUserDetailsUpdate = (
   sessionId: string,
   email: string,
   nameFirst: string,
@@ -109,10 +109,10 @@ export const requestAdminUserDetailsUpdate = (
         { sessionId, email, nameFirst, nameLast });
 };
 
-export const requestAdminQuizInfo = (sessionId: string, quizId: number) => {
+export const adminQuizInfo = (sessionId: string, quizId: number) => {
   return requestHelper('GET', `/v1/admin/quiz/${quizId}`, { sessionId });
 }
 
-export const requestClear = () => {
+export const clear = () => {
   return requestHelper('DELETE', '/v1/clear', {});
 }

@@ -96,5 +96,9 @@ export const adminQuizList = (sessionId: string) => {
 };
 
 export const adminQuizDescriptionUpdate = (quizId: number) => {
-  return requestHelper('PUT', `/v1/admin/quia/${quizId}/description`, {});
+  return requestHelper('PUT', `/v1/admin/quiz/${quizId}/description`, {});
 };
+
+export const adminAuthLogout = (sessionsId: string) => {
+    return requestHelper('POST', '/v1/admin/auth/logout', { sessionsId })
+}

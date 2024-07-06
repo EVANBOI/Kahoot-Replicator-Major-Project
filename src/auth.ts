@@ -138,6 +138,7 @@ export function adminAuthLogin (
   correctPassword.numFailedPasswordsSinceLastLogin = 0;
   correctPassword.numSuccessfulLogins += 1;
   const sessionId = { sessionId: uid.rnd() };
+  correctPassword.token.push(sessionId);
   setData(dataBase);
 
   return sessionId;

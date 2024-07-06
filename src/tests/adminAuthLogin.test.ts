@@ -34,4 +34,3 @@ test('Correctly returns two sessionId', () => {
   expect(adminAuthLogin('jessie.zhang@unsw.edu.au', 'qwerty67890')).toStrictEqual({ sessionId: expect.any(String) });
   expect(Id1).not.toStrictEqual(expect(Id2));
 });
-

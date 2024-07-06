@@ -96,5 +96,22 @@ export const adminQuizList = (sessionId: string) => {
 };
 
 export const adminQuizDescriptionUpdate = (quizId: number) => {
-  return requestHelper('PUT', `/v1/admin/quia/${quizId}/description`, {});
+    return requestHelper('PUT', `/v1/admin/quia/${quizId}/description`, {})
+}
+
+export const adminUserDetailsUpdate = (
+  sessionId: string,
+  email: string,
+  nameFirst: string,
+  nameLast: string) => {
+    return requestHelper('PUT', '/v1/admin/user/details', 
+        { sessionId, email, nameFirst, nameLast });
 };
+
+export const adminQuizInfo = (sessionId: string, quizId: number) => {
+  return requestHelper('GET', `/v1/admin/quiz/${quizId}`, { sessionId });
+}
+
+export const clear = () => {
+  return requestHelper('DELETE', '/v1/clear', {});
+}

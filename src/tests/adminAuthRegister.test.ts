@@ -1,5 +1,5 @@
 import { adminAuthRegister } from '../wrappers';
-import { clear } from '../other';
+import { clear } from '../wrappers';
 
 const REGISTRATED = {
   statusCode: 200,

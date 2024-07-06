@@ -91,11 +91,24 @@ export const adminAuthRegister = (
     return requestHelper('POST', '/v1/admin/auth/register', 
         { email, nameFirst, nameLast, password });
 };
+
+export const adminAuthLogin = (email: string, password: string) => {
+  return requestHelper('POST', '/v1/admin/auth/login', { email, password });
+}
+
+export const adminQuizCreate = (
+  sessionId: string, 
+  name: string,
+  description: string
+) => {
+  return requestHelper('POST', '/v1/admin/quiz', { sessionId, name, description });
+}
   
 export const adminQuizList = (sessionId: string) => {
-    return requestHelper('GET', '/v1/admin/quiz/list', { sessionId })
+    return requestHelper('GET', '/v1/admin/quiz/list', { sessionId });
 }
 
 export const adminQuizDescriptionUpdate = (quizId: number) => {
-    return requestHelper('PUT', `/v1/admin/quia/${quizId}/description`, {})
+    return requestHelper('PUT', `/v1/admin/quia/${quizId}/description`, {});
 }
+

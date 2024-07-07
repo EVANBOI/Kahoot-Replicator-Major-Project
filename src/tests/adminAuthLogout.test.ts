@@ -1,5 +1,4 @@
-import { adminAuthRegister, adminAuthLogout } from '../wrappers'
-import { clear } from '../other'
+import { adminAuthRegister, adminAuthLogout, clear } from '../wrappers'
 
 const ERROR = {
     statusCode: 401,
@@ -11,13 +10,25 @@ beforeEach(() => {
 });
 
 describe('Failure cases', () => {
-    test.todo('Session id is empty')
-    test.todo('Session Id does not exist')
+    test('Session id is empty', () => {
+        expect(adminAuthLogout('')).toStrictEqual(ERROR);
+    })
+    test('Session Id does not exist', () => {
+        expect(adminAuthLogout('-10000')).toStrictEqual(ERROR);
+    })
     
 })
 
 describe('Success cases', () => {
-    test.todo('Check if it returns an empty object')
+    let sessionId: string;
+    beforeEach(() => {
+        const { jsonBody } = adminAuthRegister(
+            'admin1@ad.unsw.edu.au', 'Paswoor34', 'JJ', 'ZZ');
+        sessionId = jsonBody?.sessionId;
+    })
+    test('Check if it returns an empty object', () => {
+        expect(adminAuthLogout);
+    })
 
     describe('Only one user exists in database', () => {
         test.todo('Successful logout of one user')

@@ -102,3 +102,20 @@ export const adminQuizDescriptionUpdate = (quizId: number) => {
 export const adminAuthLogout = (sessionsId: string) => {
     return requestHelper('POST', '/v1/admin/auth/logout', { sessionsId })
 }
+
+export const adminUserDetailsUpdate = (
+  sessionId: string,
+  email: string,
+  nameFirst: string,
+  nameLast: string) => {
+    return requestHelper('PUT', '/v1/admin/user/details', 
+        { sessionId, email, nameFirst, nameLast });
+};
+
+export const adminQuizInfo = (sessionId: string, quizId: number) => {
+  return requestHelper('GET', `/v1/admin/quiz/${quizId}`, { sessionId });
+}
+
+export const clear = () => {
+  return requestHelper('DELETE', '/v1/clear', {});
+}

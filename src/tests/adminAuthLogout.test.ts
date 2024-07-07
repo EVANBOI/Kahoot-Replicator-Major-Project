@@ -1,9 +1,13 @@
-import { adminUserDetails } from '../auth';
 import { adminAuthRegister, adminAuthLogout, clear } from '../wrappers'
 
 const ERROR = {
     statusCode: 401,
     jsonBody: { error: expect.any(String) }
+}
+
+const LOGOUT_SUCCESSFUL = {
+    statusCode: 200,
+    jsonBody: {}
 }
 
 beforeEach(() => {
@@ -21,31 +25,31 @@ describe('Failure cases', () => {
 })
 
 describe('Success cases', () => {
-    let sessionId1: string;
+    let sessionId: string;
     beforeEach(() => {
-        const { jsonBody } = adminAuthRegister(
+        const { jsonBody: body } = adminAuthRegister(
             'admin1@ad.unsw.edu.au', 'Paswoor34', 'JJ', 'ZZ');
-        sessionId1 = jsonBody?.sessionId;
+        sessionId = body?.sessionId;
     })
     describe('Only one user exists in database', () => {
         test('Check if it returns an empty object', () => {
-            expect(adminAuthLogout(sessionId1)).toStrictEqual({
-                statusCode: 200,
-                jsonBody: {}
-            });
+            expect(adminAuthLogout(sessionId)).toStrictEqual(LOGOUT_SUCCESSFUL);
         })
         test('Successful logout of one user', () => {
-            adminAuthLogout(sessionId1);
-            expect(adminAuthLogout(sessionId1)).toStrictEqual(ERROR);
+            adminAuthLogout(sessionId);
+            expect(adminAuthLogout(sessionId)).toStrictEqual(ERROR);
         })
     })
 
     describe('There are multiple users in database', () => {
         let sessionId2: string, sessionId3: string;
         beforeEach(() => {
-            const { jsonBody } = adminAuthRegister(
+            const { jsonBody: body2 } = adminAuthRegister(
                 'admin2@ad.unsw.edu.au', 'Paswoor34', 'JJ', 'ZZ');
-            sessionId2 = jsonBody?.sessionId;
+            sessionId2 = body2?.sessionId;
+            const { jsonBody: body3 } = adminAuthRegister(
+                'admin3@ad.unsw.edu.au', 'Paswoor34', 'JJ', 'ZZ');
+            sessionId3 = body3?.sessionId;
         })
         test('Successful logout of one user', () => {
             expect(adminAuthLogout(sessionId2)).toStrictEqual({
@@ -53,7 +57,10 @@ describe('Success cases', () => {
                 jsonBody: {}
             });
         });
-        test.todo('Successful logout of multiple users');
+        test('Successful logout of multiple users', () => {
+            adminAuthLogout(sessionId);
+            adminAuthLogout(sessionId2);
+            expect(adminAuthLogout(sessionId3)).toStrictEqual(LOGOUT_SUCCESSFUL);
+        });
     })
-    
 })

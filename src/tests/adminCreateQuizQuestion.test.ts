@@ -1,0 +1,1 @@
+import{ adminCreateQuizQuestion, adminAuthRegister } from '../wrappers'

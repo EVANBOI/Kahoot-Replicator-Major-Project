@@ -65,6 +65,7 @@ export type QuizInfoResult = ErrorMessage | {
 
 export type SessionIdObject = {
     sessionId: string
+    status: number
   };
 
 export type QuizCreateDetails = ErrorMessage | QuizIdObject

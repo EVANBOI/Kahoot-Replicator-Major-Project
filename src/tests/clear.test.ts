@@ -1,7 +1,12 @@
-import { clear } from '../other';
+import { clear } from '../wrappers';
 import { adminAuthRegister, adminUserDetails } from '../auth';
 import { adminQuizCreate, adminQuizInfo } from '../quiz';
 import { QuizIdObject, SessionId } from '../types';
+
+const CLEAR = {
+  statusCode: 200,
+  jsonBody: {}
+};
 
 const VALID_USER = {
   EMAIL: 'admin@email.com',
@@ -21,7 +26,7 @@ const ERROR = {
 
 describe('Function clear tests', () => {
   test('correct return value check', () => {
-    expect(clear()).toEqual({});
+    expect(clear()).toEqual(CLEAR);
   });
 
   test('correct clear the user store', () => {

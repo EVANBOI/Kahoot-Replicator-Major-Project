@@ -1,3 +1,4 @@
+import { adminUserDetails } from '../auth';
 import { adminAuthRegister, adminAuthLogout, clear } from '../wrappers'
 
 const ERROR = {
@@ -20,22 +21,38 @@ describe('Failure cases', () => {
 })
 
 describe('Success cases', () => {
-    let sessionId: string;
+    let sessionId1: string;
     beforeEach(() => {
         const { jsonBody } = adminAuthRegister(
             'admin1@ad.unsw.edu.au', 'Paswoor34', 'JJ', 'ZZ');
-        sessionId = jsonBody?.sessionId;
+        sessionId1 = jsonBody?.sessionId;
     })
-    test('Check if it returns an empty object', () => {
-        expect(adminAuthLogout);
-    })
-
     describe('Only one user exists in database', () => {
-        test.todo('Successful logout of one user')
+        test('Check if it returns an empty object', () => {
+            expect(adminAuthLogout(sessionId1)).toStrictEqual({
+                statusCode: 200,
+                jsonBody: {}
+            });
+        })
+        test('Successful logout of one user', () => {
+            adminAuthLogout(sessionId1);
+            expect(adminAuthLogout(sessionId1)).toStrictEqual(ERROR);
+        })
     })
 
     describe('There are multiple users in database', () => {
-        test.todo('Successful logout of one user');
+        let sessionId2: string, sessionId3: string;
+        beforeEach(() => {
+            const { jsonBody } = adminAuthRegister(
+                'admin2@ad.unsw.edu.au', 'Paswoor34', 'JJ', 'ZZ');
+            sessionId2 = jsonBody?.sessionId;
+        })
+        test('Successful logout of one user', () => {
+            expect(adminAuthLogout(sessionId2)).toStrictEqual({
+                statusCode: 200,
+                jsonBody: {}
+            });
+        });
         test.todo('Successful logout of multiple users');
     })
     

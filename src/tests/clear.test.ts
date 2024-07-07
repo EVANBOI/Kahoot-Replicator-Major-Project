@@ -1,4 +1,4 @@
-import { clear } from '../other';
+import { clear } from '../wrappers';
 import { adminAuthRegister, adminUserDetails } from '../auth';
 import { adminQuizCreate, adminQuizInfo } from '../quiz';
 import { QuizIdObject, SessionId } from '../types';

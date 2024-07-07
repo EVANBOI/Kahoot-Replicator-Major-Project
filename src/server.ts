@@ -8,6 +8,8 @@ import sui from 'swagger-ui-express';
 import fs from 'fs';
 import path from 'path';
 import process from 'process';
+import { adminAuthLogin, adminAuthRegister } from './auth';
+import { clear } from './other';
 
 // Set up web app
 const app = express();
@@ -39,6 +41,38 @@ app.get('/echo', (req: Request, res: Response) => {
   return res.json(result);
 });
 
+app.delete('/v1/clear', (req: Request, res: Response) => {
+
+  res.json(clear());
+})
+
+app.post('/v1/admin/auth/register', (req: Request, res: Response) => {
+
+  const { email, password, nameFirst, nameLast} = req.body;
+  const result = adminAuthRegister(email, password, nameFirst, nameLast);
+
+  if ('error' in result) {
+    return res.status(400).json(result);
+  }
+
+  res.json(result);
+
+})
+
+app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
+
+  const { email, password } = req.body;
+  const result = adminAuthLogin(email, password);
+
+  if ('error' in result) {
+    return res.status(400).json(result);
+  }
+
+  res.json(result);
+})
+
+
+
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================
@@ -59,9 +93,9 @@ app.use((req: Request, res: Response) => {
 });
 
 // start server
-const server = app.listen(PORT, HOST, () => {
+const server = app.listen(3300, HOST, () => {
   // DO NOT CHANGE THIS LINE
-  console.log(`⚡️ Server started on port ${PORT} at ${HOST}`);
+  console.log(`⚡️ Server started on port ${3300} at ${HOST}`);
 });
 
 // For coverage, handle Ctrl+C gracefully

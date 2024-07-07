@@ -1,5 +1,6 @@
-import { adminAuthRegister } from '../auth';
-import { clear } from '../other';
+import { adminAuthRegister } from '../wrappers';
+import { clear } from '../wrappers';
+
 
 const REGISTRATED = { sessionId: expect.any(String) };
 const ERROR = { error: expect.any(String) };

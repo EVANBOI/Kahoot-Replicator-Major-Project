@@ -1,5 +1,6 @@
 import request, { HttpVerb } from 'sync-request-curl';
 import { port, url } from '../src/config.json';
+import { QuestionBody } from './types';
 
 const SERVER_URL = `${url}:${port}`;
 
@@ -128,6 +129,10 @@ export const clear = () => {
   return requestHelper('DELETE', '/v1/clear', {});
 };
 
-export const adminCreateQuizQuestion = (quizId: number) => {
-  return requestHelper('POST', `/v1/admin/quiz/${quizId}/question`, {});
+export const adminCreateQuizQuestion = (
+  quizId: number, 
+  sessionId: string,
+  questionBody: QuestionBody) => {
+  return requestHelper('POST', `/v1/admin/quiz/${quizId}/question`, 
+    { sessionId, questionBody });
 };

@@ -83,3 +83,10 @@ export type Userdetails = ErrorMessage | {user: {
 }}
 
 export type QuizNameUpdateResult = EmptyObject | ErrorMessage;
+
+export type QuestionBody = {
+    question: string,
+    duration: number,
+    points: number,
+    answers: {answer: string, correct: boolean}[]
+};

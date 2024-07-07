@@ -10,8 +10,12 @@ const LOGOUT_SUCCESSFUL = {
     jsonBody: {}
 }
 
+let sessionId: string;
 beforeEach(() => {
     clear();
+    const { jsonBody: body } = adminAuthRegister(
+        'admin1@ad.unsw.edu.au', 'Paswoor34', 'JJ', 'ZZ');
+    sessionId = body?.sessionId;
 });
 
 describe('Failure cases', () => {
@@ -25,12 +29,6 @@ describe('Failure cases', () => {
 })
 
 describe('Success cases', () => {
-    let sessionId: string;
-    beforeEach(() => {
-        const { jsonBody: body } = adminAuthRegister(
-            'admin1@ad.unsw.edu.au', 'Paswoor34', 'JJ', 'ZZ');
-        sessionId = body?.sessionId;
-    })
     describe('Only one user exists in database', () => {
         test('Check if it returns an empty object', () => {
             expect(adminAuthLogout(sessionId)).toStrictEqual(LOGOUT_SUCCESSFUL);

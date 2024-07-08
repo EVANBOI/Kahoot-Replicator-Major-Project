@@ -11,7 +11,7 @@ const uid = new ShortUniqueId({ dictionary: 'number' });
  * @param {string} password - password for a user's login
  * @param {string} nameFirst - first name of a user
  * @param {string} nameLast - last name of a user
- * @returns {{authUserId: number}}
+ * @returns {{token: number}}
  * @returns {{error: string}} an error
  */
 export function adminAuthRegister (
@@ -44,10 +44,10 @@ export function adminAuthRegister (
   }
 
   const id = dataBase.users.length + 1;
-  const sessionId = { sessionId: uid.rnd() };
+  const token = { token: uid.rnd() };
   dataBase.users.push({
     userId: id,
-    token: [sessionId],
+    tokens: [token],
     email: email,
     password: password,
     name: `${nameFirst} ${nameLast}`,
@@ -56,14 +56,14 @@ export function adminAuthRegister (
     passwordUsedThisYear: []
   });
   setData(dataBase);
-  return sessionId;
+  return token;
 }
 
 /**
  * Given an admin user's authUserId and a set of properties,
  * update the properties of this logged in admin user.
  *
- * @param {number} authUserId - unique id of a user
+ * @param {string} sessionId - unique id of a user
  * @param {string} email - unique email of a user
  * @param {string} nameFirst - first name of a user
  * @param {string} nameLast - last name of a user
@@ -85,7 +85,7 @@ export function adminUserDetailsUpdate (
   // (the update email === original email)
   const person = dataBase.users.find(person => person.email === email);
   if (person) {
-    const isCorrectOwner = person.token.find(token => token.sessionId === sessionId);
+    const isCorrectOwner = person.tokens.find(tokens => tokens.token === sessionId);
     if (!isCorrectOwner) {
       return { error: 'Email address is used by another user.' };
     }
@@ -116,7 +116,7 @@ export function adminUserDetailsUpdate (
  *
  * @param {string} email - unique email of a user
  * @param {string} password - password for a user's account
- * @returns {{authUserId: number}}
+ * @returns {{token: string}}
  */
 export function adminAuthLogin (
   email : string,
@@ -137,17 +137,17 @@ export function adminAuthLogin (
 
   correctPassword.numFailedPasswordsSinceLastLogin = 0;
   correctPassword.numSuccessfulLogins += 1;
-  const sessionId = { sessionId: uid.rnd() };
-  correctPassword.token.push(sessionId);
+  const token = { token: uid.rnd() };
+  correctPassword.tokens.push(token);
   setData(dataBase);
 
-  return sessionId;
+  return token;
 }
 
 /**
  * Given an admin user's authUserId, return details about the user.
  * "name" is the first and last name concatenated with a single space between them.
- * @param {number} authUserId - unique id of a user
+ * @param {string} sessionId - unique id of a user
  * @returns {{user:
  *              {userId: number,
  *               name: string,

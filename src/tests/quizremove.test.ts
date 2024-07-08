@@ -1,9 +1,8 @@
 import { adminQuizCreate, adminQuizRemove, adminQuizList } from '../quiz';
 import { adminAuthRegister } from '../auth';
 import { clear } from '../other';
-import { findUserBySessionId, ok } from '../helpers';
+import { ok } from '../helpers';
 import { SessionIdObject, QuizIdObject } from '../types';
-import { error } from 'console';
 
 // Clear the state before each test
 beforeEach(() => {
@@ -79,7 +78,7 @@ test('should return an error when removing a quiz that the user does not own', (
 
   // User 2 tries to remove User 1's quiz
   const result = ok(adminQuizRemove(sessionId2, quizId));
-  
+
   // Check that the result contains an error message
   expect(result).toStrictEqual({ error: expect.any(String) });
   // temporarily changed the test as your error is saying not owned by sessionId when it is suppposed to say not owend by userId

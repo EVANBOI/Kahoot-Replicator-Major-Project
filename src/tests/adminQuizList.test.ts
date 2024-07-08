@@ -9,7 +9,7 @@ beforeEach(() => {
 });
 
 test('Session id is not valid', () => {
-  expect(adminQuizList("-10")).toStrictEqual(ERROR);
+  expect(adminQuizList('-10')).toStrictEqual(ERROR);
 });
 
 describe('Valid user with only no quizzes', () => {

@@ -65,7 +65,7 @@ app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
 
 app.put('/v1/admin/user/details', (req: Request, res: Response) => {
   const { sessionId, email, nameFirst, nameLast } = req.body;
-  const result = adminUserDetailsUpdate(sessionId, email, nameFirst, nameLast)
+  const result = adminUserDetailsUpdate(sessionId, email, nameFirst, nameLast);
   if ('error' in result) {
     if (result.error === 'sessionId provided is invalid') {
       return res.status(401).json(result);

@@ -3,8 +3,12 @@ import {
   adminCreateQuizQuestion,
   adminQuizCreate,
   adminAuthRegister,
+  adminQuizInfo,
   clear
 } from '../wrappers';
+import { ok } from '../helpers'
+import exp from 'constants';
+import { adminQuizList } from '../quiz';
 
 const SUCCESSFUL = {
   statusCode: 200,
@@ -32,6 +36,17 @@ const validQuestion2: QuestionBody = {
     { answer: 'Bsgd', correct: true }
   ]
 };
+
+const validQuestion3: QuestionBody = {
+    question: 'Valid question 3?',
+    duration: 5,
+    points: 2,
+    answers: [
+      { answer: 'Amb', correct: false },
+      { answer: 'Bsgd', correct: true },
+      { answer: 'Clsj', correct: false }
+    ]
+  };
 
 let sessionId1: string, sessionId2: string;
 let quizId1: number;
@@ -288,12 +303,99 @@ describe('Unsuccesful Tests', () => {
 
 describe('Succesful Tests', () => {
   test('Check return type', () => {
-    const result = adminCreateQuizQuestion(quizId1 - 911, sessionId1, validQuestion1);
+    const result = adminCreateQuizQuestion(quizId1, sessionId1, validQuestion1);
     expect(result).toStrictEqual(SUCCESSFUL);
   });
-  test.todo('Successfully make one valid question');
-  test.todo('Successfully make multiple valid questions');
-  test.todo('Check that questionId returned is unique in that quiz');
-  test.todo('Make questions for multiple quizzes by the same owner');
-  test.todo('Make questions for multiple quizzes by different owners');
+  test('Successfully make one valid question', () => {
+    adminCreateQuizQuestion(quizId1, sessionId1, validQuestion1);
+    const result = adminQuizInfo(sessionId1, quizId1);
+    expect(result.jsonBody).toStrictEqual({
+        quizId: quizId1,
+        name: 'Quiz 1',
+        timeCreated: expect.any(Number),
+        timeLastEdited: expect.any(Number),
+        description: 'Description',
+        questions: [validQuestion1]
+    })
+  });
+  test('Check that description time was updated successfully', () => {
+    adminCreateQuizQuestion(quizId1, sessionId1, validQuestion1);
+    const result = adminQuizInfo(sessionId1, quizId1).jsonBody; 
+  })
+
+  test('Successfully make multiple valid questions', () => {
+    adminCreateQuizQuestion(quizId1, sessionId1, validQuestion1);
+    adminCreateQuizQuestion(quizId1, sessionId1, validQuestion2);
+    adminCreateQuizQuestion(quizId1, sessionId1, validQuestion3);
+    const result = adminQuizInfo(sessionId1, quizId1);
+    expect(result.jsonBody).toStrictEqual({
+        quizId: quizId1,
+        name: 'Quiz 1',
+        timeCreated: expect.any(Number),
+        timeLastEdited: expect.any(Number),
+        description: 'Description',
+        questions: [validQuestion1, validQuestion2, validQuestion3]
+    })
+  });
+  test('Check that questionId returned is unique in that quiz', () => {
+    const id1 = adminCreateQuizQuestion(quizId1, sessionId1, validQuestion1);
+    const id2 = adminCreateQuizQuestion(quizId1, sessionId1, validQuestion2);
+    expect(id1).not.toStrictEqual(id2);
+  });
+  test('Make questions for multiple quizzes by the same owner', () => {
+    const { jsonBody: quiz } = adminQuizCreate(
+        sessionId1, 
+        'Quiz 2', 
+        'Description of other quiz');
+    const quizId2 = quiz?.quizId;
+    adminCreateQuizQuestion(quizId1, sessionId1, validQuestion1);
+    adminCreateQuizQuestion(quizId1, sessionId1, validQuestion2);
+    adminCreateQuizQuestion(quizId2, sessionId1, validQuestion3);
+    const result1 = adminQuizInfo(sessionId1, quizId1);
+    expect(result1).toStrictEqual({
+        quizId: quizId1,
+        name: 'Quiz 1',
+        timeCreated: expect.any(Number),
+        timeLastEdited: expect.any(Number),
+        description: 'Description',
+        questions: [validQuestion1, validQuestion2]
+    })
+    const result2 = adminQuizInfo(sessionId1, quizId2);
+    expect(result2).toStrictEqual({
+        quizId: quizId2,
+        name: 'Quiz 2',
+        timeCreated: expect.any(Number),
+        timeLastEdited: expect.any(Number),
+        description: 'Description of other quiz',
+        questions: [validQuestion3]
+    })
+  });
+  test('Make questions for multiple quizzes by different owners', () => {
+    const { jsonBody: quiz } = adminQuizCreate(
+        sessionId2, 
+        'Quiz 2', 
+        'Description of other quiz');
+    const quizId2 = quiz?.quizId;
+    adminCreateQuizQuestion(quizId1, sessionId1, validQuestion1);
+    adminCreateQuizQuestion(quizId1, sessionId1, validQuestion2);
+    adminCreateQuizQuestion(quizId2, sessionId2, validQuestion3);
+    const result1 = adminQuizInfo(sessionId1, quizId1);
+    expect(result1).toStrictEqual({
+        quizId: quizId1,
+        name: 'Quiz 1',
+        timeCreated: expect.any(Number),
+        timeLastEdited: expect.any(Number),
+        description: 'Description',
+        questions: [validQuestion1, validQuestion2]
+    })
+    const result2 = adminQuizInfo(sessionId2, quizId2);
+    expect(result2).toStrictEqual({
+        quizId: quizId2,
+        name: 'Quiz 2',
+        timeCreated: expect.any(Number),
+        timeLastEdited: expect.any(Number),
+        description: 'Description of other quiz',
+        questions: [validQuestion3]
+    })
+  });
 });

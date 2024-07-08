@@ -106,6 +106,7 @@ export const adminQuizCreate = (
   
 export const adminQuizList = (sessionId: string) => {
     return requestHelper('GET', '/v1/admin/quiz/list', { sessionId });
+    return requestHelper('GET', '/v1/admin/quiz/list', { sessionId });
 }
 
 export const adminQuizDescriptionUpdate = (quizId: number) => {
@@ -128,3 +129,19 @@ export const adminQuizInfo = (sessionId: string, quizId: number) => {
 export const clear = () => {
   return requestHelper('DELETE', '/v1/clear', {});
 }
+
+export const adminUserPasswordUpdate = (
+  sessionId: string,
+  oldPassword: string,
+  newPassword: string) => {
+  return requestHelper('PUT', '/v1/admin/user/password', 
+    { sessionId, oldPassword, newPassword });
+};
+
+export const adminQuizNameUpdate = (
+  sessionId: string,
+  quizId: number,
+  name: string) => {
+  return requestHelper('PUT', '/v1/admin/quiz/name', 
+    { sessionId, quizId, name });
+};

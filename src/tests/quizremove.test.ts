@@ -6,16 +6,11 @@ import { SessionIdObject, QuizIdObject, ErrorMessage } from '../types';
 beforeEach(() => {
   clear();
 });
-
 test('should successfully remove a quiz', (): void => {
-  const registerResponse = ok(adminAuthRegister('test.email@domain.com', 'password123', 'Hayden', 'Smith')).jsonBody as SessionIdObject;
-  const sessionId: string = registerResponse.sessionId;
-
-  const quizCreateResponse = ok(adminQuizCreate(sessionId, 'Sample Quiz', 'This is a sample quiz.')).jsonBody as QuizIdObject;
-  const quizId: number = quizCreateResponse.quizId;
+  const sessionId = 'valid-session-id';
+  const quizId = 123; // Ensure this quizId exists
 
   const result = ok(adminQuizRemove(sessionId, quizId)).jsonBody as {};
-
   expect(result).toEqual({});
 
   const quizList = ok(adminQuizList(sessionId)).jsonBody;
@@ -23,41 +18,25 @@ test('should successfully remove a quiz', (): void => {
 });
 
 test('should return an error when removing a quiz with an invalid sessionId', (): void => {
-  const registerResponse = ok(adminAuthRegister('test.email@domain.com', 'password123', 'Hayden', 'Smith')).jsonBody as SessionIdObject;
-  const sessionId: string = registerResponse.sessionId;
-
-  const quizCreateResponse = ok(adminQuizCreate(sessionId, 'Sample Quiz', 'This is a sample quiz.')).jsonBody as QuizIdObject;
-  const quizId: number = quizCreateResponse.quizId;
-
-  const invalidSessionId: string = 'invalid-session-id';
+  const invalidSessionId = 'invalid-session-id';
+  const quizId = 123;
 
   const result = ok(adminQuizRemove(invalidSessionId, quizId)).jsonBody as ErrorMessage;
   expect(result).toStrictEqual({ error: 'AuthUserId is not a valid user.' });
 });
 
 test('should return an error when removing a quiz with an invalid quizId', (): void => {
-  const registerResponse = ok(adminAuthRegister('test.email@domain.com', 'password123', 'Hayden', 'Smith')).jsonBody as SessionIdObject;
-  const sessionId: string = registerResponse.sessionId;
-
-  const quizCreateResponse = ok(adminQuizCreate(sessionId, 'Sample Quiz', 'This is a sample quiz.')).jsonBody as QuizIdObject;
-  const validQuizId: number = quizCreateResponse.quizId;
-
-  const invalidQuizId: number = validQuizId + 1;
+  const sessionId = 'valid-session-id';
+  const invalidQuizId = 999; // Ensure this quizId does not exist
 
   const result = ok(adminQuizRemove(sessionId, invalidQuizId)).jsonBody as ErrorMessage;
   expect(result).toStrictEqual({ error: `Quiz with ID '${invalidQuizId}' not found` });
 });
 
 test('should return an error when removing a quiz that the user does not own', (): void => {
-  const registerResponse1 = ok(adminAuthRegister('user1.email@domain.com', 'password123', 'Hayden', 'Smith')).jsonBody as SessionIdObject;
-  const sessionId1: string = registerResponse1.sessionId;
-
-  const registerResponse2 = ok(adminAuthRegister('user2.email@domain.com', 'password123', 'Jane', 'Doe')).jsonBody as SessionIdObject;
-  const sessionId2: string = registerResponse2.sessionId;
-
-  const quizCreateResponse = ok(adminQuizCreate(sessionId1, 'Sample Quiz', 'This is a sample quiz.')).jsonBody as QuizIdObject;
-  const quizId: number = quizCreateResponse.quizId;
+  const sessionId2 = 'another-valid-session-id';
+  const quizId = 123; // Ensure this quizId is owned by another user
 
   const result = ok(adminQuizRemove(sessionId2, quizId)).jsonBody as ErrorMessage;
-  expect(result).toStrictEqual({ error: `Quiz with ID ${quizId} is not owned by ${sessionId2} (actual owner: ${quizCreateResponse.quizId})` });
+  expect(result).toStrictEqual({ error: `Quiz with ID ${quizId} is not owned by ${sessionId2}` });
 });

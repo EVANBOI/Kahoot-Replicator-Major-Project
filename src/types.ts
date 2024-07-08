@@ -26,7 +26,8 @@ export type Quiz = {
     name: string,
     timeCreated: number,
     timeLastEdited: number,
-    description: string
+    description: string,
+    questions: QuestionBody[]
 }
 
 export type Data = {

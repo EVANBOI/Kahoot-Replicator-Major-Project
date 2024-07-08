@@ -10,6 +10,7 @@ import path from 'path';
 import process from 'process';
 import { adminAuthLogin, adminAuthRegister, adminUserDetailsUpdate } from './auth';
 import { clear } from './other';
+import { adminQuizInfo } from './quiz';
 
 // Set up web app
 const app = express();
@@ -71,6 +72,20 @@ app.put('/v1/admin/user/details', (req: Request, res: Response) => {
       return res.status(401).json(result);
     } else {
       return res.status(400).json(result);
+    }
+  }
+  res.json(result);
+});
+
+app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
+  const sessionId = req.query.sessionId as string;
+  const quizId = parseInt(req.params.quizid);
+  const result = adminQuizInfo(sessionId, quizId);
+  if ('error' in result) {
+    if (result.error === 'sessionId is not a valid.') {
+      return res.status(401).json(result);
+    } else {
+      return res.status(403).json(result);
     }
   }
   res.json(result);

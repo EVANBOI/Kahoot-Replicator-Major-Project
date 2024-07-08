@@ -85,11 +85,11 @@ Did you res.json(undefined)?`,
 
 export const adminAuthRegister = (
   email: string,
+  password: string,
   nameFirst: string,
-  nameLast: string,
-  password: string) => {
+  nameLast: string) => {
   return requestHelper('POST', '/v1/admin/auth/register',
-    { email, nameFirst, nameLast, password });
+    { email, password, nameFirst, nameLast});
 };
 
 export const adminAuthLogin = (email: string, password: string) => {

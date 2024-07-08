@@ -115,3 +115,17 @@ export const adminQuizInfo = (sessionId: string, quizId: number) => {
 export const clear = () => {
   return requestHelper('DELETE', '/v1/clear', {});
 }
+
+export const adminUserDetails = (sessionId: string) => {
+  return requestHelper('GET', '/v1/admin/user/details', { sessionId });
+};
+
+
+export const adminQuizRemove = (sessionId: string, quizId: number) => {
+  return requestHelper('DELETE', `/v1/admin/quiz/${quizId}`, { sessionId });
+};
+
+
+export const adminQuizCreate = (sessionId: string, name: string, description: string) => {
+  return requestHelper('POST', '/v1/admin/quiz/new', { sessionId, name, description });
+};

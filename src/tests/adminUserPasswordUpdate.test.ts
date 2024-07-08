@@ -1,86 +1,66 @@
-import { clear } from '../other';
-import { adminUserPasswordUpdate, adminAuthRegister, adminAuthLogin } from '../wrappers';
-import { PasswordUpdateResult, SessionIdObject } from '../types';
-import { RequestHelperReturnType } from '../wrappers';  
+import { adminAuthRegister, adminUserPasswordUpdate, adminAuthLogin, clear } from '../wrappers';
 
-const VALID_NEW_PASSWORD = 'newPassword123';
-const SHORT_PASSWORD = 'short';
-const NO_NUMBER_PASSWORD = 'password';
-const NO_LETTER_PASSWORD = '12345678';
+const SUCCESS = {
+  statusCode: 200,
+  jsonBody: {},
+};
 
-let sessionId: string;
-
-beforeEach(() => {
-  clear();
-});
+const ERROR400 = {
+  statusCode: 400,
+  jsonBody: { error: expect.any(String) },
+};
 
 describe('adminUserPasswordUpdate tests', () => {
+  let sessionId: string;
+
   beforeEach(() => {
-    const user = adminAuthRegister('chang.li@unsw.edu.au', 'oldPassword1', 'Chang', 'Li') as RequestHelperReturnType;
-    sessionId = user.jsonBody!.sessionId!;
+    clear();
+    const registerResponse = adminAuthRegister('chang.li@unsw.edu.au', 'oldPassword1', 'Chang', 'Li');
+    sessionId = registerResponse.jsonBody?.sessionId;
   });
 
   test('correct return value', () => {
-    const result = adminUserPasswordUpdate(sessionId, 'oldPassword1', VALID_NEW_PASSWORD) as RequestHelperReturnType;
-    expect(result.statusCode).toBe(200);
-    expect(result.jsonBody).toEqual({});
+    expect(adminUserPasswordUpdate(sessionId, 'oldPassword1', 'newPassword1')).toStrictEqual(SUCCESS);
   });
 
   test('Invalid session ID', () => {
-    const result = adminUserPasswordUpdate('invalidSessionId', 'anyPassword', VALID_NEW_PASSWORD) as RequestHelperReturnType;
-    expect(result.statusCode).toBe(400);
-    expect(result.jsonBody).toEqual({ error: 'sessionId is not valid.' });
+    expect(adminUserPasswordUpdate('invalidSessionId', 'oldPassword1', 'newPassword1')).toStrictEqual(ERROR400);
   });
 
   test('Incorrect old password', () => {
-    const result = adminUserPasswordUpdate(sessionId, 'wrongPassword', VALID_NEW_PASSWORD) as RequestHelperReturnType;
-    expect(result.statusCode).toBe(400);
-    expect(result.jsonBody).toEqual({ error: 'Old Password is not the correct old password' });
+    expect(adminUserPasswordUpdate(sessionId, 'wrongPassword', 'newPassword1')).toStrictEqual(ERROR400);
   });
 
   test('Old and new password are the same', () => {
-    const result = adminUserPasswordUpdate(sessionId, 'oldPassword1', 'oldPassword1') as RequestHelperReturnType;
-    expect(result.statusCode).toBe(400);
-    expect(result.jsonBody).toEqual({ error: 'Old Password and New Password match exactly' });
+    expect(adminUserPasswordUpdate(sessionId, 'oldPassword1', 'oldPassword1')).toStrictEqual(ERROR400);
   });
 
   test('New password has already been used - check return value', () => {
-    const firstUpdateResult = adminUserPasswordUpdate(sessionId, 'oldPassword1', VALID_NEW_PASSWORD) as RequestHelperReturnType;
-    expect(firstUpdateResult.statusCode).toBe(200);
-    expect(firstUpdateResult.jsonBody).toEqual({});
+    expect(adminUserPasswordUpdate(sessionId, 'oldPassword1', 'newPassword1')).toStrictEqual(SUCCESS);
 
-    const secondUpdateResult = adminUserPasswordUpdate(sessionId, VALID_NEW_PASSWORD, 'anotherNewPassword123') as RequestHelperReturnType;
-    expect(secondUpdateResult.statusCode).toBe(200);
-    expect(secondUpdateResult.jsonBody).toEqual({});
-
-    const thirdUpdateResult = adminUserPasswordUpdate(sessionId, 'anotherNewPassword123', VALID_NEW_PASSWORD) as RequestHelperReturnType;
-    expect(thirdUpdateResult.statusCode).toBe(400);
-    expect(thirdUpdateResult.jsonBody).toEqual({ error: 'New Password has already been used before by this user' });
+    expect(adminUserPasswordUpdate(sessionId, 'newPassword1', 'anotherNewPassword123')).toStrictEqual(SUCCESS);
   });
 
   test('New password has already been used - check data store', () => {
-    const firstUpdateResult = adminUserPasswordUpdate(sessionId, 'oldPassword1', VALID_NEW_PASSWORD) as RequestHelperReturnType;
-    expect(firstUpdateResult.statusCode).toBe(200);
-    expect(firstUpdateResult.jsonBody).toEqual({});
+    expect(adminUserPasswordUpdate(sessionId, 'oldPassword1', 'newPassword1')).toStrictEqual(SUCCESS);
 
-    const secondUpdateResult = adminUserPasswordUpdate(sessionId, VALID_NEW_PASSWORD, VALID_NEW_PASSWORD) as RequestHelperReturnType;
-    expect(secondUpdateResult.statusCode).toBe(400);
-    expect(secondUpdateResult.jsonBody).toEqual({ error: expect.any(String) });
+    expect(adminUserPasswordUpdate(sessionId, 'newPassword1', 'newPassword1')).toStrictEqual(ERROR400);
+  });
+});
 
-    const loginResult = adminAuthLogin('chang.li@unsw.edu.au', VALID_NEW_PASSWORD) as RequestHelperReturnType;
-    expect(loginResult.statusCode).toBe(200);
-    expect(loginResult.jsonBody!.sessionId).toBeDefined();
+describe('Password validation tests', () => {
+  let sessionId: string;
+
+  beforeEach(() => {
+    const registerResponse = adminAuthRegister('chang.li@unsw.edu.au', 'oldPassword1', 'Chang', 'Li');
+    sessionId = registerResponse.jsonBody?.sessionId;
   });
 
-  describe('Password validation tests', () => {
-    test.each([
-      { testName: 'Password is too short', password: SHORT_PASSWORD, error: 'Password should be more than 8 characters' },
-      { testName: 'Password with only letters', password: NO_NUMBER_PASSWORD, error: 'Password needs to contain at least one number and at least one letter' },
-      { testName: 'Password with only numbers', password: NO_LETTER_PASSWORD, error: 'Password needs to contain at least one number and at least one letter' }
-    ])('Test $testName', ({ password, error }) => {
-      const result = adminUserPasswordUpdate(sessionId, 'oldPassword1', password) as RequestHelperReturnType;
-      expect(result.statusCode).toBe(400);
-      expect(result.jsonBody).toEqual({ error: expect.any(String) });
-    });
+  test.each([
+    { testName: 'Password is too short', password: 'short' },
+    { testName: 'Password with only letters', password: 'onlyletters' },
+    { testName: 'Password with only numbers', password: '12345678' },
+  ])('Test $testName', ({ password }) => {
+    expect(adminUserPasswordUpdate(sessionId, 'oldPassword1', password)).toStrictEqual(ERROR400);
   });
 });

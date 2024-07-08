@@ -7,7 +7,7 @@ export type ERROR = {
     }, 
     status: number
 }
-export type SessionId = { sessionId: string }
+export type SessionId = { token: string }
 export type User = {
     userId: number,
     token: SessionId[],

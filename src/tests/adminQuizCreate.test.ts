@@ -1,12 +1,11 @@
 import { adminAuthRegister } from '../wrappers';
 import { adminQuizCreate } from '../wrappers';
 import { clear } from '../wrappers';
-import { AuthUserIdObject } from '../types';
 import { ok } from '../helpers';
 
 const QUIZCREATED = {
   statusCode: 200,
-  jsonBody: { sessionId: expect.any(String) }
+  jsonBody: { token: expect.any(String) }
 };
 
 const ERROR = {
@@ -18,18 +17,19 @@ beforeEach(() => {
   clear();
 });
 
-describe('When registering an user', () => {
-  let sessionId: string;
-  beforeEach(() => {
-    const { jsonBody } = ok(
-      adminAuthRegister(
-      'evan.xiong@unsw.edu.au', 
-      'abcde12345', 
-      'Evan', 
-      'Xiong'));
-    sessionId = jsonBody.sessionId;
-  });
+let sessionId: string;
 
+beforeEach(() => {
+  const { jsonBody } =
+    adminAuthRegister(
+    'evan.xiong@unsw.edu.au', 
+    'abc1234e', 
+    'Evan', 
+    'Xiong');
+  sessionId = jsonBody.sessionId;
+});
+
+describe('When registering an user', () => {
   test('SessionId is not a Valid', () => {
     expect(adminQuizCreate(sessionId + 1, 'Quiz 1', 'Pointers')).toStrictEqual(ERROR);
   });
@@ -69,7 +69,9 @@ describe('When registering an user', () => {
     expect(adminQuizCreate(sessionId, 'Quiz 1', description)).toStrictEqual(ERROR);
   });
 
-  test('Correctly returns the quizId', () => {
+  test.only('Correctly returns the quizId', () => {
+    console.log(sessionId);
+    console.log(adminQuizCreate(sessionId, 'Quiz 1', 'Pointers'));
     expect(adminQuizCreate(sessionId, 'Quiz 1', 'Pointers')).toStrictEqual(QUIZCREATED);
   });
 

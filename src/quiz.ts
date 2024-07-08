@@ -27,7 +27,7 @@ export function adminQuizList (sessionId: string): QuizListDetails {
 /**
  * Given basic details about a new quiz, create one for the logged in user.
  *
- * @param {number} sessionId - unique id of a user
+ * @param {string} sessionId - unique id of a user
  * @param {string} name - name of the quiz
  * @param {string} description - description of a quiz
  * @returns {{quizId: number}}
@@ -38,11 +38,13 @@ export function adminQuizCreate (
   name: string,
   description: string): ERROR | QuizCreateDetails {
   const database = getData();
+  console.log(sessionId);
+  console.log(name);
   const user = findUserBySessionId(database, sessionId);
   const nameUsed = database.quizzes.find(
     quiz => quiz.name === name &&
     quiz.creatorId === user?.userId);
-  
+
   if (!user) {
     return { 
       body: { 
@@ -66,7 +68,8 @@ export function adminQuizCreate (
     };
   } else if (name.length < 3 || name.length > 30) {
     return {
-      body: {error: 'name is either less than 3 characters long or more than 30 charcters long'
+      body: {
+        error: 'name is either less than 3 characters long or more than 30 charcters long'
       },
       status: 400
     };

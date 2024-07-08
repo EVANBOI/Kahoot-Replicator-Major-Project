@@ -106,7 +106,6 @@ export const adminQuizCreate = (
   
 export const adminQuizList = (sessionId: string) => {
     return requestHelper('GET', '/v1/admin/quiz/list', { sessionId });
-    return requestHelper('GET', '/v1/admin/quiz/list', { sessionId });
 }
 
 export const adminQuizDescriptionUpdate = (quizId: number) => {

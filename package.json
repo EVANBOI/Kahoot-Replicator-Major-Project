@@ -15,6 +15,7 @@
         "testl": "jest adminAuthLogin.test.ts"
     },
     "dependencies": {
+        "body-parser": "^1.20.2",
         "cors": "^2.8.5",
         "express": "^4.19.2",
         "morgan": "^1.10.0",
@@ -41,7 +42,7 @@
         "sync-request-curl": "^3.0.0",
         "ts-jest": "^29.1.2",
         "ts-node-dev": "^2.0.0",
-        "typescript": "^5.5.2",
+        "typescript": "^5.5.3",
         "yaml": "^2.4.5"
     }
 }

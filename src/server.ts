@@ -9,7 +9,7 @@ import fs from 'fs';
 import path from 'path';
 import process from 'process';
 import { adminAuthLogin, adminAuthRegister, adminUserPasswordUpdate  } from './auth';
-import { adminQuizCreate } from './quiz';
+import { adminQuizCreate,adminQuizNameUpdate } from './quiz';
 import { clear } from './other';
 import { ok } from './helpers'
 
@@ -73,6 +73,19 @@ app.put('/v1/admin/user/password', (req: Request, res: Response) => {
   } else {
     res.status(200).json(result);
   }
+});
+app.put('/v1/admin/quiz/name', (req: Request, res: Response) => {
+  const { sessionId, quizId, name } = req.body;
+  const result = adminQuizNameUpdate(sessionId, quizId, name);
+  if ('error' in result) {
+    if (result.error.includes('sessionId')) {
+      res.status(401).json(result);
+    } else if (result.error.includes('Quiz ID does not refer to a quiz that this user owns.')) {
+      res.status(403).json(result);
+    } else {
+      res.status(400).json(result);
+    }
+  } res.json(result);
 });
 
 app.post('/v1/admin/quiz', (req: Request, res: Response) => {

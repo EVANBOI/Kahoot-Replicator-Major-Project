@@ -88,7 +88,19 @@ export const adminAuthRegister = (
   nameFirst: string,
   nameLast: string) => {
   return requestHelper('POST', '/v1/admin/auth/register',
-    { email, nameFirst, nameLast, password });
+    { email, password, nameFirst, nameLast});
+};
+
+export const adminAuthLogin = (email: string, password: string) => {
+  return requestHelper('POST', '/v1/admin/auth/login', { email, password });
+};
+
+export const adminQuizCreate = (
+  sessionId: string,
+  name: string,
+  description: string
+) => {
+  return requestHelper('POST', '/v1/admin/quiz', { sessionId, name, description });
 };
 
 export const adminQuizList = (sessionId: string) => {
@@ -96,21 +108,21 @@ export const adminQuizList = (sessionId: string) => {
 };
 
 export const adminQuizDescriptionUpdate = (quizId: number) => {
-    return requestHelper('PUT', `/v1/admin/quia/${quizId}/description`, {})
-}
+  return requestHelper('PUT', `/v1/admin/quia/${quizId}/description`, {});
+};
 
 export const adminUserDetailsUpdate = (
   sessionId: string,
   email: string,
   nameFirst: string,
   nameLast: string) => {
-    return requestHelper('PUT', '/v1/admin/user/details', 
-        { sessionId, email, nameFirst, nameLast });
+  return requestHelper('PUT', '/v1/admin/user/details',
+    { sessionId, email, nameFirst, nameLast });
 };
 
 export const adminQuizInfo = (sessionId: string, quizId: number) => {
   return requestHelper('GET', `/v1/admin/quiz/${quizId}`, { sessionId });
-}
+};
 
 export const clear = () => {
   return requestHelper('DELETE', '/v1/clear', {});
@@ -123,9 +135,4 @@ export const adminUserDetails = (sessionId: string) => {
 
 export const adminQuizRemove = (sessionId: string, quizId: number) => {
   return requestHelper('DELETE', `/v1/admin/quiz/${quizId}`, { sessionId });
-};
-
-
-export const adminQuizCreate = (sessionId: string, name: string, description: string) => {
-  return requestHelper('POST', '/v1/admin/quiz/new', { sessionId, name, description });
 };

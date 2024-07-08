@@ -24,7 +24,7 @@ linting:
   stage: checks
   only:
     - master
-    - merge-requests
+    - merge_requests
   script:
     - npm run lint
 
@@ -32,6 +32,6 @@ type checking:
   stage: checks
   only:
     - master
-    - merge-requests
+    - merge_requests
   script:
     - npm run tsc

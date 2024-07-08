@@ -1,5 +1,6 @@
-import { adminAuthRegister, adminUserDetails, clear } from '../wrappers';
+import {  adminUserDetails, clear } from '../wrappers';
 import { SessionIdObject, UserRegistrationResult, ErrorMessage } from '../types';
+import { adminAuthRegister } from '../auth';
 
 const VALID_INPUTS = {
   EMAIL: 'admin@email.com',
@@ -24,7 +25,7 @@ describe('Successful user details retrieval tests', () => {
     if ('error' in registerResponse) {
       throw new Error(`Registration failed: ${(registerResponse as ErrorMessage).error}`);
     }
-
+    console.log(JSON.stringify(registerResponse))
     const sessionId: string = (registerResponse as SessionIdObject).sessionId;
     const userDetailsResponse = adminUserDetails(sessionId);
     
@@ -41,7 +42,8 @@ describe('Successful user details retrieval tests', () => {
           numSuccessfulLogins: 1,
           numFailedPasswordsSinceLastLogin: 0,
         }
-      }
+      },
+      statusCode:200
     });
   });
 });
@@ -55,7 +57,7 @@ describe('Unsuccessful user details retrieval tests', () => {
       jsonBody: {
         error: expect.any(String)
       },
-      statusCode: 403 // Assuming 403 is returned for invalid session ID
+      statusCode: 401 // The response should be 401 for invalid details.
     });
   });
 
@@ -67,7 +69,7 @@ describe('Unsuccessful user details retrieval tests', () => {
       jsonBody: {
         error: expect.any(String)
       },
-      statusCode: 403 // Assuming 403 is returned for empty session ID
+      statusCode: 401// Assuming 403 is returned for empty session ID
     });
   });
 });

@@ -1,8 +1,14 @@
-import { adminAuthRegister } from '../auth';
-import { clear } from '../other';
+import { adminAuthRegister } from '../wrappers';
+import { clear } from '../wrappers';
 
-const REGISTRATED = { sessionId: expect.any(String) };
-const ERROR = { error: expect.any(String) };
+const REGISTRATED = {
+  statusCode: 200,
+  jsonBody: { sessionId: expect.any(String) }
+};
+const ERROR = {
+  statusCode: 400,
+  jsonBody: { error: expect.any(String) }
+};
 
 const VALID_INPUTS = {
   EMAIL: 'admin@email.com',

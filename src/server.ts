@@ -9,7 +9,9 @@ import fs from 'fs';
 import path from 'path';
 import process from 'process';
 import { adminAuthLogin, adminAuthRegister, adminUserPasswordUpdate  } from './auth';
+import { adminQuizCreate } from './quiz';
 import { clear } from './other';
+import { ok } from './helpers'
 
 // Set up web app
 const app = express();
@@ -71,6 +73,12 @@ app.put('/v1/admin/user/password', (req: Request, res: Response) => {
   } else {
     res.status(200).json(result);
   }
+});
+
+app.post('/v1/admin/quiz', (req: Request, res: Response) => {
+  const { token, name, description } = req.body;
+  const result = adminQuizCreate(token, name, description);
+  return res.status(result.status).json(result.body);
 });
 
 // ====================================================================

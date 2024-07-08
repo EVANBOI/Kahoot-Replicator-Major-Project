@@ -23,7 +23,7 @@ test('Return an error for a non-existent email address', () => {
 
 describe('Tests after registering a user', () => {
   beforeEach(() => {
-    ok(adminAuthRegister('evan.xiong@unsw.edu.au', 'abcde12345', 'Evan', 'Xiong'));
+    adminAuthRegister('evan.xiong@unsw.edu.au', 'abcde12345', 'Evan', 'Xiong');
   });
 
   test('Return an error for a password that is not correct for the given email', () => {
@@ -31,12 +31,12 @@ describe('Tests after registering a user', () => {
     expect(adminAuthLogin('evan.xiong@unsw.edu.au', wrongPassword)).toStrictEqual(ERROR);
   });
 
-  test.failing('Correctly returns their sessionId', () => {
+  test('Correctly returns their sessionId', () => {
     expect(adminAuthLogin('evan.xiong@unsw.edu.au', 'abcde12345')).toStrictEqual(SUCCESSFULLOGIN);
   });
 });
 
-test.failing('Correctly returns two sessionId', () => {
+test('Correctly returns two sessionId', () => {
   const Id1 = ok(adminAuthRegister(
     'evan.xiong@unsw.edu.au',
     'abcde12345', 'Evan', 'Xiong'));

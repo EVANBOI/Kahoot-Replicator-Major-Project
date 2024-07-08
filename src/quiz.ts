@@ -1,6 +1,6 @@
 import { getData, setData } from './dataStore';
 import { findQuizWithId, findUserBySessionId } from './helpers';
-import { EmptyObject, ErrorMessage, Quiz, QuizCreateDetails, QuizInfoResult, QuizListDetails, QuizRemoveResult } from './types';
+import { ERROR, EmptyObject, ErrorMessage, Quiz, QuizCreateDetails, QuizInfoResult, QuizListDetails, QuizRemoveResult } from './types';
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
  *
@@ -27,7 +27,7 @@ export function adminQuizList (sessionId: string): QuizListDetails {
 /**
  * Given basic details about a new quiz, create one for the logged in user.
  *
- * @param {number} sessionId - unique id of a user
+ * @param {string} sessionId - unique id of a user
  * @param {string} name - name of the quiz
  * @param {string} description - description of a quiz
  * @returns {{quizId: number}}
@@ -36,26 +36,50 @@ export function adminQuizList (sessionId: string): QuizListDetails {
 export function adminQuizCreate (
   sessionId: string,
   name: string,
-  description: string): QuizCreateDetails {
+  description: string): ERROR | QuizCreateDetails {
   const database = getData();
+  console.log(sessionId);
+  console.log(name);
   const user = findUserBySessionId(database, sessionId);
-  const nameUsed = database.quizzes.find(quiz => quiz.name === name &&
-                                        quiz.creatorId === user?.userId);
+  const nameUsed = database.quizzes.find(
+    quiz => quiz.name === name &&
+    quiz.creatorId === user?.userId);
 
   if (!user) {
-    return { error: 'Session ID is not valid' };
+    return { 
+      body: { 
+        error: 'Session ID is not valid'
+      },
+      status: 401
+    };
   } else if (nameUsed) {
-    return { error: 'name has already been used by the user' };
+    return { 
+      body: {
+        error: 'name has already been used by the user'
+      },
+      status: 400
+    };
   } else if (!/^[a-zA-Z0-9 ]+$/.test(name)) {
     return {
-      error: 'name contains invalid characters. Valid characters are alphanumeric and spaces'
+      body: {
+        error: 'name contains invalid characters. Valid characters are alphanumeric and spaces'
+      },
+      status: 400
     };
   } else if (name.length < 3 || name.length > 30) {
     return {
-      error: 'name is either less than 3 characters long or more than 30 charcters long'
+      body: {
+        error: 'name is either less than 3 characters long or more than 30 charcters long'
+      },
+      status: 400
     };
   } else if (description.length > 100) {
-    return { error: 'description is more than 100 characters in length' };
+    return { 
+      body: {
+        error: 'description is more than 100 characters in length'
+      },
+      status: 400
+    };
   }
 
   const timeStamp1 = Math.floor(Date.now() / 1000);
@@ -72,7 +96,10 @@ export function adminQuizCreate (
   setData(database);
 
   return {
-    quizId: id
+    body: {
+      quizId: id
+    },
+    status: 200
   };
 }
 

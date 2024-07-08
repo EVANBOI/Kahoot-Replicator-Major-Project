@@ -44,7 +44,7 @@ export function adminAuthRegister (
   }
 
   const id = dataBase.users.length + 1;
-  const sessionId = { sessionId: uid.rnd() };
+  const sessionId = { token: uid.rnd() };
   dataBase.users.push({
     userId: id,
     token: [sessionId],
@@ -85,7 +85,7 @@ export function adminUserDetailsUpdate (
   // (the update email === original email)
   const person = dataBase.users.find(person => person.email === email);
   if (person) {
-    const isCorrectOwner = person.token.find(token => token.sessionId === sessionId);
+    const isCorrectOwner = person.token.find(token => token.token === sessionId);
     if (!isCorrectOwner) {
       return { error: 'Email address is used by another user.' };
     }
@@ -137,7 +137,7 @@ export function adminAuthLogin (
 
   correctPassword.numFailedPasswordsSinceLastLogin = 0;
   correctPassword.numSuccessfulLogins += 1;
-  const sessionId = { sessionId: uid.rnd() };
+  const sessionId = { token: uid.rnd() };
   correctPassword.token.push(sessionId);
   setData(dataBase);
 

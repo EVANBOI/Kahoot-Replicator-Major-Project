@@ -1,30 +1,29 @@
-import { adminAuthRegister, adminAuthLogin, adminUserDetails } from '../auth.js';
-import {clear} from '../other.js';
+import { adminAuthRegister, adminUserDetails } from '../auth';
+import { clear } from '../other';
+import { SessionIdObject } from '../types';
 
-// Clear the state before each test
 beforeEach(() => {
-   clear();
+  clear();
 });
 
-test('should return user details for a valid authUserId', () => {
-    // Register a user to set up the initial state
-    const registerResponse = adminAuthRegister('test.email@domain.com', 'password123', 'Hayden', 'Smith');
-    const authUserId = registerResponse.authUserId;
-    const result = adminUserDetails(authUserId);
+test('should return user details for a valid sessionId', (): void => {
+  const registerResponse = adminAuthRegister('test.email@domain.com', 'password123', 'Hayden', 'Smith') as SessionIdObject;
+  const sessionId: string = registerResponse.sessionId; // Get session id from response
+  const result = adminUserDetails(sessionId);
 
-    expect(result).toEqual({
-        user: {
-            userId: authUserId,
-            name: 'Hayden Smith',
-            email: 'test.email@domain.com',
-            numSuccessfulLogins: 1,
-            numFailedPasswordsSinceLastLogin: 0,
-        }
-    });
+  expect(result).toEqual({
+    user: {
+      userId: expect.any(Number), // userId is a random number assigned as they register
+      name: 'Hayden Smith',
+      email: 'test.email@domain.com',
+      numSuccessfulLogins: 1,
+      numFailedPasswordsSinceLastLogin: 0,
+    }
+  });
 });
 
-test('should return an error for an invalid authUserId', () => {
-    const invalidAuthUserId = -1;
-    const result = adminUserDetails(invalidAuthUserId);
-    expect(result).toStrictEqual({ error: expect.any(String) });
+test('should return an error for an invalid sessionId', (): void => {
+  const invalidSessionId: string = 'invalid-session-id';
+  const result = adminUserDetails(invalidSessionId) as { error: string };
+  expect(result).toStrictEqual({ error: expect.any(String) });
 });

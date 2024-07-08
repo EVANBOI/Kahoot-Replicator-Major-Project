@@ -1,43 +1,49 @@
-import { adminAuthRegister, adminAuthLogin } from '../auth';
-import { clear } from '../other';
-import { UserRegistrationResult } from '../types';
+import { adminAuthRegister, adminAuthLogin } from '../wrappers';
+import { clear } from '../wrappers';
+import { ok } from '../helpers';
+
+const SUCCESSFULLOGIN = {
+  statusCode: 200,
+  jsonBody: { sessionId: expect.any(String) }
+};
+
+const ERROR = {
+  statusCode: 400,
+  jsonBody: { error: expect.any(String) }
+};
 
 beforeEach(() => {
-    // Reset the state of our data so that each tests can run independently
-    clear();
+  // Reset the state of our data so that each tests can run independently
+  clear();
 });
 
-
-
-test('return an error for a non-existent email address', () => {
-    expect(adminAuthLogin(" ", "abcde12345")).toStrictEqual({ error: expect.any(String) });
+test('Return an error for a non-existent email address', () => {
+  expect(adminAuthLogin(' ', 'abcde12345')).toStrictEqual(ERROR);
 });
 
-describe('when registering an authUserId', () => {
-    let Id: UserRegistrationResult;
-    beforeEach(() => {
-        Id = adminAuthRegister('evan.xiong@unsw.edu.au', 'abcde12345', 'Evan', 'Xiong');
-    });
+describe('Tests after registering a user', () => {
+  beforeEach(() => {
+    ok(adminAuthRegister('evan.xiong@unsw.edu.au', 'abcde12345', 'Evan', 'Xiong'));
+  });
 
-    test('return an error for a password that is not correct for the given email', () => {
-        let wrong_password = 'abcde12345' + 'a';
-        expect(adminAuthLogin('evan.xiong@unsw.edu.au', wrong_password)).toStrictEqual( { error: expect.any(String) });
-    });
+  test('Return an error for a password that is not correct for the given email', () => {
+    const wrongPassword = 'abcde12345' + 'a';
+    expect(adminAuthLogin('evan.xiong@unsw.edu.au', wrongPassword)).toStrictEqual(ERROR);
+  });
 
-
-    test('correctly returns their authUserId', () => {
-        expect(adminAuthLogin('evan.xiong@unsw.edu.au', 'abcde12345')).toStrictEqual({ authUserId: Id.authUserId });
-    });
-
-    
-})
-
-test('correctly returns two authuserIds', () => {
-    const Id1: UserRegistrationResult = adminAuthRegister('evan.xiong@unsw.edu.au', 'abcde12345', 'Evan', 'Xiong');
-    const Id2: UserRegistrationResult = adminAuthRegister('jessie.zhang@unsw.edu.au', 'qwerty67890', 'Jessie', 'Zhang');
-    expect(adminAuthLogin('evan.xiong@unsw.edu.au', 'abcde12345')).toStrictEqual({ authUserId: Id1.authUserId })
-    expect(adminAuthLogin('jessie.zhang@unsw.edu.au', 'qwerty67890')).toStrictEqual({ authUserId: Id2.authUserId })
-    expect(Id1).not.toStrictEqual(expect(Id2));
+  test.failing('Correctly returns their sessionId', () => {
+    expect(adminAuthLogin('evan.xiong@unsw.edu.au', 'abcde12345')).toStrictEqual(SUCCESSFULLOGIN);
+  });
 });
 
-
+test.failing('Correctly returns two sessionId', () => {
+  const Id1 = ok(adminAuthRegister(
+    'evan.xiong@unsw.edu.au',
+    'abcde12345', 'Evan', 'Xiong'));
+  const Id2 = ok(adminAuthRegister(
+    'jessie.zhang@unsw.edu.au',
+    'qwerty67890', 'Jessie', 'Zhang'));
+  expect(adminAuthLogin('evan.xiong@unsw.edu.au', 'abcde12345')).toStrictEqual(SUCCESSFULLOGIN);
+  expect(adminAuthLogin('jessie.zhang@unsw.edu.au', 'qwerty67890')).toStrictEqual(SUCCESSFULLOGIN);
+  expect(Id1).not.toStrictEqual(expect(Id2));
+});

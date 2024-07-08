@@ -89,7 +89,7 @@ export const adminAuthRegister = (
   nameFirst: string,
   nameLast: string) => {
   return requestHelper('POST', '/v1/admin/auth/register',
-    { email, password, nameFirst, nameLast});
+    { email, password, nameFirst, nameLast });
 };
 
 export const adminAuthLogin = (email: string, password: string) => {
@@ -130,9 +130,9 @@ export const clear = () => {
 };
 
 export const adminCreateQuizQuestion = (
-  quizId: number, 
+  quizId: number,
   sessionId: string,
   questionBody: QuestionBody) => {
-  return requestHelper('POST', `/v1/admin/quiz/${quizId}/question`, 
+  return requestHelper('POST', `/v1/admin/quiz/${quizId}/question`,
     { sessionId, questionBody });
 };

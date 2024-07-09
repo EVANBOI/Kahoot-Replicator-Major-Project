@@ -20,6 +20,10 @@ export const VALID_QUIZ_CREATE_INPUTS_1 = {
 
 export const NEW_VALID_EMAIL = 'newValidEmail@gmail.com';
 
+export const INVALID_JSONIFIED_ARRAY_1 = '[999]';
+
+export const INVALID_JSONIFIED_ARRAY_2 = '[999, 9999]';
+
 // here below for the success return consts
 export const USER_DETAIL_UPDATED_SUCCESSFUL = {
   statusCode: 200,
@@ -29,6 +33,11 @@ export const USER_DETAIL_UPDATED_SUCCESSFUL = {
 export const CLEAR_SUCCESSFUL = {
   statusCode: 200,
   jsonBody: {}
+};
+
+export const QUIZ_TRASH_EMPTYED_SUCCESSFUL = {
+    statusCode: 200,
+    jsonBody: {}
 };
 
 // here below for the error return consts

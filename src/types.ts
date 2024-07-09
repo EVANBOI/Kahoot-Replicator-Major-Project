@@ -1,3 +1,5 @@
+import { QuestionToken } from "typescript";
+
 export type EmptyObject = Record<string, never>;
 
 export type ErrorMessage = { error: string };
@@ -96,3 +98,5 @@ export type QuestionBody = {
     points: number,
     answers: {answer: string, correct: boolean}[]
 };
+
+export type CreateQuestionReturn = QuizIdObject | ErrorMessage;

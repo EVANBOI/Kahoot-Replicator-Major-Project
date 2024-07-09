@@ -1,6 +1,6 @@
 import { getData, setData } from './dataStore';
-import { findQuizWithId, findUserBySessionId } from './helpers';
-import { EmptyObject, ErrorMessage, Quiz, QuizIdObject, QuizInfoResult, QuizListDetails, QuizRemoveResult } from './types';
+import { durationSum, findQuizWithId, findUserBySessionId } from './helpers';
+import { CreateQuestionReturn, EmptyObject, ErrorMessage, QuestionBody, Quiz, QuizIdObject, QuizInfoResult, QuizListDetails, QuizRemoveResult } from './types';
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
  *
@@ -67,7 +67,8 @@ export function adminQuizCreate (
     name: name,
     timeCreated: timeStamp1,
     timeLastEdited: timeStamp2,
-    description: description
+    description: description,
+    questions: []
   });
   setData(database);
 
@@ -188,7 +189,7 @@ export function adminQuizNameUpdate(sessionId: string, quizId: number, name: str
  * @returns {} - empty object
  * @returns {{error: string}} an error
  */
-export function adminQuizDescriptionUpdate (
+export function adminQuizDescriptionUpdate(
   sessionId: string,
   quizId: number,
   description: string): EmptyObject | ErrorMessage {
@@ -209,4 +210,34 @@ export function adminQuizDescriptionUpdate (
   validQuizId.timeLastEdited = Math.floor(Date.now() / 1000);
   setData(database);
   return {};
+}
+
+/**
+ * Update the description of the relevant quiz.
+ *
+ * @param {number} quizId - unique id of a quiz
+ * @param {QuestionBody} questionBody - contains information of a question
+ * @returns {{questionId: number}} - id of a question that is unique only inside a quiz
+ * @returns {{error: string}} an error
+ */
+
+export function adminCreateQuizQuestion(
+  quizId: number, 
+  questionBody: QuestionBody): CreateQuestionReturn {
+
+    const totalDuration = durationSum(quizId) + questionBody.duration;
+    if (questionBody.question.length > 50 ) {
+      return { status: 400, error: 'Question string is greater than 50 characters'}
+    } else if (questionBody.question.length < 5) {
+      return { status: 400, error: 'Question string is less than 5 characters'}
+    } else if (questionBody.duration < 0) {
+      return { status: 400, error: 'Duration is negative'}
+    } else if (totalDuration > 180) {
+      return { status: 400, error: 'Total duration is more than 3 min'}
+    } else if (questionBody.points < 1) {
+      return { status: 400, error: 'Point is less than 1'}
+    } else if (questionBody.points > 10) {
+      return { status: 400, error: 'Point is greater than 10'}
+    }
+  return;
 }

@@ -8,7 +8,7 @@ import sui from 'swagger-ui-express';
 import fs from 'fs';
 import path from 'path';
 import process from 'process';
-import { adminQuizCreate, adminQuizInfo } from './quiz';
+import { adminQuizCreate, adminQuizInfo, adminQuizTrashView } from './quiz';
 import { adminAuthLogin, adminAuthRegister, adminUserDetailsUpdate, adminUserPasswordUpdate } from './auth';
 import { clear } from './other';
 import { getData } from './dataStore';
@@ -120,6 +120,7 @@ app.put('/v1/admin/user/password', (req: Request, res: Response) => {
   }
   res.json(result);
 });
+
 app.put('/v1/admin/quiz/name', (req: Request, res: Response) => {
   const { sessionId, quizId, name } = req.body;
   const result = adminQuizNameUpdate(sessionId, quizId, name);
@@ -134,6 +135,15 @@ app.put('/v1/admin/quiz/name', (req: Request, res: Response) => {
     }
   } res.json(result);
 });
+
+app.get('v1/admin/quiz/trash', (req: Request, res: Response) => {
+  // const token = req.query.token as string;
+  // const result = adminQuizTrashView();
+  // if ('error' in result) {
+  //   return res.status(401).json(result)
+  // }
+  // return res.json(result);
+})
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================

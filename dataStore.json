@@ -1,1 +1,1 @@
-{"users":[],"quizzes":[]}
+{"users":[{"userId":1,"tokens":[{"token":"393387"}],"email":"evan.xiong@unsw.edu.au","password":"abc1234e","name":"Evan Xiong","numSuccessfulLogins":1,"numFailedPasswordsSinceLastLogin":0,"passwordUsedThisYear":[]}],"quizzes":[{"creatorId":1,"quizId":1,"name":"Quiz 1","timeCreated":1720510317,"timeLastEdited":1720510317,"description":"Pointers"}]}

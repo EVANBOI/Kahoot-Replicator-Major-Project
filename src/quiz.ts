@@ -211,3 +211,17 @@ export function adminQuizDescriptionUpdate (
   setData(database);
   return {};
 }
+
+/**
+ * Given a token/sessionId, view the quizzes that are currently in the trash for 
+ * logged in user.
+ *
+ * @param {string} sessionId - unique id of a user
+ * @returns {{quizzes: {quizId: number, name: string}}} - an object containing identifiers of all quizzes
+ * @returns {{error: string}} an error
+ */
+
+export function adminQuizTrashView() { 
+  const database = getData();
+  
+}

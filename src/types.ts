@@ -31,7 +31,8 @@ export type Quiz = {
 
 export type Data = {
     users: User[],
-    quizzes: Quiz[]
+    quizzes: Quiz[],
+    trash: Quiz[]
 }
 
 export type QuizIdObject = {

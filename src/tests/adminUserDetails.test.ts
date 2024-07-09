@@ -1,8 +1,6 @@
-import {  adminUserDetails, clear } from '../wrappers';
+import { adminUserDetails, clear } from '../wrappers';
 import { SessionIdObject, UserRegistrationResult, ErrorMessage } from '../types';
 import { adminAuthRegister } from '../auth';
-import exp from 'constants';
-import { string } from 'yargs';
 
 const VALID_INPUTS = {
   EMAIL: 'admin@email.com',
@@ -10,7 +8,6 @@ const VALID_INPUTS = {
   FIRSTNAME: 'Idk',
   LASTNAME: 'Idk'
 };
-
 
 beforeEach(() => {
   clear();
@@ -25,12 +22,8 @@ describe('Successful user details retrieval tests', () => {
       VALID_INPUTS.LASTNAME
     ) as UserRegistrationResult;
 
-    console.log(JSON.stringify(registerResponse))
     const sessionId: string = (registerResponse as SessionIdObject).token;
-    console.log(sessionId);
     const userDetailsResponse = adminUserDetails(sessionId);
-    console.log(adminUserDetails(sessionId));
-    
 
     expect(userDetailsResponse).toEqual({
       jsonBody: {
@@ -42,7 +35,7 @@ describe('Successful user details retrieval tests', () => {
           numFailedPasswordsSinceLastLogin: 0,
         }
       },
-      statusCode:200
+      statusCode: 200
     });
   });
 });

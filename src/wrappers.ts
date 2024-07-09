@@ -130,8 +130,7 @@ export const adminQuizInfo = (sessionId: string, quizId: number) => {
 
 export const clear = () => {
   return requestHelper('DELETE', '/v1/clear', {});
-}
-
+};
 
 export const adminUserPasswordUpdate = (
   sessionId: string,
@@ -151,10 +150,10 @@ export const adminQuizNameUpdate = (
 export const adminQuizTrashView = (token: string) => {
   return requestHelper('GET', '/v1/admin/quiz/trash', { token });
 };
-export const adminUserDetails = (sessionId: string) => {
-  return requestHelper('GET', '/v1/admin/user/details', { sessionId });
+export const adminUserDetails = (token: string) => {
+  return requestHelper('GET', '/v1/admin/user/details', { token });
 };
 
-export const adminQuizRemove = (sessionId: string, quizId: number) => {
-  return requestHelper('DELETE', `/v1/admin/quiz/${quizId}`, { sessionId });
+export const adminQuizRemove = (token: string, quizId: number) => {
+  return requestHelper('DELETE', `/v1/admin/quiz/${quizId}`, { token });
 };

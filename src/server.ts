@@ -15,7 +15,6 @@ import { getData } from './dataStore';
 import { findUserBySessionId } from './helpers';
 import { adminQuizNameUpdate } from './quiz';
 
-
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
@@ -96,7 +95,7 @@ app.delete('/v1/clear', (req: Request, res: Response) => {
 app.post('/v1/admin/auth/register', (req: Request, res: Response) => {
   const { email, password, nameFirst, nameLast } = req.body;
   const result = adminAuthRegister(email, password, nameFirst, nameLast);
-  console.log(JSON.stringify(result))
+  console.log(JSON.stringify(result));
   if ('error' in result) {
     return res.status(400).json(result);
   }
@@ -125,16 +124,15 @@ app.get('/v1/admin/user/details', (req: Request, res: Response) => {
 
 // This is the get admin userdetails method from the swagger
 app.delete('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
-  const token =req.query.token as string;
-  const id=parseInt(req.params.quizid)
-  const result = adminQuizRemove(token,id);
+  const token = req.query.token as string;
+  const id = parseInt(req.params.quizid);
+  const result = adminQuizRemove(token, id);
 
-  if(result.statusCode!=200){
-    res.status(result.statusCode).json({error:result.message})
-  }else{
+  if (result.statusCode !== 200) {
+    res.status(result.statusCode).json({ error: result.message });
+  } else {
     res.status(200).json({});
   }
-
 });
 
 app.post('/v1/admin/quiz', (req: Request, res: Response) => {

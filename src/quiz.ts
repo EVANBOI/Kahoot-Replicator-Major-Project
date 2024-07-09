@@ -82,26 +82,26 @@ export function adminQuizCreate (
  * @returns {} - empty object
  * @returns {{error: string}} an error
  */
-export function adminQuizRemove (sessionId: string, quizId: number): QuizRemoveResult {
+export function adminQuizRemove (token: string, quizId: number): QuizRemoveResult {
   const store = getData();
-  const user = findUserBySessionId(store, sessionId);
+  const user = findUserBySessionId(store, token);
 
   if (!user) {
-    return { statusCode:401,message: 'AuthUserId is not a valid user.' };
+    return { statusCode: 401, message: 'AuthUserId is not a valid user.' };
   }
   const quiz = findQuizWithId(quizId);
   if (!quiz) {
-    return { statusCode:403,message: `Quiz with ID '${quizId}' not found` };
+    return { statusCode: 403, message: `Quiz with ID '${quizId}' not found` };
   }
   if (quiz.creatorId !== user.userId) {
-    return { statusCode:403,message: `Quiz with ID ${quizId} is not owned by ${user.userId} (actual owner: ${quiz.creatorId})` };
+    return { statusCode: 403, message: `Quiz with ID ${quizId} is not owned by ${user.userId} (actual owner: ${quiz.creatorId})` };
   }
 
   const quizIndex = store.quizzes.findIndex(quiz => quiz.quizId === quizId);
   store.quizzes.splice(quizIndex, 1);
   setData(store);
   return {
-    statusCode:200,
+    statusCode: 200,
     message: '{}'
   };
 }

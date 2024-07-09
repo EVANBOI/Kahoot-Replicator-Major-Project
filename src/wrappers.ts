@@ -100,7 +100,8 @@ export const adminQuizCreate = (
   name: string,
   description: string
 ) => {
-  return requestHelper('POST', '/v1/admin/quiz', { sessionId, name, description });
+  console.log(sessionId, 'hi');
+  return requestHelper('POST', '/v1/admin/quiz', { token: sessionId, name, description });
 };
 
 export const adminQuizList = (sessionId: string) => {
@@ -142,4 +143,14 @@ export const adminQuizNameUpdate = (
   name: string) => {
   return requestHelper('PUT', '/v1/admin/quiz/name', 
     { sessionId, quizId, name });
+};
+export const adminQuizTrashView = (token: string) => {
+  return requestHelper('GET', '/v1/admin/quiz/trash', { token });
+};
+export const adminUserDetails = (sessionId: string) => {
+  return requestHelper('GET', '/v1/admin/user/details', { sessionId });
+};
+
+export const adminQuizRemove = (sessionId: string, quizId: number) => {
+  return requestHelper('DELETE', `/v1/admin/quiz/${quizId}`, { sessionId });
 };

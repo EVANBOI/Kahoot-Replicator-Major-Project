@@ -39,9 +39,7 @@ describe('adminQuizNameUpdate tests', () => {
   beforeEach(() => {
     const registerResponse = adminAuthRegister(VALID_INPUTS.EMAIL, VALID_INPUTS.PASSWORD, VALID_INPUTS.FIRSTNAME, VALID_INPUTS.LASTNAME);
     sessionId = registerResponse.jsonBody.token;
-    console.log('Register Response:', registerResponse);
     const quizCreateResponse = adminQuizCreate(sessionId, 'My Quiz', 'This is a description.');
-    console.log('Quiz Create Response:', quizCreateResponse);
     quizId = quizCreateResponse.jsonBody.quizId;
   });
 
@@ -52,7 +50,7 @@ describe('adminQuizNameUpdate tests', () => {
 
   test('Invalid quiz ID', () => {
     const result = adminQuizNameUpdate(sessionId, quizId + 42, 'New Quiz Name');
-    expect(result).toStrictEqual(ERROR401);
+    expect(result).toStrictEqual(ERROR403);
   });
 
   test('Quiz not owned by user', () => {
@@ -89,17 +87,18 @@ describe('adminQuizNameUpdate tests', () => {
     expect(result).toStrictEqual(SUCCESSFUL_UPDATE);
   });
 
-  test('Successful quiz name update - functionality', () => {
-    adminQuizNameUpdate(sessionId, quizId, 'New Quiz Name');
-    const updatedQuiz = ok(adminQuizInfo(sessionId, quizId));
-    expect(updatedQuiz).toStrictEqual({
-      statusCode: 200,
-      jsonBody: {
-        quizId: expect.any(Number),
-        name: 'New Quiz Name',
-        timeCreated: expect.any(Number),
-        timeLastEdited: expect.any(Number),
-        description: 'This is a description.',
+test('Successful quiz name update - functionality', () => {
+  adminQuizNameUpdate(sessionId, quizId, 'New Quiz Name');
+  const updatedQuiz = ok(adminQuizInfo(sessionId, quizId));
+  expect(updatedQuiz).toStrictEqual({
+    statusCode: 200,
+    jsonBody: {
+      quizId: expect.any(Number),
+      name: 'New Quiz Name',
+      timeCreated: expect.any(Number),
+      timeLastEdited: expect.any(Number),
+      description: 'This is a description.',
+        
       },
     });
   });

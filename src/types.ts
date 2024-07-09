@@ -42,7 +42,7 @@ export type AuthUserIdObject = {
     token: string
 }
 
-export type ClearResult = {};
+export type ClearResult = EmptyObject;
 
 export type UserUpdateResult = EmptyObject | ErrorMessage;
 

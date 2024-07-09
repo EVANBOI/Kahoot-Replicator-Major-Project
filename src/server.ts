@@ -8,9 +8,8 @@ import sui from 'swagger-ui-express';
 import fs from 'fs';
 import path from 'path';
 import process from 'process';
-import { adminQuizCreate } from './quiz';
+import { adminQuizCreate, adminQuizList } from './quiz';
 import { adminAuthLogin, adminAuthRegister, adminUserDetailsUpdate } from './auth';
-import { adminQuizList } from './quiz';
 import { clear } from './other';
 import { getData } from './dataStore';
 import { findUserBySessionId } from './helpers';
@@ -65,7 +64,7 @@ app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
     res.status(401);
   }
   return res.json(result);
-})
+});
 
 app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
   const { email, password } = req.body;

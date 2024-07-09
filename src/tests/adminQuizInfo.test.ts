@@ -37,7 +37,7 @@ describe('error tests', () => {
       VALID_USER.FIRSTNAME,
       VALID_USER.LASTNAME
     );
-    VALID_TOKEN = register.jsonBody.sessionId;
+    VALID_TOKEN = register.jsonBody.token;
   });
 
   test('AuthUserId is not a valid user.', () => {
@@ -57,7 +57,7 @@ describe('error tests', () => {
       VALID_USER.FIRSTNAME,
       VALID_USER.LASTNAME
     );
-    const ANOTHETR_SESSION_ID = otherUser.jsonBody.sessionId;
+    const ANOTHETR_SESSION_ID = otherUser.jsonBody.token;
     expect(adminQuizInfo(ANOTHETR_SESSION_ID, VALID_QUIZ_ID)).toStrictEqual(ERROR403);
   });
 });
@@ -70,7 +70,7 @@ describe('success tests', () => {
       VALID_USER.FIRSTNAME,
       VALID_USER.LASTNAME
     );
-    VALID_TOKEN = User.jsonBody.sessionId;
+    VALID_TOKEN = User.jsonBody.token;
     const Quiz = adminQuizCreate(
       VALID_TOKEN,
       VALID_QUIZ.NAME,

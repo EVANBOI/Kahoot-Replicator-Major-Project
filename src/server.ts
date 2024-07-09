@@ -8,7 +8,7 @@ import sui from 'swagger-ui-express';
 import fs from 'fs';
 import path from 'path';
 import process from 'process';
-import { adminQuizCreate } from './quiz';
+import { adminQuizCreate, adminQuizInfo } from './quiz';
 import { adminAuthLogin, adminAuthRegister, adminUserDetailsUpdate } from './auth';
 import { clear } from './other';
 import { getData } from './dataStore';

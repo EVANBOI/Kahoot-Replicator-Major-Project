@@ -1,8 +1,10 @@
-import { adminAuthRegister, 
-  adminQuizDescriptionUpdate, 
+import {
+  adminAuthRegister,
+  adminQuizDescriptionUpdate,
   clear,
   adminQuizCreate,
-  adminQuizInfo } from '../wrappers';
+  adminQuizInfo
+} from '../wrappers';
 
 beforeEach(() => {
   clear();
@@ -30,9 +32,9 @@ describe('Error cases', () => {
         'admin2@gmail.com', 'SDFJKH2349081j', 'JJone', 'ZZ'
       );
       sessionId2 = body2?.token;
-      
+
       const { jsonBody: Quiz1 } = adminQuizCreate(
-        sessionId1, 'Quiz 1', 'this is first original description')
+        sessionId1, 'Quiz 1', 'this is first original description');
       quizId1 = Quiz1?.quizId;
     });
 
@@ -81,15 +83,15 @@ describe('Successful function run', () => {
     sessionId2 = body2?.token;
 
     const { jsonBody: quiz1 } = adminQuizCreate(
-      sessionId1, 'Quiz 1', 'this is first original description')
+      sessionId1, 'Quiz 1', 'this is first original description');
     quizId1 = quiz1?.quizId;
 
     const { jsonBody: quiz2 } = adminQuizCreate(
-      sessionId1, 'Quiz 2', 'this is second original description')
+      sessionId1, 'Quiz 2', 'this is second original description');
     quizId2 = quiz2?.quizId;
 
     const { jsonBody: quiz3 } = adminQuizCreate(
-      sessionId2, 'Quiz 3', 'this is thrid original description')
+      sessionId2, 'Quiz 3', 'this is thrid original description');
     quizId3 = quiz3?.quizId;
   });
 
@@ -125,7 +127,7 @@ describe('Successful function run', () => {
       adminQuizDescriptionUpdate(sessionId1, quizId1, '');
       const quizInfo = adminQuizInfo(sessionId1, quizId1);
       expect(quizInfo).toStrictEqual({
-        statusCode: 200, 
+        statusCode: 200,
         jsonBody: {
           quizId: quizId1,
           name: 'Quiz 1',
@@ -143,7 +145,7 @@ describe('Successful function run', () => {
       adminQuizDescriptionUpdate(sessionId1, quizId1, 'changed twice');
       expect(adminQuizInfo(sessionId1, quizId1)).toStrictEqual({
         statusCode: 200,
-          jsonBody: {
+        jsonBody: {
           quizId: quizId1,
           name: 'Quiz 1',
           timeCreated: expect.any(Number),

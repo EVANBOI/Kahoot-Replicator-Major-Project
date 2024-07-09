@@ -153,3 +153,8 @@ export const adminUserDetails = (sessionId: string) => {
 export const adminQuizRemove = (sessionId: string, quizId: number) => {
   return requestHelper('DELETE', `/v1/admin/quiz/${quizId}`, { sessionId });
 };
+
+export const adminQuizQuestionUpdate = (quizid: number, questionid: number) => {
+  return requestHelper('PUT', `/v1/admin/quiz/${quizid}/question/${questionid}`, {})
+}
+

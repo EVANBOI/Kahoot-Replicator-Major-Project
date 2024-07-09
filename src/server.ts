@@ -9,10 +9,11 @@ import fs from 'fs';
 import path from 'path';
 import process from 'process';
 import { adminQuizCreate, adminQuizInfo } from './quiz';
-import { adminAuthLogin, adminAuthRegister, adminUserDetailsUpdate } from './auth';
+import { adminAuthLogin, adminAuthRegister, adminUserDetailsUpdate, adminUserPasswordUpdate } from './auth';
 import { clear } from './other';
 import { getData } from './dataStore';
 import { findUserBySessionId } from './helpers';
+import { adminQuizNameUpdate } from './quiz';
 
 // Set up web app
 const app = express();
@@ -69,7 +70,6 @@ app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
 
 app.post('/v1/admin/quiz', (req: Request, res: Response) => {
   const { token, name, description } = req.body;
-  console.log(req.body);
   const result = adminQuizCreate(token, name, description);
   const database = getData();
   const user = findUserBySessionId(database, token);
@@ -108,6 +108,29 @@ app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
   res.json(result);
 });
 
+app.put('/v1/admin/user/password', (req: Request, res: Response) => {
+  const { sessionId, oldPassword, newPassword } = req.body;
+  const result = adminUserPasswordUpdate(sessionId, oldPassword, newPassword);
+  if ('error' in result) {
+    res.status(400).json(result);
+  } else {
+    res.status(200).json(result);
+  }
+});
+app.put('/v1/admin/quiz/name', (req: Request, res: Response) => {
+  const { sessionId, quizId, name } = req.body;
+  const result = adminQuizNameUpdate(sessionId, quizId, name);
+  if ('error' in result) {
+    if (result.error.includes('sessionId')) {
+      res.status(401).json(result);
+    } else if (result.error.includes('Quiz ID does not refer to a quiz that this user owns.') ||
+    result.error.includes('Quiz ID does not refer to a valid quiz.')) {
+      res.status(403).json(result);
+    } else {
+      res.status(400).json(result);
+    }
+  } res.json(result);
+});
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================

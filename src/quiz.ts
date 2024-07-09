@@ -38,9 +38,6 @@ export function adminQuizCreate (
   name: string,
   description: string): ErrorMessage | QuizIdObject {
   const database = getData();
-  console.log(sessionId);
-  console.log(name);
-  console.log(description);
   const user = findUserBySessionId(database, sessionId);
   const nameUsed = database.quizzes.find(
     quiz => quiz.name === name &&

@@ -112,10 +112,13 @@ app.put('/v1/admin/user/password', (req: Request, res: Response) => {
   const { sessionId, oldPassword, newPassword } = req.body;
   const result = adminUserPasswordUpdate(sessionId, oldPassword, newPassword);
   if ('error' in result) {
-    res.status(400).json(result);
-  } else {
-    res.status(200).json(result);
+    if (result.error === 'sessionId is not valid.') {
+      return res.status(401).json(result);
+    } else {
+      return res.status(400).json(result);
+    }
   }
+  res.json(result);
 });
 app.put('/v1/admin/quiz/name', (req: Request, res: Response) => {
   const { sessionId, quizId, name } = req.body;

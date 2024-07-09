@@ -8,7 +8,7 @@ beforeEach(() => {
 
 test('should return user details for a valid sessionId', (): void => {
   const registerResponse = adminAuthRegister('test.email@domain.com', 'password123', 'Hayden', 'Smith') as SessionIdObject;
-  const sessionId: string = registerResponse.sessionId; // Get session id from response
+  const sessionId: string = registerResponse.token; // Get session id from response
   const result = adminUserDetails(sessionId);
 
   expect(result).toEqual({

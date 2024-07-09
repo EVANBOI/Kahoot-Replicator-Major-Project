@@ -8,8 +8,12 @@ import sui from 'swagger-ui-express';
 import fs from 'fs';
 import path from 'path';
 import process from 'process';
-import { adminAuthLogin, adminAuthRegister } from './auth';
+import { adminQuizCreate, adminQuizInfo, adminQuizList, adminQuizDescriptionUpdate } from './quiz';
+import { adminAuthLogin, adminAuthRegister, adminUserDetailsUpdate, adminUserPasswordUpdate } from './auth';
 import { clear } from './other';
+import { getData } from './dataStore';
+import { findUserBySessionId } from './helpers';
+import { adminQuizNameUpdate } from './quiz';
 
 // Set up web app
 const app = express();
@@ -37,7 +41,6 @@ app.get('/echo', (req: Request, res: Response) => {
   if ('error' in result) {
     res.status(400);
   }
-
   return res.json(result);
 });
 
@@ -54,6 +57,37 @@ app.post('/v1/admin/auth/register', (req: Request, res: Response) => {
   res.json(result);
 });
 
+app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
+  const sessionId = req.query.sessionId as string;
+  const result = adminQuizList(sessionId);
+  if ('error' in result) {
+    res.status(401);
+  }
+  return res.json(result);
+});
+
+app.put('/v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {
+  const { sessionId, description } = req.body;
+  const quizId = parseInt(req.params.quizid);
+  console.log('quizid is : ', quizId);
+  const database = getData(); // allowed to use getData from datastore??
+  const user = findUserBySessionId(database, sessionId);
+  const validQuizId = database.quizzes.find(quiz => quiz.quizId === quizId);
+  const result = adminQuizDescriptionUpdate(sessionId, quizId, description);
+  if (description.length > 100) {
+    return res.status(400).json(result);
+    // return res.json({ error: 'Description exceeds 100 characters.' });
+  } else if (!user) {
+    return res.status(401).json(result);
+  } else if (!validQuizId || validQuizId.creatorId !== user?.userId) {
+    console.log('quizid is: ', validQuizId);
+    // console.log('creator id is: ', validQuizId.creatorId)
+    return res.status(403).json(result);
+  }
+
+  return res.json(result);
+});
+
 app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
   const { email, password } = req.body;
   const result = adminAuthLogin(email, password);
@@ -63,6 +97,72 @@ app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
   res.json(result);
 });
 
+app.post('/v1/admin/quiz', (req: Request, res: Response) => {
+  const { token, name, description } = req.body;
+  const result = adminQuizCreate(token, name, description);
+  const database = getData();
+  const user = findUserBySessionId(database, token);
+  if (!user) {
+    return res.status(401).json(result);
+  } else if ('error' in result) {
+    return res.status(400).json(result);
+  }
+  return res.status(200).json(result);
+});
+
+app.put('/v1/admin/user/details', (req: Request, res: Response) => {
+  const { sessionId, email, nameFirst, nameLast } = req.body;
+  const result = adminUserDetailsUpdate(sessionId, email, nameFirst, nameLast);
+  if ('error' in result) {
+    if (result.error === 'sessionId provided is invalid') {
+      return res.status(401).json(result);
+    } else {
+      return res.status(400).json(result);
+    }
+  }
+  res.json(result);
+});
+
+app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
+  const sessionId = req.query.sessionId as string;
+  const quizId = parseInt(req.params.quizid);
+  const result = adminQuizInfo(sessionId, quizId);
+  if ('error' in result) {
+    if (result.error === 'sessionId is not a valid.') {
+      return res.status(401).json(result);
+    } else {
+      return res.status(403).json(result);
+    }
+  }
+  res.json(result);
+});
+
+app.put('/v1/admin/user/password', (req: Request, res: Response) => {
+  const { sessionId, oldPassword, newPassword } = req.body;
+  const result = adminUserPasswordUpdate(sessionId, oldPassword, newPassword);
+  if ('error' in result) {
+    if (result.error === 'sessionId is not valid.') {
+      return res.status(401).json(result);
+    } else {
+      return res.status(400).json(result);
+    }
+  }
+  res.json(result);
+});
+app.put('/v1/admin/quiz/name', (req: Request, res: Response) => {
+  const { sessionId, quizId, name } = req.body;
+  const result = adminQuizNameUpdate(sessionId, quizId, name);
+  if ('error' in result) {
+    if (result.error.includes('sessionId')) {
+      res.status(401).json(result);
+    } else if (result.error.includes('Quiz ID does not refer to a quiz that this user owns.') ||
+    result.error.includes('Quiz ID does not refer to a valid quiz.')) {
+      res.status(403).json(result);
+    } else {
+      res.status(400).json(result);
+    }
+  } res.json(result);
+});
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================

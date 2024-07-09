@@ -15,7 +15,7 @@ test('Session id is not valid', () => {
 describe('Valid user with only no quizzes', () => {
   let sessionId: string;
   beforeEach(() => {
-    sessionId = ok(adminAuthRegister('admin@unsw.edu.au', 'Password1', 'JJ', 'HH')).sessionId;
+    sessionId = ok(adminAuthRegister('admin@unsw.edu.au', 'Password1', 'JJ', 'HH')).token;
   });
   test('There is only one user in database', () => {
     expect(adminQuizList(sessionId)).toStrictEqual({ quizzes: [] });
@@ -32,7 +32,7 @@ describe('Valid user with only one quiz', () => {
   let user1Id: string;
   let quiz1Id: number;
   beforeEach(() => {
-    user1Id = ok(adminAuthRegister('admin@unsw.edu.au', 'Password1', 'JJ', 'HH')).sessionId;
+    user1Id = ok(adminAuthRegister('admin@unsw.edu.au', 'Password1', 'JJ', 'HH')).token;
     quiz1Id = ok(adminQuizCreate(user1Id, 'Quiz', '')).quizId;
   });
   test('There is only one user in database', () => {
@@ -64,7 +64,7 @@ describe('Valid user with multiple quizzes', () => {
   let user1Id: string;
   let quiz1Id: number, quiz2Id: number, quiz3Id:number;
   beforeEach(() => {
-    user1Id = ok(adminAuthRegister('admin@unsw.edu.au', 'Password1', 'JJ', 'HH')).sessionId;
+    user1Id = ok(adminAuthRegister('admin@unsw.edu.au', 'Password1', 'JJ', 'HH')).token;
     quiz1Id = ok(adminQuizCreate(user1Id, 'Quiz1', '')).quizId;
     quiz2Id = ok(adminQuizCreate(user1Id, 'Quiz2', '')).quizId;
     quiz3Id = ok(adminQuizCreate(user1Id, 'Quiz3', '')).quizId;

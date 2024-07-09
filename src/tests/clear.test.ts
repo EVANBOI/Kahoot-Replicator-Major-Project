@@ -1,7 +1,7 @@
 import { clear } from '../wrappers';
 import { adminAuthRegister, adminUserDetails } from '../auth';
 import { adminQuizCreate, adminQuizInfo } from '../quiz';
-import { QuizIdObject, SessionId } from '../types';
+import { QuizIdObject, Token } from '../types';
 
 const CLEAR = {
   statusCode: 200,
@@ -35,8 +35,8 @@ describe('Function clear tests', () => {
       VALID_USER.PASSWORD,
       VALID_USER.FIRSTNAME,
       VALID_USER.LASTNAME
-    ) as SessionId;
-    const VALID_TOKEN = register.sessionId;
+    ) as Token;
+    const VALID_TOKEN = register.token;
     clear();
     expect(adminUserDetails(VALID_TOKEN)).toStrictEqual(ERROR);
   });
@@ -47,8 +47,8 @@ describe('Function clear tests', () => {
       VALID_USER.PASSWORD,
       VALID_USER.FIRSTNAME,
       VALID_USER.LASTNAME
-    ) as SessionId;
-    const VALID_TOKEN = register.sessionId;
+    ) as Token;
+    const VALID_TOKEN = register.token;
     const create = adminQuizCreate(
       VALID_TOKEN,
       VALID_QUIZ.NAME,

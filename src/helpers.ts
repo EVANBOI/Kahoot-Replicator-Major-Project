@@ -15,7 +15,7 @@ export function ok<T>(item: T | { error: string }): T {
 
 export function findUserBySessionId(dataBase: Data, sessionIdToFind: string): User | undefined {
   return dataBase.users.find(user =>
-    user.token.some(token => token.token === sessionIdToFind)
+    user.tokens.some(tokens => tokens.token === sessionIdToFind)
   );
 }
 

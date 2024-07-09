@@ -88,7 +88,7 @@ export const adminAuthRegister = (
   nameFirst: string,
   nameLast: string) => {
   return requestHelper('POST', '/v1/admin/auth/register',
-    { email, password, nameFirst, nameLast});
+    { email, password, nameFirst, nameLast });
 };
 
 export const adminAuthLogin = (email: string, password: string) => {
@@ -132,3 +132,10 @@ export const clear = () => {
 export const adminQuizTrashView = (token: string) => {
   return requestHelper('GET', '/v1/admin/quiz/trash', { token });
 }
+export const adminUserDetails = (sessionId: string) => {
+  return requestHelper('GET', '/v1/admin/user/details', { sessionId });
+};
+
+export const adminQuizRemove = (sessionId: string, quizId: number) => {
+  return requestHelper('DELETE', `/v1/admin/quiz/${quizId}`, { sessionId });
+};

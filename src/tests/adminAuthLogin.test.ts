@@ -1,7 +1,6 @@
 import { adminAuthRegister, adminAuthLogin } from '../wrappers';
 import { clear } from '../wrappers';
 import { ok } from '../helpers';
-import { token } from 'morgan';
 
 const SUCCESSFULLOGIN = {
   statusCode: 200,

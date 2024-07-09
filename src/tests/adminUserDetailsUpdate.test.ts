@@ -1,5 +1,5 @@
 import { adminAuthRegister, adminUserDetailsUpdate, clear } from '../wrappers';
-import { adminUserDetails } from '../auth'
+import { adminUserDetails } from '../auth';
 const VALID_INPUTS_1 = {
   EMAIL: 'admin@email.com',
   PASSWORD: 'password1',

@@ -100,7 +100,6 @@ export const adminQuizCreate = (
   name: string,
   description: string
 ) => {
-  console.log(sessionId, 'hi');
   return requestHelper('POST', '/v1/admin/quiz', { token: sessionId, name, description });
 };
 

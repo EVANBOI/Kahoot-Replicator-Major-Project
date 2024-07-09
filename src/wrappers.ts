@@ -153,3 +153,7 @@ export const adminUserDetails = (sessionId: string) => {
 export const adminQuizRemove = (sessionId: string, quizId: number) => {
   return requestHelper('DELETE', `/v1/admin/quiz/${quizId}`, { sessionId });
 };
+
+export const adminQuizTrashEmpty = (token: string, quizIds: string) => {
+  return requestHelper('DELETE', '/v1/admin/quiz/trash/empty', { token, quizIds });
+}

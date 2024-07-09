@@ -105,7 +105,7 @@ export function adminQuizRemove (sessionId: string, quizId: number): QuizRemoveR
   setData(store);
   return {
     statusCode:200,
-    message:""
+    message: '{}'
   };
 }
 

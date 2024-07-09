@@ -81,13 +81,12 @@ app.get('/v1/admin/user/details', (req: Request, res: Response) => {
 app.delete('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
   const token =req.query.token as string;
   const id=parseInt(req.params.quizid)
-  const result:QuizRemoveResult = adminQuizRemove(token,id);
+  const result = adminQuizRemove(token,id);
 
   if(result.statusCode!=200){
     res.status(result.statusCode).json({error:result.message})
   }else{
     res.status(200).json({});
-
   }
 
 });

@@ -1,7 +1,6 @@
 import { adminAuthRegister, adminQuizCreate, adminQuizNameUpdate, adminQuizInfo, clear } from '../wrappers';
 import { ok } from '../helpers';
 
-
 const VALID_INPUTS = {
   EMAIL: 'changli@unsw.edu.au',
   PASSWORD: 'Password123',
@@ -87,18 +86,18 @@ describe('adminQuizNameUpdate tests', () => {
     expect(result).toStrictEqual(SUCCESSFUL_UPDATE);
   });
 
-test('Successful quiz name update - functionality', () => {
-  adminQuizNameUpdate(sessionId, quizId, 'New Quiz Name');
-  const updatedQuiz = ok(adminQuizInfo(sessionId, quizId));
-  expect(updatedQuiz).toStrictEqual({
-    statusCode: 200,
-    jsonBody: {
-      quizId: expect.any(Number),
-      name: 'New Quiz Name',
-      timeCreated: expect.any(Number),
-      timeLastEdited: expect.any(Number),
-      description: 'This is a description.',
-        
+  test('Successful quiz name update - functionality', () => {
+    adminQuizNameUpdate(sessionId, quizId, 'New Quiz Name');
+    const updatedQuiz = ok(adminQuizInfo(sessionId, quizId));
+    expect(updatedQuiz).toStrictEqual({
+      statusCode: 200,
+      jsonBody: {
+        quizId: expect.any(Number),
+        name: 'New Quiz Name',
+        timeCreated: expect.any(Number),
+        timeLastEdited: expect.any(Number),
+        description: 'This is a description.',
+
       },
     });
   });

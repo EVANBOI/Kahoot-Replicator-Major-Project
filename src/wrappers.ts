@@ -133,7 +133,7 @@ export const adminUserPasswordUpdate = (
   sessionId: string,
   oldPassword: string,
   newPassword: string) => {
-  return requestHelper('PUT', '/v1/admin/user/password', 
+  return requestHelper('PUT', '/v1/admin/user/password',
     { sessionId, oldPassword, newPassword });
 };
 
@@ -141,7 +141,7 @@ export const adminQuizNameUpdate = (
   sessionId: string,
   quizId: number,
   name: string) => {
-  return requestHelper('PUT', '/v1/admin/quiz/name', 
+  return requestHelper('PUT', '/v1/admin/quiz/name',
     { sessionId, quizId, name });
 };
 export const adminQuizTrashView = (token: string) => {

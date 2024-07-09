@@ -9,11 +9,11 @@ import fs from 'fs';
 import path from 'path';
 import process from 'process';
 import { adminQuizCreate, adminQuizInfo } from './quiz';
-import { adminAuthLogin, adminAuthRegister, adminUserDetailsUpdate,adminUserPasswordUpdate } from './auth';
+import { adminAuthLogin, adminAuthRegister, adminUserDetailsUpdate, adminUserPasswordUpdate } from './auth';
 import { clear } from './other';
 import { getData } from './dataStore';
-import { findQuizWithId, findUserBySessionId } from './helpers';
-import {adminQuizNameUpdate,}from './quiz'
+import { findUserBySessionId } from './helpers';
+import { adminQuizNameUpdate } from './quiz';
 
 // Set up web app
 const app = express();
@@ -108,7 +108,6 @@ app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
   res.json(result);
 });
 
-
 app.put('/v1/admin/user/password', (req: Request, res: Response) => {
   const { sessionId, oldPassword, newPassword } = req.body;
   const result = adminUserPasswordUpdate(sessionId, oldPassword, newPassword);
@@ -124,8 +123,8 @@ app.put('/v1/admin/quiz/name', (req: Request, res: Response) => {
   if ('error' in result) {
     if (result.error.includes('sessionId')) {
       res.status(401).json(result);
-    } else if (result.error.includes('Quiz ID does not refer to a quiz that this user owns.')
-    || result.error.includes('Quiz ID does not refer to a valid quiz.')) {
+    } else if (result.error.includes('Quiz ID does not refer to a quiz that this user owns.') ||
+    result.error.includes('Quiz ID does not refer to a valid quiz.')) {
       res.status(403).json(result);
     } else {
       res.status(400).json(result);

@@ -5,8 +5,13 @@ import { ok } from '../helpers';
 
 const QUIZCREATED = {
   statusCode: 200,
-  jsonBody: { token: expect.any(String) }
+  jsonBody: { quizId: expect.any(Number) }
 };
+
+const INVALIDID = {
+  statusCode: 401,
+  jsonBody: { error: expect.any(String) }  
+}
 
 const ERROR = {
   statusCode: 400,
@@ -26,12 +31,12 @@ beforeEach(() => {
     'abc1234e', 
     'Evan', 
     'Xiong');
-  sessionId = jsonBody.sessionId;
+  sessionId = jsonBody.token;
 });
 
 describe('When registering an user', () => {
   test('SessionId is not a Valid', () => {
-    expect(adminQuizCreate(sessionId + 1, 'Quiz 1', 'Pointers')).toStrictEqual(ERROR);
+    expect(adminQuizCreate(sessionId + 1, 'Quiz 1', 'Pointers')).toStrictEqual(INVALIDID);
   });
 
   test('Name contains invalid characters', () => {
@@ -69,9 +74,8 @@ describe('When registering an user', () => {
     expect(adminQuizCreate(sessionId, 'Quiz 1', description)).toStrictEqual(ERROR);
   });
 
-  test.only('Correctly returns the quizId', () => {
+  test('Correctly returns the quizId', () => {
     console.log(sessionId);
-    console.log(adminQuizCreate(sessionId, 'Quiz 1', 'Pointers'));
     expect(adminQuizCreate(sessionId, 'Quiz 1', 'Pointers')).toStrictEqual(QUIZCREATED);
   });
 
@@ -87,7 +91,7 @@ describe('When registering an user', () => {
         'qwerty67890', 
         'Zhihao', 
         'Cao'));
-    sessionId2 = jsonBody.sessionId;
+    sessionId2 = jsonBody.token;
     expect(adminQuizCreate(sessionId, 'Quiz 1', ' ')).toStrictEqual(QUIZCREATED);
     expect(adminQuizCreate(sessionId2, 'Quiz 2', 'Linked Lists')).toStrictEqual(QUIZCREATED);
     expect(adminQuizCreate(sessionId, 'Quiz 1', ' '))

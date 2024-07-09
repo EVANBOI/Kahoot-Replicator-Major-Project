@@ -67,6 +67,7 @@ app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
 
 app.post('/v1/admin/quiz', (req: Request, res: Response) => {
   const { token, name, description } = req.body;
+  console.log(req.body);
   const result = adminQuizCreate(token, name, description);
   return res.status(result.status).json(result.body);
 });

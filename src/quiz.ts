@@ -40,6 +40,7 @@ export function adminQuizCreate (
   const database = getData();
   console.log(sessionId);
   console.log(name);
+  console.log(description);
   const user = findUserBySessionId(database, sessionId);
   const nameUsed = database.quizzes.find(
     quiz => quiz.name === name &&

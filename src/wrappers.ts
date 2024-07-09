@@ -7,7 +7,7 @@ const SERVER_URL = `${url}:${port}`;
 // ========================================================================= //
 
 // Our custom return types - you can pick your own if you wish!
-interface RequestHelperReturnType {
+export interface RequestHelperReturnType {
   statusCode: number;
   jsonBody?: Record<string, any>;
   error?: string;
@@ -88,7 +88,7 @@ export const adminAuthRegister = (
   nameFirst: string,
   nameLast: string) => {
   return requestHelper('POST', '/v1/admin/auth/register',
-    { email, password, nameFirst, nameLast});
+    { email, password, nameFirst, nameLast });
 };
 
 export const adminAuthLogin = (email: string, password: string) => {
@@ -100,7 +100,8 @@ export const adminQuizCreate = (
   name: string,
   description: string
 ) => {
-  return requestHelper('POST', '/v1/admin/quiz', { sessionId, name, description });
+  console.log(sessionId, 'hi');
+  return requestHelper('POST', '/v1/admin/quiz', { token: sessionId, name, description });
 };
 
 export const adminQuizList = (sessionId: string) => {
@@ -128,3 +129,28 @@ export const clear = () => {
   return requestHelper('DELETE', '/v1/clear', {});
 };
 
+export const adminUserPasswordUpdate = (
+  sessionId: string,
+  oldPassword: string,
+  newPassword: string) => {
+  return requestHelper('PUT', '/v1/admin/user/password',
+    { sessionId, oldPassword, newPassword });
+};
+
+export const adminQuizNameUpdate = (
+  sessionId: string,
+  quizId: number,
+  name: string) => {
+  return requestHelper('PUT', '/v1/admin/quiz/name',
+    { sessionId, quizId, name });
+};
+export const adminQuizTrashView = (token: string) => {
+  return requestHelper('GET', '/v1/admin/quiz/trash', { token });
+};
+export const adminUserDetails = (sessionId: string) => {
+  return requestHelper('GET', '/v1/admin/user/details', { sessionId });
+};
+
+export const adminQuizRemove = (sessionId: string, quizId: number) => {
+  return requestHelper('DELETE', `/v1/admin/quiz/${quizId}`, { sessionId });
+};

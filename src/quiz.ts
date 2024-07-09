@@ -1,6 +1,6 @@
 import { getData, setData } from './dataStore';
 import { findQuizWithId, findUserBySessionId } from './helpers';
-import { ERROR, EmptyObject, ErrorMessage, Quiz, QuizCreateDetails, QuizInfoResult, QuizListDetails, QuizRemoveResult } from './types';
+import { EmptyObject, ErrorMessage, Quiz, QuizIdObject, QuizInfoResult, QuizListDetails, QuizRemoveResult } from './types';
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
  *
@@ -36,50 +36,27 @@ export function adminQuizList (sessionId: string): QuizListDetails {
 export function adminQuizCreate (
   sessionId: string,
   name: string,
-  description: string): ERROR | QuizCreateDetails {
+  description: string): ErrorMessage | QuizIdObject {
   const database = getData();
-  console.log(sessionId);
-  console.log(name);
   const user = findUserBySessionId(database, sessionId);
   const nameUsed = database.quizzes.find(
     quiz => quiz.name === name &&
     quiz.creatorId === user?.userId);
 
   if (!user) {
-    return { 
-      body: { 
-        error: 'Session ID is not valid'
-      },
-      status: 401
-    };
+    return { error: 'Session ID is not valid' };
   } else if (nameUsed) {
-    return { 
-      body: {
-        error: 'name has already been used by the user'
-      },
-      status: 400
-    };
+    return { error: 'name has already been used by the user' };
   } else if (!/^[a-zA-Z0-9 ]+$/.test(name)) {
     return {
-      body: {
-        error: 'name contains invalid characters. Valid characters are alphanumeric and spaces'
-      },
-      status: 400
+      error: 'name contains invalid characters. Valid characters are alphanumeric and spaces'
     };
   } else if (name.length < 3 || name.length > 30) {
     return {
-      body: {
-        error: 'name is either less than 3 characters long or more than 30 charcters long'
-      },
-      status: 400
+      error: 'name is either less than 3 characters long or more than 30 charcters long'
     };
   } else if (description.length > 100) {
-    return { 
-      body: {
-        error: 'description is more than 100 characters in length'
-      },
-      status: 400
-    };
+    return { error: 'description is more than 100 characters in length' };
   }
 
   const timeStamp1 = Math.floor(Date.now() / 1000);
@@ -95,12 +72,7 @@ export function adminQuizCreate (
   });
   setData(database);
 
-  return {
-    body: {
-      quizId: id
-    },
-    status: 200
-  };
+  return { quizId: id };
 }
 
 /**

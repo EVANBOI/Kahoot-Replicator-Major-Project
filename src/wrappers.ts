@@ -100,7 +100,8 @@ export const adminQuizCreate = (
   name: string,
   description: string
 ) => {
-  return requestHelper('POST', '/v1/admin/quiz', { sessionId, name, description });
+  console.log(sessionId, 'hi');
+  return requestHelper('POST', '/v1/admin/quiz', { token: sessionId, name, description });
 };
 
 export const adminQuizList = (sessionId: string) => {
@@ -128,6 +129,9 @@ export const clear = () => {
   return requestHelper('DELETE', '/v1/clear', {});
 };
 
+export const adminQuizTrashView = (token: string) => {
+  return requestHelper('GET', '/v1/admin/quiz/trash', { token });
+};
 export const adminUserDetails = (sessionId: string) => {
   return requestHelper('GET', '/v1/admin/user/details', { sessionId });
 };

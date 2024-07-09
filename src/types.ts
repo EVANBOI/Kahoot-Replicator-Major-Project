@@ -1,6 +1,12 @@
 export type EmptyObject = Record<string, never>;
 
 export type ErrorMessage = { error: string };
+export type ERROR = {
+    body: {
+        error: string
+    },
+    status: number
+}
 export type Token = { token: string }
 export type User = {
     userId: number,
@@ -68,7 +74,12 @@ export type SessionIdObject = {
     status: number
   };
 
-export type QuizCreateDetails = ErrorMessage | QuizIdObject
+export type QuizCreateDetails = {
+    body: {
+        quizId: number
+    },
+    status: number
+}
 
 export type PasswordUpdateResult = EmptyObject | ErrorMessage;
 

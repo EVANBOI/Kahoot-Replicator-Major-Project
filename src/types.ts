@@ -1,16 +1,10 @@
 export type EmptyObject = Record<string, never>;
 
 export type ErrorMessage = { error: string };
-export type ERROR = {
-    body: {
-        error: string
-    }, 
-    status: number
-}
-export type SessionId = { token: string }
+export type Token = { token: string }
 export type User = {
     userId: number,
-    token: SessionId[],
+    tokens: Token[],
     email: string,
     password: string,
     name: string,
@@ -20,7 +14,7 @@ export type User = {
 }
 export type UserdetailsResults = {
     userId: number,
-    token: SessionId[],
+    tokens: Token[],
     name: string,
     email: string,
     numSuccessfulLogins: number,
@@ -45,14 +39,14 @@ export type QuizIdObject = {
 }
 
 export type AuthUserIdObject = {
-    sessionId: string
+    token: string
 }
 
 export type ClearResult = {};
 
 export type UserUpdateResult = EmptyObject | ErrorMessage;
 
-export type UserRegistrationResult = ErrorMessage | SessionId;
+export type UserRegistrationResult = ErrorMessage | Token;
 
 export type QuizListDetails = ErrorMessage | {
     quizzes: {
@@ -70,7 +64,7 @@ export type QuizInfoResult = ErrorMessage | {
 }
 
 export type SessionIdObject = {
-    sessionId: string,
+    token: string
     status: number
   };
 
@@ -83,7 +77,7 @@ export type QuizCreateDetails = {
 
 export type PasswordUpdateResult = EmptyObject | ErrorMessage;
 
-export type QuizRemoveResult = EmptyObject | ErrorMessage;
+export type QuizRemoveResult = ErrorMessage | EmptyObject
 
 export type Userdetails = ErrorMessage | {user: {
     userId: number,

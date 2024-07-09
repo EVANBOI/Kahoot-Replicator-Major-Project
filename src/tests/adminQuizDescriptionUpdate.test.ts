@@ -22,8 +22,8 @@ describe('Error cases', () => {
     let sessionId1: string, sessionId2: string;
     let quizId1: number;
     beforeEach(() => {
-      sessionId1 = ok(adminAuthRegister('admin1@gmail.com', 'SDFJKH2349081j', 'JJone', 'ZZ')).sessionId;
-      sessionId2 = ok(adminAuthRegister('admin2@gmail.com', 'SDFJKH2349081j', 'JJone', 'ZZ')).sessionId;
+      sessionId1 = ok(adminAuthRegister('admin1@gmail.com', 'SDFJKH2349081j', 'JJone', 'ZZ')).token;
+      sessionId2 = ok(adminAuthRegister('admin2@gmail.com', 'SDFJKH2349081j', 'JJone', 'ZZ')).token;
       quizId1 = ok(adminQuizCreate(sessionId1, 'Quiz 1', 'this is first original description')).quizId;
     });
 
@@ -44,9 +44,9 @@ describe('Successful function run', () => {
   let quizId1: number, quizId2: number, quizId3: number;
   beforeEach(() => {
     sessionId1 = ok(
-      adminAuthRegister('admin1@gmail.com', 'SDFJKH2349081j', 'JJone', 'ZZ')).sessionId;
+      adminAuthRegister('admin1@gmail.com', 'SDFJKH2349081j', 'JJone', 'ZZ')).token;
     sessionId2 = ok(
-      adminAuthRegister('admin2@gmail.com', 'SDFJKH2349081j', 'JJone', 'ZZ')).sessionId;
+      adminAuthRegister('admin2@gmail.com', 'SDFJKH2349081j', 'JJone', 'ZZ')).token;
     quizId1 = ok(
       adminQuizCreate(sessionId1, 'Quiz 1', 'this is first original description')).quizId;
     quizId2 = ok(

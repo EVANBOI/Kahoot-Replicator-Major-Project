@@ -88,7 +88,7 @@ export const adminAuthRegister = (
   nameFirst: string,
   nameLast: string) => {
   return requestHelper('POST', '/v1/admin/auth/register',
-    { email, password, nameFirst, nameLast});
+    { email, password, nameFirst, nameLast });
 };
 
 export const adminAuthLogin = (email: string, password: string) => {
@@ -126,7 +126,7 @@ export const adminQuizInfo = (sessionId: string, quizId: number) => {
 
 export const clear = () => {
   return requestHelper('DELETE', '/v1/clear', {});
-}
+};
 
 export const adminUserPasswordUpdate = (
   sessionId: string,

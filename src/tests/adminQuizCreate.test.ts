@@ -1,41 +1,24 @@
-import { adminAuthRegister } from '../wrappers';
-import { adminQuizCreate } from '../wrappers';
-import { clear } from '../wrappers';
+import { adminAuthRegister } from '../auth';
+import { adminQuizCreate } from '../quiz';
+import { clear } from '../other';
+import { AuthUserIdObject } from '../types';
 import { ok } from '../helpers';
-
-const QUIZCREATED = {
-  statusCode: 200,
-  jsonBody: { token: expect.any(String) }
-};
-
-const ERROR = {
-  statusCode: 400,
-  jsonBody: { error: expect.any(String) }
-};
 
 beforeEach(() => {
   clear();
 });
 
-let sessionId: string;
-
-beforeEach(() => {
-  const { jsonBody } =
-    adminAuthRegister(
-    'evan.xiong@unsw.edu.au', 
-    'abc1234e', 
-    'Evan', 
-    'Xiong');
-  sessionId = jsonBody.sessionId;
-});
-
-describe('When registering an user', () => {
-  test('SessionId is not a Valid', () => {
-    expect(adminQuizCreate(sessionId + 1, 'Quiz 1', 'Pointers')).toStrictEqual(ERROR);
+describe('when registering an AuthUserId', () => {
+  let Id: AuthUserIdObject;
+  beforeEach(() => {
+    Id = ok(adminAuthRegister('evan.xiong@unsw.edu.au', 'abcde12345', 'Evan', 'Xiong'));
+  });
+  test('AuthUserId is not a valid user', () => {
+    expect(adminQuizCreate(Id.token + 1, 'Quiz 1', 'Pointers')).toStrictEqual({ error: expect.any(String) });
   });
 
   test('Name contains invalid characters', () => {
-    expect(adminQuizCreate(sessionId, '汉', 'Pointers')).toStrictEqual(ERROR);
+    expect(adminQuizCreate(Id.token, '汉', 'Pointers')).toStrictEqual({ error: expect.any(String) });
   });
 
   test.each([
@@ -48,12 +31,12 @@ describe('When registering an user', () => {
       name: 'a'.repeat(31)
     }
   ])('Test $#: $testName', ({ name }) => {
-    expect(adminQuizCreate(sessionId, name, 'Pointers')).toStrictEqual(ERROR);
+    expect(adminQuizCreate(Id.token, name, 'Pointers')).toStrictEqual({ error: expect.any(String) });
   });
 
   test('Name is already used by the current logged in user', () => {
-    expect(adminQuizCreate(sessionId, 'Quiz 1', 'Pointers')).toStrictEqual(QUIZCREATED);
-    expect(adminQuizCreate(sessionId, 'Quiz 1', 'Linked Lists')).toStrictEqual(ERROR);
+    expect(adminQuizCreate(Id.token, 'Quiz 1', 'Pointers')).toStrictEqual({ quizId: expect.any(Number) });
+    expect(adminQuizCreate(Id.token, 'Quiz 1', 'Linked Lists')).toStrictEqual({ error: expect.any(String) });
   });
 
   test.each([
@@ -66,41 +49,33 @@ describe('When registering an user', () => {
       description: 'b'.repeat(101)
     }
   ])('Test $#: $testName', ({ description }) => {
-    expect(adminQuizCreate(sessionId, 'Quiz 1', description)).toStrictEqual(ERROR);
+    expect(adminQuizCreate(Id.token, 'Quiz 1', description)).toStrictEqual({ error: expect.any(String) });
   });
 
-  test.only('Correctly returns the quizId', () => {
-    console.log(sessionId);
-    console.log(adminQuizCreate(sessionId, 'Quiz 1', 'Pointers'));
-    expect(adminQuizCreate(sessionId, 'Quiz 1', 'Pointers')).toStrictEqual(QUIZCREATED);
+  test('Correctly returns the quizId', () => {
+    expect(adminQuizCreate(Id.token, 'Quiz 1', 'Pointers')).toStrictEqual({ quizId: expect.any(Number) });
   });
 
   test('Description is an empty string', () => {
-    expect(adminQuizCreate(sessionId, 'Quiz 1', ' ')).toStrictEqual(QUIZCREATED);
+    expect(adminQuizCreate(Id.token, 'Quiz 1', ' ')).toStrictEqual({ quizId: expect.any(Number) });
   });
 
   test('Sucessfully give two quizIds', () => {
-    let sessionId2: string;
-    const { jsonBody } = ok(
-      adminAuthRegister(
-        'zhihao.cao@unsw.edu.au', 
-        'qwerty67890', 
-        'Zhihao', 
-        'Cao'));
-    sessionId2 = jsonBody.sessionId;
-    expect(adminQuizCreate(sessionId, 'Quiz 1', ' ')).toStrictEqual(QUIZCREATED);
-    expect(adminQuizCreate(sessionId2, 'Quiz 2', 'Linked Lists')).toStrictEqual(QUIZCREATED);
-    expect(adminQuizCreate(sessionId, 'Quiz 1', ' '))
-    .not.toStrictEqual(
-      expect(adminQuizCreate(sessionId2, 'Quiz 2', 'Linked Lists'))
-    );  
+    const Id2: AuthUserIdObject = ok(adminAuthRegister('zhihao.cao@unsw.edu.au', 'qwerty67890', 'Zhihao', 'Cao'));
+    expect(adminQuizCreate(Id.token, 'Quiz 1', ' ')).toStrictEqual({ quizId: expect.any(Number) });
+    expect(adminQuizCreate(Id2.token, 'Quiz 2', 'Linked Lists')).toStrictEqual({ quizId: expect.any(Number) });
+    expect(adminQuizCreate(Id.token,
+      'Quiz 1',
+      ' ')).not.toStrictEqual(expect(adminQuizCreate(Id2.token,
+      'Quiz 2',
+      'Linked Lists')));
   });
 
   test('Sucessfully give two quizIds for the same user', () => {
-    expect(adminQuizCreate(sessionId, 'Quiz 1', ' ')).toStrictEqual(QUIZCREATED);
-    expect(adminQuizCreate(sessionId, 'Quiz 2', 'Linked Lists')).toStrictEqual(QUIZCREATED);
-    expect(adminQuizCreate(sessionId,
-      'Quiz 1', ' ')).not.toStrictEqual(expect(adminQuizCreate(sessionId,
+    expect(adminQuizCreate(Id.token, 'Quiz 1', ' ')).toStrictEqual({ quizId: expect.any(Number) });
+    expect(adminQuizCreate(Id.token, 'Quiz 2', 'Linked Lists')).toStrictEqual({ quizId: expect.any(Number) });
+    expect(adminQuizCreate(Id.token,
+      'Quiz 1', ' ')).not.toStrictEqual(expect(adminQuizCreate(Id.token,
       'Quiz 2', 'Linked Lists')));
   });
 });

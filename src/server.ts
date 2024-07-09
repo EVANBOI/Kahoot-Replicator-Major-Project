@@ -8,8 +8,7 @@ import sui from 'swagger-ui-express';
 import fs from 'fs';
 import path from 'path';
 import process from 'process';
-import { adminAuthLogin, adminAuthRegister, adminUserPasswordUpdate  } from './auth';
-import { adminQuizCreate,adminQuizNameUpdate } from './quiz';
+import { adminAuthLogin, adminAuthRegister, adminUserDetailsUpdate } from './auth';
 import { clear } from './other';
 import { ok } from './helpers'
 
@@ -50,6 +49,7 @@ app.delete('/v1/clear', (req: Request, res: Response) => {
 app.post('/v1/admin/auth/register', (req: Request, res: Response) => {
   const { email, password, nameFirst, nameLast } = req.body;
   const result = adminAuthRegister(email, password, nameFirst, nameLast);
+  console.log(JSON.stringify(result));
   if ('error' in result) {
     return res.status(400).json(result);
   }
@@ -65,33 +65,17 @@ app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
   res.json(result);
 });
 
-app.put('/v1/admin/user/password', (req: Request, res: Response) => {
-  const { sessionId, oldPassword, newPassword } = req.body;
-  const result = adminUserPasswordUpdate(sessionId, oldPassword, newPassword);
+app.put('/v1/admin/user/details', (req: Request, res: Response) => {
+  const { sessionId, email, nameFirst, nameLast } = req.body;
+  const result = adminUserDetailsUpdate(sessionId, email, nameFirst, nameLast);
   if ('error' in result) {
-    res.status(400).json(result);
-  } else {
-    res.status(200).json(result);
-  }
-});
-app.put('/v1/admin/quiz/name', (req: Request, res: Response) => {
-  const { sessionId, quizId, name } = req.body;
-  const result = adminQuizNameUpdate(sessionId, quizId, name);
-  if ('error' in result) {
-    if (result.error.includes('sessionId')) {
-      res.status(401).json(result);
-    } else if (result.error.includes('Quiz ID does not refer to a quiz that this user owns.')) {
-      res.status(403).json(result);
+    if (result.error === 'sessionId provided is invalid') {
+      return res.status(401).json(result);
     } else {
-      res.status(400).json(result);
+      return res.status(400).json(result);
     }
-  } res.json(result);
-});
-
-app.post('/v1/admin/quiz', (req: Request, res: Response) => {
-  const { token, name, description } = req.body;
-  const result = adminQuizCreate(token, name, description);
-  return res.status(result.status).json(result.body);
+  }
+  res.json(result);
 });
 
 // ====================================================================

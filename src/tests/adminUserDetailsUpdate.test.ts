@@ -1,6 +1,6 @@
 import { adminAuthRegister, adminUserDetailsUpdate, adminUserDetails } from '../auth';
 import { clear } from '../other';
-import { SessionId } from '../types';
+import { Token } from '../types';
 
 const VALID_INPUTS_1 = {
   EMAIL: 'admin@email.com',
@@ -34,8 +34,8 @@ describe('error tests', () => {
       VALID_INPUTS_1.PASSWORD,
       VALID_INPUTS_1.FIRSTNAME,
       VALID_INPUTS_1.LASTNAME
-    ) as SessionId;
-    VALID_TOKEN = register.sessionId;
+    ) as Token;
+    VALID_TOKEN = register.token;
   });
 
   test('UserId is not a valid user', () => {
@@ -134,8 +134,8 @@ describe('Successful update', () => {
       VALID_INPUTS_1.PASSWORD,
       VALID_INPUTS_1.FIRSTNAME,
       VALID_INPUTS_1.LASTNAME
-    ) as SessionId;
-    VALID_TOKEN = register.sessionId;
+    ) as Token;
+    VALID_TOKEN = register.token;
   });
 
   test('correct return value', () => {

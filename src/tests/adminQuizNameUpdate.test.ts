@@ -14,7 +14,7 @@ beforeEach(() => {
 describe('adminQuizNameUpdate tests', () => {
   beforeEach(() => {
     const user = adminAuthRegister('changli@unsw.edu.au', 'Password123', 'Chang', 'Li') as SessionIdObject;
-    sessionId = user.sessionId;
+    sessionId = user.token;
     const quiz = adminQuizCreate(sessionId, 'My Quiz', 'This is a description.') as QuizIdObject;
     quizId = quiz.quizId;
   });
@@ -31,7 +31,7 @@ describe('adminQuizNameUpdate tests', () => {
 
   test('Quiz not owned by user', () => {
     const anotherUser = adminAuthRegister('another.user@unsw.edu.au', 'Password123', 'Another', 'User') as SessionIdObject;
-    const result = adminQuizNameUpdate(anotherUser.sessionId, quizId, 'New Quiz Name') as ErrorMessage;
+    const result = adminQuizNameUpdate(anotherUser.token, quizId, 'New Quiz Name') as ErrorMessage;
     expect(result).toEqual({ error: 'Quiz ID does not refer to a quiz that this user owns.' });
   });
 

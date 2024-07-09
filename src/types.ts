@@ -41,7 +41,7 @@ export type QuizIdObject = {
 }
 
 export type AuthUserIdObject = {
-    sessionId: string
+    token: string
 }
 
 export type ClearResult = EmptyObject;

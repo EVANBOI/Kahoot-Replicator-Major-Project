@@ -39,7 +39,7 @@ describe('Function clear tests', () => {
     expect(adminUserDetails(VALID_TOKEN)).toStrictEqual(ERROR401);
   });
 
-  test.failing('correct clear the quiz store', () => {
+  test('correct clear the quiz store', () => {
     const register = adminAuthRegister(
       VALID_USER.EMAIL,
       VALID_USER.PASSWORD,

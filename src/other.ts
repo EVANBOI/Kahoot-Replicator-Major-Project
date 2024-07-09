@@ -8,6 +8,7 @@ export function clear (): ClearResult {
   const store = getData();
   store.users = [];
   store.quizzes = [];
+  store.trash = [];
   setData(store);
   return {};
 }

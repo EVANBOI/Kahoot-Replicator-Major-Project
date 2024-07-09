@@ -8,7 +8,7 @@ import sui from 'swagger-ui-express';
 import fs from 'fs';
 import path from 'path';
 import process from 'process';
-import { adminQuizCreate, adminQuizInfo, adminQuizList } from './quiz';
+import { adminQuizCreate, adminQuizInfo, adminQuizList, adminQuizDescriptionUpdate } from './quiz';
 import { adminAuthLogin, adminAuthRegister, adminUserDetailsUpdate, adminUserPasswordUpdate } from './auth';
 import { clear } from './other';
 import { getData } from './dataStore';
@@ -63,6 +63,28 @@ app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
   if ('error' in result) {
     res.status(401);
   }
+  return res.json(result);
+});
+
+app.put('/v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {
+  const { sessionId, description } = req.body;
+  const quizId = parseInt(req.params.quizid);
+  console.log('quizid is : ', quizId);
+  const database = getData(); // allowed to use getData from datastore??
+  const user = findUserBySessionId(database, sessionId);
+  const validQuizId = database.quizzes.find(quiz => quiz.quizId === quizId);
+  const result = adminQuizDescriptionUpdate(sessionId, quizId, description);
+  if (description.length > 100) {
+    return res.status(400).json(result);
+    // return res.json({ error: 'Description exceeds 100 characters.' });
+  } else if (!user) {
+    return res.status(401).json(result);
+  } else if (!validQuizId || validQuizId.creatorId !== user?.userId) {
+    console.log('quizid is: ', validQuizId);
+    // console.log('creator id is: ', validQuizId.creatorId)
+    return res.status(403).json(result);
+  }
+
   return res.json(result);
 });
 

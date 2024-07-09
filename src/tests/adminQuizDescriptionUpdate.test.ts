@@ -3,7 +3,6 @@ import { adminAuthRegister,
   clear,
   adminQuizCreate,
   adminQuizInfo } from '../wrappers';
-import { ok } from '../helpers';
 
 beforeEach(() => {
   clear();
@@ -76,21 +75,24 @@ describe('Successful function run', () => {
       'admin1@gmail.com', 'SDFJKH2349081j', 'JJone', 'ZZ'
     );
     sessionId1 = body1?.token;
-
     const { jsonBody: body2 } = adminAuthRegister(
       'admin2@gmail.com', 'SDFJKH2349081j', 'JJone', 'ZZ'
     );
     sessionId2 = body2?.token;
+
     const { jsonBody: quiz1 } = adminQuizCreate(
       sessionId1, 'Quiz 1', 'this is first original description')
     quizId1 = quiz1?.quizId;
+
     const { jsonBody: quiz2 } = adminQuizCreate(
-      sessionId1, 'Quiz 1', 'this is second original description')
-    quizId1 = quiz2?.quizId;
+      sessionId1, 'Quiz 2', 'this is second original description')
+    quizId2 = quiz2?.quizId;
+
     const { jsonBody: quiz3 } = adminQuizCreate(
-      sessionId1, 'Quiz 1', 'this is thrid original description')
-    quizId1 = quiz3?.quizId;
+      sessionId2, 'Quiz 3', 'this is thrid original description')
+    quizId3 = quiz3?.quizId;
   });
+
   describe('Update description once', () => {
     test('Check return type', () => {
       const { jsonBody, statusCode } = adminQuizDescriptionUpdate(sessionId1, quizId1, 'changed');
@@ -102,11 +104,14 @@ describe('Successful function run', () => {
       adminQuizDescriptionUpdate(sessionId1, quizId1, 'changed');
       const quizInfo = adminQuizInfo(sessionId1, quizId1);
       expect(quizInfo).toStrictEqual({
-        quizId: quizId1,
-        name: 'Quiz 1',
-        timeCreated: expect.any(Number),
-        timeLastEdited: expect.any(Number),
-        description: 'changed'
+        statusCode: 200,
+        jsonBody: {
+          quizId: quizId1,
+          name: 'Quiz 1',
+          timeCreated: expect.any(Number),
+          timeLastEdited: expect.any(Number),
+          description: 'changed'
+        }
       });
     });
 
@@ -116,15 +121,18 @@ describe('Successful function run', () => {
       expect(quizInfo?.timeCreated).toBeLessThanOrEqual((quizInfo?.timeLastEdited));
     });
 
-    test('Description update is an empty string', () => {
+    test('Description update can be an empty string', () => {
       adminQuizDescriptionUpdate(sessionId1, quizId1, '');
       const quizInfo = adminQuizInfo(sessionId1, quizId1);
       expect(quizInfo).toStrictEqual({
-        quizId: quizId1,
-        name: 'Quiz 1',
-        timeCreated: expect.any(Number),
-        timeLastEdited: expect.any(Number),
-        description: ''
+        statusCode: 200, 
+        jsonBody: {
+          quizId: quizId1,
+          name: 'Quiz 1',
+          timeCreated: expect.any(Number),
+          timeLastEdited: expect.any(Number),
+          description: ''
+        }
       });
     });
   });
@@ -164,8 +172,8 @@ describe('Successful function run', () => {
       adminQuizDescriptionUpdate(sessionId1, quizId1, 'changed quiz 1');
       adminQuizDescriptionUpdate(sessionId2, quizId3, 'changed quiz 3');
       expect(adminQuizInfo(sessionId2, quizId3)).toStrictEqual({
-          statusCode: 200,
-          jsonBody: {
+        statusCode: 200,
+        jsonBody: {
           quizId: quizId3,
           name: 'Quiz 3',
           timeCreated: expect.any(Number),

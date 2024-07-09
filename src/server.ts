@@ -69,6 +69,7 @@ app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
 app.put('/v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {
   const { sessionId, description } = req.body;
   const quizId = parseInt(req.params.quizid);
+  console.log('quizid is : ', quizId)
   const database = getData(); // allowed to use getData from datastore??
   const user = findUserBySessionId(database, sessionId);
   const validQuizId = database.quizzes.find(quiz => quiz.quizId === quizId);
@@ -78,8 +79,9 @@ app.put('/v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {
     // return res.json({ error: 'Description exceeds 100 characters.' });
   } else if (!user) {
     return res.status(401).json(result);
-    // return res.json({ error: 'Description exceeds 100 characters.' });
   } else if (!validQuizId || validQuizId.creatorId !== user?.userId) {
+    console.log('quizid is: ', validQuizId);
+    //console.log('creator id is: ', validQuizId.creatorId)
     return res.status(403).json(result);
   }
 

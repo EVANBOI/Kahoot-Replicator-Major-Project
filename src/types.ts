@@ -1,12 +1,6 @@
 export type EmptyObject = Record<string, never>;
 
 export type ErrorMessage = { error: string };
-export type ERROR = {
-    body: {
-        error: string
-    },
-    status: number
-}
 export type Token = { token: string }
 export type User = {
     userId: number,

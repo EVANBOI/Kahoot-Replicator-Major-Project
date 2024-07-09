@@ -107,8 +107,12 @@ export const adminQuizList = (sessionId: string) => {
   return requestHelper('GET', '/v1/admin/quiz/list', { sessionId });
 };
 
-export const adminQuizDescriptionUpdate = (quizId: number) => {
-  return requestHelper('PUT', `/v1/admin/quia/${quizId}/description`, {});
+export const adminQuizDescriptionUpdate = (
+  sessionId: string,
+  quizId: number,
+  description: string) => {
+  return requestHelper('PUT', `/v1/admin/quiz/${quizId}/description`,
+    { sessionId, description });
 };
 
 export const adminUserDetailsUpdate = (

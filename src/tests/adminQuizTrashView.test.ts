@@ -1,18 +1,8 @@
-import { adminQuizTrashView } from "../wrappers";
-import { clear } from "../wrappers";
-import { ok } from '../helpers';
-
-
-const VALID_INPUTS = {
-    EMAIL: 'admin@email.com',
-    PASSWORD: 'password1',
-    FIRSTNAME: 'Idk',
-    LASTNAME: 'Idk'
-  };
+import { clear } from '../wrappers';
 
 beforeEach(() => {
-    clear();
+  clear();
 });
 
 test('Token is invalid', () => {
-})
+});

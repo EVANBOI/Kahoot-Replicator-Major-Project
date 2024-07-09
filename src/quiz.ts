@@ -47,14 +47,14 @@ export function adminQuizCreate (
     quiz.creatorId === user?.userId);
 
   if (!user) {
-    return { 
-      body: { 
+    return {
+      body: {
         error: 'Session ID is not valid'
       },
       status: 401
     };
   } else if (nameUsed) {
-    return { 
+    return {
       body: {
         error: 'name has already been used by the user'
       },
@@ -75,7 +75,7 @@ export function adminQuizCreate (
       status: 400
     };
   } else if (description.length > 100) {
-    return { 
+    return {
       body: {
         error: 'description is more than 100 characters in length'
       },

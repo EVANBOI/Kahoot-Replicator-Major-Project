@@ -11,7 +11,6 @@ import process from 'process';
 import { adminQuizCreate } from './quiz';
 import { adminAuthLogin, adminAuthRegister, adminUserDetailsUpdate } from './auth';
 import { clear } from './other';
-import { ok } from './helpers'
 
 // Set up web app
 const app = express();

@@ -10,8 +10,8 @@ const QUIZCREATED = {
 
 const INVALIDID = {
   statusCode: 401,
-  jsonBody: { error: expect.any(String) }  
-}
+  jsonBody: { error: expect.any(String) }
+};
 
 const ERROR = {
   statusCode: 400,
@@ -27,10 +27,10 @@ let sessionId: string;
 beforeEach(() => {
   const { jsonBody } =
     adminAuthRegister(
-    'evan.xiong@unsw.edu.au', 
-    'abc1234e', 
-    'Evan', 
-    'Xiong');
+      'evan.xiong@unsw.edu.au',
+      'abc1234e',
+      'Evan',
+      'Xiong');
   sessionId = jsonBody.token;
 });
 
@@ -84,20 +84,19 @@ describe('When registering an user', () => {
   });
 
   test('Sucessfully give two quizIds', () => {
-    let sessionId2: string;
     const { jsonBody } = ok(
       adminAuthRegister(
-        'zhihao.cao@unsw.edu.au', 
-        'qwerty67890', 
-        'Zhihao', 
+        'zhihao.cao@unsw.edu.au',
+        'qwerty67890',
+        'Zhihao',
         'Cao'));
-    sessionId2 = jsonBody.token;
+    const sessionId2 = jsonBody.token;
     expect(adminQuizCreate(sessionId, 'Quiz 1', ' ')).toStrictEqual(QUIZCREATED);
     expect(adminQuizCreate(sessionId2, 'Quiz 2', 'Linked Lists')).toStrictEqual(QUIZCREATED);
     expect(adminQuizCreate(sessionId, 'Quiz 1', ' '))
-    .not.toStrictEqual(
-      expect(adminQuizCreate(sessionId2, 'Quiz 2', 'Linked Lists'))
-    );  
+      .not.toStrictEqual(
+        expect(adminQuizCreate(sessionId2, 'Quiz 2', 'Linked Lists'))
+      );
   });
 
   test('Sucessfully give two quizIds for the same user', () => {

@@ -131,7 +131,7 @@ export const clear = () => {
 
 export const adminQuizTrashView = (token: string) => {
   return requestHelper('GET', '/v1/admin/quiz/trash', { token });
-}
+};
 export const adminUserDetails = (sessionId: string) => {
   return requestHelper('GET', '/v1/admin/user/details', { sessionId });
 };

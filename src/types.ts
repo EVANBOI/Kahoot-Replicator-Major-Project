@@ -4,7 +4,7 @@ export type ErrorMessage = { error: string };
 export type ERROR = {
     body: {
         error: string
-    }, 
+    },
     status: number
 }
 export type Token = { token: string }
@@ -48,7 +48,7 @@ export type AuthUserIdObject = {
     token: string
 }
 
-export type ClearResult = {};
+export type ClearResult = EmptyObject;
 
 export type UserUpdateResult = EmptyObject | ErrorMessage;
 

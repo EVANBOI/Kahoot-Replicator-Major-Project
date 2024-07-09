@@ -12,7 +12,7 @@ export function adminQuizList (sessionId: string): QuizListDetails {
   const database = getData();
   const user = findUserBySessionId(database, sessionId);
   if (!user) {
-    return { error: 'Session id is not valid.' };
+    return { statusCode: 400, error: 'Session id is not valid.' };
   }
   const creatorId = user.userId;
   const quizzes = database.quizzes.filter(quiz => quiz.creatorId === creatorId);
@@ -199,13 +199,13 @@ export function adminQuizDescriptionUpdate (
   const user = findUserBySessionId(database, sessionId);
   const validQuizId = database.quizzes.find(quiz => quiz.quizId === quizId);
   if (!user) {
-    return { error: 'AuthUserId is not a valid user.' };
+    return { statusCode: 401, error: 'AuthUserId is not a valid user.' };
   } else if (!validQuizId) {
-    return { error: 'Quiz ID does not refer to a valid quiz.' };
+    return { statusCode: 403, error: 'Quiz ID does not refer to a valid quiz.' };
   } else if (user.userId !== validQuizId.creatorId) {
-    return { error: 'Quiz ID does not refer to a quiz that this user owns.' };
+    return { statusCode: 403, error: 'Quiz ID does not refer to a quiz that this user owns.' };
   } else if (description.length > 100) {
-    return { error: 'Description is more than 100 characters in length' };
+    return { statusCode: 400, error: 'Description is more than 100 characters in length' };
   }
 
   validQuizId.description = description;

@@ -22,25 +22,25 @@ export function adminAuthRegister (
   const dataBase = getData();
   const person = dataBase.users.find(person => person.email === email);
   if (person) {
-    return { error: 'Email address is used by another user.' };
+    return { statusCode: 400, error: 'Email address is used by another user.' };
   }
   const nameRange = /^[a-zA-Z-' ]*$/;
   const passwordLetterRange = /^[a-zA-Z]/;
   const passwordNumberRange = /\d/;
   if (!validator.isEmail(email)) {
-    return { error: 'Email is not a valid email' };
+    return { statusCode: 400, error: 'Email is not a valid email' };
   } else if (!nameRange.test(nameFirst)) {
-    return { error: 'NameFirst contains invalid characters' };
+    return { statusCode: 400, error: 'NameFirst contains invalid characters' };
   } else if (nameFirst.length < 2 || nameFirst.length > 20) {
-    return { error: 'NameFirst is less than 2 characters or more than 20 characters.' };
+    return { statusCode: 400, error: 'NameFirst is less than 2 characters or more than 20 characters.' };
   } else if (!nameRange.test(nameLast)) {
-    return { error: 'NameFirst contains invalid characters' };
+    return { statusCode: 400, error: 'NameFirst contains invalid characters' };
   } else if (nameLast.length < 2 || nameLast.length > 20) {
-    return { error: 'NameLast is less than 2 characters or more than 20 characters.' };
+    return { statusCode: 400, error: 'NameLast is less than 2 characters or more than 20 characters.' };
   } else if (password.length < 8) {
-    return { error: 'Password is less than 8 characters.' };
+    return { statusCode: 400, error: 'Password is less than 8 characters.' };
   } else if (!passwordLetterRange.test(password) || !passwordNumberRange.test(password)) {
-    return { error: 'Password does not contain at least one number and at least one letter.' };
+    return { statusCode: 400, error: 'Password does not contain at least one number and at least one letter.' };
   }
 
   const id = dataBase.users.length + 1;

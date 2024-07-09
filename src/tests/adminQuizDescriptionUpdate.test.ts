@@ -1,9 +1,8 @@
-import { clear } from '../other';
-import { adminAuthRegister, adminQuizDescriptionUpdate } from '../wrappers';
-import {
+import { adminAuthRegister, 
+  adminQuizDescriptionUpdate, 
+  clear,
   adminQuizCreate,
-  adminQuizInfo
-} from '../quiz';
+  adminQuizInfo } from '../wrappers';
 import { ok } from '../helpers';
 
 beforeEach(() => {
@@ -23,19 +22,19 @@ describe('Error cases', () => {
     let sessionId1: string, sessionId2: string;
     let quizId1: number;
     beforeEach(() => {
-      const { jsonBody: Body1 } = adminAuthRegister(
+      const { jsonBody: body1 } = adminAuthRegister(
         'admin1@gmail.com', 'SDFJKH2349081j', 'JJone', 'ZZ'
       );
-      sessionId1 = Body1?.sessionId;
+      sessionId1 = body1?.token;
 
-      const { jsonBody: Body2 } = adminAuthRegister(
+      const { jsonBody: body2 } = adminAuthRegister(
         'admin2@gmail.com', 'SDFJKH2349081j', 'JJone', 'ZZ'
       );
-      sessionId2 = Body2?.sessionId;
-
-      quizId1 = ok(adminQuizCreate(
+      sessionId2 = body2?.token;
+      
+      const { jsonBody: Quiz1 } = adminQuizCreate(
         sessionId1, 'Quiz 1', 'this is first original description')
-      ).quizId;
+      quizId1 = Quiz1?.quizId;
     });
 
     test('Session id does not exist', () => {
@@ -73,22 +72,24 @@ describe('Successful function run', () => {
   let sessionId1: string, sessionId2: string;
   let quizId1: number, quizId2: number, quizId3: number;
   beforeEach(() => {
-    const { jsonBody: Body1 } = adminAuthRegister(
+    const { jsonBody: body1 } = adminAuthRegister(
       'admin1@gmail.com', 'SDFJKH2349081j', 'JJone', 'ZZ'
     );
-    sessionId1 = Body1?.sessionId;
+    sessionId1 = body1?.token;
 
-    const { jsonBody: Body2 } = adminAuthRegister(
+    const { jsonBody: body2 } = adminAuthRegister(
       'admin2@gmail.com', 'SDFJKH2349081j', 'JJone', 'ZZ'
     );
-    sessionId2 = Body2?.sessionId;
-
-    quizId1 = ok(
-      adminQuizCreate(sessionId1, 'Quiz 1', 'this is first original description')).quizId;
-    quizId2 = ok(
-      adminQuizCreate(sessionId1, 'Quiz 2', 'this is second original description')).quizId;
-    quizId3 = ok(
-      adminQuizCreate(sessionId2, 'Quiz 3', 'this is third original description')).quizId;
+    sessionId2 = body2?.token;
+    const { jsonBody: quiz1 } = adminQuizCreate(
+      sessionId1, 'Quiz 1', 'this is first original description')
+    quizId1 = quiz1?.quizId;
+    const { jsonBody: quiz2 } = adminQuizCreate(
+      sessionId1, 'Quiz 1', 'this is second original description')
+    quizId1 = quiz2?.quizId;
+    const { jsonBody: quiz3 } = adminQuizCreate(
+      sessionId1, 'Quiz 1', 'this is thrid original description')
+    quizId1 = quiz3?.quizId;
   });
   describe('Update description once', () => {
     test('Check return type', () => {
@@ -111,8 +112,8 @@ describe('Successful function run', () => {
 
     test('Time last edited is updated correctly', () => {
       adminQuizDescriptionUpdate(sessionId1, quizId1, 'changed');
-      const quizInfo = ok(adminQuizInfo(sessionId1, quizId1));
-      expect(quizInfo.timeCreated).toBeLessThanOrEqual((quizInfo.timeLastEdited));
+      const { jsonBody: quizInfo } = adminQuizInfo(sessionId1, quizId1);
+      expect(quizInfo?.timeCreated).toBeLessThanOrEqual((quizInfo?.timeLastEdited));
     });
 
     test('Description update is an empty string', () => {
@@ -133,11 +134,14 @@ describe('Successful function run', () => {
       adminQuizDescriptionUpdate(sessionId1, quizId1, 'changed');
       adminQuizDescriptionUpdate(sessionId1, quizId1, 'changed twice');
       expect(adminQuizInfo(sessionId1, quizId1)).toStrictEqual({
-        quizId: quizId1,
-        name: 'Quiz 1',
-        timeCreated: expect.any(Number),
-        timeLastEdited: expect.any(Number),
-        description: 'changed twice'
+        statusCode: 200,
+          jsonBody: {
+          quizId: quizId1,
+          name: 'Quiz 1',
+          timeCreated: expect.any(Number),
+          timeLastEdited: expect.any(Number),
+          description: 'changed twice'
+        }
       });
     });
 
@@ -145,11 +149,14 @@ describe('Successful function run', () => {
       adminQuizDescriptionUpdate(sessionId1, quizId1, 'changed quiz 1');
       adminQuizDescriptionUpdate(sessionId1, quizId2, 'changed quiz 2');
       expect(adminQuizInfo(sessionId1, quizId2)).toStrictEqual({
-        quizId: quizId2,
-        name: 'Quiz 2',
-        timeCreated: expect.any(Number),
-        timeLastEdited: expect.any(Number),
-        description: 'changed quiz 2'
+        statusCode: 200,
+        jsonBody: {
+          quizId: quizId2,
+          name: 'Quiz 2',
+          timeCreated: expect.any(Number),
+          timeLastEdited: expect.any(Number),
+          description: 'changed quiz 2'
+        }
       });
     });
 
@@ -157,13 +164,15 @@ describe('Successful function run', () => {
       adminQuizDescriptionUpdate(sessionId1, quizId1, 'changed quiz 1');
       adminQuizDescriptionUpdate(sessionId2, quizId3, 'changed quiz 3');
       expect(adminQuizInfo(sessionId2, quizId3)).toStrictEqual({
-        quizId: quizId3,
-        name: 'Quiz 3',
-        timeCreated: expect.any(Number),
-        timeLastEdited: expect.any(Number),
-        description: 'changed quiz 3'
+          statusCode: 200,
+          jsonBody: {
+          quizId: quizId3,
+          name: 'Quiz 3',
+          timeCreated: expect.any(Number),
+          timeLastEdited: expect.any(Number),
+          description: 'changed quiz 3'
+        }
       });
     });
-    // maybe add in one more test on if the first created quiz time is different to editing multiple times??
   });
 });

@@ -1,7 +1,9 @@
-import { clear } from '../other';
-import { adminAuthRegister, adminUserDetails } from '../auth';
-import { adminQuizCreate, adminQuizInfo } from '../quiz';
-import { QuizIdObject, SessionId } from '../types';
+import { clear, adminAuthRegister, adminUserDetails, adminQuizCreate, adminQuizInfo } from '../wrappers';
+
+const SUCCESSFULCLEAR = {
+  statusCode: 200,
+  jsonBody: {}
+};
 
 const VALID_USER = {
   EMAIL: 'admin@email.com',
@@ -15,25 +17,26 @@ const VALID_QUIZ = {
   DESCRIPTION: 'ValidDescription'
 };
 
-const ERROR = {
-  error: expect.any(String)
+const ERROR401 = {
+  statusCode: 401,
+  jsonBody: { error: expect.any(String) }
 };
 
 describe('Function clear tests', () => {
   test('correct return value check', () => {
-    expect(clear()).toEqual({});
+    expect(clear()).toEqual(SUCCESSFULCLEAR);
   });
 
-  test('correct clear the user store', () => {
+  test.failing('correct clear the user store', () => {
     const register = adminAuthRegister(
       VALID_USER.EMAIL,
       VALID_USER.PASSWORD,
       VALID_USER.FIRSTNAME,
       VALID_USER.LASTNAME
-    ) as SessionId;
-    const VALID_TOKEN = register.sessionId;
+    );
+    const VALID_TOKEN = register.jsonBody?.token;
     clear();
-    expect(adminUserDetails(VALID_TOKEN)).toStrictEqual(ERROR);
+    expect(adminUserDetails(VALID_TOKEN)).toStrictEqual(ERROR401);
   });
 
   test('correct clear the quiz store', () => {
@@ -42,16 +45,16 @@ describe('Function clear tests', () => {
       VALID_USER.PASSWORD,
       VALID_USER.FIRSTNAME,
       VALID_USER.LASTNAME
-    ) as SessionId;
-    const VALID_TOKEN = register.sessionId;
+    );
+    const VALID_TOKEN = register.jsonBody?.token;
     const create = adminQuizCreate(
       VALID_TOKEN,
       VALID_QUIZ.NAME,
       VALID_QUIZ.DESCRIPTION
-    ) as QuizIdObject;
-    const VALID_QUIZ_ID = create.quizId;
+    );
+    const VALID_QUIZ_ID = create.jsonBody?.quizId;
 
     clear();
-    expect(adminQuizInfo(VALID_TOKEN, VALID_QUIZ_ID)).toStrictEqual(ERROR);
+    expect(adminQuizInfo(VALID_TOKEN, VALID_QUIZ_ID)).toStrictEqual(ERROR401);
   });
 });

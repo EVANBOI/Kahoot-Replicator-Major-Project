@@ -1,6 +1,6 @@
 import { getData, setData } from './dataStore';
 import { findQuizWithId, findUserBySessionId } from './helpers';
-import { EmptyObject, ErrorMessage, Quiz, QuizCreateDetails, QuizInfoResult, QuizListDetails, QuizRemoveResult } from './types';
+import { EmptyObject, ErrorMessage, Quiz, QuizIdObject, QuizInfoResult, QuizListDetails, QuizRemoveResult } from './types';
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
  *
@@ -26,7 +26,7 @@ export function adminQuizList (sessionId: string): QuizListDetails {
 /**
  * Given basic details about a new quiz, create one for the logged in user.
  *
- * @param {number} sessionId - unique id of a user
+ * @param {string} sessionId - unique id of a user
  * @param {string} name - name of the quiz
  * @param {string} description - description of a quiz
  * @returns {{quizId: number}}
@@ -35,11 +35,12 @@ export function adminQuizList (sessionId: string): QuizListDetails {
 export function adminQuizCreate (
   sessionId: string,
   name: string,
-  description: string): QuizCreateDetails {
+  description: string): ErrorMessage | QuizIdObject {
   const database = getData();
   const user = findUserBySessionId(database, sessionId);
-  const nameUsed = database.quizzes.find(quiz => quiz.name === name &&
-                                        quiz.creatorId === user?.userId);
+  const nameUsed = database.quizzes.find(
+    quiz => quiz.name === name &&
+    quiz.creatorId === user?.userId);
 
   if (!user) {
     return { error: 'Session ID is not valid' };
@@ -70,9 +71,7 @@ export function adminQuizCreate (
   });
   setData(database);
 
-  return {
-    quizId: id
-  };
+  return { quizId: id };
 }
 
 /**

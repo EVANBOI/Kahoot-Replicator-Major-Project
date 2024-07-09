@@ -12,7 +12,7 @@ beforeEach(() => {
 test('should successfully remove a quiz', (): void => {
   // Register a user
   const registerResponse = ok(adminAuthRegister('test.email@domain.com', 'password123', 'Hayden', 'Smith')) as SessionIdObject;
-  const sessionId: string = registerResponse.sessionId;
+  const sessionId: string = registerResponse.token;
 
   // Create a quiz
   const quizCreateResponse = ok(adminQuizCreate(sessionId, 'Sample Quiz', 'This is a sample quiz.')) as QuizIdObject;
@@ -32,7 +32,7 @@ test('should successfully remove a quiz', (): void => {
 test('should return an error when removing a quiz with an invalid sessionId', (): void => {
   // Register a user
   const registerResponse = ok(adminAuthRegister('test.email@domain.com', 'password123', 'Hayden', 'Smith')) as SessionIdObject;
-  const sessionId: string = registerResponse.sessionId;
+  const sessionId: string = registerResponse.token;
 
   // Create a quiz
   const quizCreateResponse = ok(adminQuizCreate(sessionId, 'Sample Quiz', 'This is a sample quiz.')) as QuizIdObject;
@@ -50,7 +50,7 @@ test('should return an error when removing a quiz with an invalid sessionId', ()
 test('should return an error when removing a quiz with an invalid quizId', (): void => {
   // Register a user
   const registerResponse = ok(adminAuthRegister('test.email@domain.com', 'password123', 'Hayden', 'Smith')) as SessionIdObject;
-  const sessionId: string = registerResponse.sessionId;
+  const sessionId: string = registerResponse.token;
 
   // Create a quiz
   const quizCreateResponse = ok(adminQuizCreate(sessionId, 'Sample Quiz', 'This is a sample quiz.')) as QuizIdObject;
@@ -68,10 +68,10 @@ test('should return an error when removing a quiz with an invalid quizId', (): v
 test('should return an error when removing a quiz that the user does not own', (): void => {
   // Register two users
   const registerResponse1 = ok(adminAuthRegister('user1.email@domain.com', 'password123', 'Hayden', 'Smith')) as SessionIdObject;
-  const sessionId1: string = registerResponse1.sessionId;
+  const sessionId1: string = registerResponse1.token;
 
   const registerResponse2 = ok(adminAuthRegister('user2.email@domain.com', 'password123', 'Jane', 'Doe')) as SessionIdObject;
-  const sessionId2: string = registerResponse2.sessionId;
+  const sessionId2: string = registerResponse2.token;
   // User 1 creates a quiz
   const quizCreateResponse = ok(adminQuizCreate(sessionId1, 'Sample Quiz', 'This is a sample quiz.')) as QuizIdObject;
   const quizId: number = quizCreateResponse.quizId;

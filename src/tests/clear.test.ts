@@ -34,7 +34,7 @@ describe('Function clear tests', () => {
       VALID_USER.FIRSTNAME,
       VALID_USER.LASTNAME
     );
-    const VALID_TOKEN = register.jsonBody.token;
+    const VALID_TOKEN = register.jsonBody?.token;
     clear();
     expect(adminUserDetails(VALID_TOKEN)).toStrictEqual(ERROR401);
   });
@@ -46,13 +46,13 @@ describe('Function clear tests', () => {
       VALID_USER.FIRSTNAME,
       VALID_USER.LASTNAME
     );
-    const VALID_TOKEN = register.jsonBody.token;
+    const VALID_TOKEN = register.jsonBody?.token;
     const create = adminQuizCreate(
       VALID_TOKEN,
       VALID_QUIZ.NAME,
       VALID_QUIZ.DESCRIPTION
     );
-    const VALID_QUIZ_ID = create.jsonBody.quizId;
+    const VALID_QUIZ_ID = create.jsonBody?.quizId;
 
     clear();
     expect(adminQuizInfo(VALID_TOKEN, VALID_QUIZ_ID)).toStrictEqual(ERROR401);

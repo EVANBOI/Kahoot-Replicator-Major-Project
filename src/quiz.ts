@@ -4,16 +4,15 @@ import { EmptyObject, ErrorMessage, Quiz, QuizIdObject, QuizInfoResult, QuizList
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
  *
- * @param {number} sessionId - unique id of a session
+ * @param {string} sessionId - unique id of a session
  * @returns {{quizzes: {quizId: number, name: string}}} - an object containing identifiers of all quizzes
  * @returns {{error: string}} an error
  */
-
 export function adminQuizList (sessionId: string): QuizListDetails {
   const database = getData();
   const user = findUserBySessionId(database, sessionId);
   if (!user) {
-    return { error: 'AuthUserId is not a valid user.' };
+    return { error: 'Session id is not valid.' };
   }
   const creatorId = user.userId;
   const quizzes = database.quizzes.filter(quiz => quiz.creatorId === creatorId);

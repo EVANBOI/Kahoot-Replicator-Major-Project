@@ -1,10 +1,11 @@
 import { adminAuthRegister, adminAuthLogin } from '../wrappers';
 import { clear } from '../wrappers';
 import { ok } from '../helpers';
+import { token } from 'morgan';
 
 const SUCCESSFULLOGIN = {
   statusCode: 200,
-  jsonBody: { sessionId: expect.any(String) }
+  jsonBody: { token: expect.any(String) }
 };
 
 const ERROR = {

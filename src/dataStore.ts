@@ -1,5 +1,7 @@
+import { Data } from './types';
+import fs from 'fs';
 // YOU SHOULD MODIFY THIS OBJECT BELOW ONLY
-export let data = {
+export const dataStore: Data = {
   users: [],
   quizzes: []
 };
@@ -22,12 +24,19 @@ Example usage
     setData(store)
 */
 
-// Use get() to access the data
-export function getData() {
+const filePath = 'dataStore.json';
+
+export function getData(): Data {
+  if (!fs.existsSync(filePath)) {
+    fs.writeFileSync(filePath, JSON.stringify({}), { flag: 'w' });
+  }
+  const json = fs.readFileSync(filePath, { flag: 'r' });
+  const data = JSON.parse(json.toString());
   return data;
 }
 
 // Use set(newData) to pass in the entire data object, with modifications made
-export function setData(newData) {
-  data = newData;
+export function setData(newData: Data) {
+  const data = JSON.stringify(newData);
+  fs.writeFileSync(filePath, data, { flag: 'w' });
 }

@@ -1,7 +1,7 @@
 import { adminAuthRegister } from '../auth';
 import { adminQuizCreate, adminQuizInfo } from '../quiz';
 import { clear } from '../other';
-import { QuizIdObject, SessionId } from '../types';
+import { QuizIdObject, Token } from '../types';
 
 const VALID_USER = {
   EMAIL: 'admin@email.com',
@@ -33,8 +33,8 @@ describe('error tests', () => {
       VALID_USER.PASSWORD,
       VALID_USER.FIRSTNAME,
       VALID_USER.LASTNAME
-    ) as SessionId;
-    VALID_TOKEN = register.sessionId;
+    ) as Token;
+    VALID_TOKEN = register.token;
   });
 
   test('AuthUserId is not a valid user.', () => {
@@ -53,8 +53,8 @@ describe('error tests', () => {
       VALID_USER.PASSWORD,
       VALID_USER.FIRSTNAME,
       VALID_USER.LASTNAME
-    ) as SessionId;
-    const ANOTHETR_SESSION_ID = otherUser.sessionId;
+    ) as Token;
+    const ANOTHETR_SESSION_ID = otherUser.token;
     expect(adminQuizInfo(ANOTHETR_SESSION_ID, VALID_QUIZ_ID)).toStrictEqual(ERROR);
   });
 });
@@ -66,8 +66,8 @@ describe('success tests', () => {
       VALID_USER.PASSWORD,
       VALID_USER.FIRSTNAME,
       VALID_USER.LASTNAME
-    ) as SessionId;
-    VALID_TOKEN = User.sessionId;
+    ) as Token;
+    VALID_TOKEN = User.token;
     const Quiz = adminQuizCreate(
       VALID_TOKEN,
       VALID_QUIZ.NAME,

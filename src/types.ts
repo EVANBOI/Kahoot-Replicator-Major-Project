@@ -1,5 +1,3 @@
-import internal from "stream";
-
 export type EmptyObject = Record<string, never>;
 
 export type ErrorMessage = { error: string };
@@ -41,7 +39,7 @@ export type QuizIdObject = {
 }
 
 export type AuthUserIdObject = {
-    sessionId: string
+    token: string
 }
 
 export type ClearResult = EmptyObject;
@@ -70,14 +68,16 @@ export type SessionIdObject = {
     status: number
   };
 
-export type QuizCreateDetails = ErrorMessage | QuizIdObject
+export type QuizCreateDetails = {
+    body: {
+        quizId: number
+    },
+    status: number
+}
 
 export type PasswordUpdateResult = EmptyObject | ErrorMessage;
 
-export type QuizRemoveResult =  {
-    statusCode: number,
-    message?: string
-  };
+export type QuizRemoveResult = ErrorMessage | EmptyObject
 
 export type Userdetails = ErrorMessage | {user: {
     userId: number,

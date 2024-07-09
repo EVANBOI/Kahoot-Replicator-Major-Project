@@ -1,7 +1,5 @@
-import {  adminQuizRemove, adminQuizList, adminAuthRegister, clear } from '../wrappers';
-import { ok } from '../helpers';
-import { SessionIdObject, QuizIdObject, ErrorMessage, UserRegistrationResult, QuizCreateDetails } from '../types';
-import { adminUserDetails } from '../auth';
+import {  adminQuizRemove, adminAuthRegister, clear } from '../wrappers';
+import { SessionIdObject, QuizIdObject} from '../types';
 import { adminQuizCreate } from '../quiz';
 
 const VALID_USER_INPUT = {

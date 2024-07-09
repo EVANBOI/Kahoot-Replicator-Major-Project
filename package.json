@@ -10,10 +10,9 @@
         "posttest": "npm run cleanup-sync-request || true",
         "testj": "jest adminAuthRegister.test.js",
         "testj1": "jest adminQuizList.test.js",
+        "testj2": "jest adminQuizDescriptionUpdate.test.js",
         "test!": "jest adminQuizCreate.test.js",
-        "testquizremove": "jest quizremove.test.js",
-        "testj2": "jest adminQuizDescriptionUpdate.test.ts",
-        "testl": "jest adminAuthLogin.test.ts"
+        "testl": "jest adminAuthLogin.test.js"
     },
     "dependencies": {
         "body-parser": "^1.20.2",

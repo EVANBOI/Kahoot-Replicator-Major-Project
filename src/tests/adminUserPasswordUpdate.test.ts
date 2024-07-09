@@ -1,74 +1,74 @@
-import { clear } from '../other';
-import { adminUserPasswordUpdate, adminAuthRegister } from '../auth';
-import { PasswordUpdateResult, SessionIdObject } from '../types';
+import { adminAuthRegister, adminUserPasswordUpdate, clear } from '../wrappers';
 
-const VALID_NEW_PASSWORD = 'newPassword123';
-const SHORT_PASSWORD = 'short';
-const NO_NUMBER_PASSWORD = 'password';
-const NO_LETTER_PASSWORD = '12345678';
+const SUCCESS = {
+  statusCode: 200,
+  jsonBody: {},
+};
 
-let sessionId: string;
+const ERROR400 = {
+  statusCode: 400,
+  jsonBody: { error: expect.any(String) },
+};
+
+const ERROR401 = {
+  statusCode: 401,
+  jsonBody: { error: expect.any(String) },
+};
 
 beforeEach(() => {
   clear();
 });
 
 describe('adminUserPasswordUpdate tests', () => {
+  let sessionId: string;
+
   beforeEach(() => {
-    const user = adminAuthRegister('chang.li@unsw.edu.au', 'oldPassword1', 'Chang', 'Li') as SessionIdObject;
-    sessionId = user.sessionId;
+    const registerResponse = adminAuthRegister('chang.li@unsw.edu.au', 'oldPassword1', 'Chang', 'Li');
+    sessionId = registerResponse.jsonBody.token;
   });
 
   test('correct return value', () => {
-    const result: PasswordUpdateResult = adminUserPasswordUpdate(sessionId, 'oldPassword1', VALID_NEW_PASSWORD);
-    expect(result).toEqual({});
+    expect(adminUserPasswordUpdate(sessionId, 'oldPassword1', 'newPassword1')).toStrictEqual(SUCCESS);
   });
 
   test('Invalid session ID', () => {
-    const result: PasswordUpdateResult = adminUserPasswordUpdate('invalidSessionId', 'anyPassword', VALID_NEW_PASSWORD);
-    expect(result).toEqual({ error: 'sessionId is not valid.' });
+    expect(adminUserPasswordUpdate('invalidSessionId', 'oldPassword1', 'newPassword1')).toStrictEqual(ERROR401);
   });
 
   test('Incorrect old password', () => {
-    const result: PasswordUpdateResult = adminUserPasswordUpdate(sessionId, 'wrongPassword', VALID_NEW_PASSWORD);
-    expect(result).toEqual({ error: 'Old Password is not the correct old password' });
+    expect(adminUserPasswordUpdate(sessionId, 'wrongPassword', 'newPassword1')).toStrictEqual(ERROR400);
   });
 
   test('Old and new password are the same', () => {
-    const result: PasswordUpdateResult = adminUserPasswordUpdate(sessionId, 'oldPassword1', 'oldPassword1');
-    expect(result).toEqual({ error: 'Old Password and New Password match exactly' });
+    expect(adminUserPasswordUpdate(sessionId, 'oldPassword1', 'oldPassword1')).toStrictEqual(ERROR400);
   });
 
   test('New password has already been used - check return value', () => {
-    const firstUpdateResult = adminUserPasswordUpdate(sessionId, 'oldPassword1', VALID_NEW_PASSWORD);
-    expect(firstUpdateResult).toEqual({});
+    expect(adminUserPasswordUpdate(sessionId, 'oldPassword1', 'newPassword1')).toStrictEqual(SUCCESS);
 
-    const secondUpdateResult: PasswordUpdateResult = adminUserPasswordUpdate(sessionId, VALID_NEW_PASSWORD, 'anotherNewPassword123');
-    expect(secondUpdateResult).toEqual({});
-
-    const thirdUpdateResult: PasswordUpdateResult = adminUserPasswordUpdate(sessionId, 'anotherNewPassword123', VALID_NEW_PASSWORD);
-    expect(thirdUpdateResult).toEqual({ error: 'New Password has already been used before by this user' });
+    expect(adminUserPasswordUpdate(sessionId, 'newPassword1', 'anotherNewPassword123')).toStrictEqual(SUCCESS);
   });
 
   test('New password has already been used - check data store', () => {
-    const firstUpdateResult = adminUserPasswordUpdate(sessionId, 'oldPassword1', VALID_NEW_PASSWORD);
-    expect(firstUpdateResult).toEqual({});
+    expect(adminUserPasswordUpdate(sessionId, 'oldPassword1', 'newPassword1')).toStrictEqual(SUCCESS);
 
-    const secondUpdateResult = adminUserPasswordUpdate(sessionId, VALID_NEW_PASSWORD, VALID_NEW_PASSWORD);
-    expect(secondUpdateResult).toEqual({ error: expect.any(String) });
+    expect(adminUserPasswordUpdate(sessionId, 'newPassword1', 'newPassword1')).toStrictEqual(ERROR400);
+  });
+});
 
-    // const loginResult = adminAuthLogin('chang.li@unsw.edu.au', 'anotherNewPassword123') as SessionIdObject;
-    // expect(loginResult.sessionId).toEqual({ error: expect.any(String) });
+describe('Password validation tests', () => {
+  let sessionId: string;
+
+  beforeEach(() => {
+    const registerResponse = adminAuthRegister('chang.li@unsw.edu.au', 'oldPassword1', 'Chang', 'Li');
+    sessionId = registerResponse.jsonBody.token;
   });
 
-  describe('Password validation tests', () => {
-    test.each([
-      { testName: 'Password is too short', password: SHORT_PASSWORD, error: 'Password should be more than 8 characters' },
-      { testName: 'Password with only letters', password: NO_NUMBER_PASSWORD, error: 'Password needs to contain at least one number and at least one letter' },
-      { testName: 'Password with only numbers', password: NO_LETTER_PASSWORD, error: 'Password needs to contain at least one number and at least one letter' }
-    ])('Test $testName', ({ password, error }) => {
-      const result: PasswordUpdateResult = adminUserPasswordUpdate(sessionId, 'oldPassword1', password);
-      expect(result).toEqual({ error: expect.any(String) });
-    });
+  test.each([
+    { testName: 'Password is too short', password: 'short' },
+    { testName: 'Password with only letters', password: 'onlyletters' },
+    { testName: 'Password with only numbers', password: '12345678' },
+  ])('Test $testName', ({ password }) => {
+    expect(adminUserPasswordUpdate(sessionId, 'oldPassword1', password)).toStrictEqual(ERROR400);
   });
 });

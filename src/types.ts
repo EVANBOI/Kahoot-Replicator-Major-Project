@@ -31,7 +31,8 @@ export type Quiz = {
 
 export type Data = {
     users: User[],
-    quizzes: Quiz[]
+    quizzes: Quiz[],
+    trash: Quiz[]
 }
 
 export type QuizIdObject = {
@@ -77,14 +78,19 @@ export type QuizCreateDetails = {
 
 export type PasswordUpdateResult = EmptyObject | ErrorMessage;
 
-export type QuizRemoveResult = ErrorMessage | EmptyObject
+export type QuizRemoveResult = Error;
 
 export type Userdetails = ErrorMessage | {user: {
     userId: number,
     name: string,
     email: string,
     numSuccessfulLogins: number,
-    numFailedPasswordsSinceLastLogin: number,
+    numFailedPasswordsSinceLastLogin: number
 }}
 
 export type QuizNameUpdateResult = EmptyObject | ErrorMessage;
+
+export type Error = {
+    statusCode: number,
+    message: string
+}

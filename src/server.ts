@@ -8,8 +8,8 @@ import sui from 'swagger-ui-express';
 import fs from 'fs';
 import path from 'path';
 import process from 'process';
-import { adminQuizCreate, adminQuizInfo, adminQuizList, adminQuizDescriptionUpdate } from './quiz';
-import { adminAuthLogin, adminAuthRegister, adminUserDetailsUpdate, adminUserPasswordUpdate } from './auth';
+import { adminQuizCreate, adminQuizInfo, adminQuizList, adminQuizDescriptionUpdate, adminQuizRemove } from './quiz';
+import { adminAuthLogin, adminUserDetails, adminAuthRegister, adminUserDetailsUpdate, adminUserPasswordUpdate } from './auth';
 import { clear } from './other';
 import { getData } from './dataStore';
 import { findUserBySessionId } from './helpers';
@@ -88,6 +88,20 @@ app.put('/v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {
   return res.json(result);
 });
 
+app.delete('/v1/clear', (req: Request, res: Response) => {
+  res.json(clear());
+});
+
+app.post('/v1/admin/auth/register', (req: Request, res: Response) => {
+  const { email, password, nameFirst, nameLast } = req.body;
+  const result = adminAuthRegister(email, password, nameFirst, nameLast);
+  console.log(JSON.stringify(result));
+  if ('error' in result) {
+    return res.status(400).json(result);
+  }
+  res.json(result);
+});
+
 app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
   const { email, password } = req.body;
   const result = adminAuthLogin(email, password);
@@ -95,6 +109,30 @@ app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
     return res.status(400).json(result);
   }
   res.json(result);
+});
+
+// This is the get admin userdetails method from the swagger
+app.get('/v1/admin/user/details', (req: Request, res: Response) => {
+  const token = req.query.token as string;
+  // console.log(token, 'HI')
+  const result = adminUserDetails(token);
+  if ('error' in result) {
+    return res.status(401).json(result);
+  }
+  res.status(200).json(result);
+});
+
+// This is the get admin userdetails method from the swagger
+app.delete('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
+  const token = req.query.token as string;
+  const id = parseInt(req.params.quizid);
+  const result = adminQuizRemove(token, id);
+
+  if (result.statusCode !== 200) {
+    res.status(result.statusCode).json({ error: result.message });
+  } else {
+    res.status(200).json({});
+  }
 });
 
 app.post('/v1/admin/quiz', (req: Request, res: Response) => {

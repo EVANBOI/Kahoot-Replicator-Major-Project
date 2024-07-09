@@ -4,7 +4,7 @@ import { ok } from '../helpers';
 
 const SUCCESSFULLOGIN = {
   statusCode: 200,
-  jsonBody: { sessionId: expect.any(String) }
+  jsonBody: { token: expect.any(String) }
 };
 
 const ERROR = {

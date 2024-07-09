@@ -3,7 +3,7 @@ import { clear } from '../wrappers';
 
 const REGISTRATED = {
   statusCode: 200,
-  jsonBody: { sessionId: expect.any(String) }
+  jsonBody: { token: expect.any(String) }
 };
 const ERROR = {
   statusCode: 400,

@@ -1,5 +1,5 @@
-import { adminAuthRegister, adminUserDetailsUpdate, adminUserDetails, clear } from '../wrappers';
-
+import { adminAuthRegister, adminUserDetailsUpdate, clear } from '../wrappers';
+import { adminUserDetails } from '../auth';
 const VALID_INPUTS_1 = {
   EMAIL: 'admin@email.com',
   PASSWORD: 'password1',
@@ -44,7 +44,7 @@ describe('error tests', () => {
       VALID_INPUTS_1.FIRSTNAME,
       VALID_INPUTS_1.LASTNAME
     );
-    VALID_TOKEN = register.jsonBody.sessionId;
+    VALID_TOKEN = register.jsonBody?.token;
   });
 
   test('UserId is not a valid user', () => {
@@ -136,7 +136,7 @@ describe('Successful update', () => {
       VALID_INPUTS_1.FIRSTNAME,
       VALID_INPUTS_1.LASTNAME
     );
-    VALID_TOKEN = register.jsonBody.sessionId;
+    VALID_TOKEN = register.jsonBody?.token;
   });
 
   test('correct return value', () => {

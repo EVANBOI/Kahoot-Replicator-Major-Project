@@ -8,10 +8,8 @@ import sui from 'swagger-ui-express';
 import fs from 'fs';
 import path from 'path';
 import process from 'process';
-import { adminAuthLogin, adminAuthRegister, adminUserDetails } from './auth';
+import { adminAuthLogin, adminAuthRegister } from './auth';
 import { clear } from './other';
-import { adminQuizRemove } from './quiz';
-import { QuizRemoveResult } from './types';
 
 // Set up web app
 const app = express();
@@ -50,7 +48,7 @@ app.delete('/v1/clear', (req: Request, res: Response) => {
 app.post('/v1/admin/auth/register', (req: Request, res: Response) => {
   const { email, password, nameFirst, nameLast } = req.body;
   const result = adminAuthRegister(email, password, nameFirst, nameLast);
-  console.log(JSON.stringify(result))
+  console.log(JSON.stringify(result));
   if ('error' in result) {
     return res.status(400).json(result);
   }
@@ -64,31 +62,6 @@ app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
     return res.status(400).json(result);
   }
   res.json(result);
-});
-
-// This is the get admin userdetails method from the swagger
-app.get('/v1/admin/user/details', (req: Request, res: Response) => {
-  const token=req.params.token;
-  const result = adminUserDetails(token);
-  if ('error' in result) {
-    return res.status(401).json({"error":"Unknown Type: string - error"});
-  }
-  res.status(200).json(result);
-});
-
-// This is the get admin userdetails method from the swagger
-app.delete('/v1/admin/quiz/:quizzid', (req: Request, res: Response) => {
-  const token=req.params.token;
-  const id=parseInt(req.params.quizzid)
-  const result:QuizRemoveResult = adminQuizRemove(token,id);
-
-  if(result.statusCode!=200){
-    res.status(result.statusCode).json({error:result.message})
-  }else{
-    res.status(200).json({});
-
-  }
-
 });
 
 // ====================================================================

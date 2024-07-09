@@ -1,5 +1,3 @@
-import internal from "stream";
-
 export type EmptyObject = Record<string, never>;
 
 export type ErrorMessage = { error: string };
@@ -74,10 +72,7 @@ export type QuizCreateDetails = ErrorMessage | QuizIdObject
 
 export type PasswordUpdateResult = EmptyObject | ErrorMessage;
 
-export type QuizRemoveResult =  {
-    statusCode: number,
-    message?: string
-  };
+export type QuizRemoveResult = ErrorMessage | EmptyObject
 
 export type Userdetails = ErrorMessage | {user: {
     userId: number,

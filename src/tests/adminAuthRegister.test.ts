@@ -1,13 +1,8 @@
-import { adminAuthRegister } from '../wrappers';
-<<<<<<< HEAD
-import { clear } from '../other';
-=======
-import { clear } from '../wrappers';
->>>>>>> master
+import { adminAuthRegister, clear } from '../wrappers';
 
 const REGISTRATED = {
   statusCode: 200,
-  jsonBody: { sessionId: expect.any(String) }
+  jsonBody: { token: expect.any(String) }
 };
 const ERROR = {
   statusCode: 400,
@@ -26,14 +21,14 @@ beforeEach(() => {
 });
 
 describe('Successful registration tests', () => {
-  test.failing('All inputs are valid', () => {
+  test('All inputs are valid', () => {
     expect(adminAuthRegister(VALID_INPUTS.EMAIL,
       VALID_INPUTS.PASSWORD,
       VALID_INPUTS.FIRSTNAME,
       VALID_INPUTS.LASTNAME)).toStrictEqual(REGISTRATED);
   });
 
-  test.failing('Check generated ids are unique', () => {
+  test('Check generated ids are unique', () => {
     const user1 = adminAuthRegister('admin1@email.com',
       VALID_INPUTS.PASSWORD,
       VALID_INPUTS.FIRSTNAME,
@@ -46,7 +41,7 @@ describe('Successful registration tests', () => {
   });
 
   describe('More cases for successful name tests', () => {
-    test.failing.each([
+    test.each([
       {
         testName: 'First name with hyphen',
         nameFirst: 'Hello-',
@@ -87,7 +82,7 @@ describe('Successful registration tests', () => {
 });
 
 describe('Unsuccessful email tests', () => {
-  test.failing('Repeated email', () => {
+  test('Repeated email', () => {
     adminAuthRegister(VALID_INPUTS.EMAIL,
       VALID_INPUTS.PASSWORD,
       VALID_INPUTS.FIRSTNAME,
@@ -97,7 +92,7 @@ describe('Unsuccessful email tests', () => {
       VALID_INPUTS.FIRSTNAME,
       VALID_INPUTS.LASTNAME)).toStrictEqual(ERROR);
   });
-  test.failing('Input is not an email', () => {
+  test('Input is not an email', () => {
     expect(adminAuthRegister('123',
       VALID_INPUTS.PASSWORD,
       VALID_INPUTS.FIRSTNAME,
@@ -106,7 +101,7 @@ describe('Unsuccessful email tests', () => {
 });
 
 describe('Unsuccesful name tests', () => {
-  test.failing.each([
+  test.each([
     {
       testName: 'First name with number',
       nameFirst: 'J23',
@@ -156,7 +151,7 @@ describe('Unsuccesful name tests', () => {
 });
 
 describe('Unsuccessful password tests', () => {
-  test.failing.each([
+  test.each([
     {
       testName: 'Password with only letters',
       password: 'password'

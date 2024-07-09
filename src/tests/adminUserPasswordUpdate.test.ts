@@ -16,7 +16,7 @@ beforeEach(() => {
 describe('adminUserPasswordUpdate tests', () => {
   beforeEach(() => {
     const user = adminAuthRegister('chang.li@unsw.edu.au', 'oldPassword1', 'Chang', 'Li') as SessionIdObject;
-    sessionId = user.sessionId;
+    sessionId = user.token;
   });
 
   test('correct return value', () => {

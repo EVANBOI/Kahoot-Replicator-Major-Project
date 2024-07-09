@@ -8,7 +8,7 @@ import sui from 'swagger-ui-express';
 import fs from 'fs';
 import path from 'path';
 import process from 'process';
-import { adminAuthLogin, adminAuthRegister } from './auth';
+import { adminAuthLogin, adminAuthRegister, adminUserDetailsUpdate } from './auth';
 import { adminQuizList } from './quiz';
 import { clear } from './other';
 
@@ -48,10 +48,11 @@ app.delete('/v1/clear', (req: Request, res: Response) => {
 app.post('/v1/admin/auth/register', (req: Request, res: Response) => {
   const { email, password, nameFirst, nameLast } = req.body;
   const result = adminAuthRegister(email, password, nameFirst, nameLast);
+  console.log(JSON.stringify(result));
   if ('error' in result) {
-    res.status(400);
+    return res.status(400).json(result);
   }
-  return res.json(result);
+  res.json(result);
 });
 
 app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
@@ -68,6 +69,19 @@ app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
   const result = adminAuthLogin(email, password);
   if ('error' in result) {
     return res.status(400).json(result);
+  }
+  res.json(result);
+});
+
+app.put('/v1/admin/user/details', (req: Request, res: Response) => {
+  const { sessionId, email, nameFirst, nameLast } = req.body;
+  const result = adminUserDetailsUpdate(sessionId, email, nameFirst, nameLast);
+  if ('error' in result) {
+    if (result.error === 'sessionId provided is invalid') {
+      return res.status(401).json(result);
+    } else {
+      return res.status(400).json(result);
+    }
   }
   res.json(result);
 });

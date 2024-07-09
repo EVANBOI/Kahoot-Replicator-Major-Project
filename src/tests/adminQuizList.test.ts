@@ -1,6 +1,5 @@
-import { adminAuthRegister, adminQuizList } from '../wrappers';
+import { adminAuthRegister, adminQuizList, clear } from '../wrappers';
 import { adminQuizCreate } from '../quiz';
-import { clear } from '../other';
 import { ok } from '../helpers';
 const ERROR = { 
   statusCode: 401,
@@ -19,7 +18,7 @@ describe('Valid session id with only no quizzes', () => {
   let sessionId: string;
   beforeEach(() => {
     const { jsonBody } = adminAuthRegister('admin@unsw.edu.au', 'Password1', 'JJ', 'HH');
-    sessionId = ok(jsonBody?.sessionId);
+    sessionId = ok(jsonBody?.token);
   });
   test('There is only one user in database', () => {
     expect(adminQuizList(sessionId)).toStrictEqual({
@@ -43,7 +42,7 @@ describe('Valid user with only one quiz', () => {
   let quiz1Id: number;
   beforeEach(() => {
     const { jsonBody } = adminAuthRegister('admin@unsw.edu.au', 'Password1', 'JJ', 'HH');
-    sessionId1 = jsonBody?.sessionId;
+    sessionId1 = jsonBody?.token;
     quiz1Id = ok(adminQuizCreate(sessionId1, 'Quiz', '')).quizId;
   });
 
@@ -83,7 +82,7 @@ describe('Valid user with multiple quizzes', () => {
   let quiz1Id: number, quiz2Id: number, quiz3Id:number;
   beforeEach(() => {
     const { jsonBody } = adminAuthRegister('admin@unsw.edu.au', 'Password1', 'JJ', 'HH');
-    sessionId1 = jsonBody?.sessionId;
+    sessionId1 = jsonBody?.token;
     quiz1Id = ok(adminQuizCreate(sessionId1, 'Quiz1', '')).quizId;
     quiz2Id = ok(adminQuizCreate(sessionId1, 'Quiz2', '')).quizId;
     quiz3Id = ok(adminQuizCreate(sessionId1, 'Quiz3', '')).quizId;

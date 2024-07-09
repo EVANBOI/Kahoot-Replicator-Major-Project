@@ -4,7 +4,7 @@ import { ok } from '../helpers';
 
 const SUCCESSFULLOGIN = {
   statusCode: 200,
-  jsonBody: { sessionId: expect.any(String) }
+  jsonBody: { token: expect.any(String) }
 };
 
 const ERROR = {
@@ -31,12 +31,12 @@ describe('Tests after registering a user', () => {
     expect(adminAuthLogin('evan.xiong@unsw.edu.au', wrongPassword)).toStrictEqual(ERROR);
   });
 
-  test.failing('Correctly returns their sessionId', () => {
+  test('Correctly returns their sessionId', () => {
     expect(adminAuthLogin('evan.xiong@unsw.edu.au', 'abcde12345')).toStrictEqual(SUCCESSFULLOGIN);
   });
 });
 
-test.failing('Correctly returns two sessionId', () => {
+test('Correctly returns two sessionId', () => {
   const Id1 = ok(adminAuthRegister(
     'evan.xiong@unsw.edu.au',
     'abcde12345', 'Evan', 'Xiong'));

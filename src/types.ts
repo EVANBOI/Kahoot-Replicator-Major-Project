@@ -128,3 +128,5 @@ export type TrashViewDetails = ErrorMessage | {
         name: string,
     }[]
 }
+
+export type QuizTrashEmptyResult = EmptyObject | ErrorMessage;

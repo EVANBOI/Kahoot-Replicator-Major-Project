@@ -1,6 +1,13 @@
 import { getData, setData } from './dataStore';
-import { durationSum, findQuizWithId, findUserBySessionId, validAnswers } from './helpers';
-import { CreateQuestionReturn, EmptyObject, ErrorMessage, QuestionBody, Quiz, QuizIdObject, QuizInfoResult, TrashViewDetails, QuizListDetails, QuizRemoveResult } from './types';
+import {
+  durationSum, findQuizWithId, findUserBySessionId,
+  validAnswers, isQuizExistWithCorrectCreator, isAllExistInTrash
+} from './helpers';
+import {
+  CreateQuestionReturn,
+  EmptyObject, ErrorMessage, QuestionBody, Quiz, QuizIdObject, QuizInfoResult, TrashViewDetails,
+  QuizListDetails, QuizRemoveResult, QuizTrashEmptyResult
+} from './types';
 import ShortUniqueId from 'short-unique-id';
 import { randomColor } from 'seed-to-color';
 const uid = new ShortUniqueId({ dictionary: 'number' });
@@ -304,4 +311,32 @@ export function adminQuizTrashView(sessionId: string): TrashViewDetails {
     name: quiz.name
   }));
   return { quizzes: details };
+}
+
+/**
+ * clear the quiz trash
+ *
+ * @param {string} token - unique sessionId
+ * @param {string} quizIds - the stringified array of quiz Ids.
+ * @returns {} - empty object
+ * @returns {{error: string}} an error
+ */
+export function adminQuizTrashEmpty(token: string, quizIds: string): QuizTrashEmptyResult {
+  const database = getData();
+  const user = findUserBySessionId(database, token);
+  if (!user) {
+    return { statusCode: 401, error: 'Token is empty or invalid.' };
+  }
+  if (!isQuizExistWithCorrectCreator(token, quizIds)) {
+    return { statusCode: 403, error: 'Quiz does not exist or given wrong creator.' };
+  }
+  if (!isAllExistInTrash(quizIds)) {
+    return { statusCode: 400, error: 'One or more of the Quiz IDs is not currently in the trash.' };
+  }
+
+  const quizArray = JSON.parse(quizIds);
+  database.trash = database.trash.filter(quiz => !quizArray.includes(quiz.quizId));
+  setData(database);
+
+  return {};
 }

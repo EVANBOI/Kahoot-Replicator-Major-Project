@@ -13,7 +13,7 @@ import {
   adminQuizInfo,
   adminQuizList,
   adminQuizDescriptionUpdate,
-  adminQuizRemove,
+  adminQuizRemove, adminQuizTrashEmpty,
   adminCreateQuizQuestion,
   adminQuizTrashView
 } from './quiz';
@@ -196,6 +196,7 @@ app.post('/v1/admin/quiz/:quizid/question', (req: Request, res: Response) => {
   res.json(result);
 });
 
+<<<<<<< HEAD
 app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
   const { token } = req.body;
   const result = adminAuthLogout(token);
@@ -206,6 +207,18 @@ app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
 
   res.json(result);
 });
+=======
+app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
+  const token = req.query.token as string;
+  const quizIds = req.query.quizIds as string;
+  const result = adminQuizTrashEmpty(token, quizIds);
+  if ('error' in result) {
+    return res.status(result.statusCode).json({ error: result.error });
+  }
+  res.json(result);
+});
+
+>>>>>>> master
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================

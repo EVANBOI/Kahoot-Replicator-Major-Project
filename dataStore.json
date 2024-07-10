@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 {"users":[],"quizzes":[],"trash":[]}
+=======
+{"users":[{"userId":1,"tokens":[{"token":"440703"}],"email":"admin@email.com","password":"password1","name":"Idk Idk","numSuccessfulLogins":1,"numFailedPasswordsSinceLastLogin":0,"passwordUsedThisYear":[]}],"quizzes":[],"trash":[]}
+>>>>>>> master

@@ -14,7 +14,6 @@ import { clear } from './other';
 import { getData } from './dataStore';
 import { findUserBySessionId } from './helpers';
 import { adminQuizNameUpdate } from './quiz';
-import { error } from 'console';
 
 // Set up web app
 const app = express();
@@ -72,7 +71,7 @@ app.put('/v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
   const result = adminQuizDescriptionUpdate(sessionId, quizId, description);
   if ('error' in result) {
-    return res.status(result.statusCode).json({ error: result.error })
+    return res.status(result.statusCode).json({ error: result.error });
   }
   return res.json(result);
 });
@@ -160,8 +159,8 @@ app.put('/v1/admin/quiz/name', (req: Request, res: Response) => {
   const result = adminQuizNameUpdate(sessionId, quizId, name);
   if ('error' in result) {
     return res.status(result.statusCode).json({ error: result.error });
-    }
-   res.json(result);
+  }
+  res.json(result);
 });
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================

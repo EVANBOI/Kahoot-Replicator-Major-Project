@@ -155,7 +155,6 @@ export function adminAuthLogin (
  *               numSuccessfulLogins: number,
  *               numFailedPasswordsSinceLastLogin: number}}}
  */
-
 export function adminUserDetails (sessionId: string): Userdetails {
   const database = getData();
   const user = findUserBySessionId(database, sessionId);
@@ -183,7 +182,6 @@ export function adminUserDetails (sessionId: string): Userdetails {
  * @param {string} newPassword - new password to replace old password
  * @returns {} - empty object
  */
-
 export function adminUserPasswordUpdate(sessionId: string, oldPassword: string, newPassword: string): PasswordUpdateResult {
   const dataBase: Data = getData();
   const user = findUserBySessionId(dataBase, sessionId);

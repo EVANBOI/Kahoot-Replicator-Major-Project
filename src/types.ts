@@ -73,7 +73,8 @@ export type QuizInfoResult = ErrorMessage | {
     name: string,
     timeCreated: number,
     timeLastEdited: number,
-    description: string
+    description: string,
+    questions: QuestionBody[]
 }
 
 export type UserdetailsResults = {
@@ -112,10 +113,11 @@ export type QuestionBody = {
     duration: number,
     points: number,
     answers: {
-        answerId?: number, 
-        colour?: string, 
-        answer: string, 
-        correct: boolean}[]
+        answerId?: number,
+        colour?: string,
+        answer: string,
+        correct: boolean
+    }[]
 };
 
 export type CreateQuestionReturn = QuestionIdObject | ErrorMessage;

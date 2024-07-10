@@ -135,10 +135,10 @@ export const clear = () => {
 
 export const adminCreateQuizQuestion = (
   quizId: number,
-  sessionId: string,
+  token: string,
   questionBody: QuestionBody) => {
   return requestHelper('POST', `/v1/admin/quiz/${quizId}/question`,
-    { sessionId, questionBody });
+    { token, questionBody });
 };
 
 export const adminUserPasswordUpdate = (

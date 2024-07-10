@@ -8,8 +8,21 @@ import sui from 'swagger-ui-express';
 import fs from 'fs';
 import path from 'path';
 import process from 'process';
-import { adminQuizCreate, adminQuizInfo, adminQuizList, adminQuizDescriptionUpdate, adminQuizRemove } from './quiz';
-import { adminAuthLogin, adminUserDetails, adminAuthRegister, adminUserDetailsUpdate, adminUserPasswordUpdate } from './auth';
+import {
+  adminQuizCreate,
+  adminQuizInfo,
+  adminQuizList,
+  adminQuizDescriptionUpdate,
+  adminQuizRemove,
+  adminCreateQuizQuestion
+} from './quiz';
+import {
+  adminAuthLogin,
+  adminUserDetails,
+  adminAuthRegister,
+  adminUserDetailsUpdate,
+  adminUserPasswordUpdate
+} from './auth';
 import { clear } from './other';
 import { getData } from './dataStore';
 import { findUserBySessionId } from './helpers';
@@ -157,6 +170,16 @@ app.put('/v1/admin/user/password', (req: Request, res: Response) => {
 app.put('/v1/admin/quiz/name', (req: Request, res: Response) => {
   const { sessionId, quizId, name } = req.body;
   const result = adminQuizNameUpdate(sessionId, quizId, name);
+  if ('error' in result) {
+    return res.status(result.statusCode).json({ error: result.error });
+  }
+  res.json(result);
+});
+
+app.post('/v1/admin/quiz/:quizid/question', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const { token, questionBody } = req.body;
+  const result = adminCreateQuizQuestion(quizId, token, questionBody);
   if ('error' in result) {
     return res.status(result.statusCode).json({ error: result.error });
   }

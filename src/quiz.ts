@@ -227,12 +227,13 @@ export function adminQuizTrashView(sessionId: string): TrashViewDetails {
   const database = getData();
   const user = findUserBySessionId(database, sessionId);
   if (!user) {
-    return { statusCode: 401, error: "Token does not exist or is invalid"};
+    return { statusCode: 401, error: { error: "Token does not exist or is invalid" }  };
   }
-  const trashView = database.trash.filter(quiz => quiz.creatorId === user.userId);
+  const creatorId = user.userId
+  const trashView = database.trash.filter(quiz => quiz.creatorId === creatorId);
   const details = trashView.map(quiz => ({
     quizId: quiz.quizId,
     name: quiz.name
   }));
-  return { statusCode: 200, quizzes: details };  
+  return { quizzes: details };  
 }

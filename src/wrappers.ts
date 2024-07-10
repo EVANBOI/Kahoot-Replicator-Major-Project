@@ -97,11 +97,11 @@ export const adminAuthLogin = (email: string, password: string) => {
 };
 
 export const adminQuizCreate = (
-  sessionId: string,
+  token: string,
   name: string,
   description: string
 ) => {
-  return requestHelper('POST', '/v1/admin/quiz', { token: sessionId, name, description });
+  return requestHelper('POST', '/v1/admin/quiz', { token: token, name, description });
 };
 
 export const adminQuizList = (token: string) => {
@@ -112,24 +112,24 @@ export const adminAuthLogout = (token: string) => {
   return requestHelper('POST', '/v1/admin/auth/logout', { token });
 };
 export const adminQuizDescriptionUpdate = (
-  sessionId: string,
+  token: string,
   quizId: number,
   description: string) => {
   return requestHelper('PUT', `/v1/admin/quiz/${quizId}/description`,
-    { sessionId, description });
+    { token, description });
 };
 
 export const adminUserDetailsUpdate = (
-  sessionId: string,
+  token: string,
   email: string,
   nameFirst: string,
   nameLast: string) => {
   return requestHelper('PUT', '/v1/admin/user/details',
-    { sessionId, email, nameFirst, nameLast });
+    { token, email, nameFirst, nameLast });
 };
 
-export const adminQuizInfo = (sessionId: string, quizId: number) => {
-  return requestHelper('GET', `/v1/admin/quiz/${quizId}`, { sessionId });
+export const adminQuizInfo = (token: string, quizId: number) => {
+  return requestHelper('GET', `/v1/admin/quiz/${quizId}`, { token });
 };
 
 export const clear = () => {
@@ -145,19 +145,19 @@ export const adminCreateQuizQuestion = (
 };
 
 export const adminUserPasswordUpdate = (
-  sessionId: string,
+  token: string,
   oldPassword: string,
   newPassword: string) => {
   return requestHelper('PUT', '/v1/admin/user/password',
-    { sessionId, oldPassword, newPassword });
+    { token, oldPassword, newPassword });
 };
 
 export const adminQuizNameUpdate = (
-  sessionId: string,
+  token: string,
   quizId: number,
   name: string) => {
   return requestHelper('PUT', '/v1/admin/quiz/name',
-    { sessionId, quizId, name });
+    { token, quizId, name });
 };
 
 export const adminQuizTrashView = (token: string) => {

@@ -15,7 +15,7 @@ export function adminQuizList (sessionId: string): QuizListDetails {
   const database = getData();
   const user = findUserBySessionId(database, sessionId);
   if (!user) {
-    return { error: 'Session id is not valid.' };
+    return { statusCode: 401, error: 'Session id is not valid.' };
   }
   const creatorId = user.userId;
   const quizzes = database.quizzes.filter(quiz => quiz.creatorId === creatorId);
@@ -46,19 +46,21 @@ export function adminQuizCreate (
     quiz.creatorId === user?.userId);
 
   if (!user) {
-    return { error: 'Session ID is not valid' };
+    return { statusCode: 401, error: 'Session ID is not valid' };
   } else if (nameUsed) {
-    return { error: 'name has already been used by the user' };
+    return { statusCode: 400, error: 'name has already been used by the user' };
   } else if (!/^[a-zA-Z0-9 ]+$/.test(name)) {
     return {
+      statusCode: 400,
       error: 'name contains invalid characters. Valid characters are alphanumeric and spaces'
     };
   } else if (name.length < 3 || name.length > 30) {
     return {
+      statusCode: 400,
       error: 'name is either less than 3 characters long or more than 30 charcters long'
     };
   } else if (description.length > 100) {
-    return { error: 'description is more than 100 characters in length' };
+    return { statusCode: 400, error: 'description is more than 100 characters in length' };
   }
 
   const timeStamp1 = Math.floor(Date.now() / 1000);
@@ -86,26 +88,29 @@ export function adminQuizCreate (
  * @returns {} - empty object
  * @returns {{error: string}} an error
  */
-export function adminQuizRemove (sessionId: string, quizId: number): QuizRemoveResult {
-  const store = getData();
-  const user = findUserBySessionId(store, sessionId);
+export function adminQuizRemove (token: string, quizId: number): QuizRemoveResult {
+  const database = getData();
+  const user = findUserBySessionId(database, token);
 
   if (!user) {
-    return { error: 'AuthUserId is not a valid user.' };
+    return { statusCode: 401, message: 'AuthUserId is not a valid user.' };
   }
   const quiz = findQuizWithId(quizId);
   if (!quiz) {
-    return { error: `Quiz with ID '${quizId}' not found` };
+    return { statusCode: 403, message: `Quiz with ID '${quizId}' not found` };
   }
   if (quiz.creatorId !== user.userId) {
-    return { error: `Quiz with ID ${quizId} is not owned by ${user.userId} (actual owner: ${quiz.creatorId})` };
+    return { statusCode: 403, message: `Quiz with ID ${quizId} is not owned by ${user.userId} (actual owner: ${quiz.creatorId})` };
   }
 
-  const quizIndex = store.quizzes.findIndex(quiz => quiz.quizId === quizId);
-  store.quizzes.splice(quizIndex, 1);
-  setData(store);
-  return {
+  const quizIndex = database.quizzes.findIndex(quiz => quiz.quizId === quizId);
+  database.trash.push(quiz);
+  database.quizzes.splice(quizIndex, 1);
 
+  setData(database);
+  return {
+    statusCode: 200,
+    message: '{}'
   };
 }
 
@@ -123,15 +128,15 @@ export function adminQuizInfo (sessionId: string, quizId: number): QuizInfoResul
   const user = findUserBySessionId(database, sessionId);
   const quiz = findQuizWithId(quizId);
   if (!user) {
-    return { error: 'sessionId is not a valid.' };
+    return { statusCode: 401, error: 'sessionId is not a valid.' };
   }
 
   if (!quiz) {
-    return { error: `Quiz with ID '${quizId}' not found` };
+    return { statusCode: 403, error: `Quiz with ID '${quizId}' not found` };
   }
 
   if (quiz.creatorId !== user.userId) {
-    return { error: `Quiz with ID ${quizId} is not owned by ${user.userId} (actual owner: ${quiz.creatorId})` };
+    return { statusCode: 403, error: `Quiz with ID ${quizId} is not owned by ${user.userId} (actual owner: ${quiz.creatorId})` };
   }
 
   return {
@@ -155,27 +160,27 @@ export function adminQuizNameUpdate(sessionId: string, quizId: number, name: str
   const database = getData();
   const user = findUserBySessionId(database, sessionId);
   if (!user) {
-    return { error: 'sessionId is not valid.' };
+    return { statusCode: 401, error: 'sessionId is not valid.' };
   }
   const authUserId = user.userId;
   const quiz: Quiz | undefined = database.quizzes.find(quiz => quiz.quizId === quizId);
 
   const namePattern = /^[a-zA-Z0-9 ]+$/;
   if (!quiz) {
-    return { error: 'Quiz ID does not refer to a valid quiz.' };
+    return { statusCode: 403, error: 'Quiz ID does not refer to a valid quiz.' };
   }
   if (quiz.creatorId !== authUserId) {
-    return { error: 'Quiz ID does not refer to a quiz that this user owns.' };
+    return { statusCode: 403, error: 'Quiz ID does not refer to a quiz that this user owns.' };
   }
   if (!namePattern.test(name)) {
-    return { error: 'Name contains invalid characters. Valid characters are alphanumeric and spaces.' };
+    return { statusCode: 400, error: 'Name contains invalid characters. Valid characters are alphanumeric and spaces.' };
   }
   if (name.length < 3 || name.length > 30) {
-    return { error: 'Name is either less than 3 characters long or more than 30 characters long.' };
+    return { statusCode: 400, error: 'Name is either less than 3 characters long or more than 30 characters long.' };
   }
   const nameUsed = database.quizzes.find(q => q.creatorId === authUserId && q.name === name);
   if (nameUsed) {
-    return { error: 'Name is already used by the current logged in user for another quiz.' };
+    return { statusCode: 400, error: 'Name is already used by the current logged in user for another quiz.' };
   }
 
   quiz.name = name;
@@ -200,13 +205,13 @@ export function adminQuizDescriptionUpdate(
   const user = findUserBySessionId(database, sessionId);
   const validQuizId = database.quizzes.find(quiz => quiz.quizId === quizId);
   if (!user) {
-    return { error: 'AuthUserId is not a valid user.' };
+    return { statusCode: 401, error: 'AuthUserId is not a valid user.' };
   } else if (!validQuizId) {
-    return { error: 'Quiz ID does not refer to a valid quiz.' };
+    return { statusCode: 403, error: 'Quiz ID does not refer to a valid quiz.' };
   } else if (user.userId !== validQuizId.creatorId) {
-    return { error: 'Quiz ID does not refer to a quiz that this user owns.' };
+    return { statusCode: 403, error: 'Quiz ID does not refer to a quiz that this user owns.' };
   } else if (description.length > 100) {
-    return { error: 'Description is more than 100 characters in length' };
+    return { statusCode: 400, error: 'Description is more than 100 characters in length' };
   }
 
   validQuizId.description = description;
@@ -253,7 +258,7 @@ export function adminCreateQuizQuestion(
       return { statusCode: 400, error: 'Point is less than 1'}
     } else if (questionBody.points > 10) {
       return { statusCode: 400, error: 'Point is greater than 10'}
-    } else if (error in validAnswers) {
+    } else if ('error' in validAnswers) {
       return validAnswers as ErrorMessage;
     }
     const questionId = parseInt(uid.rnd());

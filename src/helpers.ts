@@ -10,7 +10,7 @@ export function findQuizWithId(quizId: number) {
   return getData().quizzes.find(q => q.quizId === quizId);
 }
 
-export function ok<T>(item: T | { error: string }): T {
+export function ok<T>(item: T | { statusCode: number, error: string }): T {
   return item as T;
 }
 

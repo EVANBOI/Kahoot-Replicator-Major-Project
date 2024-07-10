@@ -1,5 +1,6 @@
 import request, { HttpVerb } from 'sync-request-curl';
 import { port, url } from '../src/config.json';
+import { QuestionBody } from './types';
 
 const SERVER_URL = `${url}:${port}`;
 
@@ -84,11 +85,11 @@ Did you res.json(undefined)?`,
 
 export const adminAuthRegister = (
   email: string,
+  password: string,
   nameFirst: string,
-  nameLast: string,
-  password: string) => {
+  nameLast: string) => {
   return requestHelper('POST', '/v1/admin/auth/register',
-    { email, nameFirst, nameLast, password });
+    { email, password, nameFirst, nameLast });
 };
 
 export const adminAuthLogin = (email: string, password: string) => {
@@ -100,20 +101,23 @@ export const adminQuizCreate = (
   name: string,
   description: string
 ) => {
-  return requestHelper('POST', '/v1/admin/quiz', { sessionId, name, description });
+  return requestHelper('POST', '/v1/admin/quiz', { token: sessionId, name, description });
 };
 
 export const adminQuizList = (sessionId: string) => {
   return requestHelper('GET', '/v1/admin/quiz/list', { sessionId });
 };
 
-export const adminQuizDescriptionUpdate = (quizId: number) => {
-  return requestHelper('PUT', `/v1/admin/quiz/${quizId}/description`, {});
-};
-
 export const adminAuthLogout = (sessionsId: string) => {
-    return requestHelper('POST', '/v1/admin/auth/logout', { sessionsId })
+  return requestHelper('POST', '/v1/admin/auth/logout', { sessionsId })
 }
+export const adminQuizDescriptionUpdate = (
+  sessionId: string,
+  quizId: number,
+  description: string) => {
+  return requestHelper('PUT', `/v1/admin/quiz/${quizId}/description`,
+    { sessionId, description });
+};
 
 export const adminUserDetailsUpdate = (
   sessionId: string,
@@ -130,4 +134,40 @@ export const adminQuizInfo = (sessionId: string, quizId: number) => {
 
 export const clear = () => {
   return requestHelper('DELETE', '/v1/clear', {});
+};
+
+export const adminCreateQuizQuestion = (
+  quizId: number,
+  token: string,
+  questionBody: QuestionBody) => {
+  return requestHelper('POST', `/v1/admin/quiz/${quizId}/question`,
+    { token, questionBody });
+};
+
+export const adminUserPasswordUpdate = (
+  sessionId: string,
+  oldPassword: string,
+  newPassword: string) => {
+  return requestHelper('PUT', '/v1/admin/user/password',
+    { sessionId, oldPassword, newPassword });
+};
+
+export const adminQuizNameUpdate = (
+  sessionId: string,
+  quizId: number,
+  name: string) => {
+  return requestHelper('PUT', '/v1/admin/quiz/name',
+    { sessionId, quizId, name });
+};
+
+export const adminQuizTrashView = (token: string) => {
+  return requestHelper('GET', '/v1/admin/quiz/trash', { token: token });
+};
+
+export const adminUserDetails = (token: string) => {
+  return requestHelper('GET', '/v1/admin/user/details', { token });
+};
+
+export const adminQuizRemove = (token: string, quizId: number) => {
+  return requestHelper('DELETE', `/v1/admin/quiz/${quizId}`, { token });
 };

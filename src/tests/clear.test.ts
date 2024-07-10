@@ -1,62 +1,39 @@
-import { clear } from '../wrappers';
-import { adminAuthRegister, adminUserDetails } from '../auth';
-import { adminQuizCreate, adminQuizInfo } from '../quiz';
-import { QuizIdObject, SessionId } from '../types';
-
-const CLEAR = {
-  statusCode: 200,
-  jsonBody: {}
-};
-
-const VALID_USER = {
-  EMAIL: 'admin@email.com',
-  PASSWORD: 'password1',
-  FIRSTNAME: 'Idk',
-  LASTNAME: 'Idk',
-};
-
-const VALID_QUIZ = {
-  NAME: 'ValidQuizName',
-  DESCRIPTION: 'ValidDescription'
-};
-
-const ERROR = {
-  error: expect.any(String)
-};
+import { clear, adminAuthRegister, adminUserDetails, adminQuizCreate, adminQuizInfo } from '../wrappers';
+import { CLEAR_SUCCESSFUL, ERROR401, VALID_USER_REGISTER_INPUTS_1, VALID_QUIZ_CREATE_INPUTS_1 } from '../testConstants';
 
 describe('Function clear tests', () => {
   test('correct return value check', () => {
-    expect(clear()).toEqual(CLEAR);
+    expect(clear()).toEqual(CLEAR_SUCCESSFUL);
   });
 
   test('correct clear the user store', () => {
     const register = adminAuthRegister(
-      VALID_USER.EMAIL,
-      VALID_USER.PASSWORD,
-      VALID_USER.FIRSTNAME,
-      VALID_USER.LASTNAME
-    ) as SessionId;
-    const VALID_TOKEN = register.sessionId;
+      VALID_USER_REGISTER_INPUTS_1.EMAIL,
+      VALID_USER_REGISTER_INPUTS_1.PASSWORD,
+      VALID_USER_REGISTER_INPUTS_1.FIRSTNAME,
+      VALID_USER_REGISTER_INPUTS_1.LASTNAME
+    );
+    const VALID_TOKEN = register.jsonBody?.token;
     clear();
-    expect(adminUserDetails(VALID_TOKEN)).toStrictEqual(ERROR);
+    expect(adminUserDetails(VALID_TOKEN)).toStrictEqual(ERROR401);
   });
 
   test('correct clear the quiz store', () => {
     const register = adminAuthRegister(
-      VALID_USER.EMAIL,
-      VALID_USER.PASSWORD,
-      VALID_USER.FIRSTNAME,
-      VALID_USER.LASTNAME
-    ) as SessionId;
-    const VALID_TOKEN = register.sessionId;
+      VALID_USER_REGISTER_INPUTS_1.EMAIL,
+      VALID_USER_REGISTER_INPUTS_1.PASSWORD,
+      VALID_USER_REGISTER_INPUTS_1.FIRSTNAME,
+      VALID_USER_REGISTER_INPUTS_1.LASTNAME
+    );
+    const VALID_TOKEN = register.jsonBody?.token;
     const create = adminQuizCreate(
       VALID_TOKEN,
-      VALID_QUIZ.NAME,
-      VALID_QUIZ.DESCRIPTION
-    ) as QuizIdObject;
-    const VALID_QUIZ_ID = create.quizId;
+      VALID_QUIZ_CREATE_INPUTS_1.NAME,
+      VALID_QUIZ_CREATE_INPUTS_1.DESCRIPTION
+    );
+    const VALID_QUIZ_ID = create.jsonBody?.quizId;
 
     clear();
-    expect(adminQuizInfo(VALID_TOKEN, VALID_QUIZ_ID)).toStrictEqual(ERROR);
+    expect(adminQuizInfo(VALID_TOKEN, VALID_QUIZ_ID)).toStrictEqual(ERROR401);
   });
 });

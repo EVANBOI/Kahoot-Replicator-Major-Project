@@ -19,7 +19,14 @@ export const VALID_QUIZ_CREATE_INPUTS_1 = {
   DESCRIPTION: 'ValidDescription'
 };
 
+export const VALID_QUIZ_CREATE_INPUTS_2 = {
+  NAME: 'ValidQuizName2',
+  DESCRIPTION: 'ValidDescription'
+};
+
 export const NEW_VALID_EMAIL = 'newValidEmail@gmail.com';
+
+export const INVALID_STRINGIFIED_ARRAY = '[999, 9999]';
 
 // here below for the success return consts
 export const USER_DETAIL_UPDATED_SUCCESSFUL = {
@@ -28,6 +35,11 @@ export const USER_DETAIL_UPDATED_SUCCESSFUL = {
 };
 
 export const CLEAR_SUCCESSFUL = {
+  statusCode: 200,
+  jsonBody: {}
+};
+
+export const QUIZ_TRASH_EMPTYED_SUCCESSFUL = {
   statusCode: 200,
   jsonBody: {}
 };

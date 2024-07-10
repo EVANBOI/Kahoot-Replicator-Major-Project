@@ -130,3 +130,11 @@ export type TrashViewDetails = ErrorMessage | {
 }
 
 export type QuizTrashEmptyResult = EmptyObject | ErrorMessage;
+
+export type QuizQuestionMoveResult = EmptyObject | ErrorMessage;
+
+// other types
+export type PositionWithTokenObj = {
+    token: string,
+    newPosition: number
+}

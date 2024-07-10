@@ -6,7 +6,7 @@ import {
 import {
   CreateQuestionReturn,
   EmptyObject, ErrorMessage, QuestionBody, Quiz, QuizIdObject, QuizInfoResult, TrashViewDetails,
-  QuizListDetails, QuizRemoveResult, QuizTrashEmptyResult
+  QuizListDetails, QuizRemoveResult, QuizTrashEmptyResult, PositionWithTokenObj, QuizQuestionMoveResult
 } from './types';
 import ShortUniqueId from 'short-unique-id';
 import { randomColor } from 'seed-to-color';
@@ -340,3 +340,19 @@ export function adminQuizTrashEmpty(token: string, quizIds: string): QuizTrashEm
 
   return {};
 }
+
+/**
+ * move the quiz position
+ *
+ * @param {number} quizid - the quizId we want to move
+ * @param {number} questionid - the questionId we want to move
+ * @param {PositionWithTokenObj} moveinfo - the object contain the position we want to move and token who made request
+ * @returns {} - empty object
+ * @returns {{error: string}} an error
+ */
+export function adminQuizQuestionMove(
+  quizid: number, 
+  questionid: number, 
+  moveinfo: PositionWithTokenObj): QuizQuestionMoveResult {
+    return
+  }

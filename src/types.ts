@@ -107,3 +107,14 @@ export type QuestionBody = {
         }[]
     }
 };
+
+export type QuizRestoreResult = {
+    statusCode: number,
+    message: string
+  };
+
+  export type QuizQuestionDeleteResult = {
+    statusCode: number,
+    message: string
+  };
+  

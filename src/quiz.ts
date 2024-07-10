@@ -1,6 +1,6 @@
 import { getData, setData } from './dataStore';
 import { findQuizWithId, findUserBySessionId } from './helpers';
-import { EmptyObject, ErrorMessage, Quiz, QuizIdObject, QuizInfoResult, QuizListDetails, QuizRemoveResult } from './types';
+import { EmptyObject, ErrorMessage, Quiz, QuizIdObject, QuizInfoResult, QuizListDetails, QuizRemoveResult, TrashViewDetails } from './types';
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
  *
@@ -214,4 +214,31 @@ export function adminQuizDescriptionUpdate (
   validQuizId.timeLastEdited = Math.floor(Date.now() / 1000);
   setData(database);
   return {};
+}
+
+/**
+ * Given a token/sessionId, view the quizzes that are currently in the trash for
+ * logged in user.
+ *
+ * @param {string} sessionId - unique id of a user
+ * @returns {{quizzes: {quizId: number, name: string}}} - an object containing identifiers of all quizzes
+ * @returns {{error: string}} an error
+ */
+
+export function adminQuizTrashView(sessionId: string): TrashViewDetails {
+  const database = getData();
+  const user = findUserBySessionId(database, sessionId);
+  if (!user) {
+    return {
+      statusCode: 401,
+      error: 'Token does not exist or is invalid'
+    };
+  }
+  const creatorId = user.userId;
+  const trashView = database.trash.filter(quiz => quiz.creatorId === creatorId);
+  const details = trashView.map(quiz => ({
+    quizId: quiz.quizId,
+    name: quiz.name
+  }));
+  return { quizzes: details };
 }

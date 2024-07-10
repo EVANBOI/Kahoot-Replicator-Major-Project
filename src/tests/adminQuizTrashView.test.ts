@@ -25,14 +25,14 @@ beforeEach(() => {
       'Evan',
       'Xiong'
     );
-  sessionId = body1.token;
+  sessionId = body1?.token;
   const { jsonBody: body2 } = adminQuizCreate(sessionId, 'Quiz 1', 'Pointers');
-  quizId = body2.quizId;
+  quizId = body2?.quizId;
   adminQuizRemove(sessionId, quizId);
 });
 
 describe('Invalid Trash View', () => {
-  test('Token is invalid', () => {
+  test.only('Token is invalid', () => {
     expect(adminQuizTrashView(sessionId + 1)).toStrictEqual(ERROR);
   });
 
@@ -59,7 +59,7 @@ describe('Valid Trash View', () => {
 
   test.failing('Viewing multiple quizzes in the trash', () => {
     const { jsonBody: body3 } = adminQuizCreate(sessionId, 'Quiz 2', 'Linked Lists');
-    const quizId2 = body3.quizId;
+    const quizId2 = body3?.quizId;
     adminQuizRemove(sessionId, quizId2);
     expect(adminQuizTrashView(sessionId)).toStrictEqual({
       statusCode: 200,

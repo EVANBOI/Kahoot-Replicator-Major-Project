@@ -203,14 +203,15 @@ app.put('/v1/admin/quiz/name', (req: Request, res: Response) => {
   } res.json(result);
 });
 
-app.get('v1/admin/quiz/trash', (req: Request, res: Response) => {
-  // const token = req.query.token as string;
-  // const result = adminQuizTrashView();
-  // if ('error' in result) {
-  //   return res.status(401).json(result)
-  // }
-  // return res.json(result);
+app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
+  const token = req.query.token as string;
+  const result = adminQuizTrashView(token);
+  if ('error' in result) {
+    return res.status(401).json(result)
+  }
+  res.json(result);
 })
+
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================

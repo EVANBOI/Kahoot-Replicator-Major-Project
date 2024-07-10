@@ -1,6 +1,6 @@
 import { getData, setData } from './dataStore';
 import { findQuizWithId, findUserBySessionId } from './helpers';
-import { EmptyObject, ErrorMessage, Quiz, QuizIdObject, QuizInfoResult, QuizListDetails, QuizRemoveResult } from './types';
+import { EmptyObject, ErrorMessage, Quiz, QuizIdObject, QuizInfoResult, QuizListDetails, QuizRemoveResult, TrashViewDetails } from './types';
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
  *
@@ -223,7 +223,16 @@ export function adminQuizDescriptionUpdate (
  * @returns {{error: string}} an error
  */
 
-export function adminQuizTrashView() { 
+export function adminQuizTrashView(sessionId: string): TrashViewDetails { 
   const database = getData();
-  
+  const user = findUserBySessionId(database, sessionId);
+  if (!user) {
+    return { statusCode: 401, error: "Token does not exist or is invalid"};
+  }
+  const trashView = database.trash.filter(quiz => quiz.creatorId === user.userId);
+  const details = trashView.map(quiz => ({
+    quizId: quiz.quizId,
+    name: quiz.name
+  }));
+  return { statusCode: 200, quizzes: details };  
 }

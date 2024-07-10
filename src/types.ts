@@ -94,3 +94,15 @@ export type Error = {
     statusCode: number,
     message: string
 }
+
+export type ERRORMESSAGE = {
+    statusCode: number,
+    error: string    
+}
+
+export type TrashViewDetails = ERRORMESSAGE | {
+    quizzes: {
+        quizId: number
+        name: string,
+    }[]
+}

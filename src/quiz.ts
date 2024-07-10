@@ -2,7 +2,7 @@ import { getData, setData } from './dataStore';
 import { durationSum, findQuizWithId, findUserBySessionId, validAnswers } from './helpers';
 import { CreateQuestionReturn, EmptyObject, ErrorMessage, QuestionBody, Quiz, QuizIdObject, QuizInfoResult, TrashViewDetails, QuizListDetails, QuizRemoveResult,  QuizRestoreResult, QuizQuestionDeleteResult } from './types';
 import ShortUniqueId from 'short-unique-id';
-import { randomColor } from '[seed-to-color]';
+import { randomColor } from 'seed-to-color';
 const uid = new ShortUniqueId({ dictionary: 'number' });
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.

@@ -2,7 +2,7 @@
 
 import { adminQuizQuestionDelete, adminAuthRegister, clear } from '../wrappers';
 import { SessionIdObject, QuizIdObject, QuestionBody } from '../types';
-import { adminQuizCreate, adminQuizQuestionCreate } from '../quiz';
+import { adminQuizCreate, adminCreateQuizQuestion } from '../quiz';
 
 const VALID_USER_INPUT = {
   EMAIL: 'admin@email.com',
@@ -43,8 +43,6 @@ beforeEach(() => {
   validQuizId2 = (adminQuizCreate(sessionId2, 'dummyquiz', 'This is a dummy quiz for testing') as QuizIdObject).quizId;
   
   const questionBody: QuestionBody = {
-    token: sessionId,
-    questionBody: {
       question: 'Who is the Monarch of England?',
       duration: 4,
       points: 5,
@@ -52,12 +50,12 @@ beforeEach(() => {
         { answer: 'Prince Charles', correct: true },
         { answer: 'Prince William', correct: false }
       ]
-    }
+    
   };
 
 
   
-  validQuestionId = (adminQuizQuestionCreate(sessionId, validQuizId, questionBody) as { questionId: number }).questionId;
+  validQuestionId = (adminCreateQuizQuestion( validQuizId, sessionId, questionBody) as { questionId: number }).questionId;
 });
 
 test('should successfully delete a quiz question', () => {

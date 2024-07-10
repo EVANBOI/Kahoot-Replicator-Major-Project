@@ -42,7 +42,8 @@ export type Quiz = {
     timeCreated: number,
     timeLastEdited: number,
     description: string,
-    questions: QuestionBody[]
+    questions: QuestionBody[],
+    duration: number
 }
 
 export type Data = {
@@ -75,6 +76,7 @@ export type QuizInfoResult = ErrorMessage | {
     timeLastEdited: number,
     description: string,
     questions: QuestionBody[]
+    duration: number
 }
 
 export type UserdetailsResults = {

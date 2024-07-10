@@ -65,20 +65,20 @@ export function isQuizExistWithCorrectCreator(token: string, quizIds: string): b
     const isValidQuiz = isExistInTrash || isExistInQuizzesStore;
 
     if (!isValidQuiz) {
-      return false
+      return false;
     }
-    const quiz = isExistInTrash ? isExistInTrash : isExistInQuizzesStore;
+    const quiz = isExistInTrash || isExistInQuizzesStore;
     if (quiz.creatorId !== UserId) {
-      return false
+      return false;
     }
   }
 
-  return true
+  return true;
 }
 
 export function isAllExistInTrash(quizIds: string): boolean {
   const data = getData();
   const quizIdArray: number[] = JSON.parse(quizIds);
   const result = quizIdArray.every(elementId => data.trash.some(quiz => quiz.quizId === elementId));
-  return result
+  return result;
 }

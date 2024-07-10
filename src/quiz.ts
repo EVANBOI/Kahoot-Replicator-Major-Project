@@ -222,8 +222,8 @@ export function adminQuizDescriptionUpdate(
 }
 
 /**
- * Create questions for quizzes given the contents of the question and 
- * generate unique ids for the questions as well as the answers inside it. 
+ * Create questions for quizzes given the contents of the question and
+ * generate unique ids for the questions as well as the answers inside it.
  * Each answer is assigned a random colour code.
  *
  * @param {number} quizId - unique id of a quiz

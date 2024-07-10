@@ -227,7 +227,7 @@ export function adminAuthLogout(sessionId: string): ErrorMessage | EmptyObject {
     return { statusCode: 401, error: 'Session Id does not exist' };
   }
 
-  const index = user.tokens.findIndex(id => id.token === sessionId);
+  const index = user.tokens.findIndex(token => token.token === sessionId);
   user.tokens.splice(index, 1);
   setData(database);
   return {};

@@ -104,13 +104,13 @@ export const adminQuizCreate = (
   return requestHelper('POST', '/v1/admin/quiz', { token: sessionId, name, description });
 };
 
-export const adminQuizList = (sessionId: string) => {
-  return requestHelper('GET', '/v1/admin/quiz/list', { sessionId });
+export const adminQuizList = (token: string) => {
+  return requestHelper('GET', '/v1/admin/quiz/list', { token });
 };
 
-export const adminAuthLogout = (sessionsId: string) => {
-  return requestHelper('POST', '/v1/admin/auth/logout', { sessionsId })
-}
+export const adminAuthLogout = (token: string) => {
+  return requestHelper('POST', '/v1/admin/auth/logout', { token });
+};
 export const adminQuizDescriptionUpdate = (
   sessionId: string,
   quizId: number,

@@ -85,7 +85,7 @@ app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
   const { email, password } = req.body;
   const result = adminAuthLogin(email, password);
   if ('error' in result) {
-    return res.status(400).json(result);
+    return res.status(result.statusCode).json({ error: result.error });
   }
   res.json(result);
 });
@@ -119,10 +119,10 @@ app.post('/v1/admin/quiz', (req: Request, res: Response) => {
   const result = adminQuizCreate(token, name, description);
   const database = getData();
   const user = findUserBySessionId(database, token);
-  if (!user) {
-    return res.status(401).json(result);
+  if (!user && 'error' in result) {
+    return res.status(result.statusCode).json({ error: result.error });
   } else if ('error' in result) {
-    return res.status(400).json(result);
+    return res.status(result.statusCode).json({ error: result.error });
   }
   return res.status(200).json(result);
 });

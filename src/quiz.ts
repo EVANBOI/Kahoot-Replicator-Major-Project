@@ -43,19 +43,21 @@ export function adminQuizCreate (
     quiz.creatorId === user?.userId);
 
   if (!user) {
-    return { error: 'Session ID is not valid' };
+    return { statusCode: 401, error: 'Session ID is not valid' };
   } else if (nameUsed) {
-    return { error: 'name has already been used by the user' };
+    return { statusCode: 400, error: 'name has already been used by the user' };
   } else if (!/^[a-zA-Z0-9 ]+$/.test(name)) {
     return {
+      statusCode: 400,
       error: 'name contains invalid characters. Valid characters are alphanumeric and spaces'
     };
   } else if (name.length < 3 || name.length > 30) {
     return {
+      statusCode: 400,
       error: 'name is either less than 3 characters long or more than 30 charcters long'
     };
   } else if (description.length > 100) {
-    return { error: 'description is more than 100 characters in length' };
+    return { statusCode: 400, error: 'description is more than 100 characters in length' };
   }
 
   const timeStamp1 = Math.floor(Date.now() / 1000);

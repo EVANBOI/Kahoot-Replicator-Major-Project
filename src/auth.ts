@@ -26,7 +26,7 @@ export function adminAuthRegister (
   }
   const nameRange = /^[a-zA-Z-' ]*$/;
   const passwordLetterRange = /^[a-zA-Z]/;
-  const passwordNumberRange = /\d/;
+  const passwordNumberRange = /[0-9]/;
   if (!validator.isEmail(email)) {
     return { statusCode: 400, error: 'Email is not a valid email' };
   } else if (!nameRange.test(nameFirst)) {

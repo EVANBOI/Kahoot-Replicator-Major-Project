@@ -5,7 +5,8 @@ import {
   adminUserDetails,
   adminUserDetailsUpdate,
   adminUserPasswordUpdate,
-  adminQuizList
+  adminQuizList,
+  adminAuthLogin
 } from '../wrappers';
 import { ERROR401 } from '../testConstants';
 
@@ -59,6 +60,10 @@ describe('Success cases', () => {
     test('Successful logout - cannot view quiz list', () => {
       adminAuthLogout(sessionId);
       expect(adminQuizList(sessionId)).toStrictEqual(ERROR401);
+    });
+    test('Log in and then logout successfully', () => {
+      const loginId = adminAuthLogin('admin1@ad.unsw.edu.au', 'Paswoord34').jsonBody?.token;
+      expect(adminAuthLogout(loginId)).toStrictEqual(LOGOUT_SUCCESSFUL);
     });
     test('Logout twice, cannot the second time', () => {
       adminAuthLogout(sessionId);

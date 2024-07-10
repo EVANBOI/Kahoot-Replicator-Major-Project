@@ -60,7 +60,7 @@ describe('Error cases', () => {
         });
     });
     test('Description length is more than 100 characters', () => {
-      expect(adminQuizDescriptionUpdate(sessionId2, quizId1, 'a'.repeat(200)))
+      expect(adminQuizDescriptionUpdate(sessionId1, quizId1, 'a'.repeat(200)))
         .toStrictEqual({
           statusCode: 400,
           jsonBody: { error: expect.any(String) }

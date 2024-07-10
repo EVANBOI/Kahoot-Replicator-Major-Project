@@ -1,6 +1,6 @@
 // Types for errors
-export type ErrorMessage = { 
-    statusCode: number, 
+export type ErrorMessage = {
+    statusCode: number,
     error: string };
 
 export type Status = {
@@ -49,7 +49,6 @@ export type Data = {
     quizzes: Quiz[],
     trash: Quiz[]
 }
-
 
 // Types for function return
 export type EmptyObject = Record<string, never>;
@@ -103,22 +102,3 @@ export type Userdetails = ErrorMessage | {user: {
 export type QuizNameUpdateResult = EmptyObject | ErrorMessage;
 
 export type QuizTransferResult = EmptyObject | ErrorMessage;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

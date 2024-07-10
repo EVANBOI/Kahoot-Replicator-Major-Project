@@ -348,7 +348,7 @@ export function adminQuizTransfer(sessionId: string, quizId: number, newOwnerEma
   if (!currentUser) {
     return { statusCode: 401, error: 'Session ID is not valid' };
   }
-  const quiz = findQuizWithId(quizId);
+  const quiz = findQuizWithId(database,quizId);
 
   if (!quiz) {
     return { statusCode: 403, error: `Quiz with ID '${quizId}' not found` };

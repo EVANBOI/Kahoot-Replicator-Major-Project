@@ -15,7 +15,8 @@ import {
   adminQuizDescriptionUpdate,
   adminQuizRemove, adminQuizTrashEmpty,
   adminCreateQuizQuestion,
-  adminQuizTrashView
+  adminQuizTrashView,
+  adminQuizTransfer
 } from './quiz';
 import {
   adminAuthLogin,

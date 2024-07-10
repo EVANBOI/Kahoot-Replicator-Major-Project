@@ -88,6 +88,7 @@ describe('adminQuizTransfer tests', () => {
       jsonBody: {
         quizId: expect.any(Number),
         name: 'My Quiz',
+        questions: expect.any(Array),
         timeCreated: expect.any(Number),
         timeLastEdited: expect.any(Number),
         description: 'This is a description.',

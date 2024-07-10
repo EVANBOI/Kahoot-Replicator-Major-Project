@@ -1,5 +1,8 @@
 import { getData, setData } from './dataStore';
-import { durationSum, findQuizWithId, findUserBySessionId, validAnswers } from './helpers';
+import { 
+  durationSum, findQuizWithId, findUserBySessionId, 
+  validAnswers, isQuizExistWithCorrectCreator, isAllExistInTrash 
+} from './helpers';
 import { CreateQuestionReturn, 
   EmptyObject, ErrorMessage, QuestionBody, Quiz, QuizIdObject, QuizInfoResult, TrashViewDetails, 
   QuizListDetails, QuizRemoveResult, QuizTrashEmptyResult 
@@ -317,5 +320,21 @@ export function adminQuizTrashView(sessionId: string): TrashViewDetails {
  * @returns {{error: string}} an error
  */
 export function adminQuizTrashEmpty(token: string, quizIds: string): QuizTrashEmptyResult {
-  return
+  const database = getData();
+  const user = findUserBySessionId(database, token);
+  if (!user) {
+    return { statusCode: 401, error: 'Token is empty or invalid.' };
+  }
+  if (!isQuizExistWithCorrectCreator(token, quizIds)) {
+    return { statusCode: 403, error: 'Quiz does not exist or given wrong creator.' }
+  }
+  if (!isAllExistInTrash(quizIds)) {
+    return { statusCode: 400, error: 'One or more of the Quiz IDs is not currently in the trash.' }
+  }
+
+  const quizArray = JSON.parse(quizIds);
+  database.trash = database.trash.filter(quiz => !quizArray.includes(quiz.quizId));
+  setData(database);
+
+  return {};
 }

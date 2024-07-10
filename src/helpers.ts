@@ -52,3 +52,33 @@ export function validAnswers(questionBody: QuestionBody): boolean | ErrorMessage
   );
 }
 */
+
+// this function is the helper function of the adminQuizTrashEmpty, to determine if the given quiz array
+// is exist in trash or quizzesStore and creator is token owner
+export function isQuizExistWithCorrectCreator(token: string, quizIds: string): boolean {
+  const data = getData();
+  const UserId = findUserBySessionId(data, token).userId;
+  const quizIdArray: number[] = JSON.parse(quizIds);
+  for (const quizId of quizIdArray) {
+    const isExistInTrash = data.trash.find(quiz => quiz.quizId === quizId);
+    const isExistInQuizzesStore = data.quizzes.find(quiz => quiz.quizId === quizId);
+    const isValidQuiz = isExistInTrash || isExistInQuizzesStore;
+
+    if (!isValidQuiz) {
+      return false
+    }
+    const quiz = isExistInTrash ? isExistInTrash : isExistInQuizzesStore;
+    if (quiz.creatorId !== UserId) {
+      return false
+    }
+  }
+
+  return true
+}
+
+export function isAllExistInTrash(quizIds: string): boolean {
+  const data = getData();
+  const quizIdArray: number[] = JSON.parse(quizIds);
+  const result = quizIdArray.every(elementId => data.trash.some(quiz => quiz.quizId === elementId));
+  return result
+}

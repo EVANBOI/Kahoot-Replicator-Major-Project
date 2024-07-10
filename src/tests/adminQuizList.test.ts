@@ -1,24 +1,21 @@
 import { adminAuthRegister, adminQuizList, clear } from '../wrappers';
 import { adminQuizCreate } from '../quiz';
 import { ok } from '../helpers';
-const ERROR = {
-  statusCode: 401,
-  jsonBody: { error: expect.any(String) }
-};
+import { ERROR401 } from '../testConstants';
 
 beforeEach(() => {
   clear();
 });
 
 test('Session id is not valid', () => {
-  expect(adminQuizList('-10')).toStrictEqual(ERROR);
+  expect(adminQuizList('-10')).toStrictEqual(ERROR401);
 });
 
 describe('Valid session id with only no quizzes', () => {
   let sessionId: string;
   beforeEach(() => {
     const { jsonBody } = adminAuthRegister('admin@unsw.edu.au', 'Password1', 'JJ', 'HH');
-    sessionId = ok(jsonBody?.token);
+    sessionId = jsonBody?.token;
   });
   test('There is only one user in database', () => {
     expect(adminQuizList(sessionId)).toStrictEqual({

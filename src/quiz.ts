@@ -229,7 +229,9 @@ export function adminQuizDescriptionUpdate(
 }
 
 /**
- * Update the description of the relevant quiz.
+ * Create questions for quizzes given the contents of the question and
+ * generate unique ids for the questions as well as the answers inside it.
+ * Each answer is assigned a random colour code.
  *
  * @param {number} quizId - unique id of a quiz
  * @param {string} token - unique session id of a quiz
@@ -237,7 +239,6 @@ export function adminQuizDescriptionUpdate(
  * @returns {{questionId: number}} - id of a question that is unique only inside a quiz
  * @returns {{error: string}} an error
  */
-
 export function adminCreateQuizQuestion(
   quizId: number,
   token: string,

@@ -1,9 +1,13 @@
-import { adminAuthRegister, adminAuthLogout, clear } from '../wrappers'
+import { 
+    adminAuthRegister, 
+    adminAuthLogout, 
+    clear, 
+    adminUserDetails, 
+    adminUserDetailsUpdate, 
+    adminUserPasswordUpdate, 
+    adminQuizList } from '../wrappers'
+import { ERROR401 } from '../testConstants';
 
-const ERROR = {
-    statusCode: 401,
-    jsonBody: { error: expect.any(String) }
-}
 
 const LOGOUT_SUCCESSFUL = {
     statusCode: 200,
@@ -20,12 +24,11 @@ beforeEach(() => {
 
 describe('Failure cases', () => {
     test('Session id is empty', () => {
-        expect(adminAuthLogout('')).toStrictEqual(ERROR);
+        expect(adminAuthLogout('')).toStrictEqual(ERROR401);
     })
     test('Session Id does not exist', () => {
-        expect(adminAuthLogout('-10000')).toStrictEqual(ERROR);
-    })
-    
+        expect(adminAuthLogout('-10000')).toStrictEqual(ERROR401);
+    })   
 })
 
 describe('Success cases', () => {
@@ -33,10 +36,35 @@ describe('Success cases', () => {
         test('Check if it returns an empty object', () => {
             expect(adminAuthLogout(sessionId)).toStrictEqual(LOGOUT_SUCCESSFUL);
         })
-        test('Successful logout of one user', () => {
+
+        test('Successful logout - cannot check user details', () => {
             adminAuthLogout(sessionId);
-            expect(adminAuthLogout(sessionId)).toStrictEqual(ERROR);
+            expect(adminUserDetails(sessionId)).toStrictEqual(ERROR401);
         })
+        test('Successful logout - cannot update user details', () => {
+            adminAuthLogout(sessionId);
+            expect(adminUserDetailsUpdate(
+                sessionId,
+                'adminwoeiru@gmail.com', 
+                'First', 
+                'Last')).toStrictEqual(ERROR401);
+        })
+        test('Successful logout - cannot change user password', () => {
+            adminAuthLogout(sessionId);
+            expect(adminUserPasswordUpdate(
+                sessionId, 
+                'Paswoor34', 
+                'NewPaswoor34')).toStrictEqual(ERROR401);
+        })
+        test('Successful logout - cannot view quiz list', () => {
+            adminAuthLogout(sessionId);
+            expect(adminQuizList).toStrictEqual(ERROR401);
+        })
+        test('Logout twice, cannot the second time', () => {
+            adminAuthLogout(sessionId);
+            expect(adminAuthLogout(sessionId)).toStrictEqual(ERROR401);
+        })
+        
     })
 
     describe('There are multiple users in database', () => {
@@ -50,10 +78,7 @@ describe('Success cases', () => {
             sessionId3 = body3?.sessionId;
         })
         test('Successful logout of one user', () => {
-            expect(adminAuthLogout(sessionId2)).toStrictEqual({
-                statusCode: 200,
-                jsonBody: {}
-            });
+            expect(adminAuthLogout(sessionId2)).toStrictEqual(LOGOUT_SUCCESSFUL);
         });
         test('Successful logout of multiple users', () => {
             adminAuthLogout(sessionId);

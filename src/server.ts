@@ -200,6 +200,19 @@ app.put('/v1/admin/quiz/name', (req: Request, res: Response) => {
     }
   } res.json(result);
 });
+
+app.post('/v1/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
+  const token = req.body.token as string;
+  const id = parseInt(req.params.quizid);
+  const result = adminQuizRestore(token, id);
+
+  if (result.statusCode !== 200) {
+    res.status(result.statusCode).json({ error: result.message });
+  } else {
+    res.status(200).json({});
+  }
+});
+
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================

@@ -41,13 +41,18 @@ export type Quiz = {
     name: string,
     timeCreated: number,
     timeLastEdited: number,
-    description: string
+    description: string,
+    questions: QuestionBody[]
 }
 
 export type Data = {
     users: User[],
     quizzes: Quiz[],
     trash: Quiz[]
+}
+
+export type QuestionIdObject = {
+    questionId: number
 }
 
 // Types for function return
@@ -68,7 +73,8 @@ export type QuizInfoResult = ErrorMessage | {
     name: string,
     timeCreated: number,
     timeLastEdited: number,
-    description: string
+    description: string,
+    questions: QuestionBody[]
 }
 
 export type UserdetailsResults = {
@@ -100,5 +106,27 @@ export type Userdetails = ErrorMessage | {user: {
 }}
 
 export type QuizNameUpdateResult = EmptyObject | ErrorMessage;
+
+export type QuestionBody = {
+    questionId?: number,
+    question: string,
+    duration: number,
+    points: number,
+    answers: {
+        answerId?: number,
+        colour?: string,
+        answer: string,
+        correct: boolean
+    }[]
+};
+
+export type CreateQuestionReturn = QuestionIdObject | ErrorMessage;
+
+export type TrashViewDetails = ErrorMessage | {
+    quizzes: {
+        quizId: number
+        name: string,
+    }[]
+}
 
 export type QuizTrashEmptyResult = EmptyObject | ErrorMessage;

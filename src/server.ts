@@ -131,11 +131,7 @@ app.put('/v1/admin/user/details', (req: Request, res: Response) => {
   const { sessionId, email, nameFirst, nameLast } = req.body;
   const result = adminUserDetailsUpdate(sessionId, email, nameFirst, nameLast);
   if ('error' in result) {
-    if (result.error === 'sessionId provided is invalid') {
-      return res.status(401).json(result);
-    } else {
-      return res.status(400).json(result);
-    }
+    return res.status(result.statusCode).json({ error: result.error });
   }
   res.json(result);
 });
@@ -145,11 +141,7 @@ app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
   const result = adminQuizInfo(sessionId, quizId);
   if ('error' in result) {
-    if (result.error === 'sessionId is not a valid.') {
-      return res.status(401).json(result);
-    } else {
-      return res.status(403).json(result);
-    }
+    return res.status(result.statusCode).json({ error: result.error });
   }
   res.json(result);
 });

@@ -78,7 +78,7 @@ export function adminUserDetailsUpdate (
   const dataBase = getData();
   const person2 = findUserBySessionId(dataBase, sessionId);
   if (!person2) {
-    return { error: 'sessionId provided is invalid' };
+    return { statusCode: 401, error: 'sessionId provided is invalid' };
   }
 
   // to cover the case when we do not make change of the email
@@ -87,21 +87,21 @@ export function adminUserDetailsUpdate (
   if (person) {
     const isCorrectOwner = person.tokens.find(tokens => tokens.token === sessionId);
     if (!isCorrectOwner) {
-      return { error: 'Email address is used by another user.' };
+      return { statusCode: 400, error: 'Email address is used by another user.' };
     }
   }
 
   const nameRange = /^[a-zA-Z-' ]*$/;
   if (!validator.isEmail(email)) {
-    return { error: 'Email is not valid' };
+    return { statusCode: 400, error: 'Email is not valid' };
   } else if (!nameRange.test(nameFirst)) {
-    return { error: 'NameFirst contains invalid characters' };
+    return { statusCode: 400, error: 'NameFirst contains invalid characters' };
   } else if (nameFirst.length < 2 || nameFirst.length > 20) {
-    return { error: 'NameFirst is less than 2 characters or more than 20 characters.' };
+    return { statusCode: 400, error: 'NameFirst is less than 2 characters or more than 20 characters.' };
   } else if (!nameRange.test(nameLast)) {
-    return { error: 'NameLast contains invalid characters' };
+    return { statusCode: 400, error: 'NameLast contains invalid characters' };
   } else if (nameLast.length < 2 || nameLast.length > 20) {
-    return { error: 'NameLast is less than 2 characters or more than 20 characters.' };
+    return { statusCode: 400, error: 'NameLast is less than 2 characters or more than 20 characters.' };
   }
 
   person2.email = email;

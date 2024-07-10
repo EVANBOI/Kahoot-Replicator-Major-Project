@@ -122,15 +122,15 @@ export function adminQuizInfo (sessionId: string, quizId: number): QuizInfoResul
   const user = findUserBySessionId(database, sessionId);
   const quiz = findQuizWithId(quizId);
   if (!user) {
-    return { error: 'sessionId is not a valid.' };
+    return { statusCode: 401, error: 'sessionId is not a valid.' };
   }
 
   if (!quiz) {
-    return { error: `Quiz with ID '${quizId}' not found` };
+    return { statusCode: 403, error: `Quiz with ID '${quizId}' not found` };
   }
 
   if (quiz.creatorId !== user.userId) {
-    return { error: `Quiz with ID ${quizId} is not owned by ${user.userId} (actual owner: ${quiz.creatorId})` };
+    return { statusCode: 403, error: `Quiz with ID ${quizId} is not owned by ${user.userId} (actual owner: ${quiz.creatorId})` };
   }
 
   return {

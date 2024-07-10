@@ -15,7 +15,8 @@ import {
   adminQuizDescriptionUpdate,
   adminQuizRemove, adminQuizTrashEmpty,
   adminCreateQuizQuestion,
-  adminQuizTrashView
+  adminQuizTrashView,
+  adminQuizQuestionMove
 } from './quiz';
 import {
   adminAuthLogin,
@@ -210,6 +211,17 @@ app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
   const token = req.query.token as string;
   const quizIds = req.query.quizIds as string;
   const result = adminQuizTrashEmpty(token, quizIds);
+  if ('error' in result) {
+    return res.status(result.statusCode).json({ error: result.error });
+  }
+  res.json(result);
+});
+
+app.put('/v1/admin/quiz/:quizid/question/:questionid/move', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const questionId = parseInt(req.params.questionid);
+  const { moveinfo } = req.body;
+  const result = adminQuizQuestionMove(quizId, questionId, moveinfo);
   if ('error' in result) {
     return res.status(result.statusCode).json({ error: result.error });
   }

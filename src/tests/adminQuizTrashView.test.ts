@@ -44,7 +44,6 @@ describe('Invalid Trash View', () => {
 
 describe('Valid Trash View', () => {
   test('Viewing a quiz in the trash', () => {
-    console.log(adminQuizTrashView(sessionId));
     expect(adminQuizTrashView(sessionId)).toStrictEqual({
       statusCode: 200,
       jsonBody: {

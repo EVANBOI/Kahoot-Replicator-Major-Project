@@ -1,5 +1,6 @@
 import request, { HttpVerb } from 'sync-request-curl';
 import { port, url } from '../src/config.json';
+import { QuestionBody } from './types';
 
 const SERVER_URL = `${url}:${port}`;
 
@@ -103,10 +104,13 @@ export const adminQuizCreate = (
   return requestHelper('POST', '/v1/admin/quiz', { token: sessionId, name, description });
 };
 
-export const adminQuizList = (sessionId: string) => {
-  return requestHelper('GET', '/v1/admin/quiz/list', { sessionId });
+export const adminQuizList = (token: string) => {
+  return requestHelper('GET', '/v1/admin/quiz/list', { token });
 };
 
+export const adminAuthLogout = (token: string) => {
+  return requestHelper('POST', '/v1/admin/auth/logout', { token });
+};
 export const adminQuizDescriptionUpdate = (
   sessionId: string,
   quizId: number,
@@ -130,6 +134,14 @@ export const adminQuizInfo = (sessionId: string, quizId: number) => {
 
 export const clear = () => {
   return requestHelper('DELETE', '/v1/clear', {});
+};
+
+export const adminCreateQuizQuestion = (
+  quizId: number,
+  token: string,
+  questionBody: QuestionBody) => {
+  return requestHelper('POST', `/v1/admin/quiz/${quizId}/question`,
+    { token, questionBody });
 };
 
 export const adminUserPasswordUpdate = (
@@ -158,6 +170,10 @@ export const adminUserDetails = (token: string) => {
 
 export const adminQuizRemove = (token: string, quizId: number) => {
   return requestHelper('DELETE', `/v1/admin/quiz/${quizId}`, { token });
+};
+
+export const adminQuizTrashEmpty = (token: string, quizIds: string) => {
+  return requestHelper('DELETE', '/v1/admin/quiz/trash/empty', { token, quizIds });
 };
 
 export const adminQuizTransfer = (

@@ -12,13 +12,15 @@
         "testj1": "jest adminQuizList.test.ts",
         "testj2": "jest adminQuizDescriptionUpdate.test.ts",
         "test!": "jest adminQuizCreate.test.ts",
-        "testl": "jest adminAuthLogin.test.ts"
+        "testl": "jest adminAuthLogin.test.ts",
+        "testzc": "jest adminQuizTrashEmpty.test.ts"
     },
     "dependencies": {
         "body-parser": "^1.20.2",
         "cors": "^2.8.5",
         "express": "^4.19.2",
         "morgan": "^1.10.0",
+        "seed-to-color": "^1.0.5",
         "short-unique-id": "^5.2.0",
         "ts-node": "^10.9.2",
         "validator": "^13.12.0"

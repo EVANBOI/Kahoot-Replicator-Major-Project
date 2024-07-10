@@ -8,8 +8,23 @@ import sui from 'swagger-ui-express';
 import fs from 'fs';
 import path from 'path';
 import process from 'process';
-import { adminQuizCreate, adminQuizInfo, adminQuizList, adminQuizDescriptionUpdate, adminQuizRemove, adminQuizTrashView,adminQuizTransfer} from './quiz';
-import { adminAuthLogin, adminUserDetails, adminAuthRegister, adminUserDetailsUpdate, adminUserPasswordUpdate } from './auth';
+import {
+  adminQuizCreate,
+  adminQuizInfo,
+  adminQuizList,
+  adminQuizDescriptionUpdate,
+  adminQuizRemove, adminQuizTrashEmpty,
+  adminCreateQuizQuestion,
+  adminQuizTrashView
+} from './quiz';
+import {
+  adminAuthLogin,
+  adminUserDetails,
+  adminAuthRegister,
+  adminUserDetailsUpdate,
+  adminUserPasswordUpdate,
+  adminAuthLogout
+} from './auth';
 import { clear } from './other';
 import { getData } from './dataStore';
 import { findUserBySessionId } from './helpers';
@@ -58,8 +73,8 @@ app.post('/v1/admin/auth/register', (req: Request, res: Response) => {
 });
 
 app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
-  const sessionId = req.query.sessionId as string;
-  const result = adminQuizList(sessionId);
+  const token = req.query.token as string;
+  const result = adminQuizList(token);
   if ('error' in result) {
     return res.status(result.statusCode).json({ error: result.error });
   }
@@ -92,7 +107,6 @@ app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
 // This is the get admin userdetails method from the swagger
 app.get('/v1/admin/user/details', (req: Request, res: Response) => {
   const token = req.query.token as string;
-  // console.log(token, 'HI')
   const result = adminUserDetails(token);
   if ('error' in result) {
     return res.status(result.statusCode).json({ error: result.error });
@@ -166,6 +180,36 @@ app.put('/v1/admin/user/password', (req: Request, res: Response) => {
 app.put('/v1/admin/quiz/name', (req: Request, res: Response) => {
   const { sessionId, quizId, name } = req.body;
   const result = adminQuizNameUpdate(sessionId, quizId, name);
+  if ('error' in result) {
+    return res.status(result.statusCode).json({ error: result.error });
+  }
+  res.json(result);
+});
+
+app.post('/v1/admin/quiz/:quizid/question', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const { token, questionBody } = req.body;
+  const result = adminCreateQuizQuestion(quizId, token, questionBody);
+  if ('error' in result) {
+    return res.status(result.statusCode).json({ error: result.error });
+  }
+  res.json(result);
+});
+
+app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
+  const { token } = req.body;
+  const result = adminAuthLogout(token);
+
+  if ('error' in result) {
+    return res.status(result.statusCode).json({ error: result.error });
+  }
+
+  res.json(result);
+});
+app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
+  const token = req.query.token as string;
+  const quizIds = req.query.quizIds as string;
+  const result = adminQuizTrashEmpty(token, quizIds);
   if ('error' in result) {
     return res.status(result.statusCode).json({ error: result.error });
   }

@@ -22,25 +22,25 @@ export function adminAuthRegister (
   const dataBase = getData();
   const person = dataBase.users.find(person => person.email === email);
   if (person) {
-    return { error: 'Email address is used by another user.' };
+    return { statusCode: 400, error: 'Email address is used by another user.' };
   }
   const nameRange = /^[a-zA-Z-' ]*$/;
   const passwordLetterRange = /^[a-zA-Z]/;
   const passwordNumberRange = /\d/;
   if (!validator.isEmail(email)) {
-    return { error: 'Email is not a valid email' };
+    return { statusCode: 400, error: 'Email is not a valid email' };
   } else if (!nameRange.test(nameFirst)) {
-    return { error: 'NameFirst contains invalid characters' };
+    return { statusCode: 400, error: 'NameFirst contains invalid characters' };
   } else if (nameFirst.length < 2 || nameFirst.length > 20) {
-    return { error: 'NameFirst is less than 2 characters or more than 20 characters.' };
+    return { statusCode: 400, error: 'NameFirst is less than 2 characters or more than 20 characters.' };
   } else if (!nameRange.test(nameLast)) {
-    return { error: 'NameFirst contains invalid characters' };
+    return { statusCode: 400, error: 'NameFirst contains invalid characters' };
   } else if (nameLast.length < 2 || nameLast.length > 20) {
-    return { error: 'NameLast is less than 2 characters or more than 20 characters.' };
+    return { statusCode: 400, error: 'NameLast is less than 2 characters or more than 20 characters.' };
   } else if (password.length < 8) {
-    return { error: 'Password is less than 8 characters.' };
+    return { statusCode: 400, error: 'Password is less than 8 characters.' };
   } else if (!passwordLetterRange.test(password) || !passwordNumberRange.test(password)) {
-    return { error: 'Password does not contain at least one number and at least one letter.' };
+    return { statusCode: 400, error: 'Password does not contain at least one number and at least one letter.' };
   }
 
   const id = dataBase.users.length + 1;
@@ -78,7 +78,7 @@ export function adminUserDetailsUpdate (
   const dataBase = getData();
   const person2 = findUserBySessionId(dataBase, sessionId);
   if (!person2) {
-    return { error: 'sessionId provided is invalid' };
+    return { statusCode: 401, error: 'sessionId provided is invalid' };
   }
 
   // to cover the case when we do not make change of the email
@@ -87,21 +87,21 @@ export function adminUserDetailsUpdate (
   if (person) {
     const isCorrectOwner = person.tokens.find(tokens => tokens.token === sessionId);
     if (!isCorrectOwner) {
-      return { error: 'Email address is used by another user.' };
+      return { statusCode: 400, error: 'Email address is used by another user.' };
     }
   }
 
   const nameRange = /^[a-zA-Z-' ]*$/;
   if (!validator.isEmail(email)) {
-    return { error: 'Email is not valid' };
+    return { statusCode: 400, error: 'Email is not valid' };
   } else if (!nameRange.test(nameFirst)) {
-    return { error: 'NameFirst contains invalid characters' };
+    return { statusCode: 400, error: 'NameFirst contains invalid characters' };
   } else if (nameFirst.length < 2 || nameFirst.length > 20) {
-    return { error: 'NameFirst is less than 2 characters or more than 20 characters.' };
+    return { statusCode: 400, error: 'NameFirst is less than 2 characters or more than 20 characters.' };
   } else if (!nameRange.test(nameLast)) {
-    return { error: 'NameLast contains invalid characters' };
+    return { statusCode: 400, error: 'NameLast contains invalid characters' };
   } else if (nameLast.length < 2 || nameLast.length > 20) {
-    return { error: 'NameLast is less than 2 characters or more than 20 characters.' };
+    return { statusCode: 400, error: 'NameLast is less than 2 characters or more than 20 characters.' };
   }
 
   person2.email = email;
@@ -128,11 +128,11 @@ export function adminAuthLogin (
     user.email === email &&
         user.password === password);
   if (!validEmail) { // if validEmail is undefined, the condition is true
-    return { error: 'email address does not exist' };
+    return { statusCode: 400, error: 'email address does not exist' };
   } else if (!correctPassword) {
     validEmail.numFailedPasswordsSinceLastLogin += 1;
     setData(dataBase);
-    return { error: 'password is not correct for the given email' };
+    return { statusCode: 400, error: 'password is not correct for the given email' };
   }
 
   correctPassword.numFailedPasswordsSinceLastLogin = 0;
@@ -160,7 +160,7 @@ export function adminUserDetails (sessionId: string): Userdetails {
   const database = getData();
   const user = findUserBySessionId(database, sessionId);
   if (!user) {
-    return { error: 'AuthUserId is not a valid user.' };
+    return { statusCode: 401, error: 'sessionId is not a valid user.' };
   }
 
   return {
@@ -189,26 +189,26 @@ export function adminUserPasswordUpdate(sessionId: string, oldPassword: string, 
   const user = findUserBySessionId(dataBase, sessionId);
 
   if (!user) {
-    return { error: 'sessionId is not valid.' };
+    return { statusCode: 401, error: 'sessionId is not valid.' };
   }
   if (user.password !== oldPassword) {
-    return { error: 'Old Password is not the correct old password' };
+    return { statusCode: 400, error: 'Old Password is not the correct old password' };
   }
   if (oldPassword === newPassword) {
-    return { error: 'Old Password and New Password match exactly' };
+    return { statusCode: 400, error: 'Old Password and New Password match exactly' };
   }
   if (user.passwordUsedThisYear.includes(newPassword)) {
-    return { error: 'New Password has already been used before by this user' };
+    return { statusCode: 400, error: 'New Password has already been used before by this user' };
   }
   if (newPassword.length < 8) {
-    return { error: 'Password should be more than 8 characters' };
+    return { statusCode: 400, error: 'Password should be more than 8 characters' };
   }
   if (!/\d/.test(newPassword) || !/[a-zA-Z]/.test(newPassword)) {
-    return { error: 'Password needs to contain at least one number and at least one letter' };
+    return { statusCode: 400, error: 'Password needs to contain at least one number and at least one letter' };
   }
 
   if (user.passwordUsedThisYear.find(pw => pw === newPassword)) {
-    return { error: 'New Password has already been used before by this user' };
+    return { statusCode: 400, error: 'New Password has already been used before by this user' };
   }
   user.passwordUsedThisYear.push(oldPassword);
   user.password = newPassword;

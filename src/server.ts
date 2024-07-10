@@ -8,8 +8,8 @@ import sui from 'swagger-ui-express';
 import fs from 'fs';
 import path from 'path';
 import process from 'process';
-import { adminQuizCreate, adminQuizInfo, adminQuizList } from './quiz';
-import { adminAuthLogin, adminAuthRegister, adminUserDetailsUpdate, adminUserPasswordUpdate } from './auth';
+import { adminQuizCreate, adminQuizInfo, adminQuizList, adminQuizDescriptionUpdate, adminQuizRemove } from './quiz';
+import { adminAuthLogin, adminUserDetails, adminAuthRegister, adminUserDetailsUpdate, adminUserPasswordUpdate } from './auth';
 import { clear } from './other';
 import { getData } from './dataStore';
 import { findUserBySessionId } from './helpers';
@@ -52,27 +52,65 @@ app.post('/v1/admin/auth/register', (req: Request, res: Response) => {
   const { email, password, nameFirst, nameLast } = req.body;
   const result = adminAuthRegister(email, password, nameFirst, nameLast);
   if ('error' in result) {
-    return res.status(400).json(result);
+    return res.status(result.statusCode).json({ error: result.error });
   }
-  res.json(result);
+  return res.json(result);
 });
 
 app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
   const sessionId = req.query.sessionId as string;
   const result = adminQuizList(sessionId);
   if ('error' in result) {
-    res.status(401);
+    return res.status(result.statusCode).json({ error: result.error });
   }
   return res.json(result);
+});
+
+app.put('/v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {
+  const { sessionId, description } = req.body;
+  const quizId = parseInt(req.params.quizid);
+  const result = adminQuizDescriptionUpdate(sessionId, quizId, description);
+  if ('error' in result) {
+    return res.status(result.statusCode).json({ error: result.error });
+  }
+  return res.json(result);
+});
+
+app.delete('/v1/clear', (req: Request, res: Response) => {
+  res.json(clear());
 });
 
 app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
   const { email, password } = req.body;
   const result = adminAuthLogin(email, password);
   if ('error' in result) {
-    return res.status(400).json(result);
+    return res.status(result.statusCode).json({ error: result.error });
   }
   res.json(result);
+});
+
+// This is the get admin userdetails method from the swagger
+app.get('/v1/admin/user/details', (req: Request, res: Response) => {
+  const token = req.query.token as string;
+  // console.log(token, 'HI')
+  const result = adminUserDetails(token);
+  if ('error' in result) {
+    return res.status(result.statusCode).json({ error: result.error });
+  }
+  res.status(200).json(result);
+});
+
+// This is the get admin userdetails method from the swagger
+app.delete('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
+  const token = req.query.token as string;
+  const id = parseInt(req.params.quizid);
+  const result = adminQuizRemove(token, id);
+
+  if (result.statusCode !== 200) {
+    res.status(result.statusCode).json({ error: result.message });
+  } else {
+    res.status(200).json({});
+  }
 });
 
 app.post('/v1/admin/quiz', (req: Request, res: Response) => {
@@ -80,10 +118,10 @@ app.post('/v1/admin/quiz', (req: Request, res: Response) => {
   const result = adminQuizCreate(token, name, description);
   const database = getData();
   const user = findUserBySessionId(database, token);
-  if (!user) {
-    return res.status(401).json(result);
+  if (!user && 'error' in result) {
+    return res.status(result.statusCode).json({ error: result.error });
   } else if ('error' in result) {
-    return res.status(400).json(result);
+    return res.status(result.statusCode).json({ error: result.error });
   }
   return res.status(200).json(result);
 });
@@ -92,11 +130,7 @@ app.put('/v1/admin/user/details', (req: Request, res: Response) => {
   const { sessionId, email, nameFirst, nameLast } = req.body;
   const result = adminUserDetailsUpdate(sessionId, email, nameFirst, nameLast);
   if ('error' in result) {
-    if (result.error === 'sessionId provided is invalid') {
-      return res.status(401).json(result);
-    } else {
-      return res.status(400).json(result);
-    }
+    return res.status(result.statusCode).json({ error: result.error });
   }
   res.json(result);
 });
@@ -106,11 +140,7 @@ app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
   const result = adminQuizInfo(sessionId, quizId);
   if ('error' in result) {
-    if (result.error === 'sessionId is not a valid.') {
-      return res.status(401).json(result);
-    } else {
-      return res.status(403).json(result);
-    }
+    return res.status(result.statusCode).json({ error: result.error });
   }
   res.json(result);
 });
@@ -119,27 +149,18 @@ app.put('/v1/admin/user/password', (req: Request, res: Response) => {
   const { sessionId, oldPassword, newPassword } = req.body;
   const result = adminUserPasswordUpdate(sessionId, oldPassword, newPassword);
   if ('error' in result) {
-    if (result.error === 'sessionId is not valid.') {
-      return res.status(401).json(result);
-    } else {
-      return res.status(400).json(result);
-    }
+    return res.status(result.statusCode).json({ error: result.error });
   }
   res.json(result);
 });
+
 app.put('/v1/admin/quiz/name', (req: Request, res: Response) => {
   const { sessionId, quizId, name } = req.body;
   const result = adminQuizNameUpdate(sessionId, quizId, name);
   if ('error' in result) {
-    if (result.error.includes('sessionId')) {
-      res.status(401).json(result);
-    } else if (result.error.includes('Quiz ID does not refer to a quiz that this user owns.') ||
-    result.error.includes('Quiz ID does not refer to a valid quiz.')) {
-      res.status(403).json(result);
-    } else {
-      res.status(400).json(result);
-    }
-  } res.json(result);
+    return res.status(result.statusCode).json({ error: result.error });
+  }
+  res.json(result);
 });
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================

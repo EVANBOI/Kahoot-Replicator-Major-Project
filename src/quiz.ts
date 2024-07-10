@@ -156,27 +156,27 @@ export function adminQuizNameUpdate(sessionId: string, quizId: number, name: str
   const database = getData();
   const user = findUserBySessionId(database, sessionId);
   if (!user) {
-    return { error: 'sessionId is not valid.' };
+    return { statusCode: 401, error: 'sessionId is not valid.' };
   }
   const authUserId = user.userId;
   const quiz: Quiz | undefined = database.quizzes.find(quiz => quiz.quizId === quizId);
 
   const namePattern = /^[a-zA-Z0-9 ]+$/;
   if (!quiz) {
-    return { error: 'Quiz ID does not refer to a valid quiz.' };
+    return { statusCode: 403, error: 'Quiz ID does not refer to a valid quiz.' };
   }
   if (quiz.creatorId !== authUserId) {
-    return { error: 'Quiz ID does not refer to a quiz that this user owns.' };
+    return { statusCode: 403, error: 'Quiz ID does not refer to a quiz that this user owns.' };
   }
   if (!namePattern.test(name)) {
-    return { error: 'Name contains invalid characters. Valid characters are alphanumeric and spaces.' };
+    return { statusCode: 400, error: 'Name contains invalid characters. Valid characters are alphanumeric and spaces.' };
   }
   if (name.length < 3 || name.length > 30) {
-    return { error: 'Name is either less than 3 characters long or more than 30 characters long.' };
+    return { statusCode: 400, error: 'Name is either less than 3 characters long or more than 30 characters long.' };
   }
   const nameUsed = database.quizzes.find(q => q.creatorId === authUserId && q.name === name);
   if (nameUsed) {
-    return { error: 'Name is already used by the current logged in user for another quiz.' };
+    return { statusCode: 400, error: 'Name is already used by the current logged in user for another quiz.' };
   }
 
   quiz.name = name;

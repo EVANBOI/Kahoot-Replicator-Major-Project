@@ -189,26 +189,26 @@ export function adminUserPasswordUpdate(sessionId: string, oldPassword: string, 
   const user = findUserBySessionId(dataBase, sessionId);
 
   if (!user) {
-    return { error: 'sessionId is not valid.' };
+    return { statusCode: 401, error: 'sessionId is not valid.' };
   }
   if (user.password !== oldPassword) {
-    return { error: 'Old Password is not the correct old password' };
+    return { statusCode: 400, error: 'Old Password is not the correct old password' };
   }
   if (oldPassword === newPassword) {
-    return { error: 'Old Password and New Password match exactly' };
+    return { statusCode: 400, error: 'Old Password and New Password match exactly' };
   }
   if (user.passwordUsedThisYear.includes(newPassword)) {
-    return { error: 'New Password has already been used before by this user' };
+    return { statusCode: 400, error: 'New Password has already been used before by this user' };
   }
   if (newPassword.length < 8) {
-    return { error: 'Password should be more than 8 characters' };
+    return { statusCode: 400, error: 'Password should be more than 8 characters' };
   }
   if (!/\d/.test(newPassword) || !/[a-zA-Z]/.test(newPassword)) {
-    return { error: 'Password needs to contain at least one number and at least one letter' };
+    return { statusCode: 400, error: 'Password needs to contain at least one number and at least one letter' };
   }
 
   if (user.passwordUsedThisYear.find(pw => pw === newPassword)) {
-    return { error: 'New Password has already been used before by this user' };
+    return { statusCode: 400, error: 'New Password has already been used before by this user' };
   }
   user.passwordUsedThisYear.push(oldPassword);
   user.password = newPassword;

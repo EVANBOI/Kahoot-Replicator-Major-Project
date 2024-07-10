@@ -150,27 +150,18 @@ app.put('/v1/admin/user/password', (req: Request, res: Response) => {
   const { sessionId, oldPassword, newPassword } = req.body;
   const result = adminUserPasswordUpdate(sessionId, oldPassword, newPassword);
   if ('error' in result) {
-    if (result.error === 'sessionId is not valid.') {
-      return res.status(401).json(result);
-    } else {
-      return res.status(400).json(result);
-    }
+    return res.status(result.statusCode).json({ error: result.error });
   }
   res.json(result);
 });
+
 app.put('/v1/admin/quiz/name', (req: Request, res: Response) => {
   const { sessionId, quizId, name } = req.body;
   const result = adminQuizNameUpdate(sessionId, quizId, name);
   if ('error' in result) {
-    if (result.error.includes('sessionId')) {
-      res.status(401).json(result);
-    } else if (result.error.includes('Quiz ID does not refer to a quiz that this user owns.') ||
-    result.error.includes('Quiz ID does not refer to a valid quiz.')) {
-      res.status(403).json(result);
-    } else {
-      res.status(400).json(result);
+    return res.status(result.statusCode).json({ error: result.error });
     }
-  } res.json(result);
+   res.json(result);
 });
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================

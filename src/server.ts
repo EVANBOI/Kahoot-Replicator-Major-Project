@@ -83,9 +83,9 @@ app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
 });
 
 app.put('/v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {
-  const { sessionId, description } = req.body;
+  const { token, description } = req.body;
   const quizId = parseInt(req.params.quizid);
-  const result = adminQuizDescriptionUpdate(sessionId, quizId, description);
+  const result = adminQuizDescriptionUpdate(token, quizId, description);
   if ('error' in result) {
     return res.status(result.statusCode).json({ error: result.error });
   }
@@ -142,8 +142,8 @@ app.post('/v1/admin/quiz', (req: Request, res: Response) => {
 });
 
 app.put('/v1/admin/user/details', (req: Request, res: Response) => {
-  const { sessionId, email, nameFirst, nameLast } = req.body;
-  const result = adminUserDetailsUpdate(sessionId, email, nameFirst, nameLast);
+  const { token, email, nameFirst, nameLast } = req.body;
+  const result = adminUserDetailsUpdate(token, email, nameFirst, nameLast);
   if ('error' in result) {
     return res.status(result.statusCode).json({ error: result.error });
   }
@@ -160,9 +160,9 @@ app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
 });
 
 app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
-  const sessionId = req.query.sessionId as string;
+  const token = req.query.token as string;
   const quizId = parseInt(req.params.quizid);
-  const result = adminQuizInfo(sessionId, quizId);
+  const result = adminQuizInfo(token, quizId);
   if ('error' in result) {
     return res.status(result.statusCode).json({ error: result.error });
   }
@@ -170,8 +170,8 @@ app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
 });
 
 app.put('/v1/admin/user/password', (req: Request, res: Response) => {
-  const { sessionId, oldPassword, newPassword } = req.body;
-  const result = adminUserPasswordUpdate(sessionId, oldPassword, newPassword);
+  const { token, oldPassword, newPassword } = req.body;
+  const result = adminUserPasswordUpdate(token, oldPassword, newPassword);
   if ('error' in result) {
     return res.status(result.statusCode).json({ error: result.error });
   }
@@ -179,8 +179,8 @@ app.put('/v1/admin/user/password', (req: Request, res: Response) => {
 });
 
 app.put('/v1/admin/quiz/name', (req: Request, res: Response) => {
-  const { sessionId, quizId, name } = req.body;
-  const result = adminQuizNameUpdate(sessionId, quizId, name);
+  const { token, quizId, name } = req.body;
+  const result = adminQuizNameUpdate(token, quizId, name);
   if ('error' in result) {
     return res.status(result.statusCode).json({ error: result.error });
   }

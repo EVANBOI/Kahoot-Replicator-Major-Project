@@ -156,9 +156,11 @@ export const adminQuizNameUpdate = (
   return requestHelper('PUT', '/v1/admin/quiz/name',
     { sessionId, quizId, name });
 };
+
 export const adminQuizTrashView = (token: string) => {
-  return requestHelper('GET', '/v1/admin/quiz/trash', { token });
+  return requestHelper('GET', '/v1/admin/quiz/trash', { token: token });
 };
+
 export const adminUserDetails = (token: string) => {
   return requestHelper('GET', '/v1/admin/user/details', { token });
 };

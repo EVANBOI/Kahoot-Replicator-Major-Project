@@ -121,3 +121,10 @@ export type QuestionBody = {
 };
 
 export type CreateQuestionReturn = QuestionIdObject | ErrorMessage;
+
+export type TrashViewDetails = ErrorMessage | {
+    quizzes: {
+        quizId: number
+        name: string,
+    }[]
+}

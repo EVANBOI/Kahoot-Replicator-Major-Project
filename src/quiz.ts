@@ -1,6 +1,6 @@
 import { getData, setData } from './dataStore';
 import { durationSum, findQuizWithId, findUserBySessionId, validAnswers } from './helpers';
-import { CreateQuestionReturn, EmptyObject, ErrorMessage, QuestionBody, Quiz, QuizIdObject, QuizInfoResult, QuizListDetails, QuizRemoveResult } from './types';
+import { CreateQuestionReturn, EmptyObject, ErrorMessage, QuestionBody, Quiz, QuizIdObject, QuizInfoResult, TrashViewDetails, QuizListDetails, QuizRemoveResult } from './types';
 import ShortUniqueId from 'short-unique-id';
 import { randomColor } from 'seed-to-color';
 const uid = new ShortUniqueId({ dictionary: 'number' });
@@ -277,4 +277,30 @@ export function adminCreateQuizQuestion(
   quiz.timeLastEdited = Math.floor(Date.now() / 1000);
   setData(database);
   return { questionId: questionId };
+}
+
+/**
+ * Given a token/sessionId, view the quizzes that are currently in the trash for
+ * logged in user.
+ *
+ * @param {string} sessionId - unique id of a user
+ * @returns {{quizzes: {quizId: number, name: string}}} - an object containing identifiers of all quizzes
+ * @returns {{error: string}} an error
+ */
+export function adminQuizTrashView(sessionId: string): TrashViewDetails {
+  const database = getData();
+  const user = findUserBySessionId(database, sessionId);
+  if (!user) {
+    return {
+      statusCode: 401,
+      error: 'Token does not exist or is invalid'
+    };
+  }
+  const creatorId = user.userId;
+  const trashView = database.trash.filter(quiz => quiz.creatorId === creatorId);
+  const details = trashView.map(quiz => ({
+    quizId: quiz.quizId,
+    name: quiz.name
+  }));
+  return { quizzes: details };
 }

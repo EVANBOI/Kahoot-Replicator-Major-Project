@@ -6,7 +6,7 @@ describe('Function clear tests', () => {
     expect(clear()).toEqual(CLEAR_SUCCESSFUL);
   });
 
-  test.failing('correct clear the user store', () => {
+  test('correct clear the user store', () => {
     const register = adminAuthRegister(
       VALID_USER_REGISTER_INPUTS_1.EMAIL,
       VALID_USER_REGISTER_INPUTS_1.PASSWORD,

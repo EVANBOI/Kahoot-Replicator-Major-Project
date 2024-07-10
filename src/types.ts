@@ -97,7 +97,7 @@ export type Error = {
 
 export type ERRORMESSAGE = {
     statusCode: number,
-    error: { error: string }   
+    error: { error: string }
 }
 
 export type TrashViewDetails = ERRORMESSAGE | {

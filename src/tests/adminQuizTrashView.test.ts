@@ -1,9 +1,10 @@
-import { 
-  adminAuthRegister, 
-  adminQuizCreate, 
-  adminQuizRemove, 
-  adminQuizTrashView, 
-  clear } from '../wrappers';
+import {
+  adminAuthRegister,
+  adminQuizCreate,
+  adminQuizRemove,
+  adminQuizTrashView,
+  clear
+} from '../wrappers';
 
 const ERROR = {
   statusCode: 401,
@@ -38,8 +39,8 @@ describe('Invalid Trash View', () => {
 
   test('Token is empty', () => {
     expect(adminQuizTrashView(' ')).toStrictEqual(ERROR);
-  })
-})
+  });
+});
 
 describe('Valid Trash View', () => {
   test('Viewing a quiz in the trash', () => {
@@ -50,12 +51,12 @@ describe('Valid Trash View', () => {
         quizzes: [
           {
             quizId: quizId,
-            name: "Quiz 1"
+            name: 'Quiz 1'
           }
         ]
       }
-    })
-  })
+    });
+  });
 
   test('Viewing multiple quizzes in the trash', () => {
     const { jsonBody: body3 } = adminQuizCreate(sessionId, 'Quiz 2', 'Linked Lists');
@@ -67,18 +68,13 @@ describe('Valid Trash View', () => {
         quizzes: [
           {
             quizId: quizId,
-            name: "Quiz 1"
+            name: 'Quiz 1'
           }, {
             quizId: quizId2,
-            name: "Quiz 2"
+            name: 'Quiz 2'
           }
         ]
       }
-    })
-  })
-})
-
-
-
-
-
+    });
+  });
+});

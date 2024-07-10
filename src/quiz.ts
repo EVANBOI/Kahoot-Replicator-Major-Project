@@ -215,7 +215,7 @@ export function adminQuizDescriptionUpdate (
 }
 
 /**
- * Given a token/sessionId, view the quizzes that are currently in the trash for 
+ * Given a token/sessionId, view the quizzes that are currently in the trash for
  * logged in user.
  *
  * @param {string} sessionId - unique id of a user
@@ -223,17 +223,17 @@ export function adminQuizDescriptionUpdate (
  * @returns {{error: string}} an error
  */
 
-export function adminQuizTrashView(sessionId: string): TrashViewDetails { 
+export function adminQuizTrashView(sessionId: string): TrashViewDetails {
   const database = getData();
   const user = findUserBySessionId(database, sessionId);
   if (!user) {
-    return { statusCode: 401, error: { error: "Token does not exist or is invalid" }  };
+    return { statusCode: 401, error: { error: 'Token does not exist or is invalid' } };
   }
-  const creatorId = user.userId
+  const creatorId = user.userId;
   const trashView = database.trash.filter(quiz => quiz.creatorId === creatorId);
   const details = trashView.map(quiz => ({
     quizId: quiz.quizId,
     name: quiz.name
   }));
-  return { quizzes: details };  
+  return { quizzes: details };
 }

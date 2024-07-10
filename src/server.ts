@@ -168,7 +168,7 @@ app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
     return res.status(result.statusCode).json(result.error);
   }
   res.json(result);
-})
+});
 
 app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
   const sessionId = req.query.sessionId as string;

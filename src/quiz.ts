@@ -344,18 +344,18 @@ export function adminQuizTrashEmpty(token: string, quizIds: string): QuizTrashEm
 export function adminQuizTransfer(sessionId: string, quizId: number, newOwnerEmail: string): ErrorMessage | EmptyObject {
   const database = getData();
   const currentUser = findUserBySessionId(database, sessionId);
-  
+
   if (!currentUser) {
     return { statusCode: 401, error: 'Session ID is not valid' };
   }
-  const quiz = findQuizWithId(database,quizId);
+  const quiz = findQuizWithId(database, quizId);
 
   if (!quiz) {
     return { statusCode: 403, error: `Quiz with ID '${quizId}' not found` };
   }
-  
+
   const newOwner = database.users.find(user => user.email === newOwnerEmail);
-  
+
   if (!newOwner) {
     return { statusCode: 400, error: 'User email is not a real user.' };
   }
@@ -364,7 +364,7 @@ export function adminQuizTransfer(sessionId: string, quizId: number, newOwnerEma
   }
 
   const nameUsed = database.quizzes.some(
-    quiz => quiz.name === quiz.name && quiz.creatorId === newOwner.userId
+    q => q.name === quiz.name && q.creatorId === newOwner.userId && q.quizId !== quizId
   );
   if (nameUsed) {
     return { statusCode: 400, error: 'Quiz ID refers to a quiz that has a name that is already used by the target user.' };

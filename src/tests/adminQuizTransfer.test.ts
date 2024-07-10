@@ -1,5 +1,12 @@
-import { adminAuthRegister, adminQuizCreate, adminQuizTransfer, adminQuizInfo, clear } from '../wrappers';
+import { 
+  adminAuthRegister, 
+  adminQuizCreate, 
+  adminQuizTransfer, 
+  adminQuizInfo, 
+  clear
+} from '../wrappers';
 import { ok } from '../helpers';
+import { Token,UserRegistrationResult} from '../types';
 
 const VALID_INPUTS = {
   EMAIL: 'changli@unsw.edu.au',
@@ -31,7 +38,7 @@ const SUCCESSFUL_TRANSFER = {
 let sessionId: string;
 let quizId: number;
 let newOwnerEmail: string;
-let newUserRegisterResponse: any;
+let newUserRegisterResponse: UserRegistrationResult ;
 
 beforeEach(() => {
   clear();
@@ -81,7 +88,7 @@ describe('adminQuizTransfer tests', () => {
   });
 
   test('Successful quiz transfer - functionality', () => {
-    const transferResult = adminQuizTransfer(sessionId, quizId, newOwnerEmail);
+    adminQuizTransfer(sessionId, quizId, newOwnerEmail);
     const updatedQuiz = ok(adminQuizInfo(newUserRegisterResponse.jsonBody.token, quizId));
     expect(updatedQuiz).toStrictEqual({
       statusCode: 200,

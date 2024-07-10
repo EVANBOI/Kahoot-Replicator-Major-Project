@@ -3,7 +3,8 @@ import fs from 'fs';
 // YOU SHOULD MODIFY THIS OBJECT BELOW ONLY
 export const dataStore: Data = {
   users: [],
-  quizzes: []
+  quizzes: [],
+  trash: []
 };
 
 // YOU SHOULD MODIFY THIS OBJECT ABOVE ONLY

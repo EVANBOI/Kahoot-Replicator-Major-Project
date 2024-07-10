@@ -1,35 +1,9 @@
-import { adminAuthRegister, adminUserDetailsUpdate, clear } from '../wrappers';
-import { adminUserDetails } from '../auth';
-const VALID_INPUTS_1 = {
-  EMAIL: 'admin@email.com',
-  PASSWORD: 'password1',
-  FIRSTNAME: 'Idk',
-  LASTNAME: 'Idk',
-};
+import { adminAuthRegister, adminUserDetailsUpdate, clear, adminUserDetails } from '../wrappers';
+import {
+  VALID_USER_REGISTER_INPUTS_1, VALID_USER_REGISTER_INPUTS_2, USER_DETAIL_UPDATED_SUCCESSFUL,
+  ERROR401, ERROR400, NEW_VALID_EMAIL
+} from '../testConstants';
 
-const VALID_INPUTS_2 = {
-  EMAIL: 'user@email.com',
-  PASSWORD: 'password1',
-  FIRSTNAME: 'Idk',
-  LASTNAME: 'Idk',
-};
-
-const SUCCESSFULUPDATED = {
-  statusCode: 200,
-  jsonBody: {}
-};
-
-const ERROR401 = {
-  statusCode: 401,
-  jsonBody: { error: expect.any(String) }
-};
-
-const ERROR400 = {
-  statusCode: 400,
-  jsonBody: { error: expect.any(String) }
-};
-
-const NEW_VALID_EMAIL = 'newValidEmail@gmail.com';
 let VALID_TOKEN: string;
 
 beforeEach(() => {
@@ -39,10 +13,10 @@ beforeEach(() => {
 describe('error tests', () => {
   beforeEach(() => {
     const register = adminAuthRegister(
-      VALID_INPUTS_1.EMAIL,
-      VALID_INPUTS_1.PASSWORD,
-      VALID_INPUTS_1.FIRSTNAME,
-      VALID_INPUTS_1.LASTNAME
+      VALID_USER_REGISTER_INPUTS_1.EMAIL,
+      VALID_USER_REGISTER_INPUTS_1.PASSWORD,
+      VALID_USER_REGISTER_INPUTS_1.FIRSTNAME,
+      VALID_USER_REGISTER_INPUTS_1.LASTNAME
     );
     VALID_TOKEN = register.jsonBody?.token;
   });
@@ -52,23 +26,23 @@ describe('error tests', () => {
     expect(adminUserDetailsUpdate(
       INVALID_TOKEN,
       NEW_VALID_EMAIL,
-      VALID_INPUTS_1.FIRSTNAME,
-      VALID_INPUTS_1.LASTNAME)
+      VALID_USER_REGISTER_INPUTS_1.FIRSTNAME,
+      VALID_USER_REGISTER_INPUTS_1.LASTNAME)
     ).toStrictEqual(ERROR401);
   });
 
   test('Email is currently used by another user', () => {
     adminAuthRegister(
-      VALID_INPUTS_2.EMAIL,
-      VALID_INPUTS_2.PASSWORD,
-      VALID_INPUTS_2.FIRSTNAME,
-      VALID_INPUTS_2.LASTNAME
+      VALID_USER_REGISTER_INPUTS_2.EMAIL,
+      VALID_USER_REGISTER_INPUTS_2.PASSWORD,
+      VALID_USER_REGISTER_INPUTS_2.FIRSTNAME,
+      VALID_USER_REGISTER_INPUTS_2.LASTNAME
     );
     expect(adminUserDetailsUpdate(
       VALID_TOKEN,
-      VALID_INPUTS_2.EMAIL,
-      VALID_INPUTS_1.FIRSTNAME,
-      VALID_INPUTS_1.LASTNAME)
+      VALID_USER_REGISTER_INPUTS_2.EMAIL,
+      VALID_USER_REGISTER_INPUTS_1.FIRSTNAME,
+      VALID_USER_REGISTER_INPUTS_1.LASTNAME)
     ).toStrictEqual(ERROR400);
   });
 
@@ -77,8 +51,8 @@ describe('error tests', () => {
     expect(adminUserDetailsUpdate(
       VALID_TOKEN,
       INVALID_EMAIL,
-      VALID_INPUTS_1.FIRSTNAME,
-      VALID_INPUTS_1.LASTNAME)
+      VALID_USER_REGISTER_INPUTS_1.FIRSTNAME,
+      VALID_USER_REGISTER_INPUTS_1.LASTNAME)
     ).toStrictEqual(ERROR400);
   });
 
@@ -88,7 +62,7 @@ describe('error tests', () => {
       VALID_TOKEN,
       NEW_VALID_EMAIL,
       INVALID_FIRSTNAME,
-      VALID_INPUTS_1.LASTNAME)
+      VALID_USER_REGISTER_INPUTS_1.LASTNAME)
     ).toStrictEqual(ERROR400);
   });
 
@@ -97,7 +71,7 @@ describe('error tests', () => {
     expect(adminUserDetailsUpdate(
       VALID_TOKEN,
       NEW_VALID_EMAIL,
-      VALID_INPUTS_1.FIRSTNAME,
+      VALID_USER_REGISTER_INPUTS_1.FIRSTNAME,
       INVALID_LASTNAME)
     ).toStrictEqual(ERROR400);
   });
@@ -106,21 +80,21 @@ describe('error tests', () => {
     {
       error: 'First name too long',
       nameFirst: 'l'.repeat(30),
-      nameLast: VALID_INPUTS_1.LASTNAME
+      nameLast: VALID_USER_REGISTER_INPUTS_1.LASTNAME
     },
     {
       error: 'First name too short',
       nameFirst: 's',
-      nameLast: VALID_INPUTS_1.LASTNAME
+      nameLast: VALID_USER_REGISTER_INPUTS_1.LASTNAME
     },
     {
       error: 'Last name too short',
-      nameFirst: VALID_INPUTS_1.FIRSTNAME,
+      nameFirst: VALID_USER_REGISTER_INPUTS_1.FIRSTNAME,
       nameLast: 's'
     },
     {
       error: 'Last name too long',
-      nameFirst: VALID_INPUTS_1.FIRSTNAME,
+      nameFirst: VALID_USER_REGISTER_INPUTS_1.FIRSTNAME,
       nameLast: 'l'.repeat(30)
     },
   ])('$error', ({ nameFirst, nameLast }) => {
@@ -131,10 +105,10 @@ describe('error tests', () => {
 describe('Successful update', () => {
   beforeEach(() => {
     const register = adminAuthRegister(
-      VALID_INPUTS_1.EMAIL,
-      VALID_INPUTS_1.PASSWORD,
-      VALID_INPUTS_1.FIRSTNAME,
-      VALID_INPUTS_1.LASTNAME
+      VALID_USER_REGISTER_INPUTS_1.EMAIL,
+      VALID_USER_REGISTER_INPUTS_1.PASSWORD,
+      VALID_USER_REGISTER_INPUTS_1.FIRSTNAME,
+      VALID_USER_REGISTER_INPUTS_1.LASTNAME
     );
     VALID_TOKEN = register.jsonBody?.token;
   });
@@ -143,76 +117,76 @@ describe('Successful update', () => {
     expect(adminUserDetailsUpdate(
       VALID_TOKEN,
       NEW_VALID_EMAIL,
-      VALID_INPUTS_1.FIRSTNAME,
-      VALID_INPUTS_1.LASTNAME)
-    ).toStrictEqual(SUCCESSFULUPDATED);
+      VALID_USER_REGISTER_INPUTS_1.FIRSTNAME,
+      VALID_USER_REGISTER_INPUTS_1.LASTNAME)
+    ).toStrictEqual(USER_DETAIL_UPDATED_SUCCESSFUL);
   });
-});
 
-test.failing('correct update First name with all valid letters', () => {
-  expect(adminUserDetailsUpdate(
-    VALID_TOKEN,
-    VALID_INPUTS_1.EMAIL,
-    "ValidFN-' ",
-    VALID_INPUTS_1.LASTNAME)).toStrictEqual({ });
-  expect(adminUserDetails(VALID_TOKEN)).toStrictEqual({
-    statusCode: 200,
-    jsonBody: {
-      user: {
-        userId: expect.any(Number),
-        name: `ValidFN-'  ${VALID_INPUTS_1.LASTNAME}`,
-        email: VALID_INPUTS_1.EMAIL,
-        numSuccessfulLogins: expect.any(Number),
-        numFailedPasswordsSinceLastLogin: expect.any(Number),
+  test('correct update First name with all valid letters', () => {
+    expect(adminUserDetailsUpdate(
+      VALID_TOKEN,
+      VALID_USER_REGISTER_INPUTS_1.EMAIL,
+      "ValidFN-' ",
+      VALID_USER_REGISTER_INPUTS_1.LASTNAME)).toStrictEqual(USER_DETAIL_UPDATED_SUCCESSFUL);
+    expect(adminUserDetails(VALID_TOKEN)).toStrictEqual({
+      statusCode: 200,
+      jsonBody: {
+        user: {
+          userId: expect.any(Number),
+          name: `ValidFN-'  ${VALID_USER_REGISTER_INPUTS_1.LASTNAME}`,
+          email: VALID_USER_REGISTER_INPUTS_1.EMAIL,
+          numSuccessfulLogins: expect.any(Number),
+          numFailedPasswordsSinceLastLogin: expect.any(Number),
+        }
       }
-    }
+    });
   });
-});
 
-test.failing('correct update Last name with all valid letters', () => {
-  adminUserDetailsUpdate(VALID_TOKEN, VALID_INPUTS_1.EMAIL, VALID_INPUTS_1.FIRSTNAME, "ValidFN-' ");
-  expect(adminUserDetails(VALID_TOKEN)).toStrictEqual({
-    statusCode: 200,
-    jsonBody: {
-      user: {
-        userId: expect.any(Number),
-        name: `${VALID_INPUTS_1.FIRSTNAME} ValidFN-' `,
-        email: VALID_INPUTS_1.EMAIL,
-        numSuccessfulLogins: expect.any(Number),
-        numFailedPasswordsSinceLastLogin: expect.any(Number),
+  test('correct update Last name with all valid letters', () => {
+    adminUserDetailsUpdate(VALID_TOKEN, VALID_USER_REGISTER_INPUTS_1.EMAIL, VALID_USER_REGISTER_INPUTS_1.FIRSTNAME, "ValidFN-' ");
+    expect(adminUserDetails(VALID_TOKEN)).toStrictEqual({
+      statusCode: 200,
+      jsonBody: {
+        user: {
+          userId: expect.any(Number),
+          name: `${VALID_USER_REGISTER_INPUTS_1.FIRSTNAME} ValidFN-' `,
+          email: VALID_USER_REGISTER_INPUTS_1.EMAIL,
+          numSuccessfulLogins: expect.any(Number),
+          numFailedPasswordsSinceLastLogin: expect.any(Number),
+        }
       }
-    }
+    });
   });
-});
 
-test.failing('correct update New email', () => {
-  adminUserDetailsUpdate(VALID_TOKEN, NEW_VALID_EMAIL, VALID_INPUTS_1.FIRSTNAME, VALID_INPUTS_1.LASTNAME);
-  expect(adminUserDetails(VALID_TOKEN)).toStrictEqual({
-    statusCode: 200,
-    jsonBody: {
-      user: {
-        userId: expect.any(Number),
-        name: `${VALID_INPUTS_1.FIRSTNAME} ${VALID_INPUTS_1.LASTNAME}`,
-        email: NEW_VALID_EMAIL,
-        numSuccessfulLogins: expect.any(Number),
-        numFailedPasswordsSinceLastLogin: expect.any(Number),
+  test('correct update New email', () => {
+    adminUserDetailsUpdate(VALID_TOKEN, NEW_VALID_EMAIL, VALID_USER_REGISTER_INPUTS_1.FIRSTNAME, VALID_USER_REGISTER_INPUTS_1.LASTNAME);
+    expect(adminUserDetails(VALID_TOKEN)).toStrictEqual({
+      statusCode: 200,
+      jsonBody: {
+        user: {
+          userId: expect.any(Number),
+          name: `${VALID_USER_REGISTER_INPUTS_1.FIRSTNAME} ${VALID_USER_REGISTER_INPUTS_1.LASTNAME}`,
+          email: NEW_VALID_EMAIL,
+          numSuccessfulLogins: expect.any(Number),
+          numFailedPasswordsSinceLastLogin: expect.any(Number),
+        }
       }
-    }
+    });
   });
-});
 
-test.failing('correct runing but still be old email', () => {
-  adminUserDetailsUpdate(VALID_TOKEN, VALID_INPUTS_1.EMAIL, VALID_INPUTS_1.FIRSTNAME, VALID_INPUTS_1.LASTNAME);
-  expect(adminUserDetails(VALID_TOKEN)).toStrictEqual({
-    statusCode: 200,
-    jsonBody: {
-      user: {
-        userId: expect.any(Number),
-        name: `${VALID_INPUTS_1.FIRSTNAME} ${VALID_INPUTS_1.LASTNAME}`,
-        email: VALID_INPUTS_1.EMAIL,
-        numSuccessfulLogins: expect.any(Number),
-        numFailedPasswordsSinceLastLogin: expect.any(Number),
+  test('correct runing but still be old email', () => {
+    adminUserDetailsUpdate(VALID_TOKEN, VALID_USER_REGISTER_INPUTS_1.EMAIL, VALID_USER_REGISTER_INPUTS_1.FIRSTNAME, VALID_USER_REGISTER_INPUTS_1.LASTNAME);
+    expect(adminUserDetails(VALID_TOKEN)).toStrictEqual({
+      statusCode: 200,
+      jsonBody: {
+        user: {
+          userId: expect.any(Number),
+          name: `${VALID_USER_REGISTER_INPUTS_1.FIRSTNAME} ${VALID_USER_REGISTER_INPUTS_1.LASTNAME}`,
+          email: VALID_USER_REGISTER_INPUTS_1.EMAIL,
+          numSuccessfulLogins: expect.any(Number),
+          numFailedPasswordsSinceLastLogin: expect.any(Number),
+        }
       }
-    }
+    });
   });
 });

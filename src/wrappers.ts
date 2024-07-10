@@ -7,7 +7,7 @@ const SERVER_URL = `${url}:${port}`;
 // ========================================================================= //
 
 // Our custom return types - you can pick your own if you wish!
-export interface RequestHelperReturnType {
+interface RequestHelperReturnType {
   statusCode: number;
   jsonBody?: Record<string, any>;
   error?: string;
@@ -107,8 +107,12 @@ export const adminQuizList = (sessionId: string) => {
   return requestHelper('GET', '/v1/admin/quiz/list', { sessionId });
 };
 
-export const adminQuizDescriptionUpdate = (quizId: number) => {
-  return requestHelper('PUT', `/v1/admin/quia/${quizId}/description`, {});
+export const adminQuizDescriptionUpdate = (
+  sessionId: string,
+  quizId: number,
+  description: string) => {
+  return requestHelper('PUT', `/v1/admin/quiz/${quizId}/description`,
+    { sessionId, description });
 };
 
 export const adminUserDetailsUpdate = (
@@ -146,10 +150,10 @@ export const adminQuizNameUpdate = (
 export const adminQuizTrashView = (token: string) => {
   return requestHelper('GET', '/v1/admin/quiz/trash', { token });
 };
-export const adminUserDetails = (sessionId: string) => {
-  return requestHelper('GET', '/v1/admin/user/details', { sessionId });
+export const adminUserDetails = (token: string) => {
+  return requestHelper('GET', '/v1/admin/user/details', { token });
 };
 
-export const adminQuizRemove = (sessionId: string, quizId: number) => {
-  return requestHelper('DELETE', `/v1/admin/quiz/${quizId}`, { sessionId });
+export const adminQuizRemove = (token: string, quizId: number) => {
+  return requestHelper('DELETE', `/v1/admin/quiz/${quizId}`, { token });
 };

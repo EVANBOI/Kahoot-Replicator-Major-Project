@@ -31,7 +31,7 @@ beforeEach(() => {
       'abc1234e',
       'Evan',
       'Xiong');
-  sessionId = jsonBody.token;
+  sessionId = jsonBody?.token;
 });
 
 describe('When registering an user', () => {
@@ -89,7 +89,7 @@ describe('When registering an user', () => {
         'qwerty67890',
         'Zhihao',
         'Cao'));
-    const sessionId2 = jsonBody.token;
+    const sessionId2 = jsonBody?.token;
     expect(adminQuizCreate(sessionId, 'Quiz 1', ' ')).toStrictEqual(QUIZCREATED);
     expect(adminQuizCreate(sessionId2, 'Quiz 2', 'Linked Lists')).toStrictEqual(QUIZCREATED);
     expect(adminQuizCreate(sessionId, 'Quiz 1', ' '))

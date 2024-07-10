@@ -122,7 +122,6 @@ app.get('/v1/admin/user/details', (req: Request, res: Response) => {
   res.status(200).json(result);
 });
 
-// This is the get admin userdetails method from the swagger
 app.delete('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
   const token = req.query.token as string;
   const id = parseInt(req.params.quizid);

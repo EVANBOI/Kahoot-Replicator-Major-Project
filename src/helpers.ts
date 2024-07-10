@@ -1,3 +1,4 @@
+import { adminUserPasswordUpdate } from './auth';
 import { getData } from './dataStore';
 import { Data, ErrorMessage, QuestionBody, User, Quiz } from './types';
 
@@ -27,19 +28,22 @@ export function durationSum(quizId: number): number {
   return durationSum;
 }
 
-export function validAnswer(questionBody: QuestionBody): boolean | ErrorMessage {
+export function validAnswers(questionBody: QuestionBody): boolean | ErrorMessage {
   const existingAnswer: string[] = [];
   for (const ans of questionBody.answers) {
     if (ans.answer.length < 1) {
-      return { status: 400, error: 'An answer is less than 1 character long' };
+      return { statusCode: 400, error: 'An answer is less than 1 character long' };
     } else if (ans.answer.length > 30) {
-      return { status: 400, error: 'An answer is less than 1 character long' };
+      return { statusCode: 400, error: 'An answer is less than 1 character long' };
     } else if (existingAnswer.find(current => current === ans.answer)) {
-      return { status: 400, error: 'There are duplicate answers' }
+      return { statusCode: 400, error: 'There are duplicate answers' };
     } else {
       existingAnswer.push(ans.answer);
     }
-  const duplicateExists = questionBody.answers.find(ans => ans.answer === )
+  }
+  const correctExists = questionBody.answers.find(ans => ans.correct === true);
+  if (!correctExists) {
+    return { statusCode: 400, error: 'There are no correct answers' };
   }
   return true;
 }

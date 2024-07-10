@@ -45,6 +45,10 @@ export type AuthUserIdObject = {
     token: string
 }
 
+export type QuestionIdObject = {
+    questionId: number
+}
+
 export type ClearResult = EmptyObject;
 
 export type UserUpdateResult = EmptyObject | ErrorMessage;
@@ -93,10 +97,15 @@ export type Userdetails = ErrorMessage | {user: {
 export type QuizNameUpdateResult = EmptyObject | ErrorMessage;
 
 export type QuestionBody = {
+    questionId?: number,
     question: string,
     duration: number,
     points: number,
-    answers: {answer: string, correct: boolean}[]
+    answers: {
+        answerId?: number, 
+        colour?: string, 
+        answer: string, 
+        correct: boolean}[]
 };
 
-export type CreateQuestionReturn = QuizIdObject | ErrorMessage;
+export type CreateQuestionReturn = QuestionIdObject | ErrorMessage;

@@ -1,6 +1,9 @@
 import { getData, setData } from './dataStore';
-import { durationSum, findQuizWithId, findUserBySessionId } from './helpers';
+import { durationSum, findQuizWithId, findUserBySessionId, validAnswers } from './helpers';
 import { CreateQuestionReturn, EmptyObject, ErrorMessage, QuestionBody, Quiz, QuizIdObject, QuizInfoResult, QuizListDetails, QuizRemoveResult } from './types';
+import ShortUniqueId from 'short-unique-id';
+import { randomColor } from 'seed-to-color';
+const uid = new ShortUniqueId({ dictionary: 'number' });
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
  *
@@ -216,6 +219,7 @@ export function adminQuizDescriptionUpdate(
  * Update the description of the relevant quiz.
  *
  * @param {number} quizId - unique id of a quiz
+ * @param {string} token - unique session id of a quiz
  * @param {QuestionBody} questionBody - contains information of a question
  * @returns {{questionId: number}} - id of a question that is unique only inside a quiz
  * @returns {{error: string}} an error
@@ -223,21 +227,44 @@ export function adminQuizDescriptionUpdate(
 
 export function adminCreateQuizQuestion(
   quizId: number, 
+  token: string,
   questionBody: QuestionBody): CreateQuestionReturn {
-
+    const database = getData();
+    const user = findUserBySessionId(database, token);
+    if (!user) {
+      return { statusCode: 401, error: 'Session ID is invalide' }
+    }
+    let quiz = findQuizWithId(quizId);
+    if (!quiz) {
+      return { statusCode: 403, error: 'Quiz does not exist'}
+    } else if (quiz.creatorId === user.userId) {
+      return { statusCode: 403, error: 'User is is not owner of quiz'}
+    }
     const totalDuration = durationSum(quizId) + questionBody.duration;
     if (questionBody.question.length > 50 ) {
-      return { status: 400, error: 'Question string is greater than 50 characters'}
+      return { statusCode: 400, error: 'Question string is greater than 50 characters'}
     } else if (questionBody.question.length < 5) {
-      return { status: 400, error: 'Question string is less than 5 characters'}
+      return { statusCode: 400, error: 'Question string is less than 5 characters'}
     } else if (questionBody.duration < 0) {
-      return { status: 400, error: 'Duration is negative'}
+      return { statusCode: 400, error: 'Duration is negative'}
     } else if (totalDuration > 180) {
-      return { status: 400, error: 'Total duration is more than 3 min'}
+      return { statusCode: 400, error: 'Total duration is more than 3 min'}
     } else if (questionBody.points < 1) {
-      return { status: 400, error: 'Point is less than 1'}
+      return { statusCode: 400, error: 'Point is less than 1'}
     } else if (questionBody.points > 10) {
-      return { status: 400, error: 'Point is greater than 10'}
+      return { statusCode: 400, error: 'Point is greater than 10'}
+    } else if (error in validAnswers) {
+      return validAnswers as ErrorMessage;
     }
-  return;
+    const questionId = parseInt(uid.rnd());
+    questionBody.questionId = questionId;
+    for (const ans of questionBody.answers) {
+      ans.answerId = parseInt(uid.rnd());
+      ans.colour = randomColor(ans.answerId);
+    }
+    quiz.questions.push(questionBody);
+
+    quiz.timeLastEdited = Math.floor(Date.now() / 1000);
+    setData(database);
+  return { questionId: questionId };
 }

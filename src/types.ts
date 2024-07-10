@@ -102,3 +102,15 @@ export type Userdetails = ErrorMessage | {user: {
 export type QuizNameUpdateResult = EmptyObject | ErrorMessage;
 
 export type QuizTransferResult = EmptyObject | ErrorMessage;
+
+export type Error = {
+    statusCode: number,
+    message: string
+}
+
+export type TrashViewDetails = ErrorMessage | {
+    quizzes: {
+        quizId: number
+        name: string,
+    }[]
+}

@@ -1,12 +1,11 @@
-import { 
-  adminAuthRegister, 
-  adminQuizCreate, 
-  adminQuizTransfer, 
-  adminQuizInfo, 
+import {
+  adminAuthRegister,
+  adminQuizCreate,
+  adminQuizTransfer,
+  adminQuizInfo,
   clear
 } from '../wrappers';
 import { ok } from '../helpers';
-import { Token,UserRegistrationResult} from '../types';
 
 const VALID_INPUTS = {
   EMAIL: 'changli@unsw.edu.au',
@@ -38,7 +37,7 @@ const SUCCESSFUL_TRANSFER = {
 let sessionId: string;
 let quizId: number;
 let newOwnerEmail: string;
-let newUserRegisterResponse: UserRegistrationResult ;
+let validToken: string;
 
 beforeEach(() => {
   clear();
@@ -52,8 +51,9 @@ describe('adminQuizTransfer tests', () => {
     const quizCreateResponse = adminQuizCreate(sessionId, 'My Quiz', 'This is a description.');
     quizId = quizCreateResponse.jsonBody.quizId;
 
-    newUserRegisterResponse = adminAuthRegister('newuser@unsw.edu.au', 'Password123', 'New', 'User');
+    const newUserRegisterResponse = adminAuthRegister('newuser@unsw.edu.au', 'Password123', 'New', 'User');
     newOwnerEmail = 'newuser@unsw.edu.au';
+    validToken = newUserRegisterResponse.jsonBody.token;
   });
 
   test('Invalid session ID', () => {
@@ -77,7 +77,7 @@ describe('adminQuizTransfer tests', () => {
   });
 
   test('Quiz ID refers to a quiz that has a name that is already used by the target user', () => {
-    adminQuizCreate(newUserRegisterResponse.jsonBody.token, 'My Quiz', 'Another description.');
+    adminQuizCreate(validToken, 'My Quiz', 'Another description.');
     const result = adminQuizTransfer(sessionId, quizId, newOwnerEmail);
     expect(result).toStrictEqual(ERROR400);
   });
@@ -89,7 +89,7 @@ describe('adminQuizTransfer tests', () => {
 
   test('Successful quiz transfer - functionality', () => {
     adminQuizTransfer(sessionId, quizId, newOwnerEmail);
-    const updatedQuiz = ok(adminQuizInfo(newUserRegisterResponse.jsonBody.token, quizId));
+    const updatedQuiz = ok(adminQuizInfo(validToken, quizId));
     expect(updatedQuiz).toStrictEqual({
       statusCode: 200,
       jsonBody: {

@@ -1,7 +1,29 @@
-export type EmptyObject = Record<string, never>;
+// Types for errors
+export type ErrorMessage = {
+    statusCode: number,
+    error: string };
 
-export type ErrorMessage = { error: string };
+export type Status = {
+    statusCode: number,
+    message: string
+}
+
+// Id types
 export type Token = { token: string }
+export type QuizIdObject = {
+    quizId: number
+}
+
+export type AuthUserIdObject = {
+    token: string
+}
+
+export type SessionIdObject = {
+    status: number,
+    token: string
+};
+
+// Types for dataStore
 export type User = {
     userId: number,
     tokens: Token[],
@@ -12,21 +34,15 @@ export type User = {
     numFailedPasswordsSinceLastLogin: number,
     passwordUsedThisYear: string[]
 }
-export type UserdetailsResults = {
-    userId: number,
-    tokens: Token[],
-    name: string,
-    email: string,
-    numSuccessfulLogins: number,
-    numFailedPasswordsSinceLastLogin: number,
-}
+
 export type Quiz = {
     creatorId: number,
     quizId: number,
     name: string,
     timeCreated: number,
     timeLastEdited: number,
-    description: string
+    description: string,
+    questions: QuestionBody[]
 }
 
 export type Data = {
@@ -35,18 +51,14 @@ export type Data = {
     trash: Quiz[]
 }
 
-export type QuizIdObject = {
-    quizId: number
+export type QuestionIdObject = {
+    questionId: number
 }
 
-export type AuthUserIdObject = {
-    token: string
-}
-
+// Types for function return
+export type EmptyObject = Record<string, never>;
 export type ClearResult = EmptyObject;
-
-export type UserUpdateResult = EmptyObject | ErrorMessage;
-
+export type UserUpdateResult = EmptyObject | ErrorMessage
 export type UserRegistrationResult = ErrorMessage | Token;
 
 export type QuizListDetails = ErrorMessage | {
@@ -54,20 +66,25 @@ export type QuizListDetails = ErrorMessage | {
         quizId: number
         name: string,
     }[]
-} // need to check if this works correctly
+}
 
 export type QuizInfoResult = ErrorMessage | {
     quizId: number,
     name: string,
     timeCreated: number,
     timeLastEdited: number,
-    description: string
+    description: string,
+    questions: QuestionBody[]
 }
 
-export type SessionIdObject = {
-    token: string
-    status: number
-  };
+export type UserdetailsResults = {
+    userId: number,
+    tokens: Token[],
+    name: string,
+    email: string,
+    numSuccessfulLogins: number,
+    numFailedPasswordsSinceLastLogin: number,
+}
 
 export type QuizCreateDetails = {
     body: {
@@ -78,7 +95,7 @@ export type QuizCreateDetails = {
 
 export type PasswordUpdateResult = EmptyObject | ErrorMessage;
 
-export type QuizRemoveResult = Error;
+export type QuizRemoveResult = Status;
 
 export type Userdetails = ErrorMessage | {user: {
     userId: number,
@@ -90,23 +107,28 @@ export type Userdetails = ErrorMessage | {user: {
 
 export type QuizNameUpdateResult = EmptyObject | ErrorMessage;
 
-export type Error = {
-    statusCode: number,
-    message: string
+export type QuestionBody = {
+    questionId?: number,
+    question: string,
+    duration: number,
+    points: number,
+    answers: {
+        answerId?: number,
+        colour?: string,
+        answer: string,
+        correct: boolean
+    }[]
+};
+
+export type CreateQuestionReturn = QuestionIdObject | ErrorMessage;
+
+export type TrashViewDetails = ErrorMessage | {
+    quizzes: {
+        quizId: number
+        name: string,
+    }[]
 }
 
-export type QuestionBody = {
-    token: string,
-    questionBody: {
-        question: string,
-        duration: number,
-        points: number,
-        answers: {
-            answer: string,
-            correct: boolean
-        }[]
-    }
-};
 
 export type QuizRestoreResult = {
     statusCode: number,

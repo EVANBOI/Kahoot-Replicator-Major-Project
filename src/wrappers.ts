@@ -1,5 +1,6 @@
 import request, { HttpVerb } from 'sync-request-curl';
 import { port, url } from '../src/config.json';
+import { QuestionBody } from './types';
 
 const SERVER_URL = `${url}:${port}`;
 
@@ -132,6 +133,14 @@ export const clear = () => {
   return requestHelper('DELETE', '/v1/clear', {});
 };
 
+export const adminCreateQuizQuestion = (
+  quizId: number,
+  token: string,
+  questionBody: QuestionBody) => {
+  return requestHelper('POST', `/v1/admin/quiz/${quizId}/question`,
+    { token, questionBody });
+};
+
 export const adminUserPasswordUpdate = (
   sessionId: string,
   oldPassword: string,
@@ -147,9 +156,11 @@ export const adminQuizNameUpdate = (
   return requestHelper('PUT', '/v1/admin/quiz/name',
     { sessionId, quizId, name });
 };
+
 export const adminQuizTrashView = (token: string) => {
-  return requestHelper('GET', '/v1/admin/quiz/trash', { token });
+  return requestHelper('GET', '/v1/admin/quiz/trash', { token: token });
 };
+
 export const adminUserDetails = (token: string) => {
   return requestHelper('GET', '/v1/admin/user/details', { token });
 };

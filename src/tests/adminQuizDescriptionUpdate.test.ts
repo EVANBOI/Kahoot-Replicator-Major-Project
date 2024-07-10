@@ -60,7 +60,7 @@ describe('Error cases', () => {
         });
     });
     test('Description length is more than 100 characters', () => {
-      expect(adminQuizDescriptionUpdate(sessionId2, quizId1, 'a'.repeat(200)))
+      expect(adminQuizDescriptionUpdate(sessionId1, quizId1, 'a'.repeat(200)))
         .toStrictEqual({
           statusCode: 400,
           jsonBody: { error: expect.any(String) }
@@ -112,7 +112,8 @@ describe('Successful function run', () => {
           name: 'Quiz 1',
           timeCreated: expect.any(Number),
           timeLastEdited: expect.any(Number),
-          description: 'changed'
+          description: 'changed',
+          questions: []
         }
       });
     });
@@ -133,7 +134,8 @@ describe('Successful function run', () => {
           name: 'Quiz 1',
           timeCreated: expect.any(Number),
           timeLastEdited: expect.any(Number),
-          description: ''
+          description: '',
+          questions: []
         }
       });
     });
@@ -150,7 +152,8 @@ describe('Successful function run', () => {
           name: 'Quiz 1',
           timeCreated: expect.any(Number),
           timeLastEdited: expect.any(Number),
-          description: 'changed twice'
+          description: 'changed twice',
+          questions: []
         }
       });
     });
@@ -165,7 +168,8 @@ describe('Successful function run', () => {
           name: 'Quiz 2',
           timeCreated: expect.any(Number),
           timeLastEdited: expect.any(Number),
-          description: 'changed quiz 2'
+          description: 'changed quiz 2',
+          questions: []
         }
       });
     });
@@ -180,7 +184,8 @@ describe('Successful function run', () => {
           name: 'Quiz 3',
           timeCreated: expect.any(Number),
           timeLastEdited: expect.any(Number),
-          description: 'changed quiz 3'
+          description: 'changed quiz 3',
+          questions: []
         }
       });
     });

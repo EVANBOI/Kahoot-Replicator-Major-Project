@@ -8,17 +8,18 @@
         "start-dev": "ts-node-dev -T src/server.ts",
         "cleanup-sync-request": "pkill -f node_modules/sync-rpc/lib/worker.js > /dev/null 2>&1",
         "posttest": "npm run cleanup-sync-request || true",
-        "testj": "jest adminAuthRegister.test.js",
-        "testj1": "jest adminQuizList.test.js",
-        "testj2": "jest adminQuizDescriptionUpdate.test.js",
-        "test!": "jest adminQuizCreate.test.js",
-        "testl": "jest adminAuthLogin.test.js"
+        "testj": "jest adminAuthRegister.test.ts",
+        "testj1": "jest adminQuizList.test.ts",
+        "testj2": "jest adminQuizDescriptionUpdate.test.ts",
+        "test!": "jest adminQuizCreate.test.ts",
+        "testl": "jest adminAuthLogin.test.ts"
     },
     "dependencies": {
         "body-parser": "^1.20.2",
         "cors": "^2.8.5",
         "express": "^4.19.2",
         "morgan": "^1.10.0",
+        "seed-to-color": "^1.0.5",
         "short-unique-id": "^5.2.0",
         "ts-node": "^10.9.2",
         "validator": "^13.12.0"

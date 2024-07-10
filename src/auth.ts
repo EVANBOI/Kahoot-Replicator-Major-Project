@@ -1,7 +1,7 @@
 import { getData, setData } from './dataStore';
 import validator from 'validator';
 import { findUserBySessionId } from './helpers';
-import { Data, UserRegistrationResult, PasswordUpdateResult, UserUpdateResult, Userdetails } from './types';
+import { Data, UserRegistrationResult, PasswordUpdateResult, UserUpdateResult, Userdetails, ErrorMessage, EmptyObject } from './types';
 import ShortUniqueId from 'short-unique-id';
 const uid = new ShortUniqueId({ dictionary: 'number' });
 /**
@@ -211,5 +211,24 @@ export function adminUserPasswordUpdate(sessionId: string, oldPassword: string, 
   user.passwordUsedThisYear.push(oldPassword);
   user.password = newPassword;
   setData(dataBase);
+  return {};
+}
+
+/**
+ * Given the session id (token), logout the user of that particular session.
+ *
+ * @param {string} sessionId - unique session id of a user, users can have multiple
+ * @returns {} - empty object
+ */
+export function adminAuthLogout(sessionId: string): ErrorMessage | EmptyObject {
+  const database = getData();
+  const user = findUserBySessionId(database, sessionId);
+  if (!user) {
+    return { statusCode: 401, error: 'Session Id does not exist' };
+  }
+
+  const index = user.tokens.findIndex(id => id.token === sessionId);
+  user.tokens.splice(index, 1);
+  setData(database);
   return {};
 }

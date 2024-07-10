@@ -161,3 +161,7 @@ export const adminQuizRemove = (token: string, quizId: number) => {
 export const adminQuizRestore = (token: string, quizId: number) => {
   return requestHelper('POST', `/v1/admin/quiz/${quizId}/restore`, { token });
 };
+
+export const adminQuizQuestionDelete = (token: string, quizId: number, questionId: number) => {
+  return requestHelper('DELETE', `/v1/admin/quiz/${quizId}/question/${questionId}`, { token });
+};

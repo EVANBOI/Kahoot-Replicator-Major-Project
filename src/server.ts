@@ -213,6 +213,18 @@ app.post('/v1/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
   }
 });
 
+app.delete('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
+  const token = req.query.token as string;
+  const quizId = parseInt(req.params.quizid);
+  const questionId = parseInt(req.params.questionid);
+  const result = adminQuizQuestionDelete(token, quizId, questionId);
+
+  if (result.statusCode !== 200) {
+    res.status(result.statusCode).json({ error: result.message });
+  } else {
+    res.status(200).json({});
+  }
+});
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================
@@ -245,3 +257,4 @@ process.on('SIGINT', () => {
     process.exit();
   });
 });
+

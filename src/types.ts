@@ -94,3 +94,16 @@ export type Error = {
     statusCode: number,
     message: string
 }
+
+export type QuestionBody = {
+    token: string,
+    questionBody: {
+        question: string,
+        duration: number,
+        points: number,
+        answers: {
+            answer: string,
+            correct: boolean
+        }[]
+    }
+};

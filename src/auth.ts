@@ -160,7 +160,7 @@ export function adminUserDetails (sessionId: string): Userdetails {
   const database = getData();
   const user = findUserBySessionId(database, sessionId);
   if (!user) {
-    return { error: 'sessionId is not a valid user.' };
+    return { statusCode: 401, error: 'sessionId is not a valid user.' };
   }
 
   return {

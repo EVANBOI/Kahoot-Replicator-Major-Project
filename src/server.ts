@@ -96,7 +96,7 @@ app.get('/v1/admin/user/details', (req: Request, res: Response) => {
   // console.log(token, 'HI')
   const result = adminUserDetails(token);
   if ('error' in result) {
-    return res.status(401).json(result);
+    return res.status(result.statusCode).json({ error: result.error });
   }
   res.status(200).json(result);
 });

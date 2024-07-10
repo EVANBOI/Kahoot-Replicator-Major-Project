@@ -75,6 +75,7 @@ describe('When registering an user', () => {
   });
 
   test('Correctly returns the quizId', () => {
+    console.log(sessionId);
     expect(adminQuizCreate(sessionId, 'Quiz 1', 'Pointers')).toStrictEqual(QUIZCREATED);
   });
 

@@ -1,7 +1,7 @@
 import { getData, setData } from './dataStore';
 import validator from 'validator';
 import { findUserBySessionId } from './helpers';
-import { Data, UserRegistrationResult, PasswordUpdateResult, UserUpdateResult, Userdetails } from './types';
+import { Data, UserRegistrationResult, PasswordUpdateResult, UserUpdateResult, Userdetails, ErrorMessage, EmptyObject } from './types';
 import ShortUniqueId from 'short-unique-id';
 const uid = new ShortUniqueId({ dictionary: 'number' });
 /**
@@ -26,7 +26,7 @@ export function adminAuthRegister (
   }
   const nameRange = /^[a-zA-Z-' ]*$/;
   const passwordLetterRange = /^[a-zA-Z]/;
-  const passwordNumberRange = /\d/;
+  const passwordNumberRange = /[0-9]/;
   if (!validator.isEmail(email)) {
     return { statusCode: 400, error: 'Email is not a valid email' };
   } else if (!nameRange.test(nameFirst)) {
@@ -155,7 +155,6 @@ export function adminAuthLogin (
  *               numSuccessfulLogins: number,
  *               numFailedPasswordsSinceLastLogin: number}}}
  */
-
 export function adminUserDetails (sessionId: string): Userdetails {
   const database = getData();
   const user = findUserBySessionId(database, sessionId);
@@ -183,7 +182,6 @@ export function adminUserDetails (sessionId: string): Userdetails {
  * @param {string} newPassword - new password to replace old password
  * @returns {} - empty object
  */
-
 export function adminUserPasswordUpdate(sessionId: string, oldPassword: string, newPassword: string): PasswordUpdateResult {
   const dataBase: Data = getData();
   const user = findUserBySessionId(dataBase, sessionId);
@@ -213,5 +211,24 @@ export function adminUserPasswordUpdate(sessionId: string, oldPassword: string, 
   user.passwordUsedThisYear.push(oldPassword);
   user.password = newPassword;
   setData(dataBase);
+  return {};
+}
+
+/**
+ * Given the session id (token), logout the user of that particular session.
+ *
+ * @param {string} sessionId - unique session id of a user, users can have multiple
+ * @returns {} - empty object
+ */
+export function adminAuthLogout(sessionId: string): ErrorMessage | EmptyObject {
+  const database = getData();
+  const user = findUserBySessionId(database, sessionId);
+  if (!user) {
+    return { statusCode: 401, error: 'Session Id does not exist' };
+  }
+
+  const index = user.tokens.findIndex(token => token.token === sessionId);
+  user.tokens.splice(index, 1);
+  setData(database);
   return {};
 }

@@ -1,32 +1,12 @@
 import { adminAuthRegister, adminQuizCreate, adminQuizNameUpdate, adminQuizInfo, clear } from '../wrappers';
 import { ok } from '../helpers';
-
-const VALID_INPUTS = {
-  EMAIL: 'changli@unsw.edu.au',
-  PASSWORD: 'Password123',
-  FIRSTNAME: 'Chang',
-  LASTNAME: 'Li',
-};
-
-const ERROR400 = {
-  statusCode: 400,
-  jsonBody: { error: expect.any(String) },
-};
-
-const ERROR401 = {
-  statusCode: 401,
-  jsonBody: { error: expect.any(String) },
-};
-
-const ERROR403 = {
-  statusCode: 403,
-  jsonBody: { error: expect.any(String) },
-};
-
-const SUCCESSFUL_UPDATE = {
-  statusCode: 200,
-  jsonBody: {},
-};
+import {
+  VALID_USER_REGISTER_INPUTS_1,
+  ERROR400,
+  ERROR401,
+  ERROR403,
+  SUCCESSFUL_UPDATE
+} from '../testConstants';
 
 let sessionId: string;
 let quizId: number;
@@ -34,9 +14,10 @@ let quizId: number;
 beforeEach(() => {
   clear();
 });
+
 describe('adminQuizNameUpdate tests', () => {
   beforeEach(() => {
-    const registerResponse = adminAuthRegister(VALID_INPUTS.EMAIL, VALID_INPUTS.PASSWORD, VALID_INPUTS.FIRSTNAME, VALID_INPUTS.LASTNAME);
+    const registerResponse = adminAuthRegister(VALID_USER_REGISTER_INPUTS_1.EMAIL, VALID_USER_REGISTER_INPUTS_1.PASSWORD, VALID_USER_REGISTER_INPUTS_1.FIRSTNAME, VALID_USER_REGISTER_INPUTS_1.LASTNAME);
     sessionId = registerResponse.jsonBody.token;
     const quizCreateResponse = adminQuizCreate(sessionId, 'My Quiz', 'This is a description.');
     quizId = quizCreateResponse.jsonBody.quizId;
@@ -97,7 +78,8 @@ describe('adminQuizNameUpdate tests', () => {
         timeCreated: expect.any(Number),
         timeLastEdited: expect.any(Number),
         description: 'This is a description.',
-        questions: []
+        questions: [],
+        duration: expect.any(Number)
       },
     });
   });

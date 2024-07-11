@@ -42,7 +42,8 @@ export type Quiz = {
     timeCreated: number,
     timeLastEdited: number,
     description: string,
-    questions: QuestionBody[]
+    questions: QuestionBody[],
+    duration: number
 }
 
 export type Data = {
@@ -75,6 +76,7 @@ export type QuizInfoResult = ErrorMessage | {
     timeLastEdited: number,
     description: string,
     questions: QuestionBody[]
+    duration: number
 }
 
 export type UserdetailsResults = {
@@ -106,6 +108,8 @@ export type Userdetails = ErrorMessage | {user: {
 }}
 
 export type QuizNameUpdateResult = EmptyObject | ErrorMessage;
+
+export type QuizTransferResult = EmptyObject | ErrorMessage;
 
 export type QuestionBody = {
     questionId?: number,
@@ -140,3 +144,4 @@ export type QuizRestoreResult = {
     message: string
   };
   
+  export type QuizTrashEmptyResult = EmptyObject | ErrorMessage;

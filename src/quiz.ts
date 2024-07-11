@@ -1,9 +1,22 @@
 import { getData, setData } from './dataStore';
-import { durationSum, findQuizWithId, findUserBySessionId, validAnswers } from './helpers';
-import { CreateQuestionReturn, EmptyObject, ErrorMessage, QuestionBody, Quiz, QuizIdObject, QuizInfoResult, TrashViewDetails, QuizListDetails, QuizRemoveResult,  QuizRestoreResult, QuizQuestionDeleteResult } from './types';
+
+import {
+  findQuizWithId, findUserBySessionId,
+  validAnswers, isQuizExistWithCorrectCreator, isAllExistInTrash
+} from './helpers';
+import {
+  CreateQuestionReturn,
+  EmptyObject, ErrorMessage, QuestionBody, Quiz, QuizIdObject, QuizInfoResult, TrashViewDetails,
+  QuizListDetails, QuizRemoveResult, QuizTrashEmptyResult, QuizRestoreResult, QuizQuestionDeleteResult
+} from './types';
+
+
+
+
 import ShortUniqueId from 'short-unique-id';
 import { randomColor } from 'seed-to-color';
 const uid = new ShortUniqueId({ dictionary: 'number' });
+const questionUid = new ShortUniqueId({ dictionary: 'number' });
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
  *
@@ -73,7 +86,8 @@ export function adminQuizCreate (
     timeCreated: timeStamp1,
     timeLastEdited: timeStamp2,
     description: description,
-    questions: []
+    questions: [],
+    duration: 0
   });
   setData(database);
 
@@ -145,7 +159,8 @@ export function adminQuizInfo (sessionId: string, quizId: number): QuizInfoResul
     timeCreated: quiz.timeCreated,
     timeLastEdited: quiz.timeLastEdited,
     description: quiz.description,
-    questions: quiz.questions
+    questions: quiz.questions,
+    duration: quiz.duration
   };
 }
 
@@ -224,7 +239,9 @@ export function adminQuizDescriptionUpdate(
 
 
 /**
- * Update the description of the relevant quiz.
+ * Create questions for quizzes given the contents of the question and
+ * generate unique ids for the questions as well as the answers inside it.
+ * Each answer is assigned a random colour code.
  *
  * @param {number} quizId - unique id of a quiz
  * @param {string} token - unique session id of a quiz
@@ -232,7 +249,6 @@ export function adminQuizDescriptionUpdate(
  * @returns {{questionId: number}} - id of a question that is unique only inside a quiz
  * @returns {{error: string}} an error
  */
-
 export function adminCreateQuizQuestion(
   quizId: number,
   token: string,
@@ -248,7 +264,7 @@ export function adminCreateQuizQuestion(
   } else if (quiz.creatorId !== user.userId) {
     return { statusCode: 403, error: 'User is is not owner of quiz' };
   }
-  const totalDuration = durationSum(database, quizId) + questionBody.duration;
+  const totalDuration = quiz.duration + questionBody.duration;
   console.log('duration is ', totalDuration);
   if (questionBody.question.length > 50) {
     return { statusCode: 400, error: 'Question string is greater than 50 characters' };
@@ -277,6 +293,7 @@ export function adminCreateQuizQuestion(
   }
   quiz.questions.push(questionBody);
   quiz.timeLastEdited = Math.floor(Date.now() / 1000);
+  quiz.duration += questionBody.duration;
   setData(database);
   return { questionId: questionId };
 }
@@ -306,6 +323,131 @@ export function adminQuizTrashView(sessionId: string): TrashViewDetails {
   }));
   return { quizzes: details };
 }
+
+/**
+ * clear the quiz trash
+ *
+ * @param {string} token - unique sessionId
+ * @param {string} quizIds - the stringified array of quiz Ids.
+ * @returns {} - empty object
+ * @returns {{error: string}} an error
+ */
+export function adminQuizTrashEmpty(token: string, quizIds: string): QuizTrashEmptyResult {
+  const database = getData();
+  const user = findUserBySessionId(database, token);
+  if (!user) {
+    return { statusCode: 401, error: 'Token is empty or invalid.' };
+  }
+  if (!isQuizExistWithCorrectCreator(token, quizIds)) {
+    return { statusCode: 403, error: 'Quiz does not exist or given wrong creator.' };
+  }
+  if (!isAllExistInTrash(quizIds)) {
+    return { statusCode: 400, error: 'One or more of the Quiz IDs is not currently in the trash.' };
+  }
+
+  const quizArray = JSON.parse(quizIds);
+  database.trash = database.trash.filter(quiz => !quizArray.includes(quiz.quizId));
+  setData(database);
+
+  return {};
+}
+
+/**
+ * Transfer quiz ownership to a new owner.
+ *
+ * @param {string} sessionId - The session ID of the current user.
+ * @param {number} quizId - The ID of the quiz to transfer.
+ * @param {string} newOwnerEmail - The email of the new owner.
+ * @returns {ErrorMessage | EmptyObject} - The result of the transfer operation.
+ */
+export function adminQuizTransfer(sessionId: string, quizId: number, newOwnerEmail: string): ErrorMessage | EmptyObject {
+  const database = getData();
+  const currentUser = findUserBySessionId(database, sessionId);
+
+  if (!currentUser) {
+    return { statusCode: 401, error: 'Session ID is not valid' };
+  }
+  const quiz = findQuizWithId(database, quizId);
+
+  if (!quiz) {
+    return { statusCode: 403, error: `Quiz with ID '${quizId}' not found` };
+  }
+
+  const newOwner = database.users.find(user => user.email === newOwnerEmail);
+
+  if (!newOwner) {
+    return { statusCode: 400, error: 'User email is not a real user.' };
+  }
+  if (newOwner.userId === currentUser.userId) {
+    return { statusCode: 400, error: 'User email is the current logged in user.' };
+  }
+
+  const nameUsed = database.quizzes.some(
+    q => q.name === quiz.name && q.creatorId === newOwner.userId && q.quizId !== quizId
+  );
+  if (nameUsed) {
+    return { statusCode: 400, error: 'Quiz ID refers to a quiz that has a name that is already used by the target user.' };
+  }
+
+  quiz.creatorId = newOwner.userId;
+  setData(database);
+  return {};
+}
+
+/**
+ * Duplicate a quiz question.
+ *
+ * @param {string} token - The session token of the current user.
+ * @param {number} quizId - The ID of the quiz containing the question to duplicate.
+ * @param {number} questionId - The ID of the question to duplicate.
+ * @returns {ErrorMessage | { newQuestionId: number }} - The result of the duplication operation.
+ */
+export function adminQuizQuestionDuplicate(
+  token: string,
+  quizId: number,
+  questionId: number
+): ErrorMessage | { newQuestionId: number } {
+  const database = getData();
+  const user = findUserBySessionId(database, token);
+
+  if (!user) {
+    return { statusCode: 401, error: 'Token is not valid.' };
+  }
+
+  const quiz = findQuizWithId(database, quizId);
+  if (!quiz) {
+    return { statusCode: 403, error: `Quiz with ID '${quizId}' not found` };
+  }
+
+  if (quiz.creatorId !== user.userId) {
+    return { statusCode: 403, error: 'User is not the owner of the quiz.' };
+  }
+
+  if (!quiz.questions) {
+    quiz.questions = [];
+  }
+
+  const question = quiz.questions.find(q => q.questionId === questionId);
+  if (!question) {
+    return { statusCode: 400, error: 'Question ID does not refer to a valid question within this quiz.' };
+  }
+
+  const newQuestionId = parseInt(questionUid.seq());
+  const timeLastEdited = Math.floor(Date.now() / 1000);
+  const newQuestion = {
+    ...question,
+    questionId: newQuestionId
+  };
+
+  quiz.questions.push(newQuestion);
+  quiz.timeLastEdited = timeLastEdited;
+
+  setData(database);
+
+  return { newQuestionId };
+}
+
+
 
 /**
  * Restores a quiz from the trash.

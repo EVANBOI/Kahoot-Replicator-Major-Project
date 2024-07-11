@@ -1,5 +1,5 @@
 import { getData } from './dataStore';
-import { Data, ErrorMessage, QuestionBody, User, Quiz } from './types';
+import { Data, ErrorMessage, QuestionBody, User } from './types';
 
 export function findUserWithId(authUserId: number) {
   return getData().users.find(user => user.userId === authUserId);
@@ -21,21 +21,12 @@ export function findUserBySessionId(database: Data, sessionIdToFind: string): Us
 
 export function findQuestionInQuizId(database: Data, quizId: number, questionId: number): QuestionBody | undefined {
   const quiz = findQuizWithId(database, quizId);
-  return quiz.questions.find(question => question.questionId === questionId);
+  return quiz?.questions.find(question => question.questionId === questionId);
 }
 
 export function findQuestionIndex(database: Data, quizId: number, questionId: number): number {
   const quiz = findQuizWithId(database, quizId);
-  return quiz.questions.findIndex(question => question.questionId === questionId);
-}
-
-export function durationSum(database: Data, quizId: number): number {
-  const quiz = findQuizWithId(database, quizId) as Quiz;
-  let durationSum: number = 0;
-  for (const question of quiz.questions) {
-    durationSum += question.duration;
-  }
-  return durationSum;
+  return quiz?.questions.findIndex(question => question.questionId === questionId) as number;
 }
 
 export function validAnswers(questionBody: QuestionBody): boolean | ErrorMessage {
@@ -57,18 +48,38 @@ export function validAnswers(questionBody: QuestionBody): boolean | ErrorMessage
   }
   return true;
 }
-/* export function findQuizBySessionId(sessionIdToFind: string): User | undefined {
-  return getData().quizzes.find(q =>
-      q.token.some(token => token.sessionId === sessionIdToFind)
-  );
+
+export function validQuestion(
+  questionBody: QuestionBody,
+  totalDuration: number
+): boolean | ErrorMessage {
+  if (questionBody.question.length > 50) {
+    return { statusCode: 400, error: 'Question string is greater than 50 characters' };
+  } else if (questionBody.question.length < 5) {
+    return { statusCode: 400, error: 'Question string is less than 5 characters' };
+  } else if (questionBody.answers.length < 2) {
+    return { statusCode: 400, error: 'There are less than 2 answers' };
+  } else if (questionBody.answers.length > 6) {
+    return { statusCode: 400, error: 'There are more than 6 answers' };
+  } else if (questionBody.duration < 0) {
+    return { statusCode: 400, error: 'Duration is negative' };
+  } else if (totalDuration > 180) {
+    return { statusCode: 400, error: 'Total duration is more than 3 min' };
+  } else if (questionBody.points < 1) {
+    return { statusCode: 400, error: 'Point is less than 1' };
+  } else if (questionBody.points > 10) {
+    return { statusCode: 400, error: 'Point is greater than 10' };
+  } else if (typeof validAnswers(questionBody) === 'object') {
+    return validAnswers(questionBody) as ErrorMessage;
+  }
+  return true;
 }
-*/
 
 // this function is the helper function of the adminQuizTrashEmpty, to determine if the given quiz array
 // is exist in trash or quizzesStore and creator is token owner
 export function isQuizExistWithCorrectCreator(token: string, quizIds: string): boolean {
   const data = getData();
-  const UserId = findUserBySessionId(data, token).userId;
+  const UserId = findUserBySessionId(data, token)?.userId;
   const quizIdArray: number[] = JSON.parse(quizIds);
   for (const quizId of quizIdArray) {
     const isExistInTrash = data.trash.find(quiz => quiz.quizId === quizId);
@@ -79,7 +90,7 @@ export function isQuizExistWithCorrectCreator(token: string, quizIds: string): b
       return false;
     }
     const quiz = isExistInTrash || isExistInQuizzesStore;
-    if (quiz.creatorId !== UserId) {
+    if (quiz?.creatorId !== UserId) {
       return false;
     }
   }

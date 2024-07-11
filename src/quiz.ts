@@ -374,3 +374,43 @@ export function adminQuizTransfer(sessionId: string, quizId: number, newOwnerEma
   setData(database);
   return {};
 }
+
+export function adminQuizQuestionDuplicate(
+  token: string,
+  quizId: number,
+  questionId: number
+): ErrorMessage | { newQuestionId: number } {
+  const database = getData();
+  const user = findUserBySessionId(database, token);
+
+  if (!user) {
+    return { statusCode: 401, error: 'Token is not valid.' };
+  }
+
+  const quiz = findQuizWithId(database, quizId);
+  if (!quiz) {
+    return { statusCode: 403, error: `Quiz with ID '${quizId}' not found` };
+  }
+
+  if (quiz.creatorId !== user.userId) {
+    return { statusCode: 403, error: 'User is not the owner of the quiz.' };
+  }
+
+  if (!quiz.questions) {
+    quiz.questions = [];
+  }
+
+  const question = quiz.questions.find(q => q.questionId === questionId);
+  if (!question) {
+    return { statusCode: 400, error: 'Question ID does not refer to a valid question within this quiz.' };
+  }
+
+  const newQuestionId = quiz.questions.length + 1;
+  const newQuestion: QuestionBody = { ...question, questionId: newQuestionId };
+  quiz.questions.splice(quiz.questions.indexOf(question) + 1, 0, newQuestion);
+
+  quiz.timeLastEdited = Math.floor(Date.now() / 1000);
+  setData(database);
+
+  return { newQuestionId };
+}

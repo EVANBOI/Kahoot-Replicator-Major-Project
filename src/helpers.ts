@@ -26,7 +26,7 @@ export function findQuestionInQuizId(database: Data, quizId: number, questionId:
 
 export function findQuestionIndex(database: Data, quizId: number, questionId: number): number {
   const quiz = findQuizWithId(database, quizId);
-  return quiz?.questions.findIndex(question => question.questionId === questionId);
+  return quiz?.questions.findIndex(question => question.questionId === questionId) as number;
 }
 
 export function validAnswers(questionBody: QuestionBody): boolean | ErrorMessage {
@@ -74,13 +74,6 @@ export function validQuestion(
   }
   return true;
 }
-
-/* export function findQuizBySessionId(sessionIdToFind: string): User | undefined {
-  return getData().quizzes.find(q =>
-      q.token.some(token => token.sessionId === sessionIdToFind)
-  );
-}
-*/
 
 // this function is the helper function of the adminQuizTrashEmpty, to determine if the given quiz array
 // is exist in trash or quizzesStore and creator is token owner

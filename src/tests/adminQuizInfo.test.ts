@@ -67,7 +67,8 @@ describe('success tests', () => {
         timeCreated: expect.any(Number),
         timeLastEdited: expect.any(Number),
         description: VALID_QUIZ_CREATE_INPUTS_1.DESCRIPTION,
-        questions: []
+        questions: [],
+        duration: expect.any(Number)
       }
     });
   });

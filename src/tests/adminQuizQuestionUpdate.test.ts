@@ -1,3 +1,4 @@
+import { nodeModuleNameResolver } from 'typescript';
 import {
   validQuestion1,
   ERROR401,
@@ -326,6 +327,7 @@ describe('Successful Updates', () => {
     const result = adminQuizInfo(sessionId1, quizId1);
     expect(result.jsonBody).toStrictEqual({
       quizId: quizId1,
+      duration: expect.any(Number),
       name: 'Quiz 1',
       timeCreated: expect.any(Number),
       timeLastEdited: expect.any(Number),
@@ -361,6 +363,7 @@ describe('Successful Updates', () => {
     const quizInfo = adminQuizInfo(sessionId1, quizId1);
     expect(quizInfo.jsonBody).toStrictEqual({
       quizId: quizId1,
+      duration: expect.any(Number),
       name: 'Quiz 1',
       timeCreated: expect.any(Number),
       timeLastEdited: expect.any(Number),
@@ -389,6 +392,7 @@ describe('Successful Updates', () => {
     const quizInfo = adminQuizInfo(sessionId1, quizId1);
     expect(quizInfo.jsonBody).toStrictEqual({
       quizId: quizId1,
+      duration: expect.any(Number),
       name: 'Quiz 1',
       timeCreated: expect.any(Number),
       timeLastEdited: expect.any(Number),

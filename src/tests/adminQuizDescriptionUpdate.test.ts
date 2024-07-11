@@ -113,7 +113,8 @@ describe('Successful function run', () => {
           timeCreated: expect.any(Number),
           timeLastEdited: expect.any(Number),
           description: 'changed',
-          questions: []
+          questions: [],
+          duration: expect.any(Number)
         }
       });
     });
@@ -135,7 +136,8 @@ describe('Successful function run', () => {
           timeCreated: expect.any(Number),
           timeLastEdited: expect.any(Number),
           description: '',
-          questions: []
+          questions: [],
+          duration: expect.any(Number)
         }
       });
     });
@@ -153,7 +155,8 @@ describe('Successful function run', () => {
           timeCreated: expect.any(Number),
           timeLastEdited: expect.any(Number),
           description: 'changed twice',
-          questions: []
+          questions: [],
+          duration: expect.any(Number)
         }
       });
     });
@@ -169,7 +172,8 @@ describe('Successful function run', () => {
           timeCreated: expect.any(Number),
           timeLastEdited: expect.any(Number),
           description: 'changed quiz 2',
-          questions: []
+          questions: [],
+          duration: expect.any(Number)
         }
       });
     });
@@ -185,7 +189,8 @@ describe('Successful function run', () => {
           timeCreated: expect.any(Number),
           timeLastEdited: expect.any(Number),
           description: 'changed quiz 3',
-          questions: []
+          questions: [],
+          duration: expect.any(Number)
         }
       });
     });

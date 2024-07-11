@@ -17,7 +17,8 @@ import {
   adminCreateQuizQuestion,
   adminQuizTrashView,
   adminQuizTransfer,
-  adminQuizQuestionMove
+  adminQuizQuestionMove,
+  adminQuizQuestionDuplicate
 } from './quiz';
 import {
   adminAuthLogin,
@@ -226,6 +227,17 @@ app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
     return res.status(result.statusCode).json({ error: result.error });
   }
   return res.json(result);
+});
+
+app.post('/v1/admin/quiz/:quizid/question/:questionid/duplicate', (req: Request, res: Response) => {
+  const { token } = req.body;
+  const quizId = parseInt(req.params.quizid);
+  const questionId = parseInt(req.params.questionid);
+  const result = adminQuizQuestionDuplicate(token, quizId, questionId);
+  if ('error' in result) {
+    return res.status(result.statusCode).json({ error: result.error });
+  }
+  return res.status(200).json(result);
 });
 
 app.put('/v1/admin/quiz/:quizid/question/:questionid/move', (req: Request, res: Response) => {

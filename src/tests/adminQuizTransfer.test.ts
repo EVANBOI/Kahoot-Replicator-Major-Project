@@ -6,33 +6,15 @@ import {
   clear
 } from '../wrappers';
 import { ok } from '../helpers';
-
-const VALID_INPUTS = {
-  EMAIL: 'changli@unsw.edu.au',
-  PASSWORD: 'Password123',
-  FIRSTNAME: 'Chang',
-  LASTNAME: 'Li',
-};
-
-const ERROR400 = {
-  statusCode: 400,
-  jsonBody: { error: expect.any(String) },
-};
-
-const ERROR401 = {
-  statusCode: 401,
-  jsonBody: { error: expect.any(String) },
-};
-
-const ERROR403 = {
-  statusCode: 403,
-  jsonBody: { error: expect.any(String) },
-};
-
-const SUCCESSFUL_TRANSFER = {
-  statusCode: 200,
-  jsonBody: {},
-};
+import {
+  VALID_USER_REGISTER_INPUTS_1,
+  VALID_USER_REGISTER_INPUTS_2,
+  VALID_QUIZ_CREATE_INPUTS_1,
+  ERROR400,
+  ERROR401,
+  ERROR403,
+  SUCCESSFUL_TRANSFER
+} from '../testConstants';
 
 let sessionId: string;
 let quizId: number;
@@ -45,14 +27,14 @@ beforeEach(() => {
 
 describe('adminQuizTransfer tests', () => {
   beforeEach(() => {
-    const registerResponse = adminAuthRegister(VALID_INPUTS.EMAIL, VALID_INPUTS.PASSWORD, VALID_INPUTS.FIRSTNAME, VALID_INPUTS.LASTNAME);
+    const registerResponse = adminAuthRegister(VALID_USER_REGISTER_INPUTS_1.EMAIL, VALID_USER_REGISTER_INPUTS_1.PASSWORD, VALID_USER_REGISTER_INPUTS_1.FIRSTNAME, VALID_USER_REGISTER_INPUTS_1.LASTNAME);
     sessionId = registerResponse.jsonBody.token;
 
-    const quizCreateResponse = adminQuizCreate(sessionId, 'My Quiz', 'This is a description.');
+    const quizCreateResponse = adminQuizCreate(sessionId, VALID_QUIZ_CREATE_INPUTS_1.NAME, VALID_QUIZ_CREATE_INPUTS_1.DESCRIPTION);
     quizId = quizCreateResponse.jsonBody.quizId;
 
-    const newUserRegisterResponse = adminAuthRegister('newuser@unsw.edu.au', 'Password123', 'New', 'User');
-    newOwnerEmail = 'newuser@unsw.edu.au';
+    const newUserRegisterResponse = adminAuthRegister(VALID_USER_REGISTER_INPUTS_2.EMAIL, VALID_USER_REGISTER_INPUTS_2.PASSWORD, VALID_USER_REGISTER_INPUTS_2.FIRSTNAME, VALID_USER_REGISTER_INPUTS_2.LASTNAME);
+    newOwnerEmail = VALID_USER_REGISTER_INPUTS_2.EMAIL;
     validToken = newUserRegisterResponse.jsonBody.token;
   });
 
@@ -72,12 +54,12 @@ describe('adminQuizTransfer tests', () => {
   });
 
   test('User email is the current logged in user', () => {
-    const result = adminQuizTransfer(sessionId, quizId, VALID_INPUTS.EMAIL);
+    const result = adminQuizTransfer(sessionId, quizId, VALID_USER_REGISTER_INPUTS_1.EMAIL);
     expect(result).toStrictEqual(ERROR400);
   });
 
   test('Quiz ID refers to a quiz that has a name that is already used by the target user', () => {
-    adminQuizCreate(validToken, 'My Quiz', 'Another description.');
+    adminQuizCreate(validToken, VALID_QUIZ_CREATE_INPUTS_1.NAME, 'Another description.');
     const result = adminQuizTransfer(sessionId, quizId, newOwnerEmail);
     expect(result).toStrictEqual(ERROR400);
   });
@@ -94,11 +76,11 @@ describe('adminQuizTransfer tests', () => {
       statusCode: 200,
       jsonBody: {
         quizId: expect.any(Number),
-        name: 'My Quiz',
+        name: VALID_QUIZ_CREATE_INPUTS_1.NAME,
         questions: expect.any(Array),
         timeCreated: expect.any(Number),
         timeLastEdited: expect.any(Number),
-        description: 'This is a description.',
+        description: VALID_QUIZ_CREATE_INPUTS_1.DESCRIPTION,
         duration: expect.any(Number)
       },
     });

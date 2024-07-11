@@ -6,12 +6,9 @@ import {
 } from './helpers';
 import {
   CreateQuestionReturn,
-  EmptyObject, ErrorMessage, QuestionBody, Quiz, QuizIdObject, QuizInfoResult, TrashViewDetails, QuizRestoreResult, QuizQuestionDeleteResult, UserUpdateResult,   QuizListDetails, QuizRemoveResult, QuizTrashEmptyResult, PositionWithTokenObj, QuizQuestionMoveResult
+  EmptyObject, ErrorMessage, QuestionBody, Quiz, QuizIdObject, QuizInfoResult, TrashViewDetails, QuizRestoreResult, QuizQuestionDeleteResult, UserUpdateResult, QuizListDetails, QuizRemoveResult, QuizTrashEmptyResult, PositionWithTokenObj, QuizQuestionMoveResult
 
 } from './types';
-
-
-
 
 import ShortUniqueId from 'short-unique-id';
 import { randomColor } from 'seed-to-color';
@@ -237,8 +234,6 @@ export function adminQuizDescriptionUpdate(
   return {};
 }
 
-
-
 /**
  * Create questions for quizzes given the contents of the question and
  * generate unique ids for the questions as well as the answers inside it.
@@ -266,7 +261,6 @@ export function adminCreateQuizQuestion(
     return { statusCode: 403, error: 'User is not an owner of quiz' };
   }
   const totalDuration = quiz.duration + questionBody.duration;
-  console.log('duration is ', totalDuration);
   if (questionBody.question.length > 50) {
     return { statusCode: 400, error: 'Question string is greater than 50 characters' };
   } else if (questionBody.question.length < 5) {
@@ -548,7 +542,6 @@ export function adminQuizQuestionUpdate(
   return { };
 }
 
-
 /**
  * move the quiz position
  *
@@ -599,8 +592,6 @@ export function adminQuizQuestionMove(
 
   return {};
 }
-
-
 
 /**
  * Restores a quiz from the trash.

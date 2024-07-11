@@ -261,7 +261,6 @@ export function adminCreateQuizQuestion(
     return { statusCode: 403, error: 'User is not an owner of quiz' };
   }
   const totalDuration = quiz.duration + questionBody.duration;
-  console.log('duration is ', totalDuration);
   if (questionBody.question.length > 50) {
     return { statusCode: 400, error: 'Question string is greater than 50 characters' };
   } else if (questionBody.question.length < 5) {

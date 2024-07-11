@@ -405,11 +405,13 @@ export function adminQuizQuestionDuplicate(
     return { statusCode: 400, error: 'Question ID does not refer to a valid question within this quiz.' };
   }
 
-  const newQuestionId = quiz.questions.length + 1;
-  const newQuestion: QuestionBody = { ...question, questionId: newQuestionId };
-  quiz.questions.splice(quiz.questions.indexOf(question) + 1, 0, newQuestion);
+  const newQuestionId = Date.now() + Math.floor(Math.random() * 1000);
+  const timeLastEdited = Math.floor(Date.now() / 1000);
+  const newQuestion = { ...question, questionId: newQuestionId };
 
-  quiz.timeLastEdited = Math.floor(Date.now() / 1000);
+  quiz.questions.push(newQuestion);
+  quiz.timeLastEdited = timeLastEdited;
+
   setData(database);
 
   return { newQuestionId };

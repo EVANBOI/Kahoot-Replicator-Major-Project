@@ -56,6 +56,11 @@ export const SUCCESSFUL_TRANSFER = {
   jsonBody: {},
 };
 
+export const SUCCESSFUL_UPDATE = {
+  statusCode: 200,
+  jsonBody: {},
+};
+
 // here below for the error return consts
 export const ERROR400 = {
   statusCode: 400,

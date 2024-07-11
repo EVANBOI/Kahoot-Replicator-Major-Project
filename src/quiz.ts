@@ -306,13 +306,12 @@ export function adminQuizTrashView(sessionId: string): TrashViewDetails {
 }
 
 export function adminQuizQuestionUpdate(
-  quizId: number, 
-  questionId: number, 
+  quizId: number,
+  questionId: number,
   questionBody: QuestionBody,
   token: string
 ): UserUpdateResult {
-
-  const database = getData(); 
+  const database = getData();
   const user = findUserBySessionId(database, token);
 
   if (!user) {
@@ -327,23 +326,23 @@ export function adminQuizQuestionUpdate(
     return {
       statusCode: 403,
       error: 'Quiz does not exist'
-    }
+    };
   } else if (quiz.creatorId !== user.userId) {
     return {
       statusCode: 403,
       error: 'User is not an owner of this quiz'
-    }
+    };
   }
 
-  let question = quiz.questions.find(
+  const question = quiz.questions.find(
     question => question.questionId === questionId
-  )
+  );
 
   if (!question) {
     return {
       statusCode: 400,
       error: 'Question Id does not refer to a valid question within the quiz'
-    }
+    };
   }
 
   const totalDuration = durationSum(database, quizId) + questionBody.duration - question.duration;
@@ -352,44 +351,44 @@ export function adminQuizQuestionUpdate(
     return {
       statusCode: 400,
       error: 'Question string is less than 5 characters'
-    }
+    };
   } else if (questionBody.question.length > 50) {
     return {
       statusCode: 400,
       error: 'Question string is greater than 50 characters'
-    }
+    };
   } else if (questionBody.answers.length > 6) {
     return {
-      statusCode: 400, 
+      statusCode: 400,
       error: 'Question has more than 6 answers'
-    }
+    };
   } else if (questionBody.answers.length < 2) {
     return {
-      statusCode: 400, 
+      statusCode: 400,
       error: 'Question has less than 2 answers'
-    }
+    };
   } else if (questionBody.duration < 0) {
     return {
-      statusCode: 400, 
+      statusCode: 400,
       error: 'Question duration is negative'
-    }
+    };
   } else if (totalDuration > 180) {
     return {
       statusCode: 400,
       error: 'Total duration exceeds 3 minutes'
-    }
+    };
   } else if (questionBody.points < 1) {
     return {
       statusCode: 400,
       error: 'The points awarded for the question are less than 1'
-    }
+    };
   } else if (questionBody.points > 10) {
     return {
       statusCode: 400,
       error: 'The points awarded for the question are greater than 10'
-    }
+    };
   } else if (typeof validAnswers(questionBody) === 'object') {
-    return validAnswers(questionBody) as ErrorMessage;      
+    return validAnswers(questionBody) as ErrorMessage;
   }
 
   question.question = questionBody.question;
@@ -398,7 +397,7 @@ export function adminQuizQuestionUpdate(
   console.log(questionBody);
   // question.answers = questionBody.answers.splice(0);
   console.log(question.answers);
-  
+
   // for (let i = 0; i < questionBody.answers.length; i++) {
   //   question.answers[i].answer = questionBody.answers[i].answer
   //   question.answers[i].correct = questionBody.answers[i].correct
@@ -407,7 +406,7 @@ export function adminQuizQuestionUpdate(
   question.answers = questionBody.answers.map(ans => ({
     ...ans
   }));
-  
+
   for (const ans of question.answers) {
     ans.answerId = parseInt(uid.rnd());
     ans.colour = randomColor(ans.answerId);

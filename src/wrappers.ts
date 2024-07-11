@@ -170,13 +170,12 @@ export const adminQuizRemove = (token: string, quizId: number) => {
 };
 
 export const adminQuizQuestionUpdate = (
-  quizid: number, 
+  quizid: number,
   questionid: number,
   questionBody: QuestionBody,
   token: string
 ) => {
-  return requestHelper('PUT', 
-    `/v1/admin/quiz/${quizid}/question/${questionid}`, 
-    { questionBody, token })
-}
-
+  return requestHelper('PUT',
+    `/v1/admin/quiz/${quizid}/question/${questionid}`,
+    { questionBody, token });
+};

@@ -47,7 +47,7 @@ export const QUIZ_TRASH_EMPTYED_SUCCESSFUL = {
 export const QUIZ_QUESTION_MOVED_SUCCESSFUL = {
   statusCode: 200,
   jsonBody: {}
-}
+};
 
 // here below for the error return consts
 export const ERROR400 = {

@@ -1,6 +1,6 @@
 import { getData, setData } from './dataStore';
 import {
-  durationSum, findQuizWithId, findUserBySessionId,
+  findQuizWithId, findUserBySessionId,
   validAnswers, isQuizExistWithCorrectCreator, isAllExistInTrash
 } from './helpers';
 import {
@@ -80,7 +80,8 @@ export function adminQuizCreate (
     timeCreated: timeStamp1,
     timeLastEdited: timeStamp2,
     description: description,
-    questions: []
+    questions: [],
+    duration: 0
   });
   setData(database);
 
@@ -152,7 +153,8 @@ export function adminQuizInfo (sessionId: string, quizId: number): QuizInfoResul
     timeCreated: quiz.timeCreated,
     timeLastEdited: quiz.timeLastEdited,
     description: quiz.description,
-    questions: quiz.questions
+    questions: quiz.questions,
+    duration: quiz.duration
   };
 }
 
@@ -254,7 +256,7 @@ export function adminCreateQuizQuestion(
   } else if (quiz.creatorId !== user.userId) {
     return { statusCode: 403, error: 'User is is not owner of quiz' };
   }
-  const totalDuration = durationSum(database, quizId) + questionBody.duration;
+  const totalDuration = quiz.duration + questionBody.duration;
   console.log('duration is ', totalDuration);
   if (questionBody.question.length > 50) {
     return { statusCode: 400, error: 'Question string is greater than 50 characters' };
@@ -283,6 +285,7 @@ export function adminCreateQuizQuestion(
   }
   quiz.questions.push(questionBody);
   quiz.timeLastEdited = Math.floor(Date.now() / 1000);
+  quiz.duration += questionBody.duration;
   setData(database);
   return { questionId: questionId };
 }

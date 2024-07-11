@@ -1,13 +1,15 @@
 import { getData, setData } from './dataStore';
+
 import {
   findQuizWithId, findUserBySessionId, validAnswers, isQuizExistWithCorrectCreator,
   isAllExistInTrash, durationSum, findQuestionInQuizId, findQuestionIndex
 } from './helpers';
 import {
   CreateQuestionReturn,
-  EmptyObject, ErrorMessage, QuestionBody, Quiz, QuizIdObject, QuizInfoResult, TrashViewDetails,
-  QuizListDetails, QuizRemoveResult, QuizTrashEmptyResult, UserUpdateResult, PositionWithTokenObj, QuizQuestionMoveResult
+  EmptyObject, ErrorMessage, QuestionBody, Quiz, QuizIdObject, QuizInfoResult, TrashViewDetails, QuizRestoreResult, QuizQuestionDeleteResult, UserUpdateResult, QuizListDetails, QuizRemoveResult, QuizTrashEmptyResult, PositionWithTokenObj, QuizQuestionMoveResult
+
 } from './types';
+
 import ShortUniqueId from 'short-unique-id';
 import { randomColor } from 'seed-to-color';
 const uid = new ShortUniqueId({ dictionary: 'number' });
@@ -259,7 +261,6 @@ export function adminCreateQuizQuestion(
     return { statusCode: 403, error: 'User is not an owner of quiz' };
   }
   const totalDuration = quiz.duration + questionBody.duration;
-  console.log('duration is ', totalDuration);
   if (questionBody.question.length > 50) {
     return { statusCode: 400, error: 'Question string is greater than 50 characters' };
   } else if (questionBody.question.length < 5) {
@@ -590,4 +591,79 @@ export function adminQuizQuestionMove(
   setData(database);
 
   return {};
+}
+
+/**
+ * Restores a quiz from the trash.
+ * @param token The session token of the user.
+ * @param quizId The ID of the quiz to be restored.
+ * @returns The result of the restore operation.
+ */
+export function adminQuizRestore(token: string, quizId: number): QuizRestoreResult {
+  const database = getData();
+  const user = findUserBySessionId(database, token);
+
+  if (!user) {
+    return { statusCode: 401, message: 'Token is empty or invalid.' };
+  }
+
+  const quizIndex = database.trash.findIndex(quiz => quiz.quizId === quizId);
+  if (quizIndex === -1) {
+    return { statusCode: 400, message: `Quiz ID '${quizId}' does not refer to a quiz in the trash.` };
+  }
+
+  const quiz = database.trash[quizIndex];
+  if (quiz.creatorId !== user.userId) {
+    return { statusCode: 403, message: `User is not the owner of quiz with ID '${quizId}'.` };
+  }
+
+  // Check if quiz name is already used by another active quiz
+  if (database.quizzes.some(activeQuiz => activeQuiz.name === quiz.name)) {
+    return { statusCode: 400, message: `Quiz name '${quiz.name}' is already used by another active quiz.` };
+  }
+
+  // Restore the quiz
+  quiz.timeLastEdited = Date.now();
+  database.quizzes.push(quiz);
+  database.trash.splice(quizIndex, 1);
+
+  setData(database);
+  return { statusCode: 200, message: '{}' };
+}
+
+/**
+ * Deletes a question from a quiz.
+ * @param token The session token of the user.
+ * @param quizId The ID of the quiz.
+ * @param questionId The ID of the question to be deleted.
+ * @returns The result of the delete operation.
+ */
+export function adminQuizQuestionDelete(token: string, quizId: number, questionId: number): QuizQuestionDeleteResult {
+  const database = getData();
+  const user = findUserBySessionId(database, token);
+
+  if (!user) {
+    return { statusCode: 401, message: 'Token is empty or invalid.' };
+  }
+
+  const quiz = findQuizWithId(database, quizId);
+  if (!quiz) {
+    return { statusCode: 403, message: `Quiz with ID '${quizId}' does not exist.` };
+  }
+
+  if (quiz.creatorId !== user.userId) {
+    return { statusCode: 403, message: `User is not the owner of quiz with ID '${quizId}'.` };
+  }
+
+  const questionIndex = quiz.questions.findIndex(question => question.questionId === questionId);
+  if (questionIndex === -1) {
+    return { statusCode: 400, message: `Question ID '${questionId}' does not refer to a valid question within quiz '${quizId}'.` };
+  }
+
+  // Delete the question
+  quiz.questions.splice(questionIndex, 1);
+  quiz.timeLastEdited = Date.now();
+
+  setData(database);
+  return { statusCode: 200, message: '{}' };
 }

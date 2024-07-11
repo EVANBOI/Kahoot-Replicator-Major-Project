@@ -15,11 +15,13 @@ import {
   adminQuizDescriptionUpdate,
   adminQuizRemove, adminQuizTrashEmpty,
   adminCreateQuizQuestion,
+  adminQuizRestore,
+  adminQuizQuestionDelete,
   adminQuizTrashView,
-  adminQuizQuestionUpdate,
+  adminQuizTransfer,
   adminQuizQuestionMove,
   adminQuizQuestionDuplicate,
-  adminQuizTransfer
+  adminQuizQuestionUpdate
 } from './quiz';
 import {
   adminAuthLogin,
@@ -118,7 +120,6 @@ app.get('/v1/admin/user/details', (req: Request, res: Response) => {
   res.status(200).json(result);
 });
 
-// This is the get admin userdetails method from the swagger
 app.delete('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
   const token = req.query.token as string;
   const id = parseInt(req.params.quizid);
@@ -211,6 +212,30 @@ app.put('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Respo
   res.json(result);
 });
 
+app.post('/v1/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
+  const token = req.body.token as string;
+  const id = parseInt(req.params.quizid);
+  const result = adminQuizRestore(token, id);
+
+  if (result.statusCode !== 200) {
+    res.status(result.statusCode).json({ error: result.message });
+  } else {
+    res.status(200).json({});
+  }
+});
+
+app.delete('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
+  const token = req.query.token as string;
+  const quizId = parseInt(req.params.quizid);
+  const questionId = parseInt(req.params.questionid);
+  const result = adminQuizQuestionDelete(token, quizId, questionId);
+
+  if (result.statusCode !== 200) {
+    res.status(result.statusCode).json({ error: result.message });
+  } else {
+    res.status(200).json({});
+  }
+});
 app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
   const { token } = req.body;
   const result = adminAuthLogout(token);

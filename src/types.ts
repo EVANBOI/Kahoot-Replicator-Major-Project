@@ -142,3 +142,12 @@ export type PositionWithTokenObj = {
     token: string,
     newPosition: number
 }
+export type QuizRestoreResult = {
+    statusCode: number,
+    message: string
+  };
+
+export type QuizQuestionDeleteResult = {
+    statusCode: number,
+    message: string
+  };

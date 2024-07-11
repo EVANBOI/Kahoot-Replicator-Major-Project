@@ -7,3 +7,5 @@ Assumption 6. In the description of quizzes, it is assumed that special characte
 Assumption 7: The answer options when creating quiz questions cannot be all wrong 
               but they can be all correct.
 Assumption 8: When updating a quiz question; the answerId for each question gets updated.
+Assumption 9: When we move question to position, if all parameters are valid, we swap the question 
+              we want to move and the position question.

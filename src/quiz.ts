@@ -6,12 +6,9 @@ import {
 } from './helpers';
 import {
   CreateQuestionReturn,
-  EmptyObject, ErrorMessage, QuestionBody, Quiz, QuizIdObject, QuizInfoResult, TrashViewDetails, QuizRestoreResult, QuizQuestionDeleteResult, UserUpdateResult,   QuizListDetails, QuizRemoveResult, QuizTrashEmptyResult, PositionWithTokenObj, QuizQuestionMoveResult
+  EmptyObject, ErrorMessage, QuestionBody, Quiz, QuizIdObject, QuizInfoResult, TrashViewDetails, QuizRestoreResult, QuizQuestionDeleteResult, UserUpdateResult, QuizListDetails, QuizRemoveResult, QuizTrashEmptyResult, PositionWithTokenObj, QuizQuestionMoveResult
 
 } from './types';
-
-
-
 
 import ShortUniqueId from 'short-unique-id';
 import { randomColor } from 'seed-to-color';
@@ -236,8 +233,6 @@ export function adminQuizDescriptionUpdate(
   setData(database);
   return {};
 }
-
-
 
 /**
  * Create questions for quizzes given the contents of the question and
@@ -548,7 +543,6 @@ export function adminQuizQuestionUpdate(
   return { };
 }
 
-
 /**
  * move the quiz position
  *
@@ -599,8 +593,6 @@ export function adminQuizQuestionMove(
 
   return {};
 }
-
-
 
 /**
  * Restores a quiz from the trash.

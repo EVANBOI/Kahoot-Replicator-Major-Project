@@ -133,7 +133,6 @@ export type TrashViewDetails = ErrorMessage | {
     }[]
 }
 
-
 export type QuizTrashEmptyResult = EmptyObject | ErrorMessage;
 
 export type QuizQuestionMoveResult = EmptyObject | ErrorMessage;
@@ -148,8 +147,7 @@ export type QuizRestoreResult = {
     message: string
   };
 
-  export type QuizQuestionDeleteResult = {
+export type QuizQuestionDeleteResult = {
     statusCode: number,
     message: string
   };
-  

@@ -1,4 +1,4 @@
-import { adminQuizRestore, adminAuthRegister, clear, adminQuizRemove } from '../wrappers';
+import { adminQuizRestore, adminAuthRegister, clear, adminQuizRemove, adminQuizInfo } from '../wrappers';
 import { adminQuizCreate } from '../quiz';
 import { SessionIdObject, QuizIdObject } from '../types';
 
@@ -18,8 +18,8 @@ const VALID_USER_INPUT2 = {
 // Clear the state before each test
 let sessionId: string;
 let sessionId2: string;
-let validQuizId2: number;
 let validQuizId: number;
+let validQuizId2: number;
 
 beforeEach(() => {
   clear();
@@ -39,52 +39,62 @@ beforeEach(() => {
   validQuizId2 = (adminQuizCreate(sessionId2, 'dummyquiz2', 'This is a dummy quiz for testing') as QuizIdObject).quizId;
 });
 
-test('should successfully restore a quiz', () => {
-  // Move the quiz to trash before restoring
-  adminQuizRemove(sessionId, validQuizId);
+describe('Success cases', () => {
+  test('should successfully restore a quiz', () => {
+    // Move the quiz to trash before restoring
+    adminQuizRemove(sessionId, validQuizId);
 
-  const result = adminQuizRestore(sessionId, validQuizId);
-  expect(result).toEqual({
-    jsonBody: {},
-    statusCode: 200,
+    const result = adminQuizRestore(sessionId, validQuizId);
+    expect(result).toEqual({
+      jsonBody: {},
+      statusCode: 200,
+    });
+
+    // Verify the quiz is actually restored
+    const quizInfo = adminQuizInfo(sessionId, validQuizId);
+    expect(quizInfo.statusCode).toBe(200);
+    expect(quizInfo.jsonBody.quizId).toBe(validQuizId);
+    expect(quizInfo.jsonBody.name).toBe('dummyquiz');
   });
 });
 
-test('should return an error when restoring a quiz with an invalid sessionId', () => {
-  // Move the quiz to trash before restoring
-  adminQuizRemove(sessionId, validQuizId);
+describe('Failure cases', () => {
+  test('should return an error when restoring a quiz with an invalid sessionId', () => {
+    // Move the quiz to trash before restoring
+    adminQuizRemove(sessionId, validQuizId);
 
-  const result = adminQuizRestore(sessionId + 'invalid', validQuizId);
-  expect(result).toStrictEqual({
-    jsonBody: {
-      error: expect.any(String),
-    },
-    statusCode: 401,
+    const result = adminQuizRestore(sessionId + 'invalid', validQuizId);
+    expect(result).toStrictEqual({
+      jsonBody: {
+        error: expect.any(String),
+      },
+      statusCode: 401,
+    });
   });
-});
 
-test('should return an error when restoring a quiz with an invalid quizId', (): void => {
-  // Move the quiz to trash before restoring
-  adminQuizRemove(sessionId, validQuizId);
+  test('should return an error when restoring a quiz with an invalid quizId', (): void => {
+    // Move the quiz to trash before restoring
+    adminQuizRemove(sessionId, validQuizId);
 
-  const result = adminQuizRestore(sessionId, validQuizId + 1029);
-  expect(result).toStrictEqual({
-    jsonBody: {
-      error: expect.any(String),
-    },
-    statusCode: 400,
+    const result = adminQuizRestore(sessionId, validQuizId + 1029);
+    expect(result).toStrictEqual({
+      jsonBody: {
+        error: expect.any(String),
+      },
+      statusCode: 400,
+    });
   });
-});
 
-test('should return an error when restoring a quiz that the user does not own', (): void => {
-  // Move the quiz to trash before restoring
-  adminQuizRemove(sessionId2, validQuizId2);
+  test('should return an error when restoring a quiz that the user does not own', (): void => {
+    // Move the quiz to trash before restoring
+    adminQuizRemove(sessionId2, validQuizId2);
 
-  const result = adminQuizRestore(sessionId, validQuizId2);
-  expect(result).toStrictEqual({
-    jsonBody: {
-      error: expect.any(String),
-    },
-    statusCode: 403,
+    const result = adminQuizRestore(sessionId, validQuizId2);
+    expect(result).toStrictEqual({
+      jsonBody: {
+        error: expect.any(String),
+      },
+      statusCode: 403,
+    });
   });
 });

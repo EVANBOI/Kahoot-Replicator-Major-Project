@@ -12,6 +12,7 @@ import ShortUniqueId from 'short-unique-id';
 import { randomColor } from 'seed-to-color';
 const uid = new ShortUniqueId({ dictionary: 'number' });
 const questionUid = new ShortUniqueId({ dictionary: 'number' });
+const quizUid = new ShortUniqueId({ dictionary: 'number' });
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
  *
@@ -73,7 +74,7 @@ export function adminQuizCreate (
 
   const timeStamp1 = Math.floor(Date.now() / 1000);
   const timeStamp2 = Math.floor(Date.now() / 1000);
-  const id = database.quizzes.length + 1;
+  const id = parseInt(quizUid.seq());
   database.quizzes.push({
     creatorId: user.userId,
     quizId: id,

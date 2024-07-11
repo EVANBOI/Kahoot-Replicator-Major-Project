@@ -400,7 +400,6 @@ export function adminQuizQuestionDuplicate(
   quizId: number,
   questionId: number
 ): ErrorMessage | { newQuestionId: number } {
-
   const database = getData();
   const user = findUserBySessionId(database, token);
 
@@ -440,8 +439,6 @@ export function adminQuizQuestionDuplicate(
 
   return { newQuestionId };
 }
-
-
 
 export function adminQuizQuestionUpdate(
   quizId: number,

@@ -231,8 +231,8 @@ app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
 app.put('/v1/admin/quiz/:quizid/question/:questionid/move', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
   const questionId = parseInt(req.params.questionid);
-  const { moveinfo } = req.body;
-  const result = adminQuizQuestionMove(quizId, questionId, moveinfo);
+  const { moveInfo } = req.body;
+  const result = adminQuizQuestionMove(quizId, questionId, moveInfo);
   if ('error' in result) {
     return res.status(result.statusCode).json({ error: result.error });
   }

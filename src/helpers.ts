@@ -18,6 +18,17 @@ export function findUserBySessionId(database: Data, sessionIdToFind: string): Us
     user.tokens.some(tokens => tokens.token === sessionIdToFind)
   );
 }
+
+export function findQuestionInQuizId(database: Data, quizId: number, questionId: number): QuestionBody | undefined {
+  const quiz = findQuizWithId(database, quizId);
+  return quiz.questions.find(question => question.questionId === questionId);
+}
+
+export function findQuestionIndex(database: Data, quizId: number, questionId: number): number {
+  const quiz = findQuizWithId(database, quizId);
+  return quiz.questions.findIndex(question => question.questionId === questionId);
+}
+
 export function durationSum(database: Data, quizId: number): number {
   const quiz = findQuizWithId(database, quizId) as Quiz;
   let durationSum: number = 0;

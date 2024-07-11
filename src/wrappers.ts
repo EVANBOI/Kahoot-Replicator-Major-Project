@@ -187,6 +187,6 @@ export const adminQuizTransfer = (
 export const adminQuizQuestionMove = (
   quizid: number, 
   questionid: number, 
-  moveinfo: PositionWithTokenObj) => {
-  return requestHelper('PUT', `/v1/admin/quiz/${quizid}/question/${questionid}/move`, { moveinfo });
+  moveInfo: PositionWithTokenObj) => {
+  return requestHelper('PUT', `/v1/admin/quiz/${quizid}/question/${questionid}/move`, { moveInfo });
 };

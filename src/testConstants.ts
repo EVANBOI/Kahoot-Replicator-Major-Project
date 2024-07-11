@@ -51,6 +51,11 @@ export const SUCCESSFUL_DUPLICATE = {
   },
 };
 
+export const SUCCESSFUL_TRANSFER = {
+  statusCode: 200,
+  jsonBody: {},
+};
+
 // here below for the error return consts
 export const ERROR400 = {
   statusCode: 400,

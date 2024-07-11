@@ -1,5 +1,5 @@
 import { getData } from './dataStore';
-import { Data, ErrorMessage, QuestionBody, User, Quiz } from './types';
+import { Data, ErrorMessage, QuestionBody, User } from './types';
 
 export function findUserWithId(authUserId: number) {
   return getData().users.find(user => user.userId === authUserId);
@@ -45,6 +45,32 @@ export function validAnswers(questionBody: QuestionBody): boolean | ErrorMessage
   const correctExists = questionBody.answers.some(ans => ans.correct === true);
   if (!correctExists) {
     return { statusCode: 400, error: 'There are no correct answers' };
+  }
+  return true;
+}
+
+export function validQuestion(
+  questionBody: QuestionBody,
+  totalDuration: number
+): boolean | ErrorMessage {
+  if (questionBody.question.length > 50) {
+    return { statusCode: 400, error: 'Question string is greater than 50 characters' };
+  } else if (questionBody.question.length < 5) {
+    return { statusCode: 400, error: 'Question string is less than 5 characters' };
+  } else if (questionBody.answers.length < 2) {
+    return { statusCode: 400, error: 'There are less than 2 answers' };
+  } else if (questionBody.answers.length > 6) {
+    return { statusCode: 400, error: 'There are more than 6 answers' };
+  } else if (questionBody.duration < 0) {
+    return { statusCode: 400, error: 'Duration is negative' };
+  } else if (totalDuration > 180) {
+    return { statusCode: 400, error: 'Total duration is more than 3 min' };
+  } else if (questionBody.points < 1) {
+    return { statusCode: 400, error: 'Point is less than 1' };
+  } else if (questionBody.points > 10) {
+    return { statusCode: 400, error: 'Point is greater than 10' };
+  } else if (typeof validAnswers(questionBody) === 'object') {
+    return validAnswers(questionBody) as ErrorMessage;
   }
   return true;
 }

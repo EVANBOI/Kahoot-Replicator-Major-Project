@@ -1,7 +1,8 @@
 import { getData, setData } from './dataStore';
 import {
-  findQuizWithId, findUserBySessionId, validAnswers, isQuizExistWithCorrectCreator,
-  isAllExistInTrash, findQuestionInQuizId, findQuestionIndex
+  findQuizWithId, findUserBySessionId, isQuizExistWithCorrectCreator,
+  isAllExistInTrash, findQuestionInQuizId, findQuestionIndex,
+  validQuestion
 } from './helpers';
 import {
   CreateQuestionReturn,
@@ -258,24 +259,8 @@ export function adminCreateQuizQuestion(
     return { statusCode: 403, error: 'User is not an owner of quiz' };
   }
   const totalDuration = quiz.duration + questionBody.duration;
-  if (questionBody.question.length > 50) {
-    return { statusCode: 400, error: 'Question string is greater than 50 characters' };
-  } else if (questionBody.question.length < 5) {
-    return { statusCode: 400, error: 'Question string is less than 5 characters' };
-  } else if (questionBody.answers.length < 2) {
-    return { statusCode: 400, error: 'There are less than 2 answers' };
-  } else if (questionBody.answers.length > 6) {
-    return { statusCode: 400, error: 'There are more than 6 answers' };
-  } else if (questionBody.duration < 0) {
-    return { statusCode: 400, error: 'Duration is negative' };
-  } else if (totalDuration > 180) {
-    return { statusCode: 400, error: 'Total duration is more than 3 min' };
-  } else if (questionBody.points < 1) {
-    return { statusCode: 400, error: 'Point is less than 1' };
-  } else if (questionBody.points > 10) {
-    return { statusCode: 400, error: 'Point is greater than 10' };
-  } else if (typeof validAnswers(questionBody) === 'object') {
-    return validAnswers(questionBody) as ErrorMessage;
+  if (typeof validQuestion(questionBody, totalDuration) === 'object') {
+    return validQuestion(questionBody, totalDuration) as ErrorMessage;
   }
   const questionId = parseInt(questionUid.seq());
   questionBody.questionId = questionId;
@@ -456,7 +441,7 @@ export function adminQuizQuestionUpdate(
   if (!quiz) {
     return { statusCode: 403, error: 'Quiz does not exist' };
   } else if (quiz.creatorId !== user.userId) {
-    return { statusCode: 403, error: 'User is not an owner of this quiz'};
+    return { statusCode: 403, error: 'User is not an owner of this quiz' };
   }
 
   const question = quiz.questions.find(
@@ -464,32 +449,15 @@ export function adminQuizQuestionUpdate(
   );
 
   if (!question) {
-    return { 
+    return {
       statusCode: 400,
       error: 'Question Id does not refer to a valid question within the quiz'
     };
   }
 
   const totalDuration = quiz.duration + questionBody.duration - question.duration;
-
-  if (questionBody.question.length < 5) {
-    return { statusCode: 400, error: 'Question string is less than 5 characters' };
-  } else if (questionBody.question.length > 50) {
-    return { statusCode: 400, error: 'Question string is greater than 50 characters' };
-  } else if (questionBody.answers.length > 6) {
-    return { statusCode: 400,  error: 'Question has more than 6 answers' };
-  } else if (questionBody.answers.length < 2) {
-    return { statusCode: 400, error: 'Question has less than 2 answers' };
-  } else if (questionBody.duration < 0) {
-    return { statusCode: 400, error: 'Question duration is negative' };
-  } else if (totalDuration > 180) {
-    return { statusCode: 400, error: 'Total duration exceeds 3 minutes' };
-  } else if (questionBody.points < 1) {
-    return { statusCode: 400, error: 'The points awarded for the question are less than 1' };
-  } else if (questionBody.points > 10) {
-    return { statusCode: 400, error: 'The points awarded for the question are greater than 10' };
-  } else if (typeof validAnswers(questionBody) === 'object') {
-    return validAnswers(questionBody) as ErrorMessage;
+  if (typeof validQuestion(questionBody, totalDuration) === 'object') {
+    return validQuestion(questionBody, totalDuration) as ErrorMessage;
   }
 
   question.question = questionBody.question;
@@ -497,7 +465,7 @@ export function adminQuizQuestionUpdate(
   question.points = questionBody.points;
   question.answers = questionBody.answers.map(ans => ({ ...ans }));
   for (const ans of question.answers) {
-    ans.answerId = parseInt(answerUid.rnd());
+    ans.answerId = parseInt(answerUid.seq());
     ans.colour = randomColor(ans.answerId);
   }
   quiz.timeLastEdited = Math.floor(Date.now() / 1000);

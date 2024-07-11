@@ -14,15 +14,9 @@ import {
   ERROR400,
   ERROR401,
   ERROR403,
-  validQuestion1
+  validQuestion1,
+  SUCCESSFUL_DUPLICATE
 } from '../testConstants';
-
-const SUCCESSFUL_DUPLICATE = {
-  statusCode: 200,
-  jsonBody: {
-    newQuestionId: expect.any(Number),
-  },
-};
 
 let sessionId: string;
 let quizId: number;

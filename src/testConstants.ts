@@ -44,6 +44,13 @@ export const QUIZ_TRASH_EMPTYED_SUCCESSFUL = {
   jsonBody: {}
 };
 
+export const SUCCESSFUL_DUPLICATE = {
+  statusCode: 200,
+  jsonBody: {
+    newQuestionId: expect.any(Number),
+  },
+};
+
 // here below for the error return consts
 export const ERROR400 = {
   statusCode: 400,

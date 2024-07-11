@@ -13,7 +13,7 @@
         "testj2": "jest adminQuizDescriptionUpdate.test.ts",
         "test!": "jest adminQuizCreate.test.ts",
         "testl": "jest adminAuthLogin.test.ts",
-        "testzc": "jest adminQuizTrashEmpty.test.ts"
+        "testzc": "jest adminQuizQuestionMove.test.ts"
     },
     "dependencies": {
         "body-parser": "^1.20.2",

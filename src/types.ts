@@ -117,9 +117,9 @@ export type QuestionBody = {
     duration: number,
     points: number,
     answers: {
+        answer: string,
         answerId?: number,
         colour?: string,
-        answer: string,
         correct: boolean
     }[]
 };

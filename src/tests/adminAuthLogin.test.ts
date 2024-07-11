@@ -1,3 +1,4 @@
+import { ERROR400 } from '../testConstants';
 import { adminAuthRegister, adminAuthLogin } from '../wrappers';
 import { clear } from '../wrappers';
 import { ok } from '../helpers';
@@ -7,18 +8,13 @@ const SUCCESSFULLOGIN = {
   jsonBody: { token: expect.any(String) }
 };
 
-const ERROR = {
-  statusCode: 400,
-  jsonBody: { error: expect.any(String) }
-};
-
 beforeEach(() => {
   // Reset the state of our data so that each tests can run independently
   clear();
 });
 
 test('Return an error for a non-existent email address', () => {
-  expect(adminAuthLogin(' ', 'abcde12345')).toStrictEqual(ERROR);
+  expect(adminAuthLogin(' ', 'abcde12345')).toStrictEqual(ERROR400);
 });
 
 describe('Tests after registering a user', () => {
@@ -28,7 +24,7 @@ describe('Tests after registering a user', () => {
 
   test('Return an error for a password that is not correct for the given email', () => {
     const wrongPassword = 'abcde12345' + 'a';
-    expect(adminAuthLogin('evan.xiong@unsw.edu.au', wrongPassword)).toStrictEqual(ERROR);
+    expect(adminAuthLogin('evan.xiong@unsw.edu.au', wrongPassword)).toStrictEqual(ERROR400);
   });
 
   test('Correctly returns their sessionId', () => {

@@ -1,3 +1,4 @@
+import { ERROR401 } from '../testConstants';
 import {
   adminAuthRegister,
   adminQuizCreate,
@@ -5,11 +6,6 @@ import {
   adminQuizTrashView,
   clear
 } from '../wrappers';
-
-const ERROR = {
-  statusCode: 401,
-  jsonBody: { error: expect.any(String) }
-};
 
 beforeEach(() => {
   clear();
@@ -34,11 +30,11 @@ beforeEach(() => {
 
 describe('Invalid Trash View', () => {
   test('Token is invalid', () => {
-    expect(adminQuizTrashView(sessionId + 1)).toStrictEqual(ERROR);
+    expect(adminQuizTrashView(sessionId + 1)).toStrictEqual(ERROR401);
   });
 
   test('Token is empty', () => {
-    expect(adminQuizTrashView(' ')).toStrictEqual(ERROR);
+    expect(adminQuizTrashView(' ')).toStrictEqual(ERROR401);
   });
 });
 

@@ -1,1 +1,1 @@
-{"users":[],"quizzes":[],"trash":[]}
+{"users":[{"userId":1,"tokens":[{"token":"298859"},{"token":"414436"}],"email":"evan.xiong@unsw.edu.au","password":"abcde12345","name":"Evan Xiong","numSuccessfulLogins":2,"numFailedPasswordsSinceLastLogin":0,"passwordUsedThisYear":[]},{"userId":2,"tokens":[{"token":"380250"},{"token":"440325"}],"email":"jessie.zhang@unsw.edu.au","password":"qwerty67890","name":"Jessie Zhang","numSuccessfulLogins":2,"numFailedPasswordsSinceLastLogin":0,"passwordUsedThisYear":[]}],"quizzes":[],"trash":[]}

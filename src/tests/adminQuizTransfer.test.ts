@@ -99,6 +99,7 @@ describe('adminQuizTransfer tests', () => {
         timeCreated: expect.any(Number),
         timeLastEdited: expect.any(Number),
         description: 'This is a description.',
+        duration: expect.any(Number)
       },
     });
   });

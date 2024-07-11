@@ -1,19 +1,10 @@
 import { adminAuthRegister, adminUserPasswordUpdate, clear } from '../wrappers';
-
-const SUCCESS = {
-  statusCode: 200,
-  jsonBody: {},
-};
-
-const ERROR400 = {
-  statusCode: 400,
-  jsonBody: { error: expect.any(String) },
-};
-
-const ERROR401 = {
-  statusCode: 401,
-  jsonBody: { error: expect.any(String) },
-};
+import {
+  VALID_USER_REGISTER_INPUTS_1,
+  ERROR400,
+  ERROR401,
+  SUCCESSFUL_UPDATE
+} from '../testConstants';
 
 beforeEach(() => {
   clear();
@@ -23,16 +14,21 @@ describe('adminUserPasswordUpdate tests', () => {
   let sessionId: string;
 
   beforeEach(() => {
-    const registerResponse = adminAuthRegister('chang.li@unsw.edu.au', 'oldPassword1', 'Chang', 'Li');
+    const registerResponse = adminAuthRegister(
+      VALID_USER_REGISTER_INPUTS_1.EMAIL,
+      VALID_USER_REGISTER_INPUTS_1.PASSWORD,
+      VALID_USER_REGISTER_INPUTS_1.FIRSTNAME,
+      VALID_USER_REGISTER_INPUTS_1.LASTNAME
+    );
     sessionId = registerResponse.jsonBody.token;
   });
 
   test('correct return value', () => {
-    expect(adminUserPasswordUpdate(sessionId, 'oldPassword1', 'newPassword1')).toStrictEqual(SUCCESS);
+    expect(adminUserPasswordUpdate(sessionId, 'password1', 'newPassword1')).toStrictEqual(SUCCESSFUL_UPDATE);
   });
 
   test('Invalid session ID', () => {
-    expect(adminUserPasswordUpdate('invalidSessionId', 'oldPassword1', 'newPassword1')).toStrictEqual(ERROR401);
+    expect(adminUserPasswordUpdate('invalidSessionId', 'password1', 'newPassword1')).toStrictEqual(ERROR401);
   });
 
   test('Incorrect old password', () => {
@@ -40,17 +36,17 @@ describe('adminUserPasswordUpdate tests', () => {
   });
 
   test('Old and new password are the same', () => {
-    expect(adminUserPasswordUpdate(sessionId, 'oldPassword1', 'oldPassword1')).toStrictEqual(ERROR400);
+    expect(adminUserPasswordUpdate(sessionId, 'password1', 'password1')).toStrictEqual(ERROR400);
   });
 
   test('New password has already been used - check return value', () => {
-    expect(adminUserPasswordUpdate(sessionId, 'oldPassword1', 'newPassword1')).toStrictEqual(SUCCESS);
+    expect(adminUserPasswordUpdate(sessionId, 'password1', 'newPassword1')).toStrictEqual(SUCCESSFUL_UPDATE);
 
-    expect(adminUserPasswordUpdate(sessionId, 'newPassword1', 'anotherNewPassword123')).toStrictEqual(SUCCESS);
+    expect(adminUserPasswordUpdate(sessionId, 'newPassword1', 'anotherNewPassword123')).toStrictEqual(SUCCESSFUL_UPDATE);
   });
 
   test('New password has already been used - check data store', () => {
-    expect(adminUserPasswordUpdate(sessionId, 'oldPassword1', 'newPassword1')).toStrictEqual(SUCCESS);
+    expect(adminUserPasswordUpdate(sessionId, 'password1', 'newPassword1')).toStrictEqual(SUCCESSFUL_UPDATE);
 
     expect(adminUserPasswordUpdate(sessionId, 'newPassword1', 'newPassword1')).toStrictEqual(ERROR400);
   });
@@ -60,7 +56,12 @@ describe('Password validation tests', () => {
   let sessionId: string;
 
   beforeEach(() => {
-    const registerResponse = adminAuthRegister('chang.li@unsw.edu.au', 'oldPassword1', 'Chang', 'Li');
+    const registerResponse = adminAuthRegister(
+      VALID_USER_REGISTER_INPUTS_1.EMAIL,
+      VALID_USER_REGISTER_INPUTS_1.PASSWORD,
+      VALID_USER_REGISTER_INPUTS_1.FIRSTNAME,
+      VALID_USER_REGISTER_INPUTS_1.LASTNAME
+    );
     sessionId = registerResponse.jsonBody.token;
   });
 
@@ -69,6 +70,6 @@ describe('Password validation tests', () => {
     { testName: 'Password with only letters', password: 'onlyletters' },
     { testName: 'Password with only numbers', password: '12345678' },
   ])('Test $testName', ({ password }) => {
-    expect(adminUserPasswordUpdate(sessionId, 'oldPassword1', password)).toStrictEqual(ERROR400);
+    expect(adminUserPasswordUpdate(sessionId, 'password1', password)).toStrictEqual(ERROR400);
   });
 });

@@ -11,6 +11,7 @@ import {
 import ShortUniqueId from 'short-unique-id';
 import { randomColor } from 'seed-to-color';
 const uid = new ShortUniqueId({ dictionary: 'number' });
+const questionUid = new ShortUniqueId({ dictionary: 'number' });
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
  *
@@ -344,6 +345,14 @@ export function adminQuizTrashEmpty(token: string, quizIds: string): QuizTrashEm
   return {};
 }
 
+/**
+ * Transfer quiz ownership to a new owner.
+ *
+ * @param {string} sessionId - The session ID of the current user.
+ * @param {number} quizId - The ID of the quiz to transfer.
+ * @param {string} newOwnerEmail - The email of the new owner.
+ * @returns {ErrorMessage | EmptyObject} - The result of the transfer operation.
+ */
 export function adminQuizTransfer(sessionId: string, quizId: number, newOwnerEmail: string): ErrorMessage | EmptyObject {
   const database = getData();
   const currentUser = findUserBySessionId(database, sessionId);
@@ -376,4 +385,57 @@ export function adminQuizTransfer(sessionId: string, quizId: number, newOwnerEma
   quiz.creatorId = newOwner.userId;
   setData(database);
   return {};
+}
+
+/**
+ * Duplicate a quiz question.
+ *
+ * @param {string} token - The session token of the current user.
+ * @param {number} quizId - The ID of the quiz containing the question to duplicate.
+ * @param {number} questionId - The ID of the question to duplicate.
+ * @returns {ErrorMessage | { newQuestionId: number }} - The result of the duplication operation.
+ */
+export function adminQuizQuestionDuplicate(
+  token: string,
+  quizId: number,
+  questionId: number
+): ErrorMessage | { newQuestionId: number } {
+  const database = getData();
+  const user = findUserBySessionId(database, token);
+
+  if (!user) {
+    return { statusCode: 401, error: 'Token is not valid.' };
+  }
+
+  const quiz = findQuizWithId(database, quizId);
+  if (!quiz) {
+    return { statusCode: 403, error: `Quiz with ID '${quizId}' not found` };
+  }
+
+  if (quiz.creatorId !== user.userId) {
+    return { statusCode: 403, error: 'User is not the owner of the quiz.' };
+  }
+
+  if (!quiz.questions) {
+    quiz.questions = [];
+  }
+
+  const question = quiz.questions.find(q => q.questionId === questionId);
+  if (!question) {
+    return { statusCode: 400, error: 'Question ID does not refer to a valid question within this quiz.' };
+  }
+
+  const newQuestionId = parseInt(questionUid.seq());
+  const timeLastEdited = Math.floor(Date.now() / 1000);
+  const newQuestion = {
+    ...question,
+    questionId: newQuestionId
+  };
+
+  quiz.questions.push(newQuestion);
+  quiz.timeLastEdited = timeLastEdited;
+
+  setData(database);
+
+  return { newQuestionId };
 }

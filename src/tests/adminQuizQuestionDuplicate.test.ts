@@ -1,27 +1,21 @@
-import { adminAuthRegister, adminQuizCreate, adminQuizQuestionDuplicate, adminQuizInfo, adminCreateQuizQuestion, clear } from '../wrappers';
+import {
+  adminAuthRegister,
+  adminQuizCreate,
+  adminQuizQuestionDuplicate,
+  adminQuizInfo,
+  adminCreateQuizQuestion,
+  clear
+} from '../wrappers';
 import { ok } from '../helpers';
-
-const VALID_INPUTS = {
-  EMAIL: 'changli@unsw.edu.au',
-  PASSWORD: 'Password123',
-  FIRSTNAME: 'Chang',
-  LASTNAME: 'Li',
-};
-
-const ERROR400 = {
-  statusCode: 400,
-  jsonBody: { error: expect.any(String) },
-};
-
-const ERROR401 = {
-  statusCode: 401,
-  jsonBody: { error: expect.any(String) },
-};
-
-const ERROR403 = {
-  statusCode: 403,
-  jsonBody: { error: expect.any(String) },
-};
+import {
+  VALID_USER_REGISTER_INPUTS_1,
+  VALID_USER_REGISTER_INPUTS_2,
+  VALID_QUIZ_CREATE_INPUTS_1,
+  ERROR400,
+  ERROR401,
+  ERROR403,
+  validQuestion1
+} from '../testConstants';
 
 const SUCCESSFUL_DUPLICATE = {
   statusCode: 200,
@@ -40,21 +34,13 @@ beforeEach(() => {
 
 describe('adminQuizQuestionDuplicate tests', () => {
   beforeEach(() => {
-    const registerResponse = adminAuthRegister(VALID_INPUTS.EMAIL, VALID_INPUTS.PASSWORD, VALID_INPUTS.FIRSTNAME, VALID_INPUTS.LASTNAME);
+    const registerResponse = adminAuthRegister(VALID_USER_REGISTER_INPUTS_1.EMAIL, VALID_USER_REGISTER_INPUTS_1.PASSWORD, VALID_USER_REGISTER_INPUTS_1.FIRSTNAME, VALID_USER_REGISTER_INPUTS_1.LASTNAME);
     sessionId = registerResponse.jsonBody.token;
 
-    const quizCreateResponse = adminQuizCreate(sessionId, 'My Quiz', 'This is a description.');
+    const quizCreateResponse = adminQuizCreate(sessionId, VALID_QUIZ_CREATE_INPUTS_1.NAME, VALID_QUIZ_CREATE_INPUTS_1.DESCRIPTION);
     quizId = quizCreateResponse.jsonBody.quizId;
 
-    const addQuestionResponse = adminCreateQuizQuestion(quizId, sessionId, {
-      question: 'Sample question',
-      duration: 60,
-      points: 10,
-      answers: [
-        { answer: 'Option 1', correct: true },
-        { answer: 'Option 2', correct: false }
-      ]
-    });
+    const addQuestionResponse = adminCreateQuizQuestion(quizId, sessionId, validQuestion1);
     questionId = addQuestionResponse.jsonBody.questionId;
   });
 
@@ -74,7 +60,7 @@ describe('adminQuizQuestionDuplicate tests', () => {
   });
 
   test('User is not the owner of the quiz', () => {
-    const newUserRegisterResponse = adminAuthRegister('newuser@unsw.edu.au', 'Password123', 'New', 'User');
+    const newUserRegisterResponse = adminAuthRegister(VALID_USER_REGISTER_INPUTS_2.EMAIL, VALID_USER_REGISTER_INPUTS_2.PASSWORD, VALID_USER_REGISTER_INPUTS_2.FIRSTNAME, VALID_USER_REGISTER_INPUTS_2.LASTNAME);
     const newSessionId = newUserRegisterResponse.jsonBody.token;
     const result = adminQuizQuestionDuplicate(newSessionId, quizId, questionId);
     expect(result).toStrictEqual(ERROR403);
@@ -92,13 +78,10 @@ describe('adminQuizQuestionDuplicate tests', () => {
     expect(updatedQuiz.jsonBody.questions).toHaveLength(2);
     expect(updatedQuiz.jsonBody.questions[1]).toMatchObject({
       questionId: duplicateResult.jsonBody.newQuestionId,
-      question: 'Sample question',
-      duration: 60,
-      points: 10,
-      answers: [
-        { answer: 'Option 1', correct: true },
-        { answer: 'Option 2', correct: false }
-      ]
+      question: validQuestion1.question,
+      duration: validQuestion1.duration,
+      points: validQuestion1.points,
+      answers: validQuestion1.answers
     });
   });
 });

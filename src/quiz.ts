@@ -11,6 +11,7 @@ import {
 import ShortUniqueId from 'short-unique-id';
 import { randomColor } from 'seed-to-color';
 const uid = new ShortUniqueId({ dictionary: 'number' });
+const questionUid = new ShortUniqueId({ dictionary: 'number' });
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
  *
@@ -378,7 +379,6 @@ export function adminQuizTransfer(sessionId: string, quizId: number, newOwnerEma
   return {};
 }
 
-const questionUid = new ShortUniqueId({ dictionary: 'number' });
 export function adminQuizQuestionDuplicate(
   token: string,
   quizId: number,

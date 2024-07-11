@@ -529,19 +529,7 @@ export function adminQuizQuestionUpdate(
   question.question = questionBody.question;
   question.duration = questionBody.duration;
   question.points = questionBody.points;
-  console.log(questionBody);
-  // question.answers = questionBody.answers.splice(0);
-  console.log(question.answers);
-
-  // for (let i = 0; i < questionBody.answers.length; i++) {
-  //   question.answers[i].answer = questionBody.answers[i].answer
-  //   question.answers[i].correct = questionBody.answers[i].correct
-  // }
-
-  question.answers = questionBody.answers.map(ans => ({
-    ...ans
-  }));
-
+  question.answers = questionBody.answers.map(ans => ({ ...ans }));
   for (const ans of question.answers) {
     ans.answerId = parseInt(uid.rnd());
     ans.colour = randomColor(ans.answerId);

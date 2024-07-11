@@ -248,7 +248,8 @@ describe('Succesful Tests', () => {
       timeCreated: expect.any(Number),
       timeLastEdited: expect.any(Number),
       description: 'Description',
-      questions: [validQuestion1]
+      questions: [validQuestion1],
+      duration: expect.any(Number)
     });
   });
   test('Check that description time was updated successfully', () => {
@@ -269,7 +270,8 @@ describe('Succesful Tests', () => {
       timeCreated: expect.any(Number),
       timeLastEdited: expect.any(Number),
       description: 'Description',
-      questions: [validQuestion1, validQuestion2, validQuestion3]
+      questions: [validQuestion1, validQuestion2, validQuestion3],
+      duration: expect.any(Number)
     });
   });
   test('Check that questionId returned is unique', () => {
@@ -293,7 +295,8 @@ describe('Succesful Tests', () => {
       timeCreated: expect.any(Number),
       timeLastEdited: expect.any(Number),
       description: 'Description',
-      questions: [validQuestion1, validQuestion2]
+      questions: [validQuestion1, validQuestion2],
+      duration: expect.any(Number)
     });
     const result2 = adminQuizInfo(sessionId1, quizId2).jsonBody;
     expect(result2).toStrictEqual({
@@ -302,7 +305,8 @@ describe('Succesful Tests', () => {
       timeCreated: expect.any(Number),
       timeLastEdited: expect.any(Number),
       description: 'Description of other quiz',
-      questions: [validQuestion3]
+      questions: [validQuestion3],
+      duration: expect.any(Number)
     });
   });
   test('Make questions for multiple quizzes by different owners', () => {
@@ -321,7 +325,8 @@ describe('Succesful Tests', () => {
       timeCreated: expect.any(Number),
       timeLastEdited: expect.any(Number),
       description: 'Description',
-      questions: [validQuestion1, validQuestion2]
+      questions: [validQuestion1, validQuestion2],
+      duration: expect.any(Number)
     });
     const result2 = adminQuizInfo(sessionId2, quizId2).jsonBody;
     expect(result2).toStrictEqual({
@@ -330,7 +335,8 @@ describe('Succesful Tests', () => {
       timeCreated: expect.any(Number),
       timeLastEdited: expect.any(Number),
       description: 'Description of other quiz',
-      questions: [validQuestion3]
+      questions: [validQuestion3],
+      duration: expect.any(Number)
     });
   });
 });

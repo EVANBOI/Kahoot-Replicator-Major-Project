@@ -21,21 +21,12 @@ export function findUserBySessionId(database: Data, sessionIdToFind: string): Us
 
 export function findQuestionInQuizId(database: Data, quizId: number, questionId: number): QuestionBody | undefined {
   const quiz = findQuizWithId(database, quizId);
-  return quiz.questions.find(question => question.questionId === questionId);
+  return quiz?.questions.find(question => question.questionId === questionId);
 }
 
 export function findQuestionIndex(database: Data, quizId: number, questionId: number): number {
   const quiz = findQuizWithId(database, quizId);
-  return quiz.questions.findIndex(question => question.questionId === questionId);
-}
-
-export function durationSum(database: Data, quizId: number): number {
-  const quiz = findQuizWithId(database, quizId) as Quiz;
-  let durationSum: number = 0;
-  for (const question of quiz.questions) {
-    durationSum += question.duration;
-  }
-  return durationSum;
+  return quiz?.questions.findIndex(question => question.questionId === questionId);
 }
 
 export function validAnswers(questionBody: QuestionBody): boolean | ErrorMessage {
@@ -57,6 +48,7 @@ export function validAnswers(questionBody: QuestionBody): boolean | ErrorMessage
   }
   return true;
 }
+
 /* export function findQuizBySessionId(sessionIdToFind: string): User | undefined {
   return getData().quizzes.find(q =>
       q.token.some(token => token.sessionId === sessionIdToFind)
@@ -68,7 +60,7 @@ export function validAnswers(questionBody: QuestionBody): boolean | ErrorMessage
 // is exist in trash or quizzesStore and creator is token owner
 export function isQuizExistWithCorrectCreator(token: string, quizIds: string): boolean {
   const data = getData();
-  const UserId = findUserBySessionId(data, token).userId;
+  const UserId = findUserBySessionId(data, token)?.userId;
   const quizIdArray: number[] = JSON.parse(quizIds);
   for (const quizId of quizIdArray) {
     const isExistInTrash = data.trash.find(quiz => quiz.quizId === quizId);
@@ -79,7 +71,7 @@ export function isQuizExistWithCorrectCreator(token: string, quizIds: string): b
       return false;
     }
     const quiz = isExistInTrash || isExistInQuizzesStore;
-    if (quiz.creatorId !== UserId) {
+    if (quiz?.creatorId !== UserId) {
       return false;
     }
   }

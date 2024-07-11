@@ -15,11 +15,12 @@ import {
   adminQuizDescriptionUpdate,
   adminQuizRemove, adminQuizTrashEmpty,
   adminCreateQuizQuestion,
-
+  adminQuizRestore,
+  adminQuizQuestionDelete,
   adminQuizTrashView,
   adminQuizTransfer,
-  adminQuizQuestionDuplicate, adminQuizQuestionDelete, 
-  adminQuizRestore
+  adminQuizQuestionDuplicate,
+  adminQuizQuestionUpdate
 } from './quiz';
 import {
   adminAuthLogin,
@@ -199,6 +200,17 @@ app.post('/v1/admin/quiz/:quizid/question', (req: Request, res: Response) => {
   res.json(result);
 });
 
+app.put('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const questionId = parseInt(req.params.questionid);
+  const { token, questionBody } = req.body;
+  const result = adminQuizQuestionUpdate(quizId, questionId, questionBody, token);
+  if ('error' in result) {
+    return res.status(result.statusCode).json({ error: result.error });
+  }
+  res.json(result);
+});
+
 app.post('/v1/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
   const token = req.body.token as string;
   const id = parseInt(req.params.quizid);
@@ -233,6 +245,7 @@ app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
 
   res.json(result);
 });
+
 app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
   const token = req.query.token as string;
   const quizIds = req.query.quizIds as string;

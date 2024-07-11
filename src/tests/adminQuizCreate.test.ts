@@ -1,3 +1,4 @@
+import { ERROR401, ERROR400 } from '../testConstants';
 import { adminAuthRegister } from '../wrappers';
 import { adminQuizCreate } from '../wrappers';
 import { clear } from '../wrappers';
@@ -6,16 +7,6 @@ import { ok } from '../helpers';
 const QUIZCREATED = {
   statusCode: 200,
   jsonBody: { quizId: expect.any(Number) }
-};
-
-const INVALIDID = {
-  statusCode: 401,
-  jsonBody: { error: expect.any(String) }
-};
-
-const ERROR = {
-  statusCode: 400,
-  jsonBody: { error: expect.any(String) }
 };
 
 beforeEach(() => {
@@ -36,11 +27,11 @@ beforeEach(() => {
 
 describe('When registering an user', () => {
   test('SessionId is not a Valid', () => {
-    expect(adminQuizCreate(sessionId + 1, 'Quiz 1', 'Pointers')).toStrictEqual(INVALIDID);
+    expect(adminQuizCreate(sessionId + 1, 'Quiz 1', 'Pointers')).toStrictEqual(ERROR401);
   });
 
   test('Name contains invalid characters', () => {
-    expect(adminQuizCreate(sessionId, '汉', 'Pointers')).toStrictEqual(ERROR);
+    expect(adminQuizCreate(sessionId, '汉', 'Pointers')).toStrictEqual(ERROR400);
   });
 
   test.each([
@@ -53,12 +44,12 @@ describe('When registering an user', () => {
       name: 'a'.repeat(31)
     }
   ])('Test $#: $testName', ({ name }) => {
-    expect(adminQuizCreate(sessionId, name, 'Pointers')).toStrictEqual(ERROR);
+    expect(adminQuizCreate(sessionId, name, 'Pointers')).toStrictEqual(ERROR400);
   });
 
   test('Name is already used by the current logged in user', () => {
     expect(adminQuizCreate(sessionId, 'Quiz 1', 'Pointers')).toStrictEqual(QUIZCREATED);
-    expect(adminQuizCreate(sessionId, 'Quiz 1', 'Linked Lists')).toStrictEqual(ERROR);
+    expect(adminQuizCreate(sessionId, 'Quiz 1', 'Linked Lists')).toStrictEqual(ERROR400);
   });
 
   test.each([
@@ -71,7 +62,7 @@ describe('When registering an user', () => {
       description: 'b'.repeat(101)
     }
   ])('Test $#: $testName', ({ description }) => {
-    expect(adminQuizCreate(sessionId, 'Quiz 1', description)).toStrictEqual(ERROR);
+    expect(adminQuizCreate(sessionId, 'Quiz 1', description)).toStrictEqual(ERROR400);
   });
 
   test('Correctly returns the quizId', () => {

@@ -172,6 +172,17 @@ export const adminQuizRemove = (token: string, quizId: number) => {
   return requestHelper('DELETE', `/v1/admin/quiz/${quizId}`, { token });
 };
 
+export const adminQuizQuestionUpdate = (
+  quizid: number,
+  questionid: number,
+  questionBody: QuestionBody,
+  token: string
+) => {
+  return requestHelper('PUT',
+    `/v1/admin/quiz/${quizid}/question/${questionid}`,
+    { questionBody, token });
+};
+
 export const adminQuizTrashEmpty = (token: string, quizIds: string) => {
   return requestHelper('DELETE', '/v1/admin/quiz/trash/empty', { token, quizIds });
 };

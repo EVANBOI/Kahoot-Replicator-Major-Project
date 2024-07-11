@@ -1,12 +1,12 @@
 import { getData, setData } from './dataStore';
 import {
   findQuizWithId, findUserBySessionId,
-  validAnswers, isQuizExistWithCorrectCreator, isAllExistInTrash
+  validAnswers, isQuizExistWithCorrectCreator, isAllExistInTrash, durationSum
 } from './helpers';
 import {
   CreateQuestionReturn,
   EmptyObject, ErrorMessage, QuestionBody, Quiz, QuizIdObject, QuizInfoResult, TrashViewDetails,
-  QuizListDetails, QuizRemoveResult, QuizTrashEmptyResult
+  QuizListDetails, QuizRemoveResult, QuizTrashEmptyResult, UserUpdateResult
 } from './types';
 import ShortUniqueId from 'short-unique-id';
 import { randomColor } from 'seed-to-color';
@@ -255,7 +255,7 @@ export function adminCreateQuizQuestion(
   if (!quiz) {
     return { statusCode: 403, error: 'Quiz does not exist' };
   } else if (quiz.creatorId !== user.userId) {
-    return { statusCode: 403, error: 'User is is not owner of quiz' };
+    return { statusCode: 403, error: 'User is not an owner of quiz' };
   }
   const totalDuration = quiz.duration + questionBody.duration;
   console.log('duration is ', totalDuration);
@@ -438,4 +438,104 @@ export function adminQuizQuestionDuplicate(
   setData(database);
 
   return { newQuestionId };
+}
+
+export function adminQuizQuestionUpdate(
+  quizId: number,
+  questionId: number,
+  questionBody: QuestionBody,
+  token: string
+): UserUpdateResult {
+  const database = getData();
+  const user = findUserBySessionId(database, token);
+
+  if (!user) {
+    return {
+      statusCode: 401,
+      error: 'Token does not exist or is invalid'
+    };
+  }
+
+  const quiz = findQuizWithId(database, quizId);
+  if (!quiz) {
+    return {
+      statusCode: 403,
+      error: 'Quiz does not exist'
+    };
+  } else if (quiz.creatorId !== user.userId) {
+    return {
+      statusCode: 403,
+      error: 'User is not an owner of this quiz'
+    };
+  }
+
+  const question = quiz.questions.find(
+    question => question.questionId === questionId
+  );
+
+  if (!question) {
+    return {
+      statusCode: 400,
+      error: 'Question Id does not refer to a valid question within the quiz'
+    };
+  }
+
+  const totalDuration = durationSum(database, quizId) + questionBody.duration - question.duration;
+
+  if (questionBody.question.length < 5) {
+    return {
+      statusCode: 400,
+      error: 'Question string is less than 5 characters'
+    };
+  } else if (questionBody.question.length > 50) {
+    return {
+      statusCode: 400,
+      error: 'Question string is greater than 50 characters'
+    };
+  } else if (questionBody.answers.length > 6) {
+    return {
+      statusCode: 400,
+      error: 'Question has more than 6 answers'
+    };
+  } else if (questionBody.answers.length < 2) {
+    return {
+      statusCode: 400,
+      error: 'Question has less than 2 answers'
+    };
+  } else if (questionBody.duration < 0) {
+    return {
+      statusCode: 400,
+      error: 'Question duration is negative'
+    };
+  } else if (totalDuration > 180) {
+    return {
+      statusCode: 400,
+      error: 'Total duration exceeds 3 minutes'
+    };
+  } else if (questionBody.points < 1) {
+    return {
+      statusCode: 400,
+      error: 'The points awarded for the question are less than 1'
+    };
+  } else if (questionBody.points > 10) {
+    return {
+      statusCode: 400,
+      error: 'The points awarded for the question are greater than 10'
+    };
+  } else if (typeof validAnswers(questionBody) === 'object') {
+    return validAnswers(questionBody) as ErrorMessage;
+  }
+
+  question.question = questionBody.question;
+  question.duration = questionBody.duration;
+  question.points = questionBody.points;
+  question.answers = questionBody.answers.map(ans => ({ ...ans }));
+  for (const ans of question.answers) {
+    ans.answerId = parseInt(uid.rnd());
+    ans.colour = randomColor(ans.answerId);
+  }
+  quiz.timeLastEdited = Math.floor(Date.now() / 1000);
+  quiz.duration = totalDuration;
+  setData(database);
+  return { };
 }

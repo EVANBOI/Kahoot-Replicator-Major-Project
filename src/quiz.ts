@@ -378,6 +378,7 @@ export function adminQuizTransfer(sessionId: string, quizId: number, newOwnerEma
   return {};
 }
 
+const questionUid = new ShortUniqueId({ dictionary: 'number' });
 export function adminQuizQuestionDuplicate(
   token: string,
   quizId: number,
@@ -408,9 +409,12 @@ export function adminQuizQuestionDuplicate(
     return { statusCode: 400, error: 'Question ID does not refer to a valid question within this quiz.' };
   }
 
-  const newQuestionId = Date.now() + Math.floor(Math.random() * 1000);
+  const newQuestionId = parseInt(questionUid.seq());
   const timeLastEdited = Math.floor(Date.now() / 1000);
-  const newQuestion = { ...question, questionId: newQuestionId };
+  const newQuestion = {
+    ...question,
+    questionId: newQuestionId
+  };
 
   quiz.questions.push(newQuestion);
   quiz.timeLastEdited = timeLastEdited;

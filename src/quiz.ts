@@ -345,6 +345,14 @@ export function adminQuizTrashEmpty(token: string, quizIds: string): QuizTrashEm
   return {};
 }
 
+/**
+ * Transfer quiz ownership to a new owner.
+ *
+ * @param {string} sessionId - The session ID of the current user.
+ * @param {number} quizId - The ID of the quiz to transfer.
+ * @param {string} newOwnerEmail - The email of the new owner.
+ * @returns {ErrorMessage | EmptyObject} - The result of the transfer operation.
+ */
 export function adminQuizTransfer(sessionId: string, quizId: number, newOwnerEmail: string): ErrorMessage | EmptyObject {
   const database = getData();
   const currentUser = findUserBySessionId(database, sessionId);
@@ -379,6 +387,14 @@ export function adminQuizTransfer(sessionId: string, quizId: number, newOwnerEma
   return {};
 }
 
+/**
+ * Duplicate a quiz question.
+ *
+ * @param {string} token - The session token of the current user.
+ * @param {number} quizId - The ID of the quiz containing the question to duplicate.
+ * @param {number} questionId - The ID of the question to duplicate.
+ * @returns {ErrorMessage | { newQuestionId: number }} - The result of the duplication operation.
+ */
 export function adminQuizQuestionDuplicate(
   token: string,
   quizId: number,

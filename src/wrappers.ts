@@ -175,3 +175,11 @@ export const adminQuizRemove = (token: string, quizId: number) => {
 export const adminQuizTrashEmpty = (token: string, quizIds: string) => {
   return requestHelper('DELETE', '/v1/admin/quiz/trash/empty', { token, quizIds });
 };
+
+export const adminQuizTransfer = (
+  token: string,
+  quizId: number,
+  userEmail: string
+) => {
+  return requestHelper('POST', `/v1/admin/quiz/${quizId}/transfer`, { token, userEmail });
+};

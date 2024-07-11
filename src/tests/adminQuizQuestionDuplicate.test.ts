@@ -46,7 +46,6 @@ describe('adminQuizQuestionDuplicate tests', () => {
     const quizCreateResponse = adminQuizCreate(sessionId, 'My Quiz', 'This is a description.');
     quizId = quizCreateResponse.jsonBody.quizId;
 
-   
     const addQuestionResponse = adminCreateQuizQuestion(quizId, sessionId, {
       question: 'Sample question',
       duration: 60,
@@ -90,10 +89,10 @@ describe('adminQuizQuestionDuplicate tests', () => {
     const duplicateResult = adminQuizQuestionDuplicate(sessionId, quizId, questionId);
     const updatedQuiz = ok(adminQuizInfo(sessionId, quizId));
     expect(updatedQuiz).toHaveProperty('jsonBody');
-    expect(updatedQuiz.jsonBody.questions).toHaveLength(2); 
+    expect(updatedQuiz.jsonBody.questions).toHaveLength(2);
     expect(updatedQuiz.jsonBody.questions[1]).toMatchObject({
       questionId: duplicateResult.jsonBody.newQuestionId,
-      question: 'Sample question', 
+      question: 'Sample question',
       duration: 60,
       points: 10,
       answers: [

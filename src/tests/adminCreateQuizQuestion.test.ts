@@ -286,7 +286,7 @@ describe('Succesful Tests', () => {
     adminQuizQuestionDelete(sessionId1, quizId1, id1.jsonBody?.quesionId);
     const id2 = adminCreateQuizQuestion(quizId1, sessionId1, validQuestion2);
     expect(id1).not.toStrictEqual(id2);
-  })
+  });
 
   test('Make questions for multiple quizzes by the same owner', () => {
     const { jsonBody: quiz } = adminQuizCreate(

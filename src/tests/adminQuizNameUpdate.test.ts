@@ -15,12 +15,17 @@ beforeEach(() => {
   clear();
 });
 
-describe('adminQuizNameUpdate tests', () => {
+describe('adminQuizNameUpdate failure cases tests', () => {
   beforeEach(() => {
-    const registerResponse = adminAuthRegister(VALID_USER_REGISTER_INPUTS_1.EMAIL, VALID_USER_REGISTER_INPUTS_1.PASSWORD, VALID_USER_REGISTER_INPUTS_1.FIRSTNAME, VALID_USER_REGISTER_INPUTS_1.LASTNAME);
-    sessionId = registerResponse.jsonBody.token;
+    const registerResponse = adminAuthRegister(
+      VALID_USER_REGISTER_INPUTS_1.EMAIL, 
+      VALID_USER_REGISTER_INPUTS_1.PASSWORD, 
+      VALID_USER_REGISTER_INPUTS_1.FIRSTNAME, 
+      VALID_USER_REGISTER_INPUTS_1.LASTNAME
+    );
+    sessionId = registerResponse.jsonBody?.token;
     const quizCreateResponse = adminQuizCreate(sessionId, 'My Quiz', 'This is a description.');
-    quizId = quizCreateResponse.jsonBody.quizId;
+    quizId = quizCreateResponse.jsonBody?.quizId;
   });
 
   test('Invalid session ID', () => {
@@ -35,7 +40,7 @@ describe('adminQuizNameUpdate tests', () => {
 
   test('Quiz not owned by user', () => {
     const anotherRegisterResponse = adminAuthRegister('another.user@unsw.edu.au', 'Password123', 'Another', 'User');
-    const anotherSessionId = anotherRegisterResponse.jsonBody.token;
+    const anotherSessionId = anotherRegisterResponse.jsonBody?.token;
     const result = adminQuizNameUpdate(anotherSessionId, quizId, 'New Quiz Name');
     expect(result).toStrictEqual(ERROR403);
   });
@@ -60,6 +65,20 @@ describe('adminQuizNameUpdate tests', () => {
     adminQuizCreate(sessionId, 'Existing Quiz', 'Another description.');
     const result = adminQuizNameUpdate(sessionId, quizId, 'Existing Quiz');
     expect(result).toStrictEqual(ERROR400);
+  });
+});
+
+describe('adminQuizNameUpdate success cases tests', () => {
+  beforeEach(() => {
+    const registerResponse = adminAuthRegister(
+      VALID_USER_REGISTER_INPUTS_1.EMAIL, 
+      VALID_USER_REGISTER_INPUTS_1.PASSWORD, 
+      VALID_USER_REGISTER_INPUTS_1.FIRSTNAME, 
+      VALID_USER_REGISTER_INPUTS_1.LASTNAME
+    );
+    sessionId = registerResponse.jsonBody?.token;
+    const quizCreateResponse = adminQuizCreate(sessionId, 'My Quiz', 'This is a description.');
+    quizId = quizCreateResponse.jsonBody?.quizId;
   });
 
   test('Successful quiz name update - correct return value', () => {

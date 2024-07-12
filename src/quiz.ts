@@ -427,6 +427,18 @@ export function adminQuizQuestionDuplicate(
   return { newQuestionId };
 }
 
+/**
+ * Update questions for quizzes
+ * Each answer is assigned a random colour code.
+ *
+ * @param {number} quizId - unique id of a quiz
+ * @param {number} questionId - unique id of a question
+ * @param {QuestionBody} questionBody - contains information of a question
+ * @param {string} token - unique session id of a user
+ * @returns {} - an empty object
+ * @returns {{error: string}} an error
+ */
+
 export function adminQuizQuestionUpdate(
   quizId: number,
   questionId: number,

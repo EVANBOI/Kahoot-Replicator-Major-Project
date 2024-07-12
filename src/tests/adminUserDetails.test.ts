@@ -38,35 +38,7 @@ describe('Successful user details retrieval tests', () => {
       statusCode: 200
     });
   });
-});
 
-describe('Unsuccessful user details retrieval tests', () => {
-  test('Invalid sessionId returns an error', () => {
-    const invalidSessionId: string = 'invalid-session-id';
-    const userDetailsResponse = adminUserDetails(invalidSessionId) as ErrorMessage;
-
-    expect(userDetailsResponse).toStrictEqual({
-      jsonBody: {
-        error: expect.any(String)
-      },
-      statusCode: 401
-    });
-  });
-
-  test('Empty sessionId returns an error', () => {
-    const emptySessionId: string = '';
-    const userDetailsResponse = adminUserDetails(emptySessionId) as ErrorMessage;
-
-    expect(userDetailsResponse).toStrictEqual({
-      jsonBody: {
-        error: expect.any(String)
-      },
-      statusCode: 401
-    });
-  });
-});
-
-describe('Test updated inputs', () => {
   test('numFailedPasswordsSinceLastLogin updates after a failed login', () => {
     const registerResponse = adminAuthRegister(
       VALID_INPUTS.EMAIL,
@@ -93,6 +65,32 @@ describe('Test updated inputs', () => {
         }
       },
       statusCode: 200
+    });
+  });
+});
+
+describe('Unsuccessful user details retrieval tests', () => {
+  test('Invalid sessionId returns an error', () => {
+    const invalidSessionId: string = 'invalid-session-id';
+    const userDetailsResponse = adminUserDetails(invalidSessionId) as ErrorMessage;
+
+    expect(userDetailsResponse).toStrictEqual({
+      jsonBody: {
+        error: expect.any(String)
+      },
+      statusCode: 401
+    });
+  });
+
+  test('Empty sessionId returns an error', () => {
+    const emptySessionId: string = '';
+    const userDetailsResponse = adminUserDetails(emptySessionId) as ErrorMessage;
+
+    expect(userDetailsResponse).toStrictEqual({
+      jsonBody: {
+        error: expect.any(String)
+      },
+      statusCode: 401
     });
   });
 });

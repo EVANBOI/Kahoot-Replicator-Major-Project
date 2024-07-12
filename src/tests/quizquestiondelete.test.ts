@@ -63,7 +63,7 @@ describe('Success cases', () => {
 
     // Verify the question is actually removed
     const quizInfo = adminQuizInfo(sessionId, validQuizId);
-    expect(quizInfo.jsonBody.questions).not.toContainEqual(
+    expect(quizInfo.jsonBody?.questions).not.toContainEqual(
       expect.objectContaining({ questionId: validQuestionId })
     );
   });

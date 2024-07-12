@@ -7,8 +7,21 @@ import {
 } from './helpers';
 import {
   CreateQuestionReturn,
-  EmptyObject, ErrorMessage, QuestionBody, Quiz, QuizIdObject, QuizInfoResult, TrashViewDetails, QuizRestoreResult, QuizQuestionDeleteResult, UserUpdateResult, QuizListDetails, QuizRemoveResult, QuizTrashEmptyResult, PositionWithTokenObj, QuizQuestionMoveResult
-
+  EmptyObject, 
+  ErrorMessage, 
+  QuestionBody, 
+  Quiz, 
+  QuizIdObject, 
+  QuizInfoResult, 
+  TrashViewDetails, 
+  QuizRestoreResult, 
+  QuizQuestionDeleteResult, 
+  UserUpdateResult, 
+  QuizListDetails, 
+  QuizRemoveResult, 
+  QuizTrashEmptyResult, 
+  PositionWithTokenObj, 
+  QuizQuestionMoveResult
 } from './types';
 
 import ShortUniqueId from 'short-unique-id';
@@ -21,7 +34,7 @@ const quizUid = new ShortUniqueId({ dictionary: 'number' });
  *
  * @param {string} sessionId - unique id of a session
  * @returns {{quizzes: {quizId: number, name: string}}} - an object containing identifiers of all quizzes
- * @returns {{statusCode: number, error: string}} an error
+ * @returns {ErrorMessage} an error
  */
 export function adminQuizList (sessionId: string): QuizListDetails {
   const database = getData();
@@ -45,7 +58,7 @@ export function adminQuizList (sessionId: string): QuizListDetails {
  * @param {string} name - name of the quiz
  * @param {string} description - description of a quiz
  * @returns {{quizId: number}}
- * @returns {{statusCode: number, error: string}} an error
+ * @returns {ErrorMessage} an error
  */
 export function adminQuizCreate (
   sessionId: string,
@@ -99,7 +112,7 @@ export function adminQuizCreate (
  * @param {number} sessionId - unique id of a user
  * @param {number} quizId - unique id of a quiz
  * @returns {} - empty object
- * @returns {{statusCode: number, error: string}} an error
+ * @returns {ErrorMessage} an error
  */
 export function adminQuizRemove (token: string, quizId: number): QuizRemoveResult {
   const database = getData();
@@ -135,7 +148,7 @@ export function adminQuizRemove (token: string, quizId: number): QuizRemoveResul
  * @returns {{quizId: number, name: string, timeCreated: number,
  *            timeLastEdited: number, description: string,
  *            questions: QuestionBody[], duration: number}}
- * @returns {{statusCode: number, error: string}} an error
+ * @returns {ErrorMessage} an error
  */
 export function adminQuizInfo (sessionId: string, quizId: number): QuizInfoResult {
   const database = getData();
@@ -170,7 +183,7 @@ export function adminQuizInfo (sessionId: string, quizId: number): QuizInfoResul
  * @param {number} quizId - unique id of a quiz
  * @param {string} name- name of a user
  * @returns {} - empty object
- * @returns {{statusCode: number, error: string}} an error
+ * @returns {ErrorMessage} an error
  */
 export function adminQuizNameUpdate(sessionId: string, quizId: number, name: string): EmptyObject | ErrorMessage {
   const database = getData();
@@ -211,7 +224,7 @@ export function adminQuizNameUpdate(sessionId: string, quizId: number, name: str
  * @param {number} quizId - unique id of a quiz
  * @param {string} description - description of a quiz
  * @returns {} - empty object
- * @returns {{statusCode: number, error: string}} an error
+ * @returns {ErrorMessage} an error
  */
 export function adminQuizDescriptionUpdate(
   sessionId: string,
@@ -245,7 +258,7 @@ export function adminQuizDescriptionUpdate(
  * @param {string} sessionId - unique session id of a quiz
  * @param {QuestionBody} questionBody - contains information of a question
  * @returns {{questionId: number}} - id of a question that is unique only inside a quiz
- * @returns {{statusCode: number, error: string}} an error
+ * @returns {ErrorMessage} an error
  */
 export function adminCreateQuizQuestion(
   quizId: number,
@@ -285,7 +298,7 @@ export function adminCreateQuizQuestion(
  *
  * @param {string} sessionId - unique id of a user
  * @returns {{quizzes: {quizId: number, name: string}}} - an object containing identifiers of all quizzes
- * @returns {{statusCode: number, error: string}} an error
+ * @returns {ErrorMessage} an error
  */
 export function adminQuizTrashView(sessionId: string): TrashViewDetails {
   const database = getData();
@@ -311,7 +324,7 @@ export function adminQuizTrashView(sessionId: string): TrashViewDetails {
  * @param {string} token - unique sessionId
  * @param {string} quizIds - the stringified array of quiz Ids.
  * @returns {} - empty object
- * @returns {{statusCode: number, error: string}} an error
+ * @returns {ErrorMessage} an error
  */
 export function adminQuizTrashEmpty(token: string, quizIds: string): QuizTrashEmptyResult {
   const database = getData();
@@ -490,7 +503,8 @@ export function adminQuizQuestionUpdate(
 export function adminQuizQuestionMove(
   quizId: number,
   questionId: number,
-  moveInfo: PositionWithTokenObj): QuizQuestionMoveResult {
+  moveInfo: PositionWithTokenObj
+): QuizQuestionMoveResult {
   const database = getData();
   const user = findUserBySessionId(database, moveInfo.token);
   if (!user) {
@@ -534,6 +548,7 @@ export function adminQuizQuestionMove(
  * @param {string} token The session token of the user.
  * @param {number} quizId The ID of the quiz to be restored.
  * @returns {} An empty object
+ * @returns {ErrorMessage} An error message
  */
 export function adminQuizRestore(token: string, quizId: number): QuizRestoreResult | ErrorMessage {
   const database = getData();
@@ -573,6 +588,7 @@ export function adminQuizRestore(token: string, quizId: number): QuizRestoreResu
  * @param {number} quizId The ID of the quiz.
  * @param {number} questionId The ID of the question to be deleted.
  * @returns {} An empty object
+ * @returns {ErrorMessage} An error message
  */
 export function adminQuizQuestionDelete(token: string, quizId: number, questionId: number): QuizQuestionDeleteResult {
   const database = getData();

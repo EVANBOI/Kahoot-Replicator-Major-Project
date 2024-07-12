@@ -147,7 +147,7 @@ export function adminAuthLogin (
 }
 
 /**
- * Given an admin user's authUserId, return details about the user.
+ * Given an admin user's sessionId, return details about the user.
  * "name" is the first and last name concatenated with a single space between them.
  * @param {string} sessionId - unique id of a user
  * @returns {{user:
@@ -155,7 +155,8 @@ export function adminAuthLogin (
  *               name: string,
  *               email: string,
  *               numSuccessfulLogins: number,
- *               numFailedPasswordsSinceLastLogin: number}}
+ *               numFailedPasswordsSinceLastLogin: number
+ * }}
  * }
  * @returns {ErrorMessage} - an error message
  */
@@ -185,7 +186,7 @@ export function adminUserDetails (sessionId: string): Userdetails {
  * @param {string} oldPassword - current password of a user's account
  * @param {string} newPassword - new password to replace old password
  * @returns {} - empty object
- * @returns {ErrorMessage} - empty object
+ * @returns {ErrorMessage} - error code
  */
 export function adminUserPasswordUpdate(
   sessionId: string, 
@@ -209,7 +210,7 @@ export function adminUserPasswordUpdate(
   } else if (!/\d/.test(newPassword) || !/[a-zA-Z]/.test(newPassword)) {
     return { statusCode: 400, error: 'Password needs to contain at least one number and at least one letter' };
   }
-  
+
   user.passwordUsedThisYear.push(oldPassword);
   user.password = newPassword;
   setData(dataBase);
@@ -221,6 +222,7 @@ export function adminUserPasswordUpdate(
  *
  * @param {string} sessionId - unique session id of a user, users can have multiple
  * @returns {} - empty object
+ * @returns {ErrorMessage} - error code
  */
 export function adminAuthLogout(sessionId: string): ErrorMessage | EmptyObject {
   const database = getData();

@@ -1,6 +1,6 @@
 import { adminUserDetails, clear } from '../wrappers';
 import { SessionIdObject, UserRegistrationResult, ErrorMessage } from '../types';
-import { adminAuthRegister } from '../auth';
+import { adminAuthRegister, adminAuthLogin } from '../auth';
 
 const VALID_INPUTS = {
   EMAIL: 'admin@email.com',
@@ -49,7 +49,7 @@ describe('Unsuccessful user details retrieval tests', () => {
       jsonBody: {
         error: expect.any(String)
       },
-      statusCode: 401 // The response should be 401 for invalid details.
+      statusCode: 401
     });
   });
 
@@ -61,7 +61,38 @@ describe('Unsuccessful user details retrieval tests', () => {
       jsonBody: {
         error: expect.any(String)
       },
-      statusCode: 401 // Assuming 403 is returned for empty session ID
+      statusCode: 401
+    });
+  });
+});
+
+describe('Test updated inputs', () => {
+  test('numFailedPasswordsSinceLastLogin updates after a failed login', () => {
+    const registerResponse = adminAuthRegister(
+      VALID_INPUTS.EMAIL,
+      VALID_INPUTS.PASSWORD,
+      VALID_INPUTS.FIRSTNAME,
+      VALID_INPUTS.LASTNAME
+    ) as UserRegistrationResult;
+
+    const sessionId: string = (registerResponse as SessionIdObject).token;
+
+    // Attempt a failed login with an invalid password
+    adminAuthLogin(VALID_INPUTS.EMAIL, VALID_INPUTS.PASSWORD + 'blahblahblah');
+
+    const userDetailsResponse = adminUserDetails(sessionId);
+
+    expect(userDetailsResponse).toEqual({
+      jsonBody: {
+        user: {
+          userId: expect.any(Number),
+          name: `${VALID_INPUTS.FIRSTNAME} ${VALID_INPUTS.LASTNAME}`,
+          email: VALID_INPUTS.EMAIL,
+          numSuccessfulLogins: 1,
+          numFailedPasswordsSinceLastLogin: 1,
+        }
+      },
+      statusCode: 200
     });
   });
 });

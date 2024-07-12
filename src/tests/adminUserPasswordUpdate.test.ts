@@ -93,7 +93,7 @@ describe('adminUserPasswordUpdate failure tests', () => {
     expect(adminUserPasswordUpdate(
       sessionId, 
       'newPassword1', 
-      'newPassword1')
+      'password1')
     ).toStrictEqual(ERROR400);
   });
 

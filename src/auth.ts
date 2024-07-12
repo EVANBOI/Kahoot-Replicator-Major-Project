@@ -12,7 +12,7 @@ const uid = new ShortUniqueId({ dictionary: 'number' });
  * @param {string} nameFirst - first name of a user
  * @param {string} nameLast - last name of a user
  * @returns {{token: number}}
- * @returns {{error: string}} an error
+ * @returns {ErrorMessage} an error
  */
 export function adminAuthRegister (
   email: string,
@@ -68,6 +68,7 @@ export function adminAuthRegister (
  * @param {string} nameFirst - first name of a user
  * @param {string} nameLast - last name of a user
  * @returns {} - empty object
+ * @returns {ErrorMessage} - an error
  */
 export function adminUserDetailsUpdate (
   sessionId: string,
@@ -116,7 +117,8 @@ export function adminUserDetailsUpdate (
  *
  * @param {string} email - unique email of a user
  * @param {string} password - password for a user's account
- * @returns {{token: string}}
+ * @returns {{token: string}} - a unique session id of a user
+ * @returns {ErrorMessage} - an error
  */
 export function adminAuthLogin (
   email : string,
@@ -153,7 +155,9 @@ export function adminAuthLogin (
  *               name: string,
  *               email: string,
  *               numSuccessfulLogins: number,
- *               numFailedPasswordsSinceLastLogin: number}}}
+ *               numFailedPasswordsSinceLastLogin: number}}
+ * }
+ * @returns {ErrorMessage} - an error message
  */
 export function adminUserDetails (sessionId: string): Userdetails {
   const database = getData();
@@ -181,6 +185,7 @@ export function adminUserDetails (sessionId: string): Userdetails {
  * @param {string} oldPassword - current password of a user's account
  * @param {string} newPassword - new password to replace old password
  * @returns {} - empty object
+ * @returns {ErrorMessage} - empty object
  */
 export function adminUserPasswordUpdate(
   sessionId: string, 
@@ -204,11 +209,7 @@ export function adminUserPasswordUpdate(
   } else if (!/\d/.test(newPassword) || !/[a-zA-Z]/.test(newPassword)) {
     return { statusCode: 400, error: 'Password needs to contain at least one number and at least one letter' };
   }
-  // this error seems to have already checked?
-  //  else if (user.passwordUsedThisYear.find(pw => pw === newPassword)) {
-  //   return { statusCode: 400, error: 'New Password has already been used before by this user' };
-  // }
-
+  
   user.passwordUsedThisYear.push(oldPassword);
   user.password = newPassword;
   setData(dataBase);

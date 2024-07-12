@@ -7,20 +7,20 @@ import {
 } from './helpers';
 import {
   CreateQuestionReturn,
-  EmptyObject, 
-  ErrorMessage, 
-  QuestionBody, 
-  Quiz, 
-  QuizIdObject, 
-  QuizInfoResult, 
-  TrashViewDetails, 
-  QuizRestoreResult, 
-  QuizQuestionDeleteResult, 
-  UserUpdateResult, 
-  QuizListDetails, 
-  QuizRemoveResult, 
-  QuizTrashEmptyResult, 
-  PositionWithTokenObj, 
+  EmptyObject,
+  ErrorMessage,
+  QuestionBody,
+  Quiz,
+  QuizIdObject,
+  QuizInfoResult,
+  TrashViewDetails,
+  QuizRestoreResult,
+  QuizQuestionDeleteResult,
+  UserUpdateResult,
+  QuizListDetails,
+  QuizRemoveResult,
+  QuizTrashEmptyResult,
+  PositionWithTokenObj,
   QuizQuestionMoveResult
 } from './types';
 
@@ -161,9 +161,10 @@ export function adminQuizInfo (sessionId: string, quizId: number): QuizInfoResul
   if (!quiz) {
     return { statusCode: 403, error: `Quiz with ID '${quizId}' not found` };
   } else if (quiz.creatorId !== user.userId) {
-    return { 
-      statusCode: 403, 
-      error: `Quiz with ID ${quizId} is not owned by ${user.userId} (actual owner: ${quiz.creatorId})` };
+    return {
+      statusCode: 403,
+      error: `Quiz with ID ${quizId} is not owned by ${user.userId} (actual owner: ${quiz.creatorId})`
+    };
   }
 
   return {

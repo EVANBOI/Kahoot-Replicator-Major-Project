@@ -1,13 +1,14 @@
-import { 
-  adminAuthRegister, 
-  adminQuizInfo, 
-  adminQuizCreate, 
-  clear } from '../wrappers';
-import { 
-  ERROR403, 
-  ERROR401, 
-  VALID_USER_REGISTER_INPUTS_1, 
-  VALID_QUIZ_CREATE_INPUTS_1 
+import {
+  adminAuthRegister,
+  adminQuizInfo,
+  adminQuizCreate,
+  clear
+} from '../wrappers';
+import {
+  ERROR403,
+  ERROR401,
+  VALID_USER_REGISTER_INPUTS_1,
+  VALID_QUIZ_CREATE_INPUTS_1
 } from '../testConstants';
 
 let VALID_TOKEN: string;

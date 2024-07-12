@@ -28,24 +28,24 @@ beforeEach(() => {
 describe('adminQuizTransfer tests', () => {
   beforeEach(() => {
     const registerResponse = adminAuthRegister(
-      VALID_USER_REGISTER_INPUTS_1.EMAIL, 
-      VALID_USER_REGISTER_INPUTS_1.PASSWORD, 
-      VALID_USER_REGISTER_INPUTS_1.FIRSTNAME, 
+      VALID_USER_REGISTER_INPUTS_1.EMAIL,
+      VALID_USER_REGISTER_INPUTS_1.PASSWORD,
+      VALID_USER_REGISTER_INPUTS_1.FIRSTNAME,
       VALID_USER_REGISTER_INPUTS_1.LASTNAME
     );
     sessionId = registerResponse.jsonBody.token;
 
     const quizCreateResponse = adminQuizCreate(
-      sessionId, 
-      VALID_QUIZ_CREATE_INPUTS_1.NAME, 
+      sessionId,
+      VALID_QUIZ_CREATE_INPUTS_1.NAME,
       VALID_QUIZ_CREATE_INPUTS_1.DESCRIPTION
     );
     quizId = quizCreateResponse.jsonBody.quizId;
 
     const newUserRegisterResponse = adminAuthRegister(
-      VALID_USER_REGISTER_INPUTS_2.EMAIL, 
-      VALID_USER_REGISTER_INPUTS_2.PASSWORD, 
-      VALID_USER_REGISTER_INPUTS_2.FIRSTNAME, 
+      VALID_USER_REGISTER_INPUTS_2.EMAIL,
+      VALID_USER_REGISTER_INPUTS_2.PASSWORD,
+      VALID_USER_REGISTER_INPUTS_2.FIRSTNAME,
       VALID_USER_REGISTER_INPUTS_2.LASTNAME
     );
     newOwnerEmail = VALID_USER_REGISTER_INPUTS_2.EMAIL;

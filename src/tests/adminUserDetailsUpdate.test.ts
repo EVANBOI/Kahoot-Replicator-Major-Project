@@ -1,15 +1,15 @@
-import { 
-  adminAuthRegister, 
-  adminUserDetailsUpdate, 
-  clear, 
-  adminUserDetails 
+import {
+  adminAuthRegister,
+  adminUserDetailsUpdate,
+  clear,
+  adminUserDetails
 } from '../wrappers';
 import {
-  VALID_USER_REGISTER_INPUTS_1, 
-  VALID_USER_REGISTER_INPUTS_2, 
+  VALID_USER_REGISTER_INPUTS_1,
+  VALID_USER_REGISTER_INPUTS_2,
   USER_DETAIL_UPDATED_SUCCESSFUL,
-  ERROR401, 
-  ERROR400, 
+  ERROR401,
+  ERROR400,
   NEW_VALID_EMAIL
 } from '../testConstants';
 
@@ -152,9 +152,9 @@ describe('Successful update', () => {
   });
 
   test('correct update Last name with all valid letters', () => {
-    adminUserDetailsUpdate(VALID_TOKEN, 
-      VALID_USER_REGISTER_INPUTS_1.EMAIL, 
-      VALID_USER_REGISTER_INPUTS_1.FIRSTNAME, 
+    adminUserDetailsUpdate(VALID_TOKEN,
+      VALID_USER_REGISTER_INPUTS_1.EMAIL,
+      VALID_USER_REGISTER_INPUTS_1.FIRSTNAME,
       "ValidFN-' ");
     expect(adminUserDetails(VALID_TOKEN)).toStrictEqual({
       statusCode: 200,
@@ -172,9 +172,9 @@ describe('Successful update', () => {
 
   test('correct update New email', () => {
     adminUserDetailsUpdate(
-      VALID_TOKEN, 
-      NEW_VALID_EMAIL, 
-      VALID_USER_REGISTER_INPUTS_1.FIRSTNAME, 
+      VALID_TOKEN,
+      NEW_VALID_EMAIL,
+      VALID_USER_REGISTER_INPUTS_1.FIRSTNAME,
       VALID_USER_REGISTER_INPUTS_1.LASTNAME);
     expect(adminUserDetails(VALID_TOKEN)).toStrictEqual({
       statusCode: 200,
@@ -192,9 +192,9 @@ describe('Successful update', () => {
 
   test('successful update with email remaining the same', () => {
     adminUserDetailsUpdate(
-      VALID_TOKEN, 
-      VALID_USER_REGISTER_INPUTS_1.EMAIL, 
-      VALID_USER_REGISTER_INPUTS_1.FIRSTNAME, 
+      VALID_TOKEN,
+      VALID_USER_REGISTER_INPUTS_1.EMAIL,
+      VALID_USER_REGISTER_INPUTS_1.FIRSTNAME,
       VALID_USER_REGISTER_INPUTS_1.LASTNAME);
     expect(adminUserDetails(VALID_TOKEN)).toStrictEqual({
       statusCode: 200,

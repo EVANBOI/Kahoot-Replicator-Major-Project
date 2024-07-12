@@ -18,9 +18,9 @@ beforeEach(() => {
 describe('adminQuizNameUpdate failure cases tests', () => {
   beforeEach(() => {
     const registerResponse = adminAuthRegister(
-      VALID_USER_REGISTER_INPUTS_1.EMAIL, 
-      VALID_USER_REGISTER_INPUTS_1.PASSWORD, 
-      VALID_USER_REGISTER_INPUTS_1.FIRSTNAME, 
+      VALID_USER_REGISTER_INPUTS_1.EMAIL,
+      VALID_USER_REGISTER_INPUTS_1.PASSWORD,
+      VALID_USER_REGISTER_INPUTS_1.FIRSTNAME,
       VALID_USER_REGISTER_INPUTS_1.LASTNAME
     );
     sessionId = registerResponse.jsonBody?.token;
@@ -71,9 +71,9 @@ describe('adminQuizNameUpdate failure cases tests', () => {
 describe('adminQuizNameUpdate success cases tests', () => {
   beforeEach(() => {
     const registerResponse = adminAuthRegister(
-      VALID_USER_REGISTER_INPUTS_1.EMAIL, 
-      VALID_USER_REGISTER_INPUTS_1.PASSWORD, 
-      VALID_USER_REGISTER_INPUTS_1.FIRSTNAME, 
+      VALID_USER_REGISTER_INPUTS_1.EMAIL,
+      VALID_USER_REGISTER_INPUTS_1.PASSWORD,
+      VALID_USER_REGISTER_INPUTS_1.FIRSTNAME,
       VALID_USER_REGISTER_INPUTS_1.LASTNAME
     );
     sessionId = registerResponse.jsonBody?.token;

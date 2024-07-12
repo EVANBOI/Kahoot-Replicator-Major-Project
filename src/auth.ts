@@ -189,8 +189,8 @@ export function adminUserDetails (sessionId: string): Userdetails {
  * @returns {ErrorMessage} - error code
  */
 export function adminUserPasswordUpdate(
-  sessionId: string, 
-  oldPassword: string, 
+  sessionId: string,
+  oldPassword: string,
   newPassword: string
 ): PasswordUpdateResult {
   const dataBase: Data = getData();

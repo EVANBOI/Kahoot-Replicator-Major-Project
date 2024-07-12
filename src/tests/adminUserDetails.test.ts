@@ -67,7 +67,6 @@ describe('Successful user details retrieval tests', () => {
       statusCode: 200
     });
   });
-
 });
 
 describe('Unsuccessful user details retrieval tests', () => {
@@ -95,6 +94,3 @@ describe('Unsuccessful user details retrieval tests', () => {
     });
   });
 });
-
-
-

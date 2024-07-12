@@ -25,26 +25,26 @@ describe('adminUserPasswordUpdate success tests', () => {
 
   test('correct return value', () => {
     expect(adminUserPasswordUpdate(
-      sessionId, 
-      'password1', 
+      sessionId,
+      'password1',
       'newPassword1'
     )).toStrictEqual(SUCCESSFUL_UPDATE);
   });
 
   test('Successfully update password twice', () => {
     expect(adminUserPasswordUpdate(
-      sessionId, 
-      'password1', 
+      sessionId,
+      'password1',
       'newPassword1')
     ).toStrictEqual(SUCCESSFUL_UPDATE);
 
     expect(adminUserPasswordUpdate(
-      sessionId, 
-      'newPassword1', 
+      sessionId,
+      'newPassword1',
       'anotherNewPassword123'
     )).toStrictEqual(SUCCESSFUL_UPDATE);
   });
-})
+});
 
 describe('adminUserPasswordUpdate failure tests', () => {
   let sessionId: string;
@@ -61,38 +61,38 @@ describe('adminUserPasswordUpdate failure tests', () => {
 
   test('Invalid session ID', () => {
     expect(adminUserPasswordUpdate(
-      'invalidSessionId', 
-      'password1', 
+      'invalidSessionId',
+      'password1',
       'newPassword1')
     ).toStrictEqual(ERROR401);
   });
 
   test('Incorrect old password', () => {
     expect(adminUserPasswordUpdate(
-      sessionId, 
-      'wrongPassword', 
+      sessionId,
+      'wrongPassword',
       'newPassword1')
     ).toStrictEqual(ERROR400);
   });
 
   test('Old and new password are the same', () => {
     expect(adminUserPasswordUpdate(
-      sessionId, 
-      'password1', 
+      sessionId,
+      'password1',
       'password1')
     ).toStrictEqual(ERROR400);
   });
 
   test('New password has already been used - check data store', () => {
     expect(adminUserPasswordUpdate(
-      sessionId, 
-      'password1', 
+      sessionId,
+      'password1',
       'newPassword1')
     ).toStrictEqual(SUCCESSFUL_UPDATE);
 
     expect(adminUserPasswordUpdate(
-      sessionId, 
-      'newPassword1', 
+      sessionId,
+      'newPassword1',
       'password1')
     ).toStrictEqual(ERROR400);
   });

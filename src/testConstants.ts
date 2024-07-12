@@ -29,11 +29,6 @@ export const NEW_VALID_EMAIL = 'newValidEmail@gmail.com';
 export const INVALID_STRINGIFIED_ARRAY = '[999, 9999]';
 
 // here below for the success return consts
-export const SUCCESS = {
-  statusCode: 200,
-  jsonBody: {}
-};
-
 export const USER_DETAIL_UPDATED_SUCCESSFUL = {
   statusCode: 200,
   jsonBody: {}

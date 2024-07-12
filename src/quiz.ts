@@ -550,7 +550,7 @@ export function adminQuizQuestionMove(
  * @returns {} An empty object
  * @returns {ErrorMessage} An error message
  */
-export function adminQuizRestore(token: string, quizId: number): QuizRestoreResult | ErrorMessage {
+export function adminQuizRestore(token: string, quizId: number): QuizRestoreResult {
   const database = getData();
   const user = findUserBySessionId(database, token);
 

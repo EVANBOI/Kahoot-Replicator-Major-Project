@@ -1,5 +1,15 @@
-import { adminAuthRegister, adminQuizInfo, adminQuizCreate, clear } from '../wrappers';
-import { ERROR403, ERROR401, VALID_USER_REGISTER_INPUTS_1, VALID_QUIZ_CREATE_INPUTS_1 } from '../testConstants';
+import {
+  adminAuthRegister,
+  adminQuizInfo,
+  adminQuizCreate,
+  clear
+} from '../wrappers';
+import {
+  ERROR403,
+  ERROR401,
+  VALID_USER_REGISTER_INPUTS_1,
+  VALID_QUIZ_CREATE_INPUTS_1
+} from '../testConstants';
 
 let VALID_TOKEN: string;
 let VALID_QUIZ_ID: number;
@@ -16,7 +26,7 @@ describe('error tests', () => {
       VALID_USER_REGISTER_INPUTS_1.FIRSTNAME,
       VALID_USER_REGISTER_INPUTS_1.LASTNAME
     );
-    VALID_TOKEN = register.jsonBody.token;
+    VALID_TOKEN = register.jsonBody?.token;
   });
 
   test('AuthUserId is not a valid user.', () => {
@@ -29,14 +39,14 @@ describe('error tests', () => {
 
   test('Visitor is not creator', () => {
     const newQuiz = adminQuizCreate(VALID_TOKEN, VALID_QUIZ_CREATE_INPUTS_1.NAME, VALID_QUIZ_CREATE_INPUTS_1.DESCRIPTION);
-    VALID_QUIZ_ID = newQuiz.jsonBody.quizId;
+    VALID_QUIZ_ID = newQuiz.jsonBody?.quizId;
     const otherUser = adminAuthRegister(
       'validAnotherEmail@gmail.com',
       VALID_USER_REGISTER_INPUTS_1.PASSWORD,
       VALID_USER_REGISTER_INPUTS_1.FIRSTNAME,
       VALID_USER_REGISTER_INPUTS_1.LASTNAME
     );
-    const ANOTHETR_SESSION_ID = otherUser.jsonBody.token;
+    const ANOTHETR_SESSION_ID = otherUser.jsonBody?.token;
     expect(adminQuizInfo(ANOTHETR_SESSION_ID, VALID_QUIZ_ID)).toStrictEqual(ERROR403);
   });
 });
@@ -49,13 +59,13 @@ describe('success tests', () => {
       VALID_USER_REGISTER_INPUTS_1.FIRSTNAME,
       VALID_USER_REGISTER_INPUTS_1.LASTNAME
     );
-    VALID_TOKEN = User.jsonBody.token;
+    VALID_TOKEN = User.jsonBody?.token;
     const Quiz = adminQuizCreate(
       VALID_TOKEN,
       VALID_QUIZ_CREATE_INPUTS_1.NAME,
       VALID_QUIZ_CREATE_INPUTS_1.DESCRIPTION
     );
-    VALID_QUIZ_ID = Quiz.jsonBody.quizId;
+    VALID_QUIZ_ID = Quiz.jsonBody?.quizId;
   });
 
   test('correct return value', () => {

@@ -12,7 +12,7 @@ const uid = new ShortUniqueId({ dictionary: 'number' });
  * @param {string} nameFirst - first name of a user
  * @param {string} nameLast - last name of a user
  * @returns {{token: number}}
- * @returns {{error: string}} an error
+ * @returns {ErrorMessage} an error
  */
 export function adminAuthRegister (
   email: string,
@@ -68,6 +68,7 @@ export function adminAuthRegister (
  * @param {string} nameFirst - first name of a user
  * @param {string} nameLast - last name of a user
  * @returns {} - empty object
+ * @returns {ErrorMessage} - an error
  */
 export function adminUserDetailsUpdate (
   sessionId: string,
@@ -116,7 +117,8 @@ export function adminUserDetailsUpdate (
  *
  * @param {string} email - unique email of a user
  * @param {string} password - password for a user's account
- * @returns {{token: string}}
+ * @returns {{token: string}} - a unique session id of a user
+ * @returns {ErrorMessage} - an error
  */
 export function adminAuthLogin (
   email : string,
@@ -145,7 +147,7 @@ export function adminAuthLogin (
 }
 
 /**
- * Given an admin user's authUserId, return details about the user.
+ * Given an admin user's sessionId, return details about the user.
  * "name" is the first and last name concatenated with a single space between them.
  * @param {string} sessionId - unique id of a user
  * @returns {{user:
@@ -153,7 +155,10 @@ export function adminAuthLogin (
  *               name: string,
  *               email: string,
  *               numSuccessfulLogins: number,
- *               numFailedPasswordsSinceLastLogin: number}}}
+ *               numFailedPasswordsSinceLastLogin: number
+ * }}
+ * }
+ * @returns {ErrorMessage} - an error message
  */
 export function adminUserDetails (sessionId: string): Userdetails {
   const database = getData();
@@ -177,12 +182,17 @@ export function adminUserDetails (sessionId: string): Userdetails {
 /**
  * Given details relating to a password change, update the password of a logged in user.
  *
- * @param {number} authUserId - unique id of a user
+ * @param {string} sessionId - unique session id of a user
  * @param {string} oldPassword - current password of a user's account
  * @param {string} newPassword - new password to replace old password
  * @returns {} - empty object
+ * @returns {ErrorMessage} - error code
  */
-export function adminUserPasswordUpdate(sessionId: string, oldPassword: string, newPassword: string): PasswordUpdateResult {
+export function adminUserPasswordUpdate(
+  sessionId: string,
+  oldPassword: string,
+  newPassword: string
+): PasswordUpdateResult {
   const dataBase: Data = getData();
   const user = findUserBySessionId(dataBase, sessionId);
 
@@ -191,23 +201,16 @@ export function adminUserPasswordUpdate(sessionId: string, oldPassword: string, 
   }
   if (user.password !== oldPassword) {
     return { statusCode: 400, error: 'Old Password is not the correct old password' };
-  }
-  if (oldPassword === newPassword) {
+  } else if (oldPassword === newPassword) {
     return { statusCode: 400, error: 'Old Password and New Password match exactly' };
-  }
-  if (user.passwordUsedThisYear.includes(newPassword)) {
+  } else if (user.passwordUsedThisYear.includes(newPassword)) {
     return { statusCode: 400, error: 'New Password has already been used before by this user' };
-  }
-  if (newPassword.length < 8) {
+  } else if (newPassword.length < 8) {
     return { statusCode: 400, error: 'Password should be more than 8 characters' };
-  }
-  if (!/\d/.test(newPassword) || !/[a-zA-Z]/.test(newPassword)) {
+  } else if (!/\d/.test(newPassword) || !/[a-zA-Z]/.test(newPassword)) {
     return { statusCode: 400, error: 'Password needs to contain at least one number and at least one letter' };
   }
 
-  if (user.passwordUsedThisYear.find(pw => pw === newPassword)) {
-    return { statusCode: 400, error: 'New Password has already been used before by this user' };
-  }
   user.passwordUsedThisYear.push(oldPassword);
   user.password = newPassword;
   setData(dataBase);
@@ -219,6 +222,7 @@ export function adminUserPasswordUpdate(sessionId: string, oldPassword: string, 
  *
  * @param {string} sessionId - unique session id of a user, users can have multiple
  * @returns {} - empty object
+ * @returns {ErrorMessage} - error code
  */
 export function adminAuthLogout(sessionId: string): ErrorMessage | EmptyObject {
   const database = getData();

@@ -436,7 +436,7 @@ export function adminQuizQuestionDuplicate(
  * @param {QuestionBody} questionBody - contains information of a question
  * @param {string} token - unique session id of a user
  * @returns {} - an empty object
- * @returns {{error: string}} an error
+ * @returns {ErrorMessage} an error
  */
 
 export function adminQuizQuestionUpdate(

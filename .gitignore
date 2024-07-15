@@ -172,3 +172,5 @@ Thumbs.db
 # Ignore built ts files
 dist/**/*
 
+# Ignore the DataStore file
+dataStore.json

@@ -145,16 +145,13 @@ export function adminQuizRemove (token: string, quizId: number): QuizRemoveResul
 /**
  * Get all of the relevant information about the current quiz.
  *
- * @param {string} sessionId - unique session id of a user
+ * @param {string} token - unique session id of a user
  * @param {number} quizId - unique id of a quiz
- * @returns {{quizId: number, name: string, timeCreated: number,
- *            timeLastEdited: number, description: string,
- *            questions: QuestionBody[], duration: number}}
- * @returns {ErrorMessage} an error
+ * @returns {QuizInfoResult} - an object containing all the information about the quiz
  */
-export function adminQuizInfo (sessionId: string, quizId: number): QuizInfoResult {
+export function adminQuizInfo (token: string, quizId: number): QuizInfoResult {
   const database = getData();
-  const user = findUserBySessionId(database, sessionId);
+  const user = findUserBySessionId(database, token);
   const quiz = findQuizWithId(database, quizId);
 
   if (!quiz) {
@@ -318,10 +315,8 @@ export function adminQuizTrashView(sessionId: string): TrashViewDetails {
 /**
  * clear the quiz trash
  *
- * @param {string} token - unique sessionId
  * @param {string} quizIds - the stringified array of quiz Ids.
  * @returns {} - empty object
- * @returns {ErrorMessage} an error
  */
 export function adminQuizTrashEmpty(quizIds: string): QuizTrashEmptyResult {
   const database = getData();
@@ -496,7 +491,6 @@ export function adminQuizQuestionUpdate(
  * @param {number} questionId - the questionId we want to move
  * @param {PositionWithTokenObj} moveInfo - the object contain the position we want to move and token who made request
  * @returns {} - empty object
- * @returns {{statusCode: number, error: string}} an error
  */
 export function adminQuizQuestionMove(
   quizId: number,

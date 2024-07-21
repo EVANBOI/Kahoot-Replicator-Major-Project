@@ -59,7 +59,7 @@ export type QuestionIdObject = {
 // Types for function return
 export type EmptyObject = Record<string, never>;
 export type ClearResult = EmptyObject;
-export type UserUpdateResult = EmptyObject | ErrorMessage
+export type UserUpdateResult = EmptyObject;
 export type UserRegistrationResult = ErrorMessage | Token;
 
 export type QuizListDetails = ErrorMessage | {

@@ -9,6 +9,13 @@ export function findQuizWithId(database: Data, quizId: number) {
   return database.quizzes.find(quiz => quiz.quizId === quizId);
 }
 
+export function tokenCheck(token: string) {
+  const isValidToken =  getData().users.some(user => user.tokens.some(tokens => tokens.token === token));
+  if (!isValidToken) {
+    throw new Error('Invalid token provided');
+  }
+}
+
 export function ok<T>(item: T | { statusCode: number, error: string }): T {
   return item as T;
 }

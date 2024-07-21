@@ -33,7 +33,7 @@ import {
 } from './auth';
 import { clear } from './other';
 import { getData } from './dataStore';
-import { findUserBySessionId } from './helpers';
+import { findUserBySessionId, tokenCheck } from './helpers';
 import { adminQuizNameUpdate } from './quiz';
 
 // Set up web app
@@ -147,11 +147,17 @@ app.post('/v1/admin/quiz', (req: Request, res: Response) => {
 
 app.put('/v1/admin/user/details', (req: Request, res: Response) => {
   const { token, email, nameFirst, nameLast } = req.body;
-  const result = adminUserDetailsUpdate(token, email, nameFirst, nameLast);
-  if ('error' in result) {
-    return res.status(result.statusCode).json({ error: result.error });
+  try {
+    tokenCheck(token);
+  } catch (error) {
+    return res.status(401).json({ error: error.message });
   }
-  res.json(result);
+
+  try {
+    res.json(adminUserDetailsUpdate(token, email, nameFirst, nameLast));
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
 });
 
 app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {

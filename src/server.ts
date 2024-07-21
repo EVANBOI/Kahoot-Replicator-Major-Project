@@ -33,7 +33,11 @@ import {
 } from './auth';
 import { clear } from './other';
 import { getData } from './dataStore';
-import { findUserBySessionId, tokenCheck } from './helpers';
+import { 
+  findUserBySessionId, 
+  tokenCheck,
+  quizExistWithCorrectCreatorCheck,
+  allExistInTrashCheck } from './helpers';
 import { adminQuizNameUpdate } from './quiz';
 
 // Set up web app
@@ -261,11 +265,23 @@ app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
 app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
   const token = req.query.token as string;
   const quizIds = req.query.quizIds as string;
-  const result = adminQuizTrashEmpty(token, quizIds);
-  if ('error' in result) {
-    return res.status(result.statusCode).json({ error: result.error });
-  }
-  res.json(result);
+  try {
+    tokenCheck(token);
+  } catch (error) {
+    return res.status(401).json({ error: error.message })
+  };
+  try {
+    quizExistWithCorrectCreatorCheck(token, quizIds);
+  } catch (error) {
+    return res.status(403).json({ error: error.message })
+  };
+  try {
+    allExistInTrashCheck(quizIds);
+  } catch (error) {
+    return res.status(400).json({ error: error.message })
+  };
+
+  res.json(adminQuizTrashEmpty(quizIds));
 });
 
 app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {

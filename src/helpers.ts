@@ -84,7 +84,7 @@ export function validQuestion(
 
 // this function is the helper function of the adminQuizTrashEmpty, to determine if the given quiz array
 // is exist in trash or quizzesStore and creator is token owner
-export function isQuizExistWithCorrectCreator(token: string, quizIds: string): boolean {
+export function quizExistWithCorrectCreatorCheck(token: string, quizIds: string) {
   const data = getData();
   const UserId = findUserBySessionId(data, token)?.userId;
   const quizIdArray: number[] = JSON.parse(quizIds);
@@ -94,20 +94,20 @@ export function isQuizExistWithCorrectCreator(token: string, quizIds: string): b
     const isValidQuiz = isExistInTrash || isExistInQuizzesStore;
 
     if (!isValidQuiz) {
-      return false;
+      throw new Error('Quiz does not exist');
     }
     const quiz = isExistInTrash || isExistInQuizzesStore;
     if (quiz?.creatorId !== UserId) {
-      return false;
+      throw new Error('You are not the creator of the quiz');
     }
   }
-
-  return true;
 }
 
-export function isAllExistInTrash(quizIds: string): boolean {
+export function allExistInTrashCheck(quizIds: string) {
   const data = getData();
   const quizIdArray: number[] = JSON.parse(quizIds);
   const result = quizIdArray.every(elementId => data.trash.some(quiz => quiz.quizId === elementId));
-  return result;
+  if (result === false) {
+    throw new Error('Not all quizzes are in trash');
+  }
 }

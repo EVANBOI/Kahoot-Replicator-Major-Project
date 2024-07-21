@@ -1,8 +1,8 @@
 import { getData, setData } from './dataStore';
 
 import {
-  findQuizWithId, 
-  findUserBySessionId, 
+  findQuizWithId,
+  findUserBySessionId,
 } from './helpers';
 import {
   EmptyObject,
@@ -231,7 +231,6 @@ export function adminQuizDescriptionUpdate(
   return {};
 }
 
-
 /**
  * Given a token/sessionId, view the quizzes that are currently in the trash for
  * logged in user.
@@ -353,4 +352,3 @@ export function adminQuizRestore(token: string, quizId: number): QuizRestoreResu
   setData(database);
   return { statusCode: 200, message: '{}' };
 }
-

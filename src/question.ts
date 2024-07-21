@@ -1,9 +1,9 @@
 import { getData, setData } from './dataStore';
 
 import {
-  findQuizWithId, 
-  findUserBySessionId, 
-  findQuestionInQuizId, 
+  findQuizWithId,
+  findUserBySessionId,
+  findQuestionInQuizId,
   findQuestionIndex,
   validQuestion
 } from './helpers';
@@ -21,7 +21,6 @@ import ShortUniqueId from 'short-unique-id';
 import { randomColor } from 'seed-to-color';
 const answerUid = new ShortUniqueId({ dictionary: 'number' });
 const questionUid = new ShortUniqueId({ dictionary: 'number' });
-
 
 /**
  * Create questions for quizzes given the contents of the question and
@@ -65,7 +64,6 @@ export function adminCreateQuizQuestion(
   setData(database);
   return { questionId: questionId };
 }
-
 
 /**
  * Duplicate a quiz question.
@@ -214,7 +212,6 @@ export function adminQuizQuestionMove(
 
   return {};
 }
-
 
 /**
  * Deletes a question from a quiz.

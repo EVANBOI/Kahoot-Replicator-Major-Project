@@ -35,12 +35,13 @@ import {
 } from './auth';
 import { clear } from './other';
 import { getData } from './dataStore';
-import { 
-  findUserBySessionId, 
+import {
+  findUserBySessionId,
   tokenCheck,
   quizExistWithCorrectCreatorCheck,
   allExistInTrashCheck,
-  quizExistCheck } from './helpers';
+  quizExistCheck
+} from './helpers';
 import { adminQuizNameUpdate } from './quiz';
 
 // Set up web app
@@ -271,18 +272,18 @@ app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
   try {
     tokenCheck(token);
   } catch (error) {
-    return res.status(401).json({ error: error.message })
-  };
+    return res.status(401).json({ error: error.message });
+  }
   try {
     quizExistWithCorrectCreatorCheck(token, quizIds);
   } catch (error) {
-    return res.status(403).json({ error: error.message })
-  };
+    return res.status(403).json({ error: error.message });
+  }
   try {
     allExistInTrashCheck(quizIds);
   } catch (error) {
-    return res.status(400).json({ error: error.message })
-  };
+    return res.status(400).json({ error: error.message });
+  }
 
   res.json(adminQuizTrashEmpty(quizIds));
 });

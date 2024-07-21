@@ -69,7 +69,7 @@ export type QuizListDetails = ErrorMessage | {
     }[]
 }
 
-export type QuizInfoResult =  {
+export type QuizInfoResult = {
     quizId: number,
     name: string,
     timeCreated: number,

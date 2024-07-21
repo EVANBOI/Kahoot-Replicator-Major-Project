@@ -10,7 +10,7 @@ export function findQuizWithId(database: Data, quizId: number) {
 }
 
 export function tokenCheck(token: string) {
-  const isValidToken =  getData().users.some(user => user.tokens.some(tokens => tokens.token === token));
+  const isValidToken = getData().users.some(user => user.tokens.some(tokens => tokens.token === token));
   if (!isValidToken) {
     throw new Error('Invalid token provided');
   }

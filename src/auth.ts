@@ -63,50 +63,45 @@ export function adminAuthRegister (
  * Given an admin user's authUserId and a set of properties,
  * update the properties of this logged in admin user.
  *
- * @param {string} sessionId - unique id of a user
+ * @param {string} token - unique session id of a user
  * @param {string} email - unique email of a user
  * @param {string} nameFirst - first name of a user
  * @param {string} nameLast - last name of a user
  * @returns {} - empty object
- * @returns {ErrorMessage} - an error
  */
 export function adminUserDetailsUpdate (
-  sessionId: string,
+  token: string,
   email: string,
   nameFirst: string,
   nameLast: string
 ): UserUpdateResult {
   const dataBase = getData();
-  const person2 = findUserBySessionId(dataBase, sessionId);
-  if (!person2) {
-    return { statusCode: 401, error: 'sessionId provided is invalid' };
-  }
-
   // to cover the case when we do not make change of the email
   // (the update email === original email)
   const person = dataBase.users.find(person => person.email === email);
   if (person) {
-    const isCorrectOwner = person.tokens.find(tokens => tokens.token === sessionId);
+    const isCorrectOwner = person.tokens.find(tokens => tokens.token === token);
     if (!isCorrectOwner) {
-      return { statusCode: 400, error: 'Email address is used by another user.' };
+      throw new Error('Email address is used by another user.');
     }
   }
 
   const nameRange = /^[a-zA-Z-' ]*$/;
   if (!validator.isEmail(email)) {
-    return { statusCode: 400, error: 'Email is not valid' };
+    throw new Error('Email is not valid');
   } else if (!nameRange.test(nameFirst)) {
-    return { statusCode: 400, error: 'NameFirst contains invalid characters' };
+    throw new Error('NameFirst contains invalid characters');
   } else if (nameFirst.length < 2 || nameFirst.length > 20) {
-    return { statusCode: 400, error: 'NameFirst is less than 2 characters or more than 20 characters.' };
+    throw new Error('NameFirst is less than 2 characters or more than 20 characters.');
   } else if (!nameRange.test(nameLast)) {
-    return { statusCode: 400, error: 'NameLast contains invalid characters' };
+    throw new Error('NameLast contains invalid characters');
   } else if (nameLast.length < 2 || nameLast.length > 20) {
-    return { statusCode: 400, error: 'NameLast is less than 2 characters or more than 20 characters.' };
+    throw new Error('NameLast is less than 2 characters or more than 20 characters.');
   }
 
-  person2.email = email;
-  person2.name = `${nameFirst} ${nameLast}`;
+  const user = findUserBySessionId(dataBase, token);
+  user.email = email;
+  user.name = `${nameFirst} ${nameLast}`;
   setData(dataBase);
 
   return {};

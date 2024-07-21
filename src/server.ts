@@ -14,15 +14,17 @@ import {
   adminQuizList,
   adminQuizDescriptionUpdate,
   adminQuizRemove, adminQuizTrashEmpty,
-  adminCreateQuizQuestion,
   adminQuizRestore,
-  adminQuizQuestionDelete,
   adminQuizTrashView,
   adminQuizTransfer,
+} from './quiz';
+import {
+  adminCreateQuizQuestion,
+  adminQuizQuestionDelete,
   adminQuizQuestionMove,
   adminQuizQuestionDuplicate,
   adminQuizQuestionUpdate
-} from './quiz';
+} from './question';
 import {
   adminAuthLogin,
   adminUserDetails,
@@ -33,7 +35,13 @@ import {
 } from './auth';
 import { clear } from './other';
 import { getData } from './dataStore';
-import { findUserBySessionId } from './helpers';
+import {
+  findUserBySessionId,
+  tokenCheck,
+  quizExistWithCorrectCreatorCheck,
+  allExistInTrashCheck,
+  quizExistCheck
+} from './helpers';
 import { adminQuizNameUpdate } from './quiz';
 
 // Set up web app
@@ -147,11 +155,17 @@ app.post('/v1/admin/quiz', (req: Request, res: Response) => {
 
 app.put('/v1/admin/user/details', (req: Request, res: Response) => {
   const { token, email, nameFirst, nameLast } = req.body;
-  const result = adminUserDetailsUpdate(token, email, nameFirst, nameLast);
-  if ('error' in result) {
-    return res.status(result.statusCode).json({ error: result.error });
+  try {
+    tokenCheck(token);
+  } catch (error) {
+    return res.status(401).json({ error: error.message });
   }
-  res.json(result);
+
+  try {
+    res.json(adminUserDetailsUpdate(token, email, nameFirst, nameLast));
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
 });
 
 app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
@@ -166,11 +180,16 @@ app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
 app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
   const token = req.query.token as string;
   const quizId = parseInt(req.params.quizid);
-  const result = adminQuizInfo(token, quizId);
-  if ('error' in result) {
-    return res.status(result.statusCode).json({ error: result.error });
+  try {
+    tokenCheck(token);
+  } catch (error) {
+    return res.status(401).json({ error: error.message });
   }
-  res.json(result);
+  try {
+    res.json(adminQuizInfo(token, quizId));
+  } catch (error) {
+    return res.status(403).json({ error: error.message });
+  }
 });
 
 app.put('/v1/admin/user/password', (req: Request, res: Response) => {
@@ -250,11 +269,23 @@ app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
 app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
   const token = req.query.token as string;
   const quizIds = req.query.quizIds as string;
-  const result = adminQuizTrashEmpty(token, quizIds);
-  if ('error' in result) {
-    return res.status(result.statusCode).json({ error: result.error });
+  try {
+    tokenCheck(token);
+  } catch (error) {
+    return res.status(401).json({ error: error.message });
   }
-  res.json(result);
+  try {
+    quizExistWithCorrectCreatorCheck(token, quizIds);
+  } catch (error) {
+    return res.status(403).json({ error: error.message });
+  }
+  try {
+    allExistInTrashCheck(quizIds);
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+
+  res.json(adminQuizTrashEmpty(quizIds));
 });
 
 app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
@@ -282,11 +313,21 @@ app.put('/v1/admin/quiz/:quizid/question/:questionid/move', (req: Request, res: 
   const quizId = parseInt(req.params.quizid);
   const questionId = parseInt(req.params.questionid);
   const { moveInfo } = req.body;
-  const result = adminQuizQuestionMove(quizId, questionId, moveInfo);
-  if ('error' in result) {
-    return res.status(result.statusCode).json({ error: result.error });
+  try {
+    tokenCheck(moveInfo.token);
+  } catch (error) {
+    return res.status(401).json({ error: error.message });
   }
-  res.json(result);
+  try {
+    quizExistCheck(quizId, moveInfo.token);
+  } catch (error) {
+    return res.status(403).json({ error: error.message });
+  }
+  try {
+    res.json(adminQuizQuestionMove(quizId, questionId, moveInfo));
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
 });
 
 // ====================================================================

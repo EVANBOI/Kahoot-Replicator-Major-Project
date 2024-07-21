@@ -37,7 +37,8 @@ import {
   findUserBySessionId, 
   tokenCheck,
   quizExistWithCorrectCreatorCheck,
-  allExistInTrashCheck } from './helpers';
+  allExistInTrashCheck,
+  quizExistCheck } from './helpers';
 import { adminQuizNameUpdate } from './quiz';
 
 // Set up web app
@@ -309,11 +310,21 @@ app.put('/v1/admin/quiz/:quizid/question/:questionid/move', (req: Request, res: 
   const quizId = parseInt(req.params.quizid);
   const questionId = parseInt(req.params.questionid);
   const { moveInfo } = req.body;
-  const result = adminQuizQuestionMove(quizId, questionId, moveInfo);
-  if ('error' in result) {
-    return res.status(result.statusCode).json({ error: result.error });
+  try {
+    tokenCheck(moveInfo.token);
+  } catch (error) {
+    return res.status(401).json({ error: error.message });
   }
-  res.json(result);
+  try {
+    quizExistCheck(quizId, moveInfo.token);
+  } catch (error) {
+    return res.status(403).json({ error: error.message });
+  }
+  try {
+    res.json(adminQuizQuestionMove(quizId, questionId, moveInfo));
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
 });
 
 // ====================================================================

@@ -111,3 +111,14 @@ export function allExistInTrashCheck(quizIds: string) {
     throw new Error('Not all quizzes are in trash');
   }
 }
+
+// helper function to check if the quiz exist and the creator is the token owner
+export function quizExistCheck(quizId: number, token: string) {
+  const user = findUserBySessionId(getData(), token);
+  const quiz = findQuizWithId(getData(), quizId);
+  if (!quiz) {
+    throw new Error('Quiz does not exist');
+  } else if (quiz.creatorId !== user.userId) {
+    throw new Error('You are not the creator of the quiz');
+  }
+}

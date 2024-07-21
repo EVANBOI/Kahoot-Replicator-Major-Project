@@ -135,7 +135,7 @@ export type TrashViewDetails = ErrorMessage | {
 
 export type QuizTrashEmptyResult = EmptyObject;
 
-export type QuizQuestionMoveResult = EmptyObject | ErrorMessage;
+export type QuizQuestionMoveResult = EmptyObject;
 
 // other types
 export type PositionWithTokenObj = {

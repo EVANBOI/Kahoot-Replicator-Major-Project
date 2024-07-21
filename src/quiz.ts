@@ -494,7 +494,7 @@ export function adminQuizQuestionUpdate(
  *
  * @param {number} quizId - the quizId we want to move
  * @param {number} questionId - the questionId we want to move
- * @param {PositionWithTokenObj} moveinfo - the object contain the position we want to move and token who made request
+ * @param {PositionWithTokenObj} moveInfo - the object contain the position we want to move and token who made request
  * @returns {} - empty object
  * @returns {{statusCode: number, error: string}} an error
  */
@@ -504,34 +504,16 @@ export function adminQuizQuestionMove(
   moveInfo: PositionWithTokenObj
 ): QuizQuestionMoveResult {
   const database = getData();
-  const user = findUserBySessionId(database, moveInfo.token);
-  if (!user) {
-    return { statusCode: 401, error: 'Token is empty or invalid.' };
-  }
   const quiz = findQuizWithId(database, quizId);
-  if (!quiz) {
-    return { statusCode: 403, error: 'Quiz does not exist' };
-  } else if (quiz.creatorId !== user.userId) {
-    return { statusCode: 403, error: 'User is is not owner of quiz' };
-  }
   const question = findQuestionInQuizId(database, quizId, questionId);
   const questionIndex = findQuestionIndex(database, quizId, questionId);
   const maxPosition = quiz.questions.length - 1;
   if (!question) {
-    return {
-      statusCode: 400,
-      error: 'Question Id does not refer to a valid question within this quiz'
-    };
+    throw new Error('Question Id does not refer to a valid question within this quiz');
   } else if (moveInfo.newPosition > maxPosition || moveInfo.newPosition < 0) {
-    return {
-      statusCode: 400,
-      error: 'NewPosition is less than 0, or NewPosition is greater than n-1 where n is the number of questions'
-    };
+    throw new Error('NewPosition is less than 0, or NewPosition is greater than n-1 where n is the number of questions');
   } else if (moveInfo.newPosition === questionIndex) {
-    return {
-      statusCode: 400,
-      error: 'NewPosition is the position of the current question'
-    };
+    throw new Error('NewPosition is the position of the current question');
   }
   // swap them
   [quiz.questions[questionIndex], quiz.questions[moveInfo.newPosition]] = [quiz.questions[moveInfo.newPosition], quiz.questions[questionIndex]];

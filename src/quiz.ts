@@ -154,17 +154,11 @@ export function adminQuizInfo (sessionId: string, quizId: number): QuizInfoResul
   const database = getData();
   const user = findUserBySessionId(database, sessionId);
   const quiz = findQuizWithId(database, quizId);
-  if (!user) {
-    return { statusCode: 401, error: 'sessionId is not a valid.' };
-  }
 
   if (!quiz) {
-    return { statusCode: 403, error: `Quiz with ID '${quizId}' not found` };
+    throw new Error(`Quiz with ID '${quizId}' not found`);
   } else if (quiz.creatorId !== user.userId) {
-    return {
-      statusCode: 403,
-      error: `Quiz with ID ${quizId} is not owned by ${user.userId} (actual owner: ${quiz.creatorId})`
-    };
+    throw new Error(`Quiz with ID ${quizId} is not owned by ${user.userId} (actual owner: ${quiz.creatorId})`);
   }
 
   return {

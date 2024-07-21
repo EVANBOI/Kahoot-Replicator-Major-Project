@@ -172,11 +172,16 @@ app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
 app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
   const token = req.query.token as string;
   const quizId = parseInt(req.params.quizid);
-  const result = adminQuizInfo(token, quizId);
-  if ('error' in result) {
-    return res.status(result.statusCode).json({ error: result.error });
+  try {
+    tokenCheck(token);
+  } catch (error) {
+    return res.status(401).json({ error: error.message });
   }
-  res.json(result);
+  try {
+    res.json(adminQuizInfo(token, quizId));
+  } catch (error) {
+    return res.status(403).json({ error: error.message });
+  }
 });
 
 app.put('/v1/admin/user/password', (req: Request, res: Response) => {

@@ -14,15 +14,17 @@ import {
   adminQuizList,
   adminQuizDescriptionUpdate,
   adminQuizRemove, adminQuizTrashEmpty,
-  adminCreateQuizQuestion,
   adminQuizRestore,
-  adminQuizQuestionDelete,
   adminQuizTrashView,
   adminQuizTransfer,
+} from './quiz';
+import {
+  adminCreateQuizQuestion,
+  adminQuizQuestionDelete,
   adminQuizQuestionMove,
   adminQuizQuestionDuplicate,
   adminQuizQuestionUpdate
-} from './quiz';
+} from './question';
 import {
   adminAuthLogin,
   adminUserDetails,

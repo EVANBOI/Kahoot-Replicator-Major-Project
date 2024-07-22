@@ -1,5 +1,4 @@
-import { adminAuthRegister, adminQuizList, clear } from '../wrappers';
-import { adminQuizCreate } from '../quiz';
+import { adminAuthRegister, adminQuizList, clear, adminQuizCreate} from '../wrappers';
 import { ok } from '../helpers';
 import { ERROR401 } from '../testConstants';
 

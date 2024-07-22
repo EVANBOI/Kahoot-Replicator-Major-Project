@@ -79,11 +79,11 @@ app.delete('/v1/clear', (req: Request, res: Response) => {
 
 app.post('/v1/admin/auth/register', (req: Request, res: Response) => {
   const { email, password, nameFirst, nameLast } = req.body;
-  const result = adminAuthRegister(email, password, nameFirst, nameLast);
-  if ('error' in result) {
-    return res.status(result.statusCode).json({ error: result.error });
-  }
-  return res.json(result);
+  try {
+    res.json(adminAuthRegister(email, password, nameFirst, nameLast));
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  } 
 });
 
 app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {

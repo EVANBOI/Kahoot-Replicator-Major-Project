@@ -213,18 +213,10 @@ export function adminQuizDescriptionUpdate(
   quizId: number,
   description: string): EmptyObject | ErrorMessage {
   const database = getData();
-  const user = findUserBySessionId(database, sessionId);
   const validQuizId = database.quizzes.find(quiz => quiz.quizId === quizId);
-  if (!user) {
-    return { statusCode: 401, error: 'AuthUserId is not a valid user.' };
-  } else if (!validQuizId) {
-    return { statusCode: 403, error: 'Quiz ID does not refer to a valid quiz.' };
-  } else if (user.userId !== validQuizId.creatorId) {
-    return { statusCode: 403, error: 'Quiz ID does not refer to a quiz that this user owns.' };
-  } else if (description.length > 100) {
-    return { statusCode: 400, error: 'Description is more than 100 characters in length' };
+  if (description.length > 100) {
+    throw new Error('Description is more than 100 characters in length');
   }
-
   validQuizId.description = description;
   validQuizId.timeLastEdited = Math.floor(Date.now() / 1000);
   setData(database);

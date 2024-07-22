@@ -9,6 +9,16 @@ export function findQuizWithId(database: Data, quizId: number) {
   return database.quizzes.find(quiz => quiz.quizId === quizId);
 }
 
+export function quizIdCheck(token: string, quizId: number) {
+  const isValidQuizId = getData().quizzes.find(q => q.quizId === quizId);
+  const user = getData().users.find(user => user.tokens.some(tokens => tokens.token === token));
+  if (!isValidQuizId) {
+    throw new Error('Quiz Id does not exist');
+  } else if (user.userId !== isValidQuizId.creatorId) {
+    throw new Error('Quiz does not belong to user')
+  }
+}
+
 export function tokenCheck(token: string) {
   const isValidToken = getData().users.some(user => user.tokens.some(tokens => tokens.token === token));
   if (!isValidToken) {

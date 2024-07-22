@@ -40,7 +40,8 @@ import {
   tokenCheck,
   quizExistWithCorrectCreatorCheck,
   allExistInTrashCheck,
-  quizExistCheck
+  quizExistCheck,
+  quizIdCheck
 } from './helpers';
 import { adminQuizNameUpdate } from './quiz';
 
@@ -98,11 +99,21 @@ app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
 app.put('/v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {
   const { token, description } = req.body;
   const quizId = parseInt(req.params.quizid);
-  const result = adminQuizDescriptionUpdate(token, quizId, description);
-  if ('error' in result) {
-    return res.status(result.statusCode).json({ error: result.error });
+  try {
+    tokenCheck(token);
+  } catch (error) {
+    return res.status(401).json({ error: error.message });
   }
-  return res.json(result);
+  try {
+    quizIdCheck(token, quizId);
+  } catch (error) {
+    return res.status(403).json({ error: error.message });
+  }
+  try {
+    res.json(adminQuizDescriptionUpdate(token, quizId, description));
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
 });
 
 app.delete('/v1/clear', (req: Request, res: Response) => {

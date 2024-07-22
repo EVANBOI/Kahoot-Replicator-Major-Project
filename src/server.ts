@@ -245,11 +245,21 @@ app.put('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Respo
   const quizId = parseInt(req.params.quizid);
   const questionId = parseInt(req.params.questionid);
   const { token, questionBody } = req.body;
-  const result = adminQuizQuestionUpdate(quizId, questionId, questionBody, token);
-  if ('error' in result) {
-    return res.status(result.statusCode).json({ error: result.error });
+  try {
+    tokenCheck(token);
+  } catch (error) {
+    return res.status(401).json({ error: error.message });
   }
-  res.json(result);
+  try {
+    quizIdCheck(token, quizId);
+  } catch (error) {
+    return res.status(403).json({ error: error.message });
+  }
+  try {
+    res.json(adminQuizQuestionUpdate(quizId, questionId, questionBody, token));
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
 });
 
 app.post('/v1/admin/quiz/:quizid/restore', (req: Request, res: Response) => {

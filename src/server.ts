@@ -288,13 +288,12 @@ app.delete('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Re
 });
 app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
   const { token } = req.body;
-  const result = adminAuthLogout(token);
-
-  if ('error' in result) {
-    return res.status(result.statusCode).json({ error: result.error });
+  try {
+    tokenCheck(token);
+  } catch (error) {
+    return res.status(401).json({ error: error.message });
   }
-
-  res.json(result);
+  res.json(adminAuthLogout(token));
 });
 
 app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {

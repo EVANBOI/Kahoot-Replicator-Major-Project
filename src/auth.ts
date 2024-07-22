@@ -222,10 +222,6 @@ export function adminUserPasswordUpdate(
 export function adminAuthLogout(sessionId: string): ErrorMessage | EmptyObject {
   const database = getData();
   const user = findUserBySessionId(database, sessionId);
-  if (!user) {
-    return { statusCode: 401, error: 'Session Id does not exist' };
-  }
-
   const index = user.tokens.findIndex(token => token.token === sessionId);
   user.tokens.splice(index, 1);
   setData(database);

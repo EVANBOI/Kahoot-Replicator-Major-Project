@@ -39,7 +39,9 @@ describe('Valid user with only one quiz', () => {
   beforeEach(() => {
     const { jsonBody } = adminAuthRegister('admin@unsw.edu.au', 'Password1', 'JJ', 'HH');
     sessionId1 = jsonBody?.token;
-    quiz1Id = ok(adminQuizCreate(sessionId1, 'Quiz', '')).quizId;
+    const { jsonBody: Quiz1 } = adminQuizCreate(
+      sessionId1, 'Quiz', 'this is first original description');
+    quiz1Id = Quiz1?.quizId;
   });
 
   test('There is only one user in database', () => {
@@ -79,9 +81,15 @@ describe('Valid user with multiple quizzes', () => {
   beforeEach(() => {
     const { jsonBody } = adminAuthRegister('admin@unsw.edu.au', 'Password1', 'JJ', 'HH');
     sessionId1 = jsonBody?.token;
-    quiz1Id = ok(adminQuizCreate(sessionId1, 'Quiz1', '')).quizId;
-    quiz2Id = ok(adminQuizCreate(sessionId1, 'Quiz2', '')).quizId;
-    quiz3Id = ok(adminQuizCreate(sessionId1, 'Quiz3', '')).quizId;
+    const { jsonBody: Quiz1 } = adminQuizCreate(
+      sessionId1, 'Quiz1', 'this is first original description');
+      quiz1Id = Quiz1?.quizId;
+    const { jsonBody: Quiz2 } = adminQuizCreate(
+      sessionId1, 'Quiz2', 'this is second original description');
+      quiz2Id = Quiz2?.quizId;
+    const { jsonBody: Quiz3 } = adminQuizCreate(
+      sessionId1, 'Quiz3', 'this is third original description');
+      quiz3Id = Quiz3?.quizId;
   });
   test('There is only one user in database', () => {
     expect(adminQuizList(sessionId1)).toStrictEqual({

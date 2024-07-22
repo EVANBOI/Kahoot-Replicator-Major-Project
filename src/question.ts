@@ -38,16 +38,7 @@ export function adminCreateQuizQuestion(
   sessionId: string,
   questionBody: QuestionBody): CreateQuestionReturn {
   const database = getData();
-  const user = findUserBySessionId(database, sessionId);
-  if (!user) {
-    return { statusCode: 401, error: 'Session ID is invalid' };
-  }
   const quiz = findQuizWithId(database, quizId);
-  if (!quiz) {
-    return { statusCode: 403, error: 'Quiz does not exist' };
-  } else if (quiz.creatorId !== user.userId) {
-    return { statusCode: 403, error: 'User is not an owner of quiz' };
-  }
   const totalDuration = quiz.duration + questionBody.duration;
   if (typeof validQuestion(questionBody, totalDuration) === 'object') {
     return validQuestion(questionBody, totalDuration) as ErrorMessage;

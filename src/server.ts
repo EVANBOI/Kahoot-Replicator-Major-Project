@@ -88,11 +88,11 @@ app.post('/v1/admin/auth/register', (req: Request, res: Response) => {
 
 app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
   const token = req.query.token as string;
-  const result = adminQuizList(token);
-  if ('error' in result) {
-    return res.status(result.statusCode).json({ error: result.error });
+  try {
+    res.json(adminQuizList(token));
+  } catch (error) {
+    return res.status(401).json({ error: error.message });
   }
-  return res.json(result);
 });
 
 app.put('/v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {

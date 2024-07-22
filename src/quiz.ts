@@ -30,7 +30,7 @@ export function adminQuizList (sessionId: string): QuizListDetails {
   const database = getData();
   const user = findUserBySessionId(database, sessionId);
   if (!user) {
-    return { statusCode: 401, error: 'Session id is not valid.' };
+    throw new Error('Session id is not valid.');
   }
   const creatorId = user.userId;
   const quizzes = database.quizzes.filter(quiz => quiz.creatorId === creatorId);

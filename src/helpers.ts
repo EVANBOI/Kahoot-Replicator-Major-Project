@@ -61,7 +61,7 @@ export function validQuestion(
     return { statusCode: 400, error: 'There are less than 2 answers' };
   } else if (questionBody.answers.length > 6) {
     return { statusCode: 400, error: 'There are more than 6 answers' };
-  } else if (questionBody.duration < 0) {
+  } else if (questionBody.duration <= 0) {
     return { statusCode: 400, error: 'Duration is negative' };
   } else if (totalDuration > 180) {
     return { statusCode: 400, error: 'Total duration is more than 3 min' };

@@ -182,7 +182,7 @@ app.put('/v1/admin/user/password', (req: Request, res: Response) => {
   res.json(result);
 });
 
-app.put('/v1/admin/quiz/name', (req: Request, res: Response) => {
+app.put('/v1/admin/quiz/:quizid/name', (req: Request, res: Response) => {
   const { token, quizId, name } = req.body;
   const result = adminQuizNameUpdate(token, quizId, name);
   if ('error' in result) {

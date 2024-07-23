@@ -214,5 +214,5 @@ export const adminQuizQuestionMove = (
   quizid: number,
   questionid: number,
   moveInfo: PositionWithTokenObj) => {
-  return requestHelper('PUT', `/v1/admin/quiz/${quizid}/question/${questionid}/move`, { moveInfo });
+  return requestHelper('PUT', `/v1/admin/quiz/${quizid}/question/${questionid}/move`, moveInfo);
 };

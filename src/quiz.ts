@@ -3,7 +3,8 @@ import { getData, setData } from './dataStore';
 import {
   findQuizWithId, findUserBySessionId, isQuizExistWithCorrectCreator,
   isAllExistInTrash, findQuestionInQuizId, findQuestionIndex,
-  validQuestion
+  validQuestion,
+  getRandomColour
 } from './helpers';
 import {
   CreateQuestionReturn,
@@ -25,7 +26,6 @@ import {
 } from './types';
 
 import ShortUniqueId from 'short-unique-id';
-import { randomColor } from 'seed-to-color';
 const answerUid = new ShortUniqueId({ dictionary: 'number' });
 const questionUid = new ShortUniqueId({ dictionary: 'number' });
 const quizUid = new ShortUniqueId({ dictionary: 'number' });
@@ -284,7 +284,7 @@ export function adminCreateQuizQuestion(
   questionBody.questionId = questionId;
   for (const ans of questionBody.answers) {
     ans.answerId = parseInt(answerUid.seq());
-    ans.colour = randomColor(ans.answerId);
+    ans.colour = getRandomColour();
   }
   quiz.questions.push(questionBody);
   quiz.timeLastEdited = Math.floor(Date.now() / 1000);
@@ -496,7 +496,7 @@ export function adminQuizQuestionUpdate(
   question.answers = questionBody.answers.map(ans => ({ ...ans }));
   for (const ans of question.answers) {
     ans.answerId = parseInt(answerUid.seq());
-    ans.colour = randomColor(ans.answerId);
+    ans.colour = getRandomColour();
   }
   quiz.timeLastEdited = Math.floor(Date.now() / 1000);
   quiz.duration = totalDuration;

@@ -13,6 +13,22 @@ export function ok<T>(item: T | { statusCode: number, error: string }): T {
   return item as T;
 }
 
+export enum Colours {
+  red = 'red',
+  blue = 'blue',
+  green = 'green',
+  yellow = 'yellow',
+  purple = 'purple',
+  brown = 'brown',
+  orange = 'orange'
+}
+
+export function getRandomColour(): Colours {
+  const colours = Object.values(Colours);
+  const randomIndex = Math.floor(Math.random() * colours.length);
+  return colours[randomIndex];
+}
+
 export function findUserBySessionId(database: Data, sessionIdToFind: string): User | undefined {
   return database.users.find(user =>
     user.tokens.some(tokens => tokens.token === sessionIdToFind)

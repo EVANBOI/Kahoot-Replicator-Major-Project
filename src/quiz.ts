@@ -572,9 +572,7 @@ export function adminQuizRestore(token: string, quizId: number): QuizRestoreResu
   }
 
   const quizIndex = database.trash.findIndex(quiz => quiz.quizId === quizId);
-  if (quizIndex === -1) {
-    return { statusCode: 400, message: `Quiz ID '${quizId}' does not refer to a quiz in the trash.` };
-  }
+  
 
   const quiz = database.trash[quizIndex];
   if (quiz.creatorId !== user.userId) {
@@ -586,6 +584,9 @@ export function adminQuizRestore(token: string, quizId: number): QuizRestoreResu
     return { statusCode: 400, message: `Quiz name '${quiz.name}' is already used by another active quiz.` };
   }
 
+  if (quizIndex === -1) {
+    return { statusCode: 400, message: `Quiz ID '${quizId}' does not refer to a quiz in the trash.` };
+  }
   // Restore the quiz
   quiz.timeLastEdited = Date.now();
   database.quizzes.push(quiz);

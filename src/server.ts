@@ -222,6 +222,7 @@ app.post('/v1/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
   } else {
     res.status(200).json({});
   }
+  res.json(result);
 });
 
 app.delete('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {

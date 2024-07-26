@@ -334,6 +334,10 @@ app.get('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Respons
   return res.json('test')
 })
 
+app.get('/v1/player/:playerid/question/:questionposition', (req: Request, res: Response) => {
+  return res.json('test')
+})
+
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================

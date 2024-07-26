@@ -222,3 +222,9 @@ quizid: number,
 sessionid: number) => {
 return requestHelper('GET', `/v1/admin/quiz/${quizid}/session/${sessionid}`, {});
 };
+
+export const playerQuestionInfo = (
+  playerid: number,
+  questionposition: number) => {
+  return requestHelper('GET', `/v1/player/${playerid}/question/${questionposition}`, {});
+};

@@ -46,6 +46,19 @@ export type Quiz = {
     duration: number
 }
 
+export type V2Quiz = {
+    creatorId: number,
+    quizId: number,
+    name: string,
+    timeCreated: number,
+    timeLastEdited: number,
+    description: string,
+    numQuestions: number,
+    questions: V2QuestionBody[],
+    duration: number,
+    thumbnailUrl: string
+}
+
 export type Data = {
     users: User[],
     quizzes: Quiz[],
@@ -61,6 +74,33 @@ export type EmptyObject = Record<string, never>;
 export type ClearResult = EmptyObject;
 export type UserUpdateResult = EmptyObject;
 export type UserRegistrationResult = ErrorMessage | Token;
+
+export enum SessionStatus {
+    LOBBY, 
+    QUESTION_COUNTDOWN, 
+    QUESTION_OPEN, 
+    QUESTION_CLOSE, 
+    ANSWER_SHOW, 
+    FINAL_RESULTS, 
+    END
+}
+
+export type GetSessionStatus = ErrorMessage | {
+    state: SessionStatus,
+    atQuestion: number,
+    players: string[],
+    metadata: {
+        quizId: number,
+        name: string,
+        timeCreated: number,
+        timeLastEdited: number,
+        description: string,
+        numQuestions: number,
+        questions: V2QuestionBody[],
+        duration: number,
+        thumbnailUrl: string
+    }
+}
 
 export type QuizListDetails = ErrorMessage | {
     quizzes: {
@@ -115,6 +155,20 @@ export type QuestionBody = {
     questionId?: number,
     question: string,
     duration: number,
+    points: number,
+    answers: {
+        answer: string,
+        answerId?: number,
+        colour?: string,
+        correct: boolean
+    }[]
+};
+
+export type V2QuestionBody = {
+    questionId?: number,
+    question: string,
+    duration: number,
+    thumbnailUrl: string,
     points: number,
     answers: {
         answer: string,

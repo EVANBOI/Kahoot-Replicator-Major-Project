@@ -216,3 +216,9 @@ export const adminQuizQuestionMove = (
   moveInfo: PositionWithTokenObj) => {
   return requestHelper('PUT', `/v1/admin/quiz/${quizid}/question/${questionid}/move`, { moveInfo });
 };
+
+export const adminQuizSessionStatus = (
+quizid: number,
+sessionid: number) => {
+return requestHelper('GET', `/v1/admin/quiz/${quizid}/session/${sessionid}`, {});
+};

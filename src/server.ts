@@ -330,6 +330,10 @@ app.put('/v1/admin/quiz/:quizid/question/:questionid/move', (req: Request, res: 
   }
 });
 
+app.get('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Response) => {
+  return res.json('test')
+})
+
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================

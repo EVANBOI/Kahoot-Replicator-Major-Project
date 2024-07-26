@@ -193,7 +193,7 @@ export function adminQuizNameUpdate(sessionId: string, quizId: number, name: str
     return { statusCode: 401, error: 'sessionId is not valid.' };
   }
   const authUserId = user.userId;
-  const quiz: Quiz | undefined = database.quizzes.find(quiz => quiz.quizId === quizId);
+  const quiz = findQuizWithId(database, quizId);
 
   const namePattern = /^[a-zA-Z0-9 ]+$/;
   if (!quiz) {
@@ -572,7 +572,6 @@ export function adminQuizRestore(token: string, quizId: number): QuizRestoreResu
   }
 
   const quizIndex = database.trash.findIndex(quiz => quiz.quizId === quizId);
-  
 
   const quiz = database.trash[quizIndex];
   if (quiz.creatorId !== user.userId) {

@@ -1,4 +1,4 @@
-import { GetSessionStatus, SessionStatus, V2QuestionBody } from "./types";
+import { EmptyObject, GetSessionStatus, SessionStatus, V2QuestionBody } from "./types";
 
 /**
  * Gives the status of a particular quiz session
@@ -51,7 +51,7 @@ export function adminQuizSessionStatus (quizId: number, sessionId: number): GetS
  * @returns {V2QuestionBody} Information about the current question
  * @returns {ErrorMessage} An error message
  */
-export function adminPlayerQuestionInfo (playerId: number, questionPosition: number): V2QuestionBody {
+export function playerQuestionInfo (playerId: number, questionPosition: number): V2QuestionBody {
   return {
     questionId: 5565,
     question: 'Thishfdoixhsddof',
@@ -67,4 +67,17 @@ export function adminPlayerQuestionInfo (playerId: number, questionPosition: num
       }
     ]
   }
+}
+
+/**
+ * Send a chat message
+ * @param {number} playerId The ID of the player playing.
+ * @param {string} message The position of the question
+ * @returns {EmptyObject} Returns an empty object
+ * @returns {ErrorMessage} An error message
+ */
+export function playerSendMessage (playerId: number, message: string): EmptyObject | Error {
+  // Check if message should be an message object with messageBody or just message body
+
+  return {}
 }

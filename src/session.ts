@@ -1,4 +1,14 @@
-import { EmptyObject, GetSessionStatus, SessionStatus, V2QuestionBody } from "./types";
+import { EmptyObject, GetSessionStatus, MessageObject, V2QuestionBody } from "./types";
+
+export enum SessionStatus {
+  LOBBY, 
+  QUESTION_COUNTDOWN, 
+  QUESTION_OPEN, 
+  QUESTION_CLOSE, 
+  ANSWER_SHOW, 
+  FINAL_RESULTS, 
+  END
+}
 
 /**
  * Gives the status of a particular quiz session
@@ -76,7 +86,7 @@ export function playerQuestionInfo (playerId: number, questionPosition: number):
  * @returns {EmptyObject} Returns an empty object
  * @returns {ErrorMessage} An error message
  */
-export function playerSendMessage (playerId: number, message: string): EmptyObject | Error {
+export function playerSendMessage (playerId: number, message: MessageObject): EmptyObject | Error {
   // Check if message should be an message object with messageBody or just message body
 
   return {}

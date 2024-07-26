@@ -1,6 +1,6 @@
 import request, { HttpVerb } from 'sync-request-curl';
 import { port, url } from '../src/config.json';
-import { QuestionBody, PositionWithTokenObj } from './types';
+import { QuestionBody, PositionWithTokenObj, MessageObject } from './types';
 
 const SERVER_URL = `${url}:${port}`;
 
@@ -228,3 +228,10 @@ export const playerQuestionInfo = (
   questionposition: number) => {
   return requestHelper('GET', `/v1/player/${playerid}/question/${questionposition}`, {});
 };
+
+export const playerSendMessage = (
+  playerid: number,
+  message: MessageObject) => {
+  return requestHelper('GET', `/v1/player/${playerid}/chat}`, { message });
+};
+

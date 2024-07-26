@@ -338,6 +338,10 @@ app.get('/v1/player/:playerid/question/:questionposition', (req: Request, res: R
   return res.json('test')
 })
 
+app.post('/v1/player/:playerid/chat', (req: Request, res: Response) => {
+  return res.json('test')
+})
+
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================

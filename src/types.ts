@@ -1,3 +1,5 @@
+import { SessionStatus } from "./session";
+
 // Types for errors
 export type ErrorMessage = {
     statusCode: number,
@@ -70,20 +72,17 @@ export type QuestionIdObject = {
 }
 
 // Types for function return
+
+export type MessageObject = {
+    message: {
+      messageBody: string;
+    };
+};
+
 export type EmptyObject = Record<string, never>;
 export type ClearResult = EmptyObject;
 export type UserUpdateResult = EmptyObject;
 export type UserRegistrationResult = ErrorMessage | Token;
-
-export enum SessionStatus {
-    LOBBY, 
-    QUESTION_COUNTDOWN, 
-    QUESTION_OPEN, 
-    QUESTION_CLOSE, 
-    ANSWER_SHOW, 
-    FINAL_RESULTS, 
-    END
-}
 
 export type GetSessionStatus = ErrorMessage | {
     state: SessionStatus,

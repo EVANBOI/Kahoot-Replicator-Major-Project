@@ -44,6 +44,8 @@ import {
   quizIdCheck
 } from './helpers';
 import { adminQuizNameUpdate } from './quiz';
+import { Error400, Error401, Error403 } from './error';
+import { StatusCodes } from 'http-status-codes';
 
 // Set up web app
 const app = express();
@@ -82,17 +84,21 @@ app.post('/v1/admin/auth/register', (req: Request, res: Response) => {
   const { email, password, nameFirst, nameLast } = req.body;
   try {
     res.json(adminAuthRegister(email, password, nameFirst, nameLast));
-  } catch (error) {
-    return res.status(400).json({ error: error.message });
-  } 
+  } catch (e) {
+    if (e instanceof Error400) {
+      return res.status(StatusCodes.BAD_REQUEST).json({ error: e.message });
+    }
+  }
 });
 
 app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
   const token = req.query.token as string;
   try {
     res.json(adminQuizList(token));
-  } catch (error) {
-    return res.status(401).json({ error: error.message });
+  } catch (e) {
+    if (e instanceof Error401) {
+      return res.status(StatusCodes.UNAUTHORIZED).json({ error: e.message });
+    }
   }
 });
 
@@ -100,19 +106,15 @@ app.put('/v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {
   const { token, description } = req.body;
   const quizId = parseInt(req.params.quizid);
   try {
-    tokenCheck(token);
-  } catch (error) {
-    return res.status(401).json({ error: error.message });
-  }
-  try {
-    quizIdCheck(token, quizId);
-  } catch (error) {
-    return res.status(403).json({ error: error.message });
-  }
-  try {
     res.json(adminQuizDescriptionUpdate(token, quizId, description));
-  } catch (error) {
-    return res.status(400).json({ error: error.message });
+  } catch (e) {
+    if (e instanceof Error401) {
+      return res.status(StatusCodes.UNAUTHORIZED).json({ error: e.message });
+    } else if (e instanceof Error403) {
+      return res.status(StatusCodes.FORBIDDEN).json({ error: e.message });
+    } else if (e instanceof Error400) {
+      return res.status(StatusCodes.BAD_REQUEST).json({ error: e.message });
+    }
   }
 });
 
@@ -225,19 +227,15 @@ app.post('/v1/admin/quiz/:quizid/question', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
   const { token, questionBody } = req.body;
   try {
-    tokenCheck(token);
-  } catch (error) {
-    return res.status(401).json({ error: error.message });
-  }
-  try {
-    quizIdCheck(token, quizId);
-  } catch (error) {
-    return res.status(403).json({ error: error.message });
-  }
-  try {
     res.json(adminCreateQuizQuestion(quizId, token, questionBody));
-  } catch (error) {
-    return res.status(400).json({ error: error.message });
+  } catch (e) {
+    if (e instanceof Error401) {
+      return res.status(StatusCodes.UNAUTHORIZED).json({ error: e.message });
+    } else if (e instanceof Error403) {
+      return res.status(StatusCodes.FORBIDDEN).json({ error: e.message });
+    } else if (e instanceof Error400) {
+      return res.status(StatusCodes.BAD_REQUEST).json({ error: e.message });
+    }
   }
 });
 
@@ -290,8 +288,10 @@ app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
   const { token } = req.body;
   try {
     tokenCheck(token);
-  } catch (error) {
-    return res.status(401).json({ error: error.message });
+  } catch (e) {
+    if (e instanceof Error401) {
+      return res.status(StatusCodes.UNAUTHORIZED).json({ error: e.message });
+    }
   }
   res.json(adminAuthLogout(token));
 });

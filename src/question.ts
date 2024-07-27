@@ -19,6 +19,7 @@ import {
 
 import ShortUniqueId from 'short-unique-id';
 import { randomColor } from 'seed-to-color';
+import { Error401, Error403 } from './error';
 const answerUid = new ShortUniqueId({ dictionary: 'number' });
 const questionUid = new ShortUniqueId({ dictionary: 'number' });
 
@@ -35,10 +36,19 @@ const questionUid = new ShortUniqueId({ dictionary: 'number' });
  */
 export function adminCreateQuizQuestion(
   quizId: number,
-  sessionId: string,
+  token: string,
   questionBody: QuestionBody): CreateQuestionReturn {
   const database = getData();
+  const user = findUserBySessionId(database, token);
+  if (!user) {
+    throw new Error401('Session ID is invalid');
+  }
   const quiz = findQuizWithId(database, quizId);
+  if (!quiz) {
+    throw new Error403('Quiz does not exist');
+  } else if (quiz.creatorId !== user.userId) {
+    throw new Error403('User is not an owner of quiz');
+  }
   const totalDuration = quiz.duration + questionBody.duration;
   if (typeof validQuestion(questionBody, totalDuration) === 'object') {
     return validQuestion(questionBody, totalDuration) as ErrorMessage;

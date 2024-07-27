@@ -2,6 +2,7 @@ import { getData, setData } from './dataStore';
 import validator from 'validator';
 import { findUserBySessionId } from './helpers';
 import { Data, UserRegistrationResult, PasswordUpdateResult, UserUpdateResult, Userdetails, ErrorMessage, EmptyObject } from './types';
+import { Error400 } from './error';
 import ShortUniqueId from 'short-unique-id';
 const uid = new ShortUniqueId({ dictionary: 'number' });
 /**
@@ -22,25 +23,25 @@ export function adminAuthRegister (
   const dataBase = getData();
   const person = dataBase.users.find(person => person.email === email);
   if (person) {
-    throw new Error('Email address is used by another user.');
+    throw new Error400('Email address is used by another user.');
   }
   const nameRange = /^[a-zA-Z-' ]*$/;
   const passwordLetterRange = /^[a-zA-Z]/;
   const passwordNumberRange = /[0-9]/;
   if (!validator.isEmail(email)) {
-    throw new Error('Email is not a valid email');
+    throw new Error400('Email is not a valid email');
   } else if (!nameRange.test(nameFirst)) {
-    throw new Error('NameFirst contains invalid characters');
+    throw new Error400('NameFirst contains invalid characters');
   } else if (nameFirst.length < 2 || nameFirst.length > 20) {
-    throw new Error('NameFirst is less than 2 characters or more than 20 characters.');
+    throw new Error400('NameFirst is less than 2 characters or more than 20 characters.');
   } else if (!nameRange.test(nameLast)) {
-    throw new Error('NameFirst contains invalid characters');
+    throw new Error400('NameFirst contains invalid characters');
   } else if (nameLast.length < 2 || nameLast.length > 20) {
-    throw new Error('NameLast is less than 2 characters or more than 20 characters.');
+    throw new Error400('NameLast is less than 2 characters or more than 20 characters.');
   } else if (password.length < 8) {
-    throw new Error('Password is less than 8 characters.');
+    throw new Error400('Password is less than 8 characters.');
   } else if (!passwordLetterRange.test(password) || !passwordNumberRange.test(password)) {
-    throw new Error('Password does not contain at least one number and at least one letter.');
+    throw new Error400('Password does not contain at least one number and at least one letter.');
   }
 
   const id = dataBase.users.length + 1;

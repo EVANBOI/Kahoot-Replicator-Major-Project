@@ -1,5 +1,4 @@
-import { adminAuthRegister, adminQuizList, clear, adminQuizCreate} from '../wrappers';
-import { ok } from '../helpers';
+import { adminAuthRegister, adminQuizList, clear, adminQuizCreate } from '../wrappers';
 import { ERROR401 } from '../testConstants';
 
 beforeEach(() => {
@@ -83,13 +82,13 @@ describe('Valid user with multiple quizzes', () => {
     sessionId1 = jsonBody?.token;
     const { jsonBody: Quiz1 } = adminQuizCreate(
       sessionId1, 'Quiz1', 'this is first original description');
-      quiz1Id = Quiz1?.quizId;
+    quiz1Id = Quiz1?.quizId;
     const { jsonBody: Quiz2 } = adminQuizCreate(
       sessionId1, 'Quiz2', 'this is second original description');
-      quiz2Id = Quiz2?.quizId;
+    quiz2Id = Quiz2?.quizId;
     const { jsonBody: Quiz3 } = adminQuizCreate(
       sessionId1, 'Quiz3', 'this is third original description');
-      quiz3Id = Quiz3?.quizId;
+    quiz3Id = Quiz3?.quizId;
   });
   test('There is only one user in database', () => {
     expect(adminQuizList(sessionId1)).toStrictEqual({

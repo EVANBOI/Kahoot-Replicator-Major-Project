@@ -1,4 +1,7 @@
-import { EmptyObject, GetSessionStatus, MessageObject, V2QuestionBody } from "./types";
+import { 
+  EmptyObject, GetSessionStatus, MessageObject, V2QuestionBody, QuizSessionViewResult, 
+  QuizSessionResultLinkResult, PlayerQuestionResultResult
+} from "./types";
 
 export enum SessionStatus {
   LOBBY, 
@@ -8,6 +11,49 @@ export enum SessionStatus {
   ANSWER_SHOW, 
   FINAL_RESULTS, 
   END
+}
+
+/**
+ * Retrieves active and inactive session ids (sorted in ascending order) for a quiz
+ * @param {string} token - unique session id of a user
+ * @param {number} quizId The ID of the quiz to be found.
+ * @returns {QuizSessionViewResult} active and inactive Sessions
+ */
+export function adminQuizSessionView (token: string, quizId: number): QuizSessionViewResult {
+  return {
+    activeSessions: [1, 2],
+    inactiveSessions: [3, 4]
+  };
+}
+
+/**
+ * Get the a link to the final results (in CSV format) for all players for a completed quiz session
+ * @param {number} quizId The ID of the quiz to be found.
+ * @param {number} sessionId The ID of the session to be found.
+ * @param {string} token - unique session id of a user
+ * @returns {QuizSessionResultResult} active and inactive Sessions
+ */
+export function adminQuizSessionResultLink (quizId: number, sessionId: number, token: string): QuizSessionResultLinkResult {
+  return {
+    url: 'http://google.com/some/image/path.csv'
+  };
+}
+
+/**
+ * Get the results for a particular question of the session a player is playing in. Question position starts at 1
+ * @param {number} playerId The ID of the player.
+ * @param {number} questionposition The position of the question in this quiz.
+ * @returns {PlayerQuestionResultResult} active and inactive Sessions
+ */
+export function PlayerQuestionResult (playerId: number, questionposition: number): PlayerQuestionResultResult {
+  return {
+    questionId: 1,
+    playersCorrectList: [
+      'Hayden'
+    ],
+    averageAnswerTime: 44,
+    percentCorrect: 100
+  };
 }
 
 /**

@@ -235,3 +235,21 @@ export const playerSendMessage = (
   return requestHelper('GET', `/v1/player/${playerid}/chat}`, { message });
 };
 
+export const adminQuizSessionView = (
+  token: string, 
+  quizid: number) => {
+  return requestHelper('GET', `/v1/admin/quiz/${quizid}/sessions`, { token });
+}
+
+export const adminQuizSessionResultLink = (
+  quizid: number,
+  sessionid: number,
+  token: string) => {
+  return requestHelper('GET', `/v1/admin/quiz/${quizid}/session/${sessionid}/results/csv`, { token });
+}
+
+export const PlayerQuestionResult = (
+  playerid: number,
+  questionposition: number) => {
+  return requestHelper('GET', `/v1/player/${playerid}/question/${questionposition}/results`, {});
+}

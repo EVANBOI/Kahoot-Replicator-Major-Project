@@ -342,6 +342,17 @@ app.post('/v1/player/:playerid/chat', (req: Request, res: Response) => {
   return res.json('test')
 })
 
+app.get('/v1/admin/quiz/:quizid/sessions', (req: Request, res: Response) => {
+  return res.json('test')
+});
+app.get('/v1/admin/quiz/:quizid/session/:sessionid/results/csv', (req: Request, res: Response) => {
+  return res.json('test')
+});
+
+app.get('/v1/player/:playerid/question/:questionposition/results', (req: Request, res: Response) => {
+  return res.json('test')
+});
+
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================

@@ -190,6 +190,22 @@ export type QuizTrashEmptyResult = EmptyObject;
 
 export type QuizQuestionMoveResult = EmptyObject;
 
+export type QuizSessionViewResult = {
+    activeSessions: number[],
+    inactiveSessions: number[]
+}
+
+export type QuizSessionResultLinkResult = {
+    url: string
+}
+
+export type PlayerQuestionResultResult = {
+    questionId: number,
+    playersCorrectList : string[],
+    averageAnswerTime: number,
+    percentCorrect: number
+}
+
 // other types
 export type PositionWithTokenObj = {
     token: string,
@@ -204,3 +220,4 @@ export type QuizQuestionDeleteResult = {
     statusCode: number,
     message: string
   };
+

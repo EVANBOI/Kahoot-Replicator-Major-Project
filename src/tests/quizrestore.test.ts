@@ -72,19 +72,7 @@ describe('Failure cases', () => {
     });
   });
 
-  test('should return an error when restoring a quiz with an invalid quizId', (): void => {
-    // Move the quiz to trash before restoring
-    adminQuizRemove(sessionId, validQuizId);
-
-    const result = adminQuizRestore(sessionId, validQuizId + 1029);
-    expect(result).toStrictEqual({
-      jsonBody: {
-        error: expect.any(String),
-      },
-      statusCode: 400,
-    });
-  });
-
+  
   test('should return an error when restoring a quiz that the user does not own', (): void => {
     // Move the quiz to trash before restoring
     adminQuizRemove(sessionId2, validQuizId2);
@@ -97,4 +85,18 @@ describe('Failure cases', () => {
       statusCode: 403,
     });
   });
+  test('should return an error when restoring a quiz with an invalid quizId', (): void => {
+    // Move the quiz to trash before restoring
+    adminQuizRemove(sessionId, validQuizId);
+
+    const result = adminQuizRestore(sessionId, validQuizId2);
+    expect(result).toStrictEqual({
+      jsonBody: {
+        error: expect.any(String),
+      },
+      statusCode: 400,
+    });
+  });
+
+
 });

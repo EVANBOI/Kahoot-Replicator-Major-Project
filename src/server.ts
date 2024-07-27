@@ -214,8 +214,8 @@ app.put('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Respo
 
 app.post('/v1/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
   const token = req.body.token as string;
-  const id = parseInt(req.params.quizid);
-  const result = adminQuizRestore(token, id);
+  const quizId = parseInt(req.params.quizid);
+  const result = adminQuizRestore(token, quizId);
 
   if (result.statusCode !== 200) {
     res.status(result.statusCode).json({ error: result.message });
@@ -236,7 +236,9 @@ app.delete('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Re
   } else {
     res.status(200).json({});
   }
+  res.json(result);
 });
+
 app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
   const { token } = req.body;
   const result = adminAuthLogout(token);

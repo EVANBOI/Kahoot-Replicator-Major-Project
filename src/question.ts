@@ -56,14 +56,14 @@ export function adminCreateQuizQuestion(
   }
   const validExtensions = /\.(jpg|jpeg|png)$/i;
   const validProtocol = /^https?:\/\//;
-  console.log(questionBody.thumbnailUrl)
+  console.log(questionBody.thumbnailUrl);
   if (v2 === true) {
     if (questionBody.thumbnailUrl === '') {
-      throw new Error400('Thumbnail url is an empty string')
+      throw new Error400('Thumbnail url is an empty string');
     } else if (!validExtensions.test(questionBody.thumbnailUrl)) {
-      throw new Error400('Not valid file type for thumbnail')
+      throw new Error400('Not valid file type for thumbnail');
     } else if (!validProtocol.test(questionBody.thumbnailUrl)) {
-      throw new Error400('Invalid https protocol')
+      throw new Error400('Invalid https protocol');
     }
   }
   const questionId = parseInt(questionUid.seq());

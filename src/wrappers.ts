@@ -191,7 +191,6 @@ export const adminCreateQuizQuestionV2 = (
     { questionBody }, token);
 };
 
-
 export const adminUserPasswordUpdate = (
   token: string,
   oldPassword: string,

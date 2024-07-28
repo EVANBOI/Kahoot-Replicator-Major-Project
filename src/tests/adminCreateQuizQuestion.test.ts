@@ -352,91 +352,100 @@ describe('Succesful Tests', () => {
   });
 });
 
-//============================================================================//
+//= ===========================================================================//
 // V2 route tests
 describe('v2 unsuccessful tests: thumbnail url', () => {
   test('url is an empty string', () => {
     const result = adminCreateQuizQuestionV2(
-      quizId1, 
-      sessionId1, 
+      quizId1,
+      sessionId1,
       {
         questionId: expect.any(Number),
         question: 'Valid question 1?',
         duration: 3,
         points: 2,
         answers: [
-          { 
-            answerId: expect.any(Number), 
-            colour: expect.any(String), 
-            answer: 'A', correct: true },
-          { 
-            answerId: expect.any(Number), 
-            colour: expect.any(String), 
+          {
+            answerId: expect.any(Number),
+            colour: expect.any(String),
+            answer: 'A',
+            correct: true
+          },
+          {
+            answerId: expect.any(Number),
+            colour: expect.any(String),
             answer: 'B',
-            correct: false }
+            correct: false
+          }
         ],
         thumbnailUrl: ''
       }
-    )
+    );
     expect(result).toStrictEqual(ERROR400);
-  })
+  });
 
   test('url is invalid file type', () => {
     const result = adminCreateQuizQuestionV2(
-      quizId1, 
-      sessionId1, 
+      quizId1,
+      sessionId1,
       {
         questionId: expect.any(Number),
         question: 'Valid question 1?',
         duration: 3,
         points: 2,
         answers: [
-          { 
-            answerId: expect.any(Number), 
-            colour: expect.any(String), 
-            answer: 'A', correct: true },
-          { 
-            answerId: expect.any(Number), 
-            colour: expect.any(String), 
+          {
+            answerId: expect.any(Number),
+            colour: expect.any(String),
+            answer: 'A',
+            correct: true
+          },
+          {
+            answerId: expect.any(Number),
+            colour: expect.any(String),
             answer: 'B',
-            correct: false }
+            correct: false
+          }
         ],
         thumbnailUrl: 'http://google.com/some/image/path.jpe'
       }
-    )
+    );
     expect(result).toStrictEqual(ERROR400);
-  })
+  });
 
   test('url does not begin with http or https', () => {
     const result = adminCreateQuizQuestionV2(
-      quizId1, 
-      sessionId1, 
+      quizId1,
+      sessionId1,
       {
         questionId: expect.any(Number),
         question: 'Valid question 1?',
         duration: 3,
         points: 2,
         answers: [
-          { 
-            answerId: expect.any(Number), 
-            colour: expect.any(String), 
-            answer: 'A', correct: true },
-          { 
-            answerId: expect.any(Number), 
-            colour: expect.any(String), 
+          {
+            answerId: expect.any(Number),
+            colour: expect.any(String),
+            answer: 'A',
+            correct: true
+          },
+          {
+            answerId: expect.any(Number),
+            colour: expect.any(String),
             answer: 'B',
-            correct: false }
+            correct: false
+          }
         ],
         thumbnailUrl: 'htteep://google.com/some/image/path.jpg'
       }
-    )
+    );
     expect(result).toStrictEqual(ERROR400);
-  })
-})
+  });
+});
 
 describe('v2 successful question creation', () => {
   test('Valid inputs include thumbnail', () => {
-    const result = adminCreateQuizQuestionV2(quizId1, sessionId1, validQuestion1V2)
-    expect(result).toStrictEqual(SUCCESSFUL)
-  })
-})
+    const result = adminCreateQuizQuestionV2(quizId1, sessionId1, validQuestion1V2);
+    expect(result).toStrictEqual(SUCCESSFUL);
+  });
+});

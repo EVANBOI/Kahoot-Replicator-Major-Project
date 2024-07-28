@@ -131,8 +131,8 @@ app.put('/v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {
 });
 
 app.put('/v2/admin/quiz/:quizid/description', (req: Request, res: Response) => {
-  const {description } = req.body;
-  const token = req.headers.token as string; 
+  const { description } = req.body;
+  const token = req.headers.token as string;
   const quizId = parseInt(req.params.quizid);
   try {
     res.json(adminQuizDescriptionUpdate(token, quizId, description));

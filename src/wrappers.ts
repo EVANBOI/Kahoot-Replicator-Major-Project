@@ -203,7 +203,7 @@ export const adminQuizNameUpdate = (
   token: string,
   quizId: number,
   name: string) => {
-  return requestHelper('PUT', '/v1/admin/quiz/name',
+  return requestHelper('PUT', `/v1/admin/quiz/${quizId}/name`,
     { token, quizId, name });
 };
 
@@ -312,3 +312,25 @@ export const PlayerQuestionResult = (
   questionposition: number) => {
   return requestHelper('GET', `/v1/player/${playerid}/question/${questionposition}/results`, {});
 }
+
+export const adminQuizSessionUpdate = (
+  quizid: number,
+  sessionid: number, 
+  token: string, 
+  action: string
+) => {
+  return requestHelper('PUT', `/v1/admin/quiz/${quizid}/session/${sessionid}`, {action}, token)
+}
+
+export const playerStatus = (
+  playerid: number
+) => {
+  return requestHelper('GET', `/v1/player/${playerid}`, {})
+}
+
+export const playerChatlog = (
+  playerid: number
+) => {
+  return requestHelper('GET', `v1/player/${playerid}/chat`, {})
+}
+

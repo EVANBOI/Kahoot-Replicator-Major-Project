@@ -181,6 +181,23 @@ export type PlayerQuestionResultResult = {
     percentCorrect: number
 }
 
+export type PlayerStatusResult = {
+    state: string, 
+    numQuestions: number, 
+    atQuestion: number, 
+}
+
+export type PlayerChatlogResult = {
+	messages: [
+		{
+			messageBody: string, 
+			playerId: number, 
+			playerName: string, 
+			timeSent: number
+		}
+	]
+}
+
 // other types
 export type PositionWithTokenObj = {
     token: string,
@@ -201,3 +218,20 @@ export type QuizQuestionDeleteResult = {
     message: string
   };
 
+	export type PlayerQuestionAnswerResult = {
+    statusCode?: number;
+    error?: string;
+  }
+
+  export type SessionResults = {
+    usersRankedByScore: {
+      name: string;
+      score: number;
+    }[];
+    questionResults: {
+      questionId: number;
+      playersCorrectList: string[];
+      averageAnswerTime: number;
+      percentCorrect: number;
+    }[];
+  };

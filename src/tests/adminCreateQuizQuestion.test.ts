@@ -1,3 +1,4 @@
+import { Error400 } from '../error';
 import {
   validQuestion1,
   validQuestion2,
@@ -12,7 +13,8 @@ import {
   adminAuthRegister,
   adminQuizInfo,
   clear,
-  adminQuizQuestionDelete
+  adminQuizQuestionDelete,
+  adminCreateQuizQuestionV2
 } from '../wrappers';
 
 const SUCCESSFUL = {
@@ -349,3 +351,65 @@ describe('Succesful Tests', () => {
     });
   });
 });
+
+//============================================================================//
+// V2 route tests
+
+describe('v2 unsuccessful tests: thumbnail url', () => {
+  test('url is an empty string', () => {
+    expect(adminCreateQuizQuestionV2(
+      quizId1, 
+      sessionId1, 
+      {
+        questionId: expect.any(Number),
+        question: 'Valid question 1?',
+        duration: 3,
+        points: 2,
+        answers: [
+          { answerId: expect.any(Number), colour: expect.any(String), answer: 'A', correct: true },
+          { answerId: expect.any(Number), colour: expect.any(String), answer: 'B', correct: false }
+        ],
+        thumbnailUrl: ''
+      }, 
+      true)
+    ).toStrictEqual(Error400);
+  })
+
+  test('url is invalid file type', () => {
+    expect(adminCreateQuizQuestionV2(
+      quizId1, 
+      sessionId1, 
+      {
+        questionId: expect.any(Number),
+        question: 'Valid question 1?',
+        duration: 3,
+        points: 2,
+        answers: [
+          { answerId: expect.any(Number), colour: expect.any(String), answer: 'A', correct: true },
+          { answerId: expect.any(Number), colour: expect.any(String), answer: 'B', correct: false }
+        ],
+        thumbnailUrl: 'http://google.com/some/image/path.jpe'
+      }, 
+      true)
+    ).toStrictEqual(Error400);
+  })
+
+  test('url does not begin with http or https', () => {
+    expect(adminCreateQuizQuestionV2(
+      quizId1, 
+      sessionId1, 
+      {
+        questionId: expect.any(Number),
+        question: 'Valid question 1?',
+        duration: 3,
+        points: 2,
+        answers: [
+          { answerId: expect.any(Number), colour: expect.any(String), answer: 'A', correct: true },
+          { answerId: expect.any(Number), colour: expect.any(String), answer: 'B', correct: false }
+        ],
+        thumbnailUrl: 'htteeep://google.com/some/image/path.jpg'
+      }, 
+      true)
+    ).toStrictEqual(Error400);
+  })
+})

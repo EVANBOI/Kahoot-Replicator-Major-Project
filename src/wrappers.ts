@@ -182,6 +182,16 @@ export const adminCreateQuizQuestion = (
     { token, questionBody });
 };
 
+export const adminCreateQuizQuestionV2 = (
+  quizId: number,
+  token: string,
+  questionBody: QuestionBody
+) => {
+  return requestHelper('POST', `/v2/admin/quiz/${quizId}/question`,
+    { questionBody }, token);
+};
+
+
 export const adminUserPasswordUpdate = (
   token: string,
   oldPassword: string,

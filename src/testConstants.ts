@@ -115,3 +115,15 @@ export const validQuestion3: QuestionBody = {
     { answerId: expect.any(Number), colour: expect.any(String), answer: 'Clsj', correct: false }
   ]
 };
+
+export const validQuestion1V2: QuestionBody = {
+  questionId: expect.any(Number),
+  question: 'Valid question 1?',
+  duration: 3,
+  points: 2,
+  answers: [
+    { answerId: expect.any(Number), colour: expect.any(String), answer: 'A', correct: true },
+    { answerId: expect.any(Number), colour: expect.any(String), answer: 'B', correct: false }
+  ],
+  thumbnailUrl: 'http://google.com/some/image/path.jpg'
+};

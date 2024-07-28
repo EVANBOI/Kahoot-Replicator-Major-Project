@@ -136,6 +136,15 @@ export const adminUserDetailsUpdate = (
     { token, email, nameFirst, nameLast });
 };
 
+export const adminUserDetailsUpdateV2 = (
+  token: string,
+  email: string,
+  nameFirst: string,
+  nameLast: string) => {
+  return requestHelper('PUT', '/v2/admin/user/details',
+    { email, nameFirst, nameLast }, token );
+};
+
 export const adminQuizInfo = (token: string, quizId: number) => {
   return requestHelper('GET', `/v1/admin/quiz/${quizId}`, { token });
 };

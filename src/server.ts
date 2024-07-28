@@ -330,6 +330,24 @@ app.put('/v1/admin/quiz/:quizid/question/:questionid/move', (req: Request, res: 
   }
 });
 
+// v2 functions
+
+app.put('/v2/admin/user/details', (req: Request, res: Response) => {
+  const { email, nameFirst, nameLast } = req.body;
+  const token = req.headers.token as string;
+  try {
+    tokenCheck(token);
+  } catch (error) {
+    return res.status(401).json({ error: error.message });
+  }
+
+  try {
+    res.json(adminUserDetailsUpdate(token, email, nameFirst, nameLast));
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+});
+
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================

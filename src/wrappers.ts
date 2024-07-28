@@ -38,7 +38,8 @@ interface RequestHelperReturnType {
 const requestHelper = (
   method: HttpVerb,
   path: string,
-  payload: object = {}
+  payload: object = {},
+  token?: string
 ): RequestHelperReturnType => {
   let qs = {};
   let json = {};
@@ -48,7 +49,14 @@ const requestHelper = (
     // PUT/POST
     json = payload;
   }
-  const res = request(method, SERVER_URL + path, { qs, json, timeout: 20000 });
+  let res;
+  if (token) {
+    // Add headers if they exist
+    const headers = { token };
+    res = request(method, SERVER_URL + path, { headers, qs, json, timeout: 20000 });
+  } else {
+    res = request(method, SERVER_URL + path, { qs, json, timeout: 20000 });
+  }
   const bodyString = res.body.toString();
   let bodyObject: RequestHelperReturnType;
   try {

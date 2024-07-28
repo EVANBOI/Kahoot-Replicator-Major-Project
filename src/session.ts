@@ -1,7 +1,7 @@
 import { 
   EmptyObject, GetSessionStatus, MessageObject, QuizSessionViewResult, 
   QuizSessionResultLinkResult, PlayerQuestionResultResult,
-  QuestionBody,PlayerQuestionAnswerResult
+  QuestionBody,PlayerQuestionAnswerResult,SessionResults
 } from "./types";
 
 export enum SessionStatus {
@@ -148,4 +148,36 @@ export function playerSendMessage (playerId: number, message: MessageObject): Em
  */
 export function playerQuestionAnswer(playerId: number, questionPosition: number, answerIds: number[]): PlayerQuestionAnswerResult {
   return {};
+}
+
+
+/**
+ * Get the final results for all players for a completed quiz session.
+ * @param {number} quizId - The ID of the quiz.
+ * @param {number} sessionId - The ID of the session.
+ * @param {string} token - The token of the user.
+ * @returns {SessionResults} - The final results of the session.
+ * @returns {ErrorMessage} - An error message.
+ */
+export function adminQuizSessionResults(
+  quizId: number,
+  sessionId: number,
+  token: string
+): SessionResults {
+  return {
+    usersRankedByScore: [
+      {
+        name: 'Hayden',
+        score: 45,
+      },
+    ],
+    questionResults: [
+      {
+        questionId: 5546,
+        playersCorrectList: ['Hayden'],
+        averageAnswerTime: 45,
+        percentCorrect: 54,
+      },
+    ],
+  };
 }

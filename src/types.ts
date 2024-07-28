@@ -186,6 +186,19 @@ export type PlayerQuestionAnswerResult = {
     error?: string;
   }
 
+  export type SessionResults = {
+    usersRankedByScore: {
+      name: string;
+      score: number;
+    }[];
+    questionResults: {
+      questionId: number;
+      playersCorrectList: string[];
+      averageAnswerTime: number;
+      percentCorrect: number;
+    }[];
+  };
+
 // other types
 export type PositionWithTokenObj = {
     token: string,

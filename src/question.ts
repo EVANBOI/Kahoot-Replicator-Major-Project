@@ -37,7 +37,8 @@ const questionUid = new ShortUniqueId({ dictionary: 'number' });
 export function adminCreateQuizQuestion(
   quizId: number,
   token: string,
-  questionBody: QuestionBody): CreateQuestionReturn {
+  questionBody: QuestionBody,
+  v2?: boolean): CreateQuestionReturn {
   const database = getData();
   const user = findUserBySessionId(database, token);
   if (!user) {
@@ -52,6 +53,18 @@ export function adminCreateQuizQuestion(
   const totalDuration = quiz.duration + questionBody.duration;
   if (typeof validQuestion(questionBody, totalDuration) === 'object') {
     return validQuestion(questionBody, totalDuration) as ErrorMessage;
+  }
+  const validExtensions = /\.(jpg|jpeg|png)$/i;
+  const validProtocol = /^https?:\/\//;
+  console.log(questionBody.thumbnailUrl);
+  if (v2 === true) {
+    if (questionBody.thumbnailUrl === '') {
+      throw new Error400('Thumbnail url is an empty string');
+    } else if (!validExtensions.test(questionBody.thumbnailUrl)) {
+      throw new Error400('Not valid file type for thumbnail');
+    } else if (!validProtocol.test(questionBody.thumbnailUrl)) {
+      throw new Error400('Invalid https protocol');
+    }
   }
   const questionId = parseInt(questionUid.seq());
   questionBody.questionId = questionId;

@@ -122,6 +122,7 @@ export type QuestionBody = {
         colour?: string,
         correct: boolean
     }[]
+    thumbnailUrl?: string
 };
 
 export type CreateQuestionReturn = QuestionIdObject | ErrorMessage;

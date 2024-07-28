@@ -123,6 +123,11 @@ export const adminQuizListV2 = (token: string) => {
 export const adminAuthLogout = (token: string) => {
   return requestHelper('POST', '/v1/admin/auth/logout', { token });
 };
+
+export const adminAuthLogoutV2 = (token: string) => {
+  return requestHelper('POST', '/v2/admin/auth/logout', {}, token);
+};
+
 export const adminQuizDescriptionUpdate = (
   token: string,
   quizId: number,
@@ -135,7 +140,7 @@ export const adminQuizDescriptionUpdateV2 = (
   token: string,
   quizId: number,
   description: string) => {
-  return requestHelper('PUT', `/v1/admin/quiz/${quizId}/description`,
+  return requestHelper('PUT', `/v2/admin/quiz/${quizId}/description`,
     { description }, token);
 };
 

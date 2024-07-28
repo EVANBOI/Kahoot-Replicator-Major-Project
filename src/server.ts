@@ -333,6 +333,18 @@ app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
   res.json(adminAuthLogout(token));
 });
 
+app.post('/v2/admin/auth/logout', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  try {
+    tokenCheck(token);
+  } catch (e) {
+    if (e instanceof Error401) {
+      return res.status(StatusCodes.UNAUTHORIZED).json({ error: e.message });
+    }
+  }
+  res.json(adminAuthLogout(token));
+});
+
 app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
   const token = req.query.token as string;
   const quizIds = req.query.quizIds as string;

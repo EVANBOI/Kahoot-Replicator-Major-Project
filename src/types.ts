@@ -211,6 +211,11 @@ export type PositionWithTokenObj = {
     token: string,
     newPosition: number
 }
+
+export type PositionObj = {
+    newPosition: number
+}
+
 export type QuizRestoreResult = {
     statusCode: number,
     message: string

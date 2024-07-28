@@ -203,7 +203,7 @@ export const adminQuizNameUpdate = (
   token: string,
   quizId: number,
   name: string) => {
-  return requestHelper('PUT', '/v1/admin/quiz/name',
+  return requestHelper('PUT', `/v1/admin/quiz/${quizId}/name`,
     { token, quizId, name });
 };
 

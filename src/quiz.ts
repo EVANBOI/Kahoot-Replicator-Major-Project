@@ -175,7 +175,7 @@ export function adminQuizNameUpdate(sessionId: string, quizId: number, name: str
     return { statusCode: 401, error: 'sessionId is not valid.' };
   }
   const authUserId = user.userId;
-  const quiz: Quiz | undefined = database.quizzes.find(quiz => quiz.quizId === quizId);
+  const quiz = findQuizWithId(database, quizId);
 
   const namePattern = /^[a-zA-Z0-9 ]+$/;
   if (!quiz) {
@@ -279,33 +279,37 @@ export function adminQuizTrashEmpty(quizIds: string): QuizTrashEmptyResult {
  * @param {string} newOwnerEmail - The email of the new owner.
  * @returns {ErrorMessage | EmptyObject} - The result of the transfer operation.
  */
-export function adminQuizTransfer(sessionId: string, quizId: number, newOwnerEmail: string): ErrorMessage | EmptyObject {
+export function adminQuizTransfer(sessionId: string, quizId: number, newOwnerEmail: string): EmptyObject {
   const database = getData();
   const currentUser = findUserBySessionId(database, sessionId);
 
   if (!currentUser) {
-    return { statusCode: 401, error: 'Session ID is not valid' };
+    throw new Error401('Session ID is not valid');
   }
   const quiz = findQuizWithId(database, quizId);
 
   if (!quiz) {
-    return { statusCode: 403, error: `Quiz with ID '${quizId}' not found` };
+    throw new Error403(`Quiz with ID '${quizId}' not found`);
+  }
+
+  if (quiz.creatorId !== currentUser.userId) {
+    throw new Error403('You are not the creator of the quiz');
   }
 
   const newOwner = database.users.find(user => user.email === newOwnerEmail);
 
   if (!newOwner) {
-    return { statusCode: 400, error: 'User email is not a real user.' };
+    throw new Error400('User email is not a real user.');
   }
   if (newOwner.userId === currentUser.userId) {
-    return { statusCode: 400, error: 'User email is the current logged in user.' };
+    throw new Error400('User email is the current logged in user.');
   }
 
   const nameUsed = database.quizzes.some(
     q => q.name === quiz.name && q.creatorId === newOwner.userId && q.quizId !== quizId
   );
   if (nameUsed) {
-    return { statusCode: 400, error: 'Quiz ID refers to a quiz that has a name that is already used by the target user.' };
+    throw new Error400('Quiz ID refers to a quiz that has a name that is already used by the target user.');
   }
 
   quiz.creatorId = newOwner.userId;
@@ -329,9 +333,6 @@ export function adminQuizRestore(token: string, quizId: number): QuizRestoreResu
   }
 
   const quizIndex = database.trash.findIndex(quiz => quiz.quizId === quizId);
-  if (quizIndex === -1) {
-    return { statusCode: 400, message: `Quiz ID '${quizId}' does not refer to a quiz in the trash.` };
-  }
 
   const quiz = database.trash[quizIndex];
   if (quiz.creatorId !== user.userId) {
@@ -343,6 +344,9 @@ export function adminQuizRestore(token: string, quizId: number): QuizRestoreResu
     return { statusCode: 400, message: `Quiz name '${quiz.name}' is already used by another active quiz.` };
   }
 
+  if (quizIndex === -1) {
+    return { statusCode: 400, message: `Quiz ID '${quizId}' does not refer to a quiz in the trash.` };
+  }
   // Restore the quiz
   quiz.timeLastEdited = Date.now();
   database.quizzes.push(quiz);

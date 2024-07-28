@@ -218,3 +218,20 @@ export type QuizQuestionDeleteResult = {
     message: string
   };
 
+	export type PlayerQuestionAnswerResult = {
+    statusCode?: number;
+    error?: string;
+  }
+
+  export type SessionResults = {
+    usersRankedByScore: {
+      name: string;
+      score: number;
+    }[];
+    questionResults: {
+      questionId: number;
+      playersCorrectList: string[];
+      averageAnswerTime: number;
+      percentCorrect: number;
+    }[];
+  };

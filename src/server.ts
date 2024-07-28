@@ -244,14 +244,20 @@ app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
 
 app.put('/v1/admin/user/password', (req: Request, res: Response) => {
   const { token, oldPassword, newPassword } = req.body;
-  const result = adminUserPasswordUpdate(token, oldPassword, newPassword);
-  if ('error' in result) {
-    return res.status(result.statusCode).json({ error: result.error });
+  try {
+    tokenCheck(token);
+  } catch (error) {
+    return res.status(401).json({ error: error.message });
   }
-  res.json(result);
+  try {
+    adminUserPasswordUpdate(token, oldPassword, newPassword);
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+  res.json({});
 });
 
-app.put('/v1/admin/quiz/name', (req: Request, res: Response) => {
+app.put('/v1/admin/quiz/:quizid/name', (req: Request, res: Response) => {
   const { token, quizId, name } = req.body;
   const result = adminQuizNameUpdate(token, quizId, name);
   if ('error' in result) {
@@ -324,6 +330,7 @@ app.post('/v1/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
   } else {
     res.status(200).json({});
   }
+  res.json(result);
 });
 
 app.delete('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
@@ -393,11 +400,22 @@ app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
 app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
   const { token, userEmail } = req.body;
   const quizId = parseInt(req.params.quizid);
-  const result = adminQuizTransfer(token, quizId, userEmail);
-  if ('error' in result) {
-    return res.status(result.statusCode).json({ error: result.error });
+  try {
+    tokenCheck(token);
+  } catch (error) {
+    return res.status(401).json({ error: error.message });
   }
-  return res.json(result);
+  try {
+    quizIdCheck(token, quizId);
+  } catch (error) {
+    return res.status(403).json({ error: error.message });
+  }
+  try {
+    const result = adminQuizTransfer(token, quizId, userEmail);
+    return res.json(result);
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
 });
 
 app.post('/v1/admin/quiz/:quizid/question/:questionid/duplicate', (req: Request, res: Response) => {

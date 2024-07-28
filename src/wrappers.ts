@@ -116,6 +116,10 @@ export const adminQuizList = (token: string) => {
   return requestHelper('GET', '/v1/admin/quiz/list', { token });
 };
 
+export const adminQuizListV2 = (token: string) => {
+  return requestHelper('GET', '/v2/admin/quiz/list', {}, token);
+};
+
 export const adminAuthLogout = (token: string) => {
   return requestHelper('POST', '/v1/admin/auth/logout', { token });
 };

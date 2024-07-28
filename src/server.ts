@@ -92,6 +92,17 @@ app.post('/v1/admin/auth/register', (req: Request, res: Response) => {
   }
 });
 
+app.get('/v2/admin/quiz/list', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  try {
+    res.json(adminQuizList(token));
+  } catch (e) {
+    if (e instanceof Error401) {
+      return res.status(StatusCodes.UNAUTHORIZED).json({ error: e.message });
+    }
+  }
+});
+
 app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
   const token = req.query.token as string;
   try {

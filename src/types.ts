@@ -181,6 +181,11 @@ export type PlayerQuestionResultResult = {
     percentCorrect: number
 }
 
+export type PlayerQuestionAnswerResult = {
+    statusCode?: number;
+    error?: string;
+  }
+
 // other types
 export type PositionWithTokenObj = {
     token: string,

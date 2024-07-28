@@ -1,7 +1,7 @@
 import { 
   EmptyObject, GetSessionStatus, MessageObject, QuizSessionViewResult, 
   QuizSessionResultLinkResult, PlayerQuestionResultResult,
-  QuestionBody
+  QuestionBody,PlayerQuestionAnswerResult
 } from "./types";
 
 export enum SessionStatus {
@@ -137,4 +137,15 @@ export function playerSendMessage (playerId: number, message: MessageObject): Em
   // Check if message should be an message object with messageBody or just message body
 
   return {}
+}
+
+/**
+ * Allows the current player to submit answer(s) to the currently active question.
+ * @param {number} playerId The ID of the player.
+ * @param {number} questionPosition The position of the question.
+ * @param {number[]} answerIds The IDs of the submitted answers.
+ * @returns {PlayerQuestionAnswerResult} The result of the submission.
+ */
+export function playerQuestionAnswer(playerId: number, questionPosition: number, answerIds: number[]): PlayerQuestionAnswerResult {
+  return {};
 }

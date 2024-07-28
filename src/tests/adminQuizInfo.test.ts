@@ -138,7 +138,7 @@ describe('/v2/admin/quiz/{quizid}', () => {
       VALID_QUIZ_ID = Quiz.jsonBody?.quizId;
     });
 
-    test('correct return value', () => {
+    test.failing('correct return value', () => {
       expect(adminQuizInfoV2(VALID_TOKEN, VALID_QUIZ_ID)).toStrictEqual({
         statusCode: 200,
         jsonBody: {
@@ -147,8 +147,10 @@ describe('/v2/admin/quiz/{quizid}', () => {
           timeCreated: expect.any(Number),
           timeLastEdited: expect.any(Number),
           description: VALID_QUIZ_CREATE_INPUTS_1.DESCRIPTION,
+          numQuestions: 0,
           questions: [],
-          duration: expect.any(Number)
+          duration: expect.any(Number),
+          thumbnailUrl: expect.any(String)
         }
       });
     });

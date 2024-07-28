@@ -470,7 +470,7 @@ app.get('/v2/admin/quiz/:quizid', (req: Request, res: Response) => {
     }
   }
   try {
-    res.json(adminQuizInfo(token, quizId));
+    res.json(adminQuizInfo(token, quizId, true));
   } catch (error) {
     if (error instanceof Error403) {
       return res.status(403).json({ error: error.message });

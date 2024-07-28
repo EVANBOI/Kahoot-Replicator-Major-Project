@@ -44,6 +44,7 @@ export type Quiz = {
     description: string,
     questions: QuestionBody[],
     duration: number
+    thumbnailUrl?: string
 }
 
 export type Data = {
@@ -75,8 +76,10 @@ export type QuizInfoResult = {
     timeCreated: number,
     timeLastEdited: number,
     description: string,
+    numQuestions?: number,
     questions: QuestionBody[]
-    duration: number
+    duration: number,
+    thumbnailUrl?: string
 }
 
 export type UserdetailsResults = {

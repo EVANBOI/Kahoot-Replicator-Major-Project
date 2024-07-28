@@ -352,6 +352,16 @@ app.get('/v1/admin/quiz/:quizid/session/:sessionid/results/csv', (req: Request, 
 app.get('/v1/player/:playerid/question/:questionposition/results', (req: Request, res: Response) => {
   return res.json('test')
 });
+app.post('/v1/admin/quiz/{quizid}/session/start', (req: Request, res: Response) => {
+  return res.json('test')
+});
+app.post('/v1/player/join', (req: Request, res: Response) => {
+  return res.json('test')
+});
+app.get('/v1/player/results', (req: Request, res: Response) => {
+  return res.json('test')
+});
+
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================

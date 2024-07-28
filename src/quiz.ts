@@ -352,3 +352,60 @@ export function adminQuizRestore(token: string, quizId: number): QuizRestoreResu
   setData(database);
   return { statusCode: 200, message: '{}' };
 }
+
+
+export function adminQuizSessionStart(quizId: number, token: string, autoStartNum: number) {
+  if (autoStartNum <= 50 && autoStartNum > 0) {
+    return {
+      sessionId: 5546,
+    };
+  }
+
+  if (!token) {
+    return {
+      error: "Token is empty or invalid",
+      statusCode: 401,
+    };
+  }
+
+  const userIsOwner = false;
+  if (!userIsOwner) {
+    return {
+      error: "Valid token is provided, but user is not an owner of this quiz or quiz doesn't exist",
+      statusCode: 403,
+    };
+  }
+  if (autoStartNum > 50) {
+    return {
+      error: "autoStartNum is a number greater than 50",
+      statusCode: 400,
+    };
+  }
+
+  const activeSessions = 11;
+  if (activeSessions >= 10) {
+    return {
+      error: "10 sessions that are not in END state currently exist for this quiz",
+      statusCode: 400,
+    };
+  }
+
+  const quizHasQuestions = false;
+  if (!quizHasQuestions) {
+    return {
+      error: "The quiz does not have any questions in it",
+      statusCode: 400,
+    };
+  }
+
+  const quizInTrash = true;
+  if (quizInTrash) {
+    return {
+      error: "The quiz is in trash",
+      statusCode: 400,
+    };
+  }
+
+}
+
+

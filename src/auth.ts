@@ -2,6 +2,7 @@ import { getData, setData } from './dataStore';
 import validator from 'validator';
 import { findUserBySessionId } from './helpers';
 import { Data, UserRegistrationResult, PasswordUpdateResult, UserUpdateResult, Userdetails, ErrorMessage, EmptyObject } from './types';
+import { Error400 } from './error';
 import ShortUniqueId from 'short-unique-id';
 const uid = new ShortUniqueId({ dictionary: 'number' });
 /**
@@ -22,25 +23,25 @@ export function adminAuthRegister (
   const dataBase = getData();
   const person = dataBase.users.find(person => person.email === email);
   if (person) {
-    return { statusCode: 400, error: 'Email address is used by another user.' };
+    throw new Error400('Email address is used by another user.');
   }
   const nameRange = /^[a-zA-Z-' ]*$/;
   const passwordLetterRange = /^[a-zA-Z]/;
   const passwordNumberRange = /[0-9]/;
   if (!validator.isEmail(email)) {
-    return { statusCode: 400, error: 'Email is not a valid email' };
+    throw new Error400('Email is not a valid email');
   } else if (!nameRange.test(nameFirst)) {
-    return { statusCode: 400, error: 'NameFirst contains invalid characters' };
+    throw new Error400('NameFirst contains invalid characters');
   } else if (nameFirst.length < 2 || nameFirst.length > 20) {
-    return { statusCode: 400, error: 'NameFirst is less than 2 characters or more than 20 characters.' };
+    throw new Error400('NameFirst is less than 2 characters or more than 20 characters.');
   } else if (!nameRange.test(nameLast)) {
-    return { statusCode: 400, error: 'NameFirst contains invalid characters' };
+    throw new Error400('NameFirst contains invalid characters');
   } else if (nameLast.length < 2 || nameLast.length > 20) {
-    return { statusCode: 400, error: 'NameLast is less than 2 characters or more than 20 characters.' };
+    throw new Error400('NameLast is less than 2 characters or more than 20 characters.');
   } else if (password.length < 8) {
-    return { statusCode: 400, error: 'Password is less than 8 characters.' };
+    throw new Error400('Password is less than 8 characters.');
   } else if (!passwordLetterRange.test(password) || !passwordNumberRange.test(password)) {
-    return { statusCode: 400, error: 'Password does not contain at least one number and at least one letter.' };
+    throw new Error400('Password does not contain at least one number and at least one letter.');
   }
 
   const id = dataBase.users.length + 1;
@@ -222,10 +223,6 @@ export function adminUserPasswordUpdate(
 export function adminAuthLogout(sessionId: string): ErrorMessage | EmptyObject {
   const database = getData();
   const user = findUserBySessionId(database, sessionId);
-  if (!user) {
-    return { statusCode: 401, error: 'Session Id does not exist' };
-  }
-
   const index = user.tokens.findIndex(token => token.token === sessionId);
   user.tokens.splice(index, 1);
   setData(database);

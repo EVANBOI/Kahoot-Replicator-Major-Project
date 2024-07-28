@@ -1,4 +1,5 @@
 import { getData } from './dataStore';
+import { Error400, Error401 } from './error';
 import { Data, ErrorMessage, QuestionBody, User } from './types';
 
 export function findUserWithId(authUserId: number) {
@@ -9,10 +10,20 @@ export function findQuizWithId(database: Data, quizId: number) {
   return database.quizzes.find(quiz => quiz.quizId === quizId);
 }
 
+export function quizIdCheck(token: string, quizId: number) {
+  const isValidQuizId = getData().quizzes.find(q => q.quizId === quizId);
+  const user = getData().users.find(user => user.tokens.some(tokens => tokens.token === token));
+  if (!isValidQuizId) {
+    throw new Error('Quiz Id does not exist');
+  } else if (user.userId !== isValidQuizId.creatorId) {
+    throw new Error('Quiz does not belong to user');
+  }
+}
+
 export function tokenCheck(token: string) {
   const isValidToken = getData().users.some(user => user.tokens.some(tokens => tokens.token === token));
   if (!isValidToken) {
-    throw new Error('Invalid token provided');
+    throw new Error401('Invalid token provided');
   }
 }
 
@@ -40,18 +51,18 @@ export function validAnswers(questionBody: QuestionBody): boolean | ErrorMessage
   const existingAnswer: string[] = [];
   for (const ans of questionBody.answers) {
     if (ans.answer.length < 1) {
-      return { statusCode: 400, error: 'An answer is less than 1 character long' };
+      throw new Error400('An answer is less than 1 character long');
     } else if (ans.answer.length > 30) {
-      return { statusCode: 400, error: 'An answer is more than 30 character long' };
+      throw new Error400('An answer is more than 30 character long');
     } else if (existingAnswer.find(current => current === ans.answer)) {
-      return { statusCode: 400, error: 'There are duplicate answers' };
+      throw new Error400('There are duplicate answers');
     } else {
       existingAnswer.push(ans.answer);
     }
   }
   const correctExists = questionBody.answers.some(ans => ans.correct === true);
   if (!correctExists) {
-    return { statusCode: 400, error: 'There are no correct answers' };
+    throw new Error400('There are no correct answers');
   }
   return true;
 }
@@ -61,21 +72,21 @@ export function validQuestion(
   totalDuration: number
 ): boolean | ErrorMessage {
   if (questionBody.question.length > 50) {
-    return { statusCode: 400, error: 'Question string is greater than 50 characters' };
+    throw new Error400('Question string is greater than 50 characters');
   } else if (questionBody.question.length < 5) {
-    return { statusCode: 400, error: 'Question string is less than 5 characters' };
+    throw new Error400('Question string is less than 5 characters');
   } else if (questionBody.answers.length < 2) {
-    return { statusCode: 400, error: 'There are less than 2 answers' };
+    throw new Error400('There are less than 2 answers');
   } else if (questionBody.answers.length > 6) {
-    return { statusCode: 400, error: 'There are more than 6 answers' };
-  } else if (questionBody.duration < 0) {
-    return { statusCode: 400, error: 'Duration is negative' };
+    throw new Error400('There are more than 6 answers');
+  } else if (questionBody.duration <= 0) {
+    throw new Error400('Duration is negative');
   } else if (totalDuration > 180) {
-    return { statusCode: 400, error: 'Total duration is more than 3 min' };
+    throw new Error400('Total duration is more than 3 min');
   } else if (questionBody.points < 1) {
-    return { statusCode: 400, error: 'Point is less than 1' };
+    throw new Error400('Point is less than 1');
   } else if (questionBody.points > 10) {
-    return { statusCode: 400, error: 'Point is greater than 10' };
+    throw new Error400('Point is greater than 10');
   } else if (typeof validAnswers(questionBody) === 'object') {
     return validAnswers(questionBody) as ErrorMessage;
   }

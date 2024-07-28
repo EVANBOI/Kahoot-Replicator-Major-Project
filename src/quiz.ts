@@ -1,4 +1,5 @@
 import { getData, setData } from './dataStore';
+import { Error400, Error401, Error403 } from './error';
 
 import {
   findQuizWithId,
@@ -26,11 +27,11 @@ const quizUid = new ShortUniqueId({ dictionary: 'number' });
  * @returns {{quizzes: {quizId: number, name: string}}} - an object containing identifiers of all quizzes
  * @returns {ErrorMessage} an error
  */
-export function adminQuizList (sessionId: string): QuizListDetails {
+export function adminQuizList (token: string): QuizListDetails {
   const database = getData();
-  const user = findUserBySessionId(database, sessionId);
+  const user = findUserBySessionId(database, token);
   if (!user) {
-    return { statusCode: 401, error: 'Session id is not valid.' };
+    throw new Error401('Session id is not valid.');
   }
   const creatorId = user.userId;
   const quizzes = database.quizzes.filter(quiz => quiz.creatorId === creatorId);
@@ -202,29 +203,27 @@ export function adminQuizNameUpdate(sessionId: string, quizId: number, name: str
 /**
  * Update the description of the relevant quiz.
  *
- * @param {number} sessionId - unique id of a user
  * @param {number} quizId - unique id of a quiz
  * @param {string} description - description of a quiz
  * @returns {} - empty object
  * @returns {ErrorMessage} an error
  */
 export function adminQuizDescriptionUpdate(
-  sessionId: string,
+  token: string,
   quizId: number,
   description: string): EmptyObject | ErrorMessage {
   const database = getData();
-  const user = findUserBySessionId(database, sessionId);
+  const user = findUserBySessionId(database, token);
   const validQuizId = database.quizzes.find(quiz => quiz.quizId === quizId);
   if (!user) {
-    return { statusCode: 401, error: 'AuthUserId is not a valid user.' };
+    throw new Error401('AuthUserId is not a valid user.');
   } else if (!validQuizId) {
-    return { statusCode: 403, error: 'Quiz ID does not refer to a valid quiz.' };
+    throw new Error403('Quiz ID does not refer to a valid quiz.');
   } else if (user.userId !== validQuizId.creatorId) {
-    return { statusCode: 403, error: 'Quiz ID does not refer to a quiz that this user owns.' };
+    throw new Error403('Quiz ID does not refer to a quiz that this user owns.');
   } else if (description.length > 100) {
-    return { statusCode: 400, error: 'Description is more than 100 characters in length' };
+    throw new Error400('Description is more than 100 characters in length');
   }
-
   validQuizId.description = description;
   validQuizId.timeLastEdited = Math.floor(Date.now() / 1000);
   setData(database);

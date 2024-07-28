@@ -19,6 +19,7 @@ import {
 
 import ShortUniqueId from 'short-unique-id';
 import { randomColor } from 'seed-to-color';
+import { Error401, Error403 } from './error';
 const answerUid = new ShortUniqueId({ dictionary: 'number' });
 const questionUid = new ShortUniqueId({ dictionary: 'number' });
 
@@ -35,18 +36,18 @@ const questionUid = new ShortUniqueId({ dictionary: 'number' });
  */
 export function adminCreateQuizQuestion(
   quizId: number,
-  sessionId: string,
+  token: string,
   questionBody: QuestionBody): CreateQuestionReturn {
   const database = getData();
-  const user = findUserBySessionId(database, sessionId);
+  const user = findUserBySessionId(database, token);
   if (!user) {
-    return { statusCode: 401, error: 'Session ID is invalid' };
+    throw new Error401('Session ID is invalid');
   }
   const quiz = findQuizWithId(database, quizId);
   if (!quiz) {
-    return { statusCode: 403, error: 'Quiz does not exist' };
+    throw new Error403('Quiz does not exist');
   } else if (quiz.creatorId !== user.userId) {
-    return { statusCode: 403, error: 'User is not an owner of quiz' };
+    throw new Error403('User is not an owner of quiz');
   }
   const totalDuration = quiz.duration + questionBody.duration;
   if (typeof validQuestion(questionBody, totalDuration) === 'object') {
@@ -137,28 +138,14 @@ export function adminQuizQuestionUpdate(
   token: string
 ): UserUpdateResult | ErrorMessage {
   const database = getData();
-  const user = findUserBySessionId(database, token);
-
-  if (!user) {
-    return { statusCode: 401, error: 'Token does not exist or is invalid' };
-  }
-
   const quiz = findQuizWithId(database, quizId);
-  if (!quiz) {
-    return { statusCode: 403, error: 'Quiz does not exist' };
-  } else if (quiz.creatorId !== user.userId) {
-    return { statusCode: 403, error: 'User is not an owner of this quiz' };
-  }
 
   const question = quiz.questions.find(
     question => question.questionId === questionId
   );
 
   if (!question) {
-    return {
-      statusCode: 400,
-      error: 'Question Id does not refer to a valid question within the quiz'
-    };
+    throw new Error('Question Id does not refer to a valid question within the quiz');
   }
 
   const totalDuration = quiz.duration + questionBody.duration - question.duration;

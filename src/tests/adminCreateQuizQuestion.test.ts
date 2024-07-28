@@ -43,7 +43,6 @@ beforeEach(() => {
 });
 
 describe('Unsuccesful Tests', () => {
-  // should I have some tests for cases where there are no users?
   describe('Expected error code is 401', () => {
     test('Empty sessionId', () => {
       const result = adminCreateQuizQuestion(quizId1, '', validQuestion1);

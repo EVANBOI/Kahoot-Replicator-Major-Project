@@ -166,34 +166,34 @@ export function adminQuizInfo (token: string, quizId: number): QuizInfoResult {
  * @param {number} quizId - unique id of a quiz
  * @param {string} name- name of a user
  * @returns {} - empty object
- * @returns {ErrorMessage} an error
  */
-export function adminQuizNameUpdate(sessionId: string, quizId: number, name: string): EmptyObject | ErrorMessage {
+
+export function adminQuizNameUpdate(sessionId: string, quizId: number, name: string): EmptyObject {
   const database = getData();
   const user = findUserBySessionId(database, sessionId);
   if (!user) {
-    return { statusCode: 401, error: 'sessionId is not valid.' };
+    throw new Error401('sessionId is not valid.');
   }
   const authUserId = user.userId;
   const quiz = findQuizWithId(database, quizId);
 
   const namePattern = /^[a-zA-Z0-9 ]+$/;
   if (!quiz) {
-    return { statusCode: 403, error: 'Quiz ID does not refer to a valid quiz.' };
+    throw new Error403('Quiz ID does not refer to a valid quiz.');
   }
   if (quiz.creatorId !== authUserId) {
-    return { statusCode: 403, error: 'Quiz ID does not refer to a quiz that this user owns.' };
+    throw new Error403('Quiz ID does not refer to a quiz that this user owns.');
   }
   if (!namePattern.test(name)) {
-    return { statusCode: 400, error: 'Name contains invalid characters. Valid characters are alphanumeric and spaces.' };
+    throw new Error400('Name contains invalid characters. Valid characters are alphanumeric and spaces.');
   }
   if (name.length < 3 || name.length > 30) {
-    return { statusCode: 400, error: 'Name is either less than 3 characters long or more than 30 characters long.' };
+    throw new Error400('Name is either less than 3 characters long or more than 30 characters long.');
   }
   const nameUsed = database.quizzes.find(q => q.creatorId === authUserId && q.name === name);
   if (nameUsed) {
-    return { statusCode: 400, error: 'Name is already used by the current logged in user for another quiz.' };
-  }
+    throw new Error400('Name is already used by the current logged in user for another quiz.');
+  }  
 
   quiz.name = name;
   setData(database);

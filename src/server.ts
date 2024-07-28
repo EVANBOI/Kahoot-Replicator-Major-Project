@@ -222,7 +222,7 @@ app.put('/v1/admin/user/password', (req: Request, res: Response) => {
     return res.status(401).json({ error: error.message });
   }
   try {
-    adminUserPasswordUpdate(token, oldPassword, newPassword);
+    res.json(adminUserPasswordUpdate(token, oldPassword, newPassword));
   } catch (error) {
     return res.status(400).json({ error: error.message });
   }
@@ -232,10 +232,21 @@ app.put('/v1/admin/user/password', (req: Request, res: Response) => {
 app.put('/v1/admin/quiz/:quizid/name', (req: Request, res: Response) => {
   const { token, quizId, name } = req.body;
   const result = adminQuizNameUpdate(token, quizId, name);
-  if ('error' in result) {
-    return res.status(result.statusCode).json({ error: result.error });
+  try {
+    tokenCheck(token);
+  } catch (error) {
+    return res.status(401).json({ error: error.message });
   }
-  res.json(result);
+  try {
+    quizIdCheck(token, quizId);
+  } catch (error) {
+    return res.status(403).json({ error: error.message });
+  }
+  try {
+    res.json(adminQuizNameUpdate(token, quizId, name));
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
 });
 
 app.post('/v1/admin/quiz/:quizid/question', (req: Request, res: Response) => {

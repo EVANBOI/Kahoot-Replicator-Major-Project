@@ -250,3 +250,38 @@ export function adminQuizSessionResults(
 export function adminQuizThumbnailUpdate(quizId: number, token: string, imgUrl: string): EmptyObject {
   return {};
 }
+
+
+export function adminQuizSessionStart(
+  quizId: number, 
+  token: string, 
+  autoStartNum: number
+): { sessionId: number } {
+  return { sessionId: 5546 }; 
+}
+
+
+export function playerJoin(
+  sessionId: number, 
+  name: string
+): { playerId: number } {
+  return { playerId: 5546 }; 
+}
+
+export function playerResults(
+  playerId: number
+): SessionResults {
+  return {
+    usersRankedByScore: [
+      { name: 'Hayden', score: 45 }
+    ],
+    questionResults: [
+      {
+        questionId: 5546,
+        playersCorrectList: ['Hayden'],
+        averageAnswerTime: 45,
+        percentCorrect: 54
+      }
+    ]
+  }; 
+}

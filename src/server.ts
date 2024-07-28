@@ -170,6 +170,21 @@ app.get('/v1/admin/user/details', (req: Request, res: Response) => {
   res.status(200).json(result);
 });
 
+
+app.get('/v2/admin/user/details', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+
+  try {
+    const userDetails = adminUserDetails(token);
+    res.json(userDetails);
+  } catch (e) {
+    if (e instanceof Unauthorised) {
+      return res.status(StatusCodes.UNAUTHORIZED).json({ error: e.message });
+    }
+  }
+});
+
+
 app.delete('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
   const token = req.query.token as string;
   const id = parseInt(req.params.quizid);
@@ -181,6 +196,26 @@ app.delete('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
     res.status(200).json({});
   }
 });
+
+app.delete('/v2/admin/quiz/:quizid', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  const quizId = parseInt(req.params.quizid);
+
+  try {
+    adminQuizRemove(token, quizId);
+    res.status(StatusCodes.OK).json({});
+  } catch (e) {
+    if (e instanceof Unauthorised) {
+      return res.status(StatusCodes.UNAUTHORIZED).json({ error: e.message });
+    } else if (e instanceof Forbidden) {
+      return res.status(StatusCodes.FORBIDDEN).json({ error: e.message });
+    } else if (e instanceof Bad_Request) {
+      return res.status(StatusCodes.BAD_REQUEST).json({ error: e.message });
+    }
+  }
+});
+
+
 
 app.post('/v1/admin/quiz', (req: Request, res: Response) => {
   const { token, name, description } = req.body;
@@ -333,6 +368,26 @@ app.post('/v1/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
   res.json(result);
 });
 
+app.post('/v2/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  const quizId = parseInt(req.params.quizid);
+
+  try {
+    res.json(adminQuizRestore(token, quizId));
+  } catch (e) {
+    if (e instanceof Unauthorised) {
+      return res.status(StatusCodes.UNAUTHORIZED).json({ error: e.message });
+    } else if (e instanceof Forbidden) {
+      return res.status(StatusCodes.FORBIDDEN).json({ error: e.message });
+    } else if (e instanceof Bad_Request) {
+      return res.status(StatusCodes.BAD_REQUEST).json({ error: e.message });
+    }
+  }
+});
+
+
+
+
 app.delete('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
   const token = req.query.token as string;
   const quizId = parseInt(req.params.quizid);
@@ -345,6 +400,29 @@ app.delete('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Re
     res.status(200).json({});
   }
 });
+
+
+app.delete('/v2/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  const quizId = parseInt(req.params.quizid);
+  const questionId = parseInt(req.params.questionid);
+
+  try {
+    adminQuizQuestionDelete(token, quizId, questionId);
+    res.status(StatusCodes.OK).json({});
+  } catch (e) {
+    if (e instanceof Unauthorised) {
+      return res.status(StatusCodes.UNAUTHORIZED).json({ error: e.message });
+    } else if (e instanceof Forbidden) {
+      return res.status(StatusCodes.FORBIDDEN).json({ error: e.message });
+    } else if (e instanceof Bad_Request) {
+      return res.status(StatusCodes.BAD_REQUEST).json({ error: e.message });
+    }
+  }
+});
+
+
+
 app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
   const { token } = req.body;
   try {

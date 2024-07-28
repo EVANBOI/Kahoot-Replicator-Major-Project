@@ -43,6 +43,7 @@ import {
   quizExistCheck
 } from './helpers';
 import { adminQuizNameUpdate } from './quiz';
+import { PositionWithTokenObj } from './types';
 
 // Set up web app
 const app = express();
@@ -312,7 +313,7 @@ app.post('/v1/admin/quiz/:quizid/question/:questionid/duplicate', (req: Request,
 app.put('/v1/admin/quiz/:quizid/question/:questionid/move', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
   const questionId = parseInt(req.params.questionid);
-  const { moveInfo } = req.body;
+  const moveInfo = req.body;
   try {
     tokenCheck(moveInfo.token);
   } catch (error) {
@@ -383,6 +384,32 @@ app.delete('/v2/admin/quiz/trash/empty', (req: Request, res: Response) => {
   }
 
   res.json(adminQuizTrashEmpty(quizIds));
+});
+
+app.put('/v2/admin/quiz/:quizid/question/:questionid/move', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const questionId = parseInt(req.params.questionid);
+  const token = req.headers.token as string; 
+  const newPosition = req.body.newPosition;
+  const moveInfo:PositionWithTokenObj = {
+    token: token,
+    newPosition: newPosition
+  }
+  try {
+    tokenCheck(token);
+  } catch (error) {
+    return res.status(401).json({ error: error.message });
+  }
+  try {
+    quizExistCheck(quizId, token);
+  } catch (error) {
+    return res.status(403).json({ error: error.message });
+  }
+  try {
+    res.json(adminQuizQuestionMove(quizId, questionId, moveInfo));
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
 });
 
 // ====================================================================

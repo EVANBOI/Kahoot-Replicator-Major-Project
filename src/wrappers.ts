@@ -1,6 +1,6 @@
 import request, { HttpVerb } from 'sync-request-curl';
 import { port, url } from '../src/config.json';
-import { QuestionBody, PositionWithTokenObj } from './types';
+import { QuestionBody, PositionWithTokenObj, PositionObj } from './types';
 
 const SERVER_URL = `${url}:${port}`;
 
@@ -239,5 +239,13 @@ export const adminQuizQuestionMove = (
   quizid: number,
   questionid: number,
   moveInfo: PositionWithTokenObj) => {
-  return requestHelper('PUT', `/v1/admin/quiz/${quizid}/question/${questionid}/move`, { moveInfo });
+  return requestHelper('PUT', `/v1/admin/quiz/${quizid}/question/${questionid}/move`, moveInfo);
+};
+
+export const adminQuizQuestionMoveV2 = (
+  quizid: number,
+  questionid: number,
+  positionObj: PositionObj,
+  token: string) => {
+  return requestHelper('PUT', `/v2/admin/quiz/${quizid}/question/${questionid}/move`, positionObj, token);
 };

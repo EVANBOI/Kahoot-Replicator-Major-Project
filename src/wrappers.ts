@@ -312,3 +312,25 @@ export const PlayerQuestionResult = (
   questionposition: number) => {
   return requestHelper('GET', `/v1/player/${playerid}/question/${questionposition}/results`, {});
 }
+
+export const adminQuizSessionUpdate = (
+  quizid: number,
+  sessionid: number, 
+  token: string, 
+  action: string
+) => {
+  return requestHelper('PUT', `/v1/admin/quiz/${quizid}/session/${sessionid}`, {action}, token)
+}
+
+export const playerStatus = (
+  playerid: number
+) => {
+  return requestHelper('GET', `/v1/player/${playerid}`, {})
+}
+
+export const playerChatlog = (
+  playerid: number
+) => {
+  return requestHelper('GET', `v1/player/${playerid}/chat`, {})
+}
+

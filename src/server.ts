@@ -438,6 +438,12 @@ app.put('/v1/admin/quiz/:quizid/question/:questionid/move', (req: Request, res: 
   }
 });
 
+// Evan's function don't change the order needs to be above
+app.put('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Response) => {
+  return res.json('test')
+})
+
+
 app.get('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Response) => {
   return res.json('test')
 })
@@ -460,6 +466,17 @@ app.get('/v1/admin/quiz/:quizid/session/:sessionid/results/csv', (req: Request, 
 app.get('/v1/player/:playerid/question/:questionposition/results', (req: Request, res: Response) => {
   return res.json('test')
 });
+
+// Evan's function
+app.get('/v1/player/:playerid', (req: Request, res: Response) => {
+  return res.json('test')
+})
+
+// Evan's function
+app.get('/v1/player/:playerid/chat', (req: Request, res: Response) => {
+  return res.json('test')
+})
+
 // v2 functions
 
 app.put('/v2/admin/user/details', (req: Request, res: Response) => {

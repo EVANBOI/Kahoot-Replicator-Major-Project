@@ -1,7 +1,9 @@
 import { 
   EmptyObject, GetSessionStatus, MessageObject, QuizSessionViewResult, 
   QuizSessionResultLinkResult, PlayerQuestionResultResult,
-  QuestionBody
+  QuestionBody,
+  PlayerStatusResult,
+  PlayerChatlogResult
 } from "./types";
 
 export enum SessionStatus {
@@ -58,6 +60,25 @@ export function PlayerQuestionResult (playerId: number, questionposition: number
 }
 
 /**
+ * Update the state of a particular quiz session by sending an action command
+ * @param {number} quizId The ID of the quiz to be found.
+ * @param {number} sessionId The ID of the session to be found.
+ * @param {string} token - unique session id of a user
+ * @param {string} action - action command
+ * @returns {} active and inactive Sessions
+ * @returns {ErrorMessage} An error message
+ */
+
+export function adminQuizSessionUpdate(  
+  quizid: number,
+  sessionid: number, 
+  token: string, 
+  action: string): EmptyObject | Error {
+    return {};
+  }
+
+
+/**
  * Gives the status of a particular quiz session
  * @param {number} quizId The ID of the quiz to be found.
  * @param {number} sessionId The ID of the session to be found.
@@ -102,6 +123,21 @@ export function adminQuizSessionStatus (quizId: number, sessionId: number): GetS
 }
 
 /**
+ * Get the status of a guest player that has already joined a session.
+ * @param {number} playerId The ID of the player playing.
+ * @returns {PlayerStatusResult} Information about the player's status
+ * @returns {ErrorMessage} An error message
+ */
+
+export function playerStatus(playerid: number): PlayerStatusResult | Error {
+  return {
+    state: "LOBBY",
+    numQuestions: 1,
+    atQuestion: 1
+  }
+}
+
+/**
  * Get the information about a question that the guest player is on.
  * @param {number} playerId The ID of the player playing.
  * @param {number} questionPosition The position of the question
@@ -121,6 +157,25 @@ export function playerQuestionInfo (playerId: number, questionPosition: number):
         answer: 'Prince Charles',
         colour: 'red',
         correct: true
+      }
+    ]
+  }
+}
+
+/**
+ * Return all messages that are in the same session as the player, in the order they were sent
+ * @param {number} playerId The ID of the player playing.
+ * @returns {PlayerChatlogResult} All the player's messages
+ * @returns {ErrorMessage} An error message
+ */
+export function playerChatlog(playerid: number): PlayerChatlogResult | Error {
+  return {
+    messages: [
+      {
+        messageBody: "This is a message body",
+        playerId: 5546,
+        playerName: "Yuchao Jiang",
+        timeSent: 1683019484
       }
     ]
   }

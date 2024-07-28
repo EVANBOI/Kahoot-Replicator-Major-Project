@@ -19,7 +19,7 @@ import {
 
 import ShortUniqueId from 'short-unique-id';
 import { randomColor } from 'seed-to-color';
-import { Error401, Error403 } from './error';
+import { Error401, Error403, Error400 } from './error';
 const answerUid = new ShortUniqueId({ dictionary: 'number' });
 const questionUid = new ShortUniqueId({ dictionary: 'number' });
 
@@ -186,11 +186,11 @@ export function adminQuizQuestionMove(
   const questionIndex = findQuestionIndex(database, quizId, questionId);
   const maxPosition = quiz.questions.length - 1;
   if (!question) {
-    throw new Error('Question Id does not refer to a valid question within this quiz');
+    throw new Error400('Question Id does not refer to a valid question within this quiz');
   } else if (moveInfo.newPosition > maxPosition || moveInfo.newPosition < 0) {
-    throw new Error('NewPosition is less than 0, or NewPosition is greater than n-1 where n is the number of questions');
+    throw new Error400('NewPosition is less than 0, or NewPosition is greater than n-1 where n is the number of questions');
   } else if (moveInfo.newPosition === questionIndex) {
-    throw new Error('NewPosition is the position of the current question');
+    throw new Error400('NewPosition is the position of the current question');
   }
   // swap them
   [quiz.questions[questionIndex], quiz.questions[moveInfo.newPosition]] = [quiz.questions[moveInfo.newPosition], quiz.questions[questionIndex]];

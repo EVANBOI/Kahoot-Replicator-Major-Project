@@ -144,9 +144,9 @@ export function adminQuizInfo (token: string, quizId: number): QuizInfoResult {
   const quiz = findQuizWithId(database, quizId);
 
   if (!quiz) {
-    throw new Error(`Quiz with ID '${quizId}' not found`);
+    throw new Error403(`Quiz with ID '${quizId}' not found`);
   } else if (quiz.creatorId !== user.userId) {
-    throw new Error(`Quiz with ID ${quizId} is not owned by ${user.userId} (actual owner: ${quiz.creatorId})`);
+    throw new Error403(`Quiz with ID ${quizId} is not owned by ${user.userId} (actual owner: ${quiz.creatorId})`);
   }
 
   return {

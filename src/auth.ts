@@ -83,21 +83,21 @@ export function adminUserDetailsUpdate (
   if (person) {
     const isCorrectOwner = person.tokens.find(tokens => tokens.token === token);
     if (!isCorrectOwner) {
-      throw new Error('Email address is used by another user.');
+      throw new Error400('Email address is used by another user.');
     }
   }
 
   const nameRange = /^[a-zA-Z-' ]*$/;
   if (!validator.isEmail(email)) {
-    throw new Error('Email is not valid');
+    throw new Error400('Email is not valid');
   } else if (!nameRange.test(nameFirst)) {
-    throw new Error('NameFirst contains invalid characters');
+    throw new Error400('NameFirst contains invalid characters');
   } else if (nameFirst.length < 2 || nameFirst.length > 20) {
-    throw new Error('NameFirst is less than 2 characters or more than 20 characters.');
+    throw new Error400('NameFirst is less than 2 characters or more than 20 characters.');
   } else if (!nameRange.test(nameLast)) {
-    throw new Error('NameLast contains invalid characters');
+    throw new Error400('NameLast contains invalid characters');
   } else if (nameLast.length < 2 || nameLast.length > 20) {
-    throw new Error('NameLast is less than 2 characters or more than 20 characters.');
+    throw new Error400('NameLast is less than 2 characters or more than 20 characters.');
   }
 
   const user = findUserBySessionId(dataBase, token);

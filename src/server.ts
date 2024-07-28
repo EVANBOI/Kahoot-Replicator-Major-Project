@@ -46,6 +46,7 @@ import {
 import { adminQuizNameUpdate } from './quiz';
 import { Error400, Error401, Error403 } from './error';
 import { StatusCodes } from 'http-status-codes';
+import { PositionWithTokenObj } from './types';
 
 // Set up web app
 const app = express();
@@ -171,13 +172,17 @@ app.put('/v1/admin/user/details', (req: Request, res: Response) => {
   try {
     tokenCheck(token);
   } catch (error) {
-    return res.status(401).json({ error: error.message });
+    if (error instanceof Error401) {
+      return res.status(401).json({ error: error.message });
+    }
   }
 
   try {
     res.json(adminUserDetailsUpdate(token, email, nameFirst, nameLast));
   } catch (error) {
-    return res.status(400).json({ error: error.message });
+    if (error instanceof Error400) {
+      return res.status(400).json({ error: error.message });
+    }
   }
 });
 
@@ -196,12 +201,16 @@ app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
   try {
     tokenCheck(token);
   } catch (error) {
-    return res.status(401).json({ error: error.message });
+    if (error instanceof Error401) {
+      return res.status(401).json({ error: error.message });
+    }
   }
   try {
     res.json(adminQuizInfo(token, quizId));
   } catch (error) {
-    return res.status(403).json({ error: error.message });
+    if (error instanceof Error403) {
+      return res.status(403).json({ error: error.message });
+    }
   }
 });
 
@@ -302,17 +311,23 @@ app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
   try {
     tokenCheck(token);
   } catch (error) {
-    return res.status(401).json({ error: error.message });
+    if (error instanceof Error401) {
+      return res.status(401).json({ error: error.message });
+    }
   }
   try {
     quizExistWithCorrectCreatorCheck(token, quizIds);
   } catch (error) {
-    return res.status(403).json({ error: error.message });
+    if (error instanceof Error403) {
+      return res.status(403).json({ error: error.message });
+    }
   }
   try {
     allExistInTrashCheck(quizIds);
   } catch (error) {
-    return res.status(400).json({ error: error.message });
+    if (error instanceof Error400) {
+      return res.status(400).json({ error: error.message });
+    }
   }
 
   res.json(adminQuizTrashEmpty(quizIds));
@@ -342,21 +357,127 @@ app.post('/v1/admin/quiz/:quizid/question/:questionid/duplicate', (req: Request,
 app.put('/v1/admin/quiz/:quizid/question/:questionid/move', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
   const questionId = parseInt(req.params.questionid);
-  const { moveInfo } = req.body;
+  const moveInfo = req.body;
   try {
     tokenCheck(moveInfo.token);
   } catch (error) {
-    return res.status(401).json({ error: error.message });
+    if (error instanceof Error401) {
+      return res.status(401).json({ error: error.message });
+    }
   }
   try {
     quizExistCheck(quizId, moveInfo.token);
   } catch (error) {
-    return res.status(403).json({ error: error.message });
+    if (error instanceof Error403) {
+      return res.status(403).json({ error: error.message });
+    }
   }
   try {
     res.json(adminQuizQuestionMove(quizId, questionId, moveInfo));
   } catch (error) {
-    return res.status(400).json({ error: error.message });
+    if (error instanceof Error400) {
+      return res.status(400).json({ error: error.message });
+    }
+  }
+});
+
+// v2 functions
+
+app.put('/v2/admin/user/details', (req: Request, res: Response) => {
+  const { email, nameFirst, nameLast } = req.body;
+  const token = req.headers.token as string;
+  try {
+    tokenCheck(token);
+  } catch (error) {
+    if (error instanceof Error401) {
+      return res.status(401).json({ error: error.message });
+    }
+  }
+  try {
+    res.json(adminUserDetailsUpdate(token, email, nameFirst, nameLast));
+  } catch (error) {
+    if (error instanceof Error400) {
+      return res.status(400).json({ error: error.message });
+    }
+  }
+});
+
+app.get('/v2/admin/quiz/:quizid', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  const quizId = parseInt(req.params.quizid);
+  try {
+    tokenCheck(token);
+  } catch (error) {
+    if (error instanceof Error401) {
+      return res.status(401).json({ error: error.message });
+    }
+  }
+  try {
+    res.json(adminQuizInfo(token, quizId));
+  } catch (error) {
+    if (error instanceof Error403) {
+      return res.status(403).json({ error: error.message });
+    }
+  }
+});
+
+app.delete('/v2/admin/quiz/trash/empty', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  const quizIds = req.query.quizIds as string;
+  try {
+    tokenCheck(token);
+  } catch (error) {
+    if (error instanceof Error401) {
+      return res.status(401).json({ error: error.message });
+    }
+  }
+  try {
+    quizExistWithCorrectCreatorCheck(token, quizIds);
+  } catch (error) {
+    if (error instanceof Error403) {
+      return res.status(403).json({ error: error.message });
+    }
+  }
+  try {
+    allExistInTrashCheck(quizIds);
+  } catch (error) {
+    if (error instanceof Error400) {
+      return res.status(400).json({ error: error.message });
+    }
+  }
+
+  res.json(adminQuizTrashEmpty(quizIds));
+});
+
+app.put('/v2/admin/quiz/:quizid/question/:questionid/move', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const questionId = parseInt(req.params.questionid);
+  const token = req.headers.token as string;
+  const newPosition = req.body.newPosition;
+  const moveInfo:PositionWithTokenObj = {
+    token: token,
+    newPosition: newPosition
+  };
+  try {
+    tokenCheck(token);
+  } catch (error) {
+    if (error instanceof Error401) {
+      return res.status(401).json({ error: error.message });
+    }
+  }
+  try {
+    quizExistCheck(quizId, token);
+  } catch (error) {
+    if (error instanceof Error403) {
+      return res.status(403).json({ error: error.message });
+    }
+  }
+  try {
+    res.json(adminQuizQuestionMove(quizId, questionId, moveInfo));
+  } catch (error) {
+    if (error instanceof Error400) {
+      return res.status(400).json({ error: error.message });
+    }
   }
 });
 

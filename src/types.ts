@@ -59,7 +59,7 @@ export type QuestionIdObject = {
 // Types for function return
 export type EmptyObject = Record<string, never>;
 export type ClearResult = EmptyObject;
-export type UserUpdateResult = EmptyObject | ErrorMessage
+export type UserUpdateResult = EmptyObject;
 export type UserRegistrationResult = ErrorMessage | Token;
 
 export type QuizListDetails = ErrorMessage | {
@@ -69,7 +69,7 @@ export type QuizListDetails = ErrorMessage | {
     }[]
 }
 
-export type QuizInfoResult = ErrorMessage | {
+export type QuizInfoResult = {
     quizId: number,
     name: string,
     timeCreated: number,
@@ -133,15 +133,20 @@ export type TrashViewDetails = ErrorMessage | {
     }[]
 }
 
-export type QuizTrashEmptyResult = EmptyObject | ErrorMessage;
+export type QuizTrashEmptyResult = EmptyObject;
 
-export type QuizQuestionMoveResult = EmptyObject | ErrorMessage;
+export type QuizQuestionMoveResult = EmptyObject;
 
 // other types
 export type PositionWithTokenObj = {
     token: string,
     newPosition: number
 }
+
+export type PositionObj = {
+    newPosition: number
+}
+
 export type QuizRestoreResult = {
     statusCode: number,
     message: string

@@ -1,6 +1,7 @@
 import { adminQuizQuestionDelete, adminAuthRegister, clear, adminQuizInfo } from '../wrappers';
 import { SessionIdObject, QuizIdObject, QuestionBody } from '../types';
-import { adminQuizCreate, adminCreateQuizQuestion } from '../quiz';
+import { adminQuizCreate } from '../quiz';
+import { adminCreateQuizQuestion } from '../question';
 
 const VALID_USER_INPUT = {
   EMAIL: 'admin@email.com',

@@ -149,6 +149,10 @@ export const adminQuizInfo = (token: string, quizId: number) => {
   return requestHelper('GET', `/v1/admin/quiz/${quizId}`, { token });
 };
 
+export const adminQuizInfoV2 = (token: string, quizId: number) => {
+  return requestHelper('GET', `/v2/admin/quiz/${quizId}`, {}, token);
+};
+
 export const clear = () => {
   return requestHelper('DELETE', '/v1/clear', {});
 };

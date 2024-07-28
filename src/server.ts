@@ -348,6 +348,21 @@ app.put('/v2/admin/user/details', (req: Request, res: Response) => {
   }
 });
 
+app.get('/v2/admin/quiz/:quizid', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  const quizId = parseInt(req.params.quizid);
+  try {
+    tokenCheck(token);
+  } catch (error) {
+    return res.status(401).json({ error: error.message });
+  }
+  try {
+    res.json(adminQuizInfo(token, quizId));
+  } catch (error) {
+    return res.status(403).json({ error: error.message });
+  }
+});
+
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================

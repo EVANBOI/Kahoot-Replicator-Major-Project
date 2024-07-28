@@ -193,7 +193,7 @@ export function adminQuizNameUpdate(sessionId: string, quizId: number, name: str
   const nameUsed = database.quizzes.find(q => q.creatorId === authUserId && q.name === name);
   if (nameUsed) {
     throw new Error400('Name is already used by the current logged in user for another quiz.');
-  }  
+  }
 
   quiz.name = name;
   setData(database);

@@ -230,8 +230,9 @@ app.put('/v1/admin/user/password', (req: Request, res: Response) => {
 });
 
 app.put('/v1/admin/quiz/:quizid/name', (req: Request, res: Response) => {
-  const { token, quizId, name } = req.body;
-  const result = adminQuizNameUpdate(token, quizId, name);
+  const { token, name } = req.body;
+  const quizId = parseInt(req.params.quizid);
+
   try {
     tokenCheck(token);
   } catch (error) {
@@ -365,8 +366,7 @@ app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
     return res.status(403).json({ error: error.message });
   }
   try {
-    const result = adminQuizTransfer(token, quizId, userEmail);
-    return res.json(result);
+    res.json(adminQuizTransfer(token, quizId, userEmail));
   } catch (error) {
     return res.status(400).json({ error: error.message });
   }
@@ -376,11 +376,23 @@ app.post('/v1/admin/quiz/:quizid/question/:questionid/duplicate', (req: Request,
   const { token } = req.body;
   const quizId = parseInt(req.params.quizid);
   const questionId = parseInt(req.params.questionid);
-  const result = adminQuizQuestionDuplicate(token, quizId, questionId);
-  if ('error' in result) {
-    return res.status(result.statusCode).json({ error: result.error });
+  try {
+    tokenCheck(token);
+  } catch (error) {
+    return res.status(401).json({ error: error.message });
   }
-  return res.status(200).json(result);
+
+  try {
+    quizIdCheck(token, quizId);
+  } catch (error) {
+    return res.status(403).json({ error: error.message });
+  }
+
+  try {
+    res.json(adminQuizQuestionDuplicate(token, quizId, questionId));
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
 });
 
 app.put('/v1/admin/quiz/:quizid/question/:questionid/move', (req: Request, res: Response) => {

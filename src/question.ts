@@ -72,27 +72,27 @@ export function adminCreateQuizQuestion(
  * @param {string} token - The session token of the current user.
  * @param {number} quizId - The ID of the quiz containing the question to duplicate.
  * @param {number} questionId - The ID of the question to duplicate.
- * @returns {ErrorMessage | { newQuestionId: number }} - The result of the duplication operation.
+ * @returns {{ newQuestionId: number }} - The result of the duplication operation.
  */
 export function adminQuizQuestionDuplicate(
   token: string,
   quizId: number,
   questionId: number
-): ErrorMessage | { newQuestionId: number } {
+):{ newQuestionId: number } {
   const database = getData();
   const user = findUserBySessionId(database, token);
 
   if (!user) {
-    return { statusCode: 401, error: 'Token is not valid.' };
+    throw new Error401('Token is not valid.');
   }
 
   const quiz = findQuizWithId(database, quizId);
   if (!quiz) {
-    return { statusCode: 403, error: `Quiz with ID '${quizId}' not found` };
+    throw new Error403(`Quiz with ID '${quizId}' not found.`);
   }
 
   if (quiz.creatorId !== user.userId) {
-    return { statusCode: 403, error: 'User is not the owner of the quiz.' };
+    throw new Error403('User is not the owner of the quiz.');
   }
 
   if (!quiz.questions) {
@@ -101,7 +101,7 @@ export function adminQuizQuestionDuplicate(
 
   const question = quiz.questions.find(q => q.questionId === questionId);
   if (!question) {
-    return { statusCode: 400, error: 'Question ID does not refer to a valid question within this quiz.' };
+    throw new Error400('Question ID does not refer to a valid question within this quiz.');
   }
 
   const newQuestionId = parseInt(questionUid.seq());

@@ -181,3 +181,15 @@ export function adminQuizSessionResults(
     ],
   };
 }
+
+/**
+ * Update the thumbnail for the quiz
+ * @param {number} quizId The ID of the quiz
+ * @param {string} token The session token of the user
+ * @param {string} imgUrl The URL of the new thumbnail image
+ * @returns {EmptyObject} Returns an empty object on success
+ * @throws {Error} Throws an error if there is a problem with the update
+ */
+export function adminQuizThumbnailUpdate(quizId: number, token: string, imgUrl: string): EmptyObject {
+  return {};
+}

@@ -19,6 +19,7 @@ import {
 
 import ShortUniqueId from 'short-unique-id';
 import { randomColor } from 'seed-to-color';
+import { Unauthorised, Bad_Request, Forbidden } from './error';
 const answerUid = new ShortUniqueId({ dictionary: 'number' });
 const questionUid = new ShortUniqueId({ dictionary: 'number' });
 
@@ -35,22 +36,34 @@ const questionUid = new ShortUniqueId({ dictionary: 'number' });
  */
 export function adminCreateQuizQuestion(
   quizId: number,
-  sessionId: string,
-  questionBody: QuestionBody): CreateQuestionReturn {
+  token: string,
+  questionBody: QuestionBody,
+  v2?: boolean): CreateQuestionReturn {
   const database = getData();
-  const user = findUserBySessionId(database, sessionId);
+  const user = findUserBySessionId(database, token);
   if (!user) {
-    return { statusCode: 401, error: 'Session ID is invalid' };
+    throw new Unauthorised('Session ID is invalid');
   }
   const quiz = findQuizWithId(database, quizId);
   if (!quiz) {
-    return { statusCode: 403, error: 'Quiz does not exist' };
+    throw new Forbidden('Quiz does not exist');
   } else if (quiz.creatorId !== user.userId) {
-    return { statusCode: 403, error: 'User is not an owner of quiz' };
+    throw new Forbidden('User is not an owner of quiz');
   }
   const totalDuration = quiz.duration + questionBody.duration;
   if (typeof validQuestion(questionBody, totalDuration) === 'object') {
     return validQuestion(questionBody, totalDuration) as ErrorMessage;
+  }
+  const validExtensions = /\.(jpg|jpeg|png)$/i;
+  const validProtocol = /^https?:\/\//;
+  if (v2 === true) {
+    if (questionBody.thumbnailUrl === '') {
+      throw new Bad_Request('Thumbnail url is an empty string');
+    } else if (!validExtensions.test(questionBody.thumbnailUrl)) {
+      throw new Bad_Request('Not valid file type for thumbnail');
+    } else if (!validProtocol.test(questionBody.thumbnailUrl)) {
+      throw new Bad_Request('Invalid https protocol');
+    }
   }
   const questionId = parseInt(questionUid.seq());
   questionBody.questionId = questionId;
@@ -137,28 +150,14 @@ export function adminQuizQuestionUpdate(
   token: string
 ): UserUpdateResult | ErrorMessage {
   const database = getData();
-  const user = findUserBySessionId(database, token);
-
-  if (!user) {
-    return { statusCode: 401, error: 'Token does not exist or is invalid' };
-  }
-
   const quiz = findQuizWithId(database, quizId);
-  if (!quiz) {
-    return { statusCode: 403, error: 'Quiz does not exist' };
-  } else if (quiz.creatorId !== user.userId) {
-    return { statusCode: 403, error: 'User is not an owner of this quiz' };
-  }
 
   const question = quiz.questions.find(
     question => question.questionId === questionId
   );
 
   if (!question) {
-    return {
-      statusCode: 400,
-      error: 'Question Id does not refer to a valid question within the quiz'
-    };
+    throw new Error('Question Id does not refer to a valid question within the quiz');
   }
 
   const totalDuration = quiz.duration + questionBody.duration - question.duration;
@@ -199,11 +198,11 @@ export function adminQuizQuestionMove(
   const questionIndex = findQuestionIndex(database, quizId, questionId);
   const maxPosition = quiz.questions.length - 1;
   if (!question) {
-    throw new Error('Question Id does not refer to a valid question within this quiz');
+    throw new Bad_Request('Question Id does not refer to a valid question within this quiz');
   } else if (moveInfo.newPosition > maxPosition || moveInfo.newPosition < 0) {
-    throw new Error('NewPosition is less than 0, or NewPosition is greater than n-1 where n is the number of questions');
+    throw new Bad_Request('NewPosition is less than 0, or NewPosition is greater than n-1 where n is the number of questions');
   } else if (moveInfo.newPosition === questionIndex) {
-    throw new Error('NewPosition is the position of the current question');
+    throw new Bad_Request('NewPosition is the position of the current question');
   }
   // swap them
   [quiz.questions[questionIndex], quiz.questions[moveInfo.newPosition]] = [quiz.questions[moveInfo.newPosition], quiz.questions[questionIndex]];

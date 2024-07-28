@@ -1,4 +1,5 @@
 import { getData, setData } from './dataStore';
+import { Unauthorised, Bad_Request, Forbidden } from './error';
 
 import {
   findQuizWithId,
@@ -26,11 +27,11 @@ const quizUid = new ShortUniqueId({ dictionary: 'number' });
  * @returns {{quizzes: {quizId: number, name: string}}} - an object containing identifiers of all quizzes
  * @returns {ErrorMessage} an error
  */
-export function adminQuizList (sessionId: string): QuizListDetails {
+export function adminQuizList (token: string): QuizListDetails {
   const database = getData();
-  const user = findUserBySessionId(database, sessionId);
+  const user = findUserBySessionId(database, token);
   if (!user) {
-    return { statusCode: 401, error: 'Session id is not valid.' };
+    throw new Unauthorised('Session id is not valid.');
   }
   const creatorId = user.userId;
   const quizzes = database.quizzes.filter(quiz => quiz.creatorId === creatorId);
@@ -143,9 +144,9 @@ export function adminQuizInfo (token: string, quizId: number): QuizInfoResult {
   const quiz = findQuizWithId(database, quizId);
 
   if (!quiz) {
-    throw new Error(`Quiz with ID '${quizId}' not found`);
+    throw new Forbidden(`Quiz with ID '${quizId}' not found`);
   } else if (quiz.creatorId !== user.userId) {
-    throw new Error(`Quiz with ID ${quizId} is not owned by ${user.userId} (actual owner: ${quiz.creatorId})`);
+    throw new Forbidden(`Quiz with ID ${quizId} is not owned by ${user.userId} (actual owner: ${quiz.creatorId})`);
   }
 
   return {
@@ -174,7 +175,7 @@ export function adminQuizNameUpdate(sessionId: string, quizId: number, name: str
     return { statusCode: 401, error: 'sessionId is not valid.' };
   }
   const authUserId = user.userId;
-  const quiz: Quiz | undefined = database.quizzes.find(quiz => quiz.quizId === quizId);
+  const quiz = findQuizWithId(database, quizId);
 
   const namePattern = /^[a-zA-Z0-9 ]+$/;
   if (!quiz) {
@@ -202,29 +203,27 @@ export function adminQuizNameUpdate(sessionId: string, quizId: number, name: str
 /**
  * Update the description of the relevant quiz.
  *
- * @param {number} sessionId - unique id of a user
  * @param {number} quizId - unique id of a quiz
  * @param {string} description - description of a quiz
  * @returns {} - empty object
  * @returns {ErrorMessage} an error
  */
 export function adminQuizDescriptionUpdate(
-  sessionId: string,
+  token: string,
   quizId: number,
   description: string): EmptyObject | ErrorMessage {
   const database = getData();
-  const user = findUserBySessionId(database, sessionId);
+  const user = findUserBySessionId(database, token);
   const validQuizId = database.quizzes.find(quiz => quiz.quizId === quizId);
   if (!user) {
-    return { statusCode: 401, error: 'AuthUserId is not a valid user.' };
+    throw new Unauthorised('AuthUserId is not a valid user.');
   } else if (!validQuizId) {
-    return { statusCode: 403, error: 'Quiz ID does not refer to a valid quiz.' };
+    throw new Forbidden('Quiz ID does not refer to a valid quiz.');
   } else if (user.userId !== validQuizId.creatorId) {
-    return { statusCode: 403, error: 'Quiz ID does not refer to a quiz that this user owns.' };
+    throw new Forbidden('Quiz ID does not refer to a quiz that this user owns.');
   } else if (description.length > 100) {
-    return { statusCode: 400, error: 'Description is more than 100 characters in length' };
+    throw new Bad_Request('Description is more than 100 characters in length');
   }
-
   validQuizId.description = description;
   validQuizId.timeLastEdited = Math.floor(Date.now() / 1000);
   setData(database);
@@ -280,33 +279,37 @@ export function adminQuizTrashEmpty(quizIds: string): QuizTrashEmptyResult {
  * @param {string} newOwnerEmail - The email of the new owner.
  * @returns {ErrorMessage | EmptyObject} - The result of the transfer operation.
  */
-export function adminQuizTransfer(sessionId: string, quizId: number, newOwnerEmail: string): ErrorMessage | EmptyObject {
+export function adminQuizTransfer(sessionId: string, quizId: number, newOwnerEmail: string): EmptyObject {
   const database = getData();
   const currentUser = findUserBySessionId(database, sessionId);
 
   if (!currentUser) {
-    return { statusCode: 401, error: 'Session ID is not valid' };
+    throw new Unauthorised('Session ID is not valid');
   }
   const quiz = findQuizWithId(database, quizId);
 
   if (!quiz) {
-    return { statusCode: 403, error: `Quiz with ID '${quizId}' not found` };
+    throw new Forbidden(`Quiz with ID '${quizId}' not found`);
+  }
+
+  if (quiz.creatorId !== currentUser.userId) {
+    throw new Forbidden('You are not the creator of the quiz');
   }
 
   const newOwner = database.users.find(user => user.email === newOwnerEmail);
 
   if (!newOwner) {
-    return { statusCode: 400, error: 'User email is not a real user.' };
+    throw new Bad_Request('User email is not a real user.');
   }
   if (newOwner.userId === currentUser.userId) {
-    return { statusCode: 400, error: 'User email is the current logged in user.' };
+    throw new Bad_Request('User email is the current logged in user.');
   }
 
   const nameUsed = database.quizzes.some(
     q => q.name === quiz.name && q.creatorId === newOwner.userId && q.quizId !== quizId
   );
   if (nameUsed) {
-    return { statusCode: 400, error: 'Quiz ID refers to a quiz that has a name that is already used by the target user.' };
+    throw new Bad_Request('Quiz ID refers to a quiz that has a name that is already used by the target user.');
   }
 
   quiz.creatorId = newOwner.userId;
@@ -330,9 +333,6 @@ export function adminQuizRestore(token: string, quizId: number): QuizRestoreResu
   }
 
   const quizIndex = database.trash.findIndex(quiz => quiz.quizId === quizId);
-  if (quizIndex === -1) {
-    return { statusCode: 400, message: `Quiz ID '${quizId}' does not refer to a quiz in the trash.` };
-  }
 
   const quiz = database.trash[quizIndex];
   if (quiz.creatorId !== user.userId) {
@@ -344,6 +344,9 @@ export function adminQuizRestore(token: string, quizId: number): QuizRestoreResu
     return { statusCode: 400, message: `Quiz name '${quiz.name}' is already used by another active quiz.` };
   }
 
+  if (quizIndex === -1) {
+    return { statusCode: 400, message: `Quiz ID '${quizId}' does not refer to a quiz in the trash.` };
+  }
   // Restore the quiz
   quiz.timeLastEdited = Date.now();
   database.quizzes.push(quiz);

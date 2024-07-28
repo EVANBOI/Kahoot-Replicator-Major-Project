@@ -2,6 +2,7 @@ import { getData, setData } from './dataStore';
 import validator from 'validator';
 import { findUserBySessionId } from './helpers';
 import { Data, UserRegistrationResult, PasswordUpdateResult, UserUpdateResult, Userdetails, ErrorMessage, EmptyObject } from './types';
+import { Bad_Request, Unauthorised } from './error';
 import ShortUniqueId from 'short-unique-id';
 const uid = new ShortUniqueId({ dictionary: 'number' });
 /**
@@ -22,25 +23,25 @@ export function adminAuthRegister (
   const dataBase = getData();
   const person = dataBase.users.find(person => person.email === email);
   if (person) {
-    return { statusCode: 400, error: 'Email address is used by another user.' };
+    throw new Bad_Request('Email address is used by another user.');
   }
   const nameRange = /^[a-zA-Z-' ]*$/;
   const passwordLetterRange = /^[a-zA-Z]/;
   const passwordNumberRange = /[0-9]/;
   if (!validator.isEmail(email)) {
-    return { statusCode: 400, error: 'Email is not a valid email' };
+    throw new Bad_Request('Email is not a valid email');
   } else if (!nameRange.test(nameFirst)) {
-    return { statusCode: 400, error: 'NameFirst contains invalid characters' };
+    throw new Bad_Request('NameFirst contains invalid characters');
   } else if (nameFirst.length < 2 || nameFirst.length > 20) {
-    return { statusCode: 400, error: 'NameFirst is less than 2 characters or more than 20 characters.' };
+    throw new Bad_Request('NameFirst is less than 2 characters or more than 20 characters.');
   } else if (!nameRange.test(nameLast)) {
-    return { statusCode: 400, error: 'NameFirst contains invalid characters' };
+    throw new Bad_Request('NameFirst contains invalid characters');
   } else if (nameLast.length < 2 || nameLast.length > 20) {
-    return { statusCode: 400, error: 'NameLast is less than 2 characters or more than 20 characters.' };
+    throw new Bad_Request('NameLast is less than 2 characters or more than 20 characters.');
   } else if (password.length < 8) {
-    return { statusCode: 400, error: 'Password is less than 8 characters.' };
+    throw new Bad_Request('Password is less than 8 characters.');
   } else if (!passwordLetterRange.test(password) || !passwordNumberRange.test(password)) {
-    return { statusCode: 400, error: 'Password does not contain at least one number and at least one letter.' };
+    throw new Bad_Request('Password does not contain at least one number and at least one letter.');
   }
 
   const id = dataBase.users.length + 1;
@@ -82,21 +83,21 @@ export function adminUserDetailsUpdate (
   if (person) {
     const isCorrectOwner = person.tokens.find(tokens => tokens.token === token);
     if (!isCorrectOwner) {
-      throw new Error('Email address is used by another user.');
+      throw new Bad_Request('Email address is used by another user.');
     }
   }
 
   const nameRange = /^[a-zA-Z-' ]*$/;
   if (!validator.isEmail(email)) {
-    throw new Error('Email is not valid');
+    throw new Bad_Request('Email is not valid');
   } else if (!nameRange.test(nameFirst)) {
-    throw new Error('NameFirst contains invalid characters');
+    throw new Bad_Request('NameFirst contains invalid characters');
   } else if (nameFirst.length < 2 || nameFirst.length > 20) {
-    throw new Error('NameFirst is less than 2 characters or more than 20 characters.');
+    throw new Bad_Request('NameFirst is less than 2 characters or more than 20 characters.');
   } else if (!nameRange.test(nameLast)) {
-    throw new Error('NameLast contains invalid characters');
+    throw new Bad_Request('NameLast contains invalid characters');
   } else if (nameLast.length < 2 || nameLast.length > 20) {
-    throw new Error('NameLast is less than 2 characters or more than 20 characters.');
+    throw new Bad_Request('NameLast is less than 2 characters or more than 20 characters.');
   }
 
   const user = findUserBySessionId(dataBase, token);
@@ -192,20 +193,23 @@ export function adminUserPasswordUpdate(
   const user = findUserBySessionId(dataBase, sessionId);
 
   if (!user) {
-    return { statusCode: 401, error: 'sessionId is not valid.' };
+    throw new Unauthorised('sessionId is not valid.');
   }
   if (user.password !== oldPassword) {
-    return { statusCode: 400, error: 'Old Password is not the correct old password' };
-  } else if (oldPassword === newPassword) {
-    return { statusCode: 400, error: 'Old Password and New Password match exactly' };
-  } else if (user.passwordUsedThisYear.includes(newPassword)) {
-    return { statusCode: 400, error: 'New Password has already been used before by this user' };
-  } else if (newPassword.length < 8) {
-    return { statusCode: 400, error: 'Password should be more than 8 characters' };
-  } else if (!/\d/.test(newPassword) || !/[a-zA-Z]/.test(newPassword)) {
-    return { statusCode: 400, error: 'Password needs to contain at least one number and at least one letter' };
+    throw new Bad_Request('Old Password is not the correct old password');
   }
-
+  if (oldPassword === newPassword) {
+    throw new Bad_Request('Old Password and New Password match exactly');
+  }
+  if (user.passwordUsedThisYear.includes(newPassword)) {
+    throw new Bad_Request('New Password has already been used before by this user');
+  }
+  if (newPassword.length < 8) {
+    throw new Bad_Request('Password should be more than 8 characters');
+  }
+  if (!/\d/.test(newPassword) || !/[a-zA-Z]/.test(newPassword)) {
+    throw new Bad_Request('Password needs to contain at least one number and at least one letter');
+  }
   user.passwordUsedThisYear.push(oldPassword);
   user.password = newPassword;
   setData(dataBase);
@@ -222,10 +226,6 @@ export function adminUserPasswordUpdate(
 export function adminAuthLogout(sessionId: string): ErrorMessage | EmptyObject {
   const database = getData();
   const user = findUserBySessionId(database, sessionId);
-  if (!user) {
-    return { statusCode: 401, error: 'Session Id does not exist' };
-  }
-
   const index = user.tokens.findIndex(token => token.token === sessionId);
   user.tokens.splice(index, 1);
   setData(database);

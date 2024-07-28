@@ -45,20 +45,8 @@ export type Quiz = {
     timeLastEdited: number,
     description: string,
     questions: QuestionBody[],
-    duration: number
-}
-
-export type V2Quiz = {
-    creatorId: number,
-    quizId: number,
-    name: string,
-    timeCreated: number,
-    timeLastEdited: number,
-    description: string,
-    numQuestions: number,
-    questions: V2QuestionBody[],
     duration: number,
-    thumbnailUrl: string
+    thumbnailUrl?: string
 }
 
 export type Data = {
@@ -95,7 +83,7 @@ export type GetSessionStatus = ErrorMessage | {
         timeLastEdited: number,
         description: string,
         numQuestions: number,
-        questions: V2QuestionBody[],
+        questions: QuestionBody[],
         duration: number,
         thumbnailUrl: string
     }
@@ -161,20 +149,7 @@ export type QuestionBody = {
         colour?: string,
         correct: boolean
     }[]
-};
-
-export type V2QuestionBody = {
-    questionId?: number,
-    question: string,
-    duration: number,
-    thumbnailUrl: string,
-    points: number,
-    answers: {
-        answer: string,
-        answerId?: number,
-        colour?: string,
-        correct: boolean
-    }[]
+    thumbnailUrl?: string
 };
 
 export type CreateQuestionReturn = QuestionIdObject | ErrorMessage;
@@ -206,11 +181,33 @@ export type PlayerQuestionResultResult = {
     percentCorrect: number
 }
 
+export type PlayerStatusResult = {
+    state: string, 
+    numQuestions: number, 
+    atQuestion: number, 
+}
+
+export type PlayerChatlogResult = {
+	messages: [
+		{
+			messageBody: string, 
+			playerId: number, 
+			playerName: string, 
+			timeSent: number
+		}
+	]
+}
+
 // other types
 export type PositionWithTokenObj = {
     token: string,
     newPosition: number
 }
+
+export type PositionObj = {
+    newPosition: number
+}
+
 export type QuizRestoreResult = {
     statusCode: number,
     message: string
@@ -221,3 +218,20 @@ export type QuizQuestionDeleteResult = {
     message: string
   };
 
+	export type PlayerQuestionAnswerResult = {
+    statusCode?: number;
+    error?: string;
+  }
+
+  export type SessionResults = {
+    usersRankedByScore: {
+      name: string;
+      score: number;
+    }[];
+    questionResults: {
+      questionId: number;
+      playersCorrectList: string[];
+      averageAnswerTime: number;
+      percentCorrect: number;
+    }[];
+  };

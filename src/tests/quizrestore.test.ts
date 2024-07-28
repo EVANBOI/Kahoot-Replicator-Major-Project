@@ -72,7 +72,6 @@ describe('Failure cases', () => {
     });
   });
 
-  
   test('should return an error when restoring a quiz that the user does not own', (): void => {
     // Move the quiz to trash before restoring
     adminQuizRemove(sessionId2, validQuizId2);
@@ -97,6 +96,4 @@ describe('Failure cases', () => {
       statusCode: 400,
     });
   });
-
-
 });

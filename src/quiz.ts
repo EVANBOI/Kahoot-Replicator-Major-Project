@@ -11,7 +11,6 @@ import {
   EmptyObject,
   ErrorMessage,
   QuestionBody,
-  Quiz,
   QuizIdObject,
   QuizInfoResult,
   TrashViewDetails,
@@ -586,7 +585,6 @@ export function adminQuizRestore(token: string, quizId: number): QuizRestoreResu
     return { statusCode: 400, message: `Quiz name '${quiz.name}' is already used by another active quiz.` };
   }
 
-  
   // Restore the quiz
   quiz.timeLastEdited = Date.now();
   database.quizzes.push(quiz);

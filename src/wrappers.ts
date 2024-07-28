@@ -116,15 +116,32 @@ export const adminQuizList = (token: string) => {
   return requestHelper('GET', '/v1/admin/quiz/list', { token });
 };
 
+export const adminQuizListV2 = (token: string) => {
+  return requestHelper('GET', '/v2/admin/quiz/list', {}, token);
+};
+
 export const adminAuthLogout = (token: string) => {
   return requestHelper('POST', '/v1/admin/auth/logout', { token });
 };
+
+export const adminAuthLogoutV2 = (token: string) => {
+  return requestHelper('POST', '/v2/admin/auth/logout', {}, token);
+};
+
 export const adminQuizDescriptionUpdate = (
   token: string,
   quizId: number,
   description: string) => {
   return requestHelper('PUT', `/v1/admin/quiz/${quizId}/description`,
     { token, description });
+};
+
+export const adminQuizDescriptionUpdateV2 = (
+  token: string,
+  quizId: number,
+  description: string) => {
+  return requestHelper('PUT', `/v2/admin/quiz/${quizId}/description`,
+    { description }, token);
 };
 
 export const adminUserDetailsUpdate = (
@@ -163,6 +180,15 @@ export const adminCreateQuizQuestion = (
   questionBody: QuestionBody) => {
   return requestHelper('POST', `/v1/admin/quiz/${quizId}/question`,
     { token, questionBody });
+};
+
+export const adminCreateQuizQuestionV2 = (
+  quizId: number,
+  token: string,
+  questionBody: QuestionBody
+) => {
+  return requestHelper('POST', `/v2/admin/quiz/${quizId}/question`,
+    { questionBody }, token);
 };
 
 export const adminUserPasswordUpdate = (

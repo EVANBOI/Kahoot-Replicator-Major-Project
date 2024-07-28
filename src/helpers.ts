@@ -1,5 +1,5 @@
 import { getData } from './dataStore';
-import { Error400, Error401 } from './error';
+import { Error400, Error401, Error403 } from './error';
 import { Data, ErrorMessage, QuestionBody, User } from './types';
 
 export function findUserWithId(authUserId: number) {
@@ -105,11 +105,11 @@ export function quizExistWithCorrectCreatorCheck(token: string, quizIds: string)
     const isValidQuiz = isExistInTrash || isExistInQuizzesStore;
 
     if (!isValidQuiz) {
-      throw new Error('Quiz does not exist');
+      throw new Error403('Quiz does not exist');
     }
     const quiz = isExistInTrash || isExistInQuizzesStore;
     if (quiz?.creatorId !== UserId) {
-      throw new Error('You are not the creator of the quiz');
+      throw new Error403('You are not the creator of the quiz');
     }
   }
 }
@@ -119,7 +119,7 @@ export function allExistInTrashCheck(quizIds: string) {
   const quizIdArray: number[] = JSON.parse(quizIds);
   const result = quizIdArray.every(elementId => data.trash.some(quiz => quiz.quizId === elementId));
   if (result === false) {
-    throw new Error('Not all quizzes are in trash');
+    throw new Error400('Not all quizzes are in trash');
   }
 }
 
@@ -128,8 +128,8 @@ export function quizExistCheck(quizId: number, token: string) {
   const user = findUserBySessionId(getData(), token);
   const quiz = findQuizWithId(getData(), quizId);
   if (!quiz) {
-    throw new Error('Quiz does not exist');
+    throw new Error403('Quiz does not exist');
   } else if (quiz.creatorId !== user.userId) {
-    throw new Error('You are not the creator of the quiz');
+    throw new Error403('You are not the creator of the quiz');
   }
 }

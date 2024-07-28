@@ -216,11 +216,17 @@ app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
 
 app.put('/v1/admin/user/password', (req: Request, res: Response) => {
   const { token, oldPassword, newPassword } = req.body;
-  const result = adminUserPasswordUpdate(token, oldPassword, newPassword);
-  if ('error' in result) {
-    return res.status(result.statusCode).json({ error: result.error });
+  try {
+    tokenCheck(token);
+  } catch (error) {
+    return res.status(401).json({ error: error.message });
   }
-  res.json(result);
+  try {
+    adminUserPasswordUpdate(token, oldPassword, newPassword);
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+  res.json({});
 });
 
 app.put('/v1/admin/quiz/:quizid/name', (req: Request, res: Response) => {

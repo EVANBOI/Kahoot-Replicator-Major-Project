@@ -2,7 +2,7 @@ import { getData, setData } from './dataStore';
 import validator from 'validator';
 import { findUserBySessionId } from './helpers';
 import { Data, UserRegistrationResult, PasswordUpdateResult, UserUpdateResult, Userdetails, ErrorMessage, EmptyObject } from './types';
-import { Error400 } from './error';
+import { Error400, Error401 } from './error';
 import ShortUniqueId from 'short-unique-id';
 const uid = new ShortUniqueId({ dictionary: 'number' });
 /**
@@ -193,20 +193,23 @@ export function adminUserPasswordUpdate(
   const user = findUserBySessionId(dataBase, sessionId);
 
   if (!user) {
-    return { statusCode: 401, error: 'sessionId is not valid.' };
+    throw new Error401('sessionId is not valid.');
   }
   if (user.password !== oldPassword) {
-    return { statusCode: 400, error: 'Old Password is not the correct old password' };
-  } else if (oldPassword === newPassword) {
-    return { statusCode: 400, error: 'Old Password and New Password match exactly' };
-  } else if (user.passwordUsedThisYear.includes(newPassword)) {
-    return { statusCode: 400, error: 'New Password has already been used before by this user' };
-  } else if (newPassword.length < 8) {
-    return { statusCode: 400, error: 'Password should be more than 8 characters' };
-  } else if (!/\d/.test(newPassword) || !/[a-zA-Z]/.test(newPassword)) {
-    return { statusCode: 400, error: 'Password needs to contain at least one number and at least one letter' };
+    throw new Error400('Old Password is not the correct old password');
   }
-
+  if (oldPassword === newPassword) {
+    throw new Error400('Old Password and New Password match exactly');
+  }
+  if (user.passwordUsedThisYear.includes(newPassword)) {
+    throw new Error400('New Password has already been used before by this user');
+  }
+  if (newPassword.length < 8) {
+    throw new Error400('Password should be more than 8 characters');
+  }
+  if (!/\d/.test(newPassword) || !/[a-zA-Z]/.test(newPassword)) {
+    throw new Error400('Password needs to contain at least one number and at least one letter');
+  }
   user.passwordUsedThisYear.push(oldPassword);
   user.password = newPassword;
   setData(dataBase);

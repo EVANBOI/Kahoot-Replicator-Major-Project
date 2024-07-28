@@ -363,6 +363,28 @@ app.get('/v2/admin/quiz/:quizid', (req: Request, res: Response) => {
   }
 });
 
+app.delete('/v2/admin/quiz/trash/empty', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  const quizIds = req.query.quizIds as string;
+  try {
+    tokenCheck(token);
+  } catch (error) {
+    return res.status(401).json({ error: error.message });
+  }
+  try {
+    quizExistWithCorrectCreatorCheck(token, quizIds);
+  } catch (error) {
+    return res.status(403).json({ error: error.message });
+  }
+  try {
+    allExistInTrashCheck(quizIds);
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+
+  res.json(adminQuizTrashEmpty(quizIds));
+});
+
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================

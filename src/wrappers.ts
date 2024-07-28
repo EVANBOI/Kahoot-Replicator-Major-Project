@@ -208,6 +208,10 @@ export const adminQuizTrashEmpty = (token: string, quizIds: string) => {
   return requestHelper('DELETE', '/v1/admin/quiz/trash/empty', { token, quizIds });
 };
 
+export const adminQuizTrashEmptyV2 = (token: string, quizIds: string) => {
+  return requestHelper('DELETE', '/v2/admin/quiz/trash/empty', { quizIds }, token);
+};
+
 export const adminQuizTransfer = (
   token: string,
   quizId: number,

@@ -1,5 +1,5 @@
 import { getData, setData } from './dataStore';
-import { Error400, Error401, Error403 } from './error';
+import { Unauthorised, Bad_Request, Forbidden } from './error';
 
 import {
   findQuizWithId,
@@ -31,7 +31,7 @@ export function adminQuizList (token: string): QuizListDetails {
   const database = getData();
   const user = findUserBySessionId(database, token);
   if (!user) {
-    throw new Error401('Session id is not valid.');
+    throw new Unauthorised('Session id is not valid.');
   }
   const creatorId = user.userId;
   const quizzes = database.quizzes.filter(quiz => quiz.creatorId === creatorId);
@@ -144,9 +144,9 @@ export function adminQuizInfo (token: string, quizId: number): QuizInfoResult {
   const quiz = findQuizWithId(database, quizId);
 
   if (!quiz) {
-    throw new Error403(`Quiz with ID '${quizId}' not found`);
+    throw new Forbidden(`Quiz with ID '${quizId}' not found`);
   } else if (quiz.creatorId !== user.userId) {
-    throw new Error403(`Quiz with ID ${quizId} is not owned by ${user.userId} (actual owner: ${quiz.creatorId})`);
+    throw new Forbidden(`Quiz with ID ${quizId} is not owned by ${user.userId} (actual owner: ${quiz.creatorId})`);
   }
 
   return {
@@ -216,13 +216,13 @@ export function adminQuizDescriptionUpdate(
   const user = findUserBySessionId(database, token);
   const validQuizId = database.quizzes.find(quiz => quiz.quizId === quizId);
   if (!user) {
-    throw new Error401('AuthUserId is not a valid user.');
+    throw new Unauthorised('AuthUserId is not a valid user.');
   } else if (!validQuizId) {
-    throw new Error403('Quiz ID does not refer to a valid quiz.');
+    throw new Forbidden('Quiz ID does not refer to a valid quiz.');
   } else if (user.userId !== validQuizId.creatorId) {
-    throw new Error403('Quiz ID does not refer to a quiz that this user owns.');
+    throw new Forbidden('Quiz ID does not refer to a quiz that this user owns.');
   } else if (description.length > 100) {
-    throw new Error400('Description is more than 100 characters in length');
+    throw new Bad_Request('Description is more than 100 characters in length');
   }
   validQuizId.description = description;
   validQuizId.timeLastEdited = Math.floor(Date.now() / 1000);

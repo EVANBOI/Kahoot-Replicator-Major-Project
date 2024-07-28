@@ -131,6 +131,14 @@ export const adminQuizDescriptionUpdate = (
     { token, description });
 };
 
+export const adminQuizDescriptionUpdateV2 = (
+  token: string,
+  quizId: number,
+  description: string) => {
+  return requestHelper('PUT', `/v1/admin/quiz/${quizId}/description`,
+    { description }, token);
+};
+
 export const adminUserDetailsUpdate = (
   token: string,
   email: string,

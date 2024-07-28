@@ -1,6 +1,7 @@
 import { 
-  EmptyObject, GetSessionStatus, MessageObject, V2QuestionBody, QuizSessionViewResult, 
-  QuizSessionResultLinkResult, PlayerQuestionResultResult
+  EmptyObject, GetSessionStatus, MessageObject, QuizSessionViewResult, 
+  QuizSessionResultLinkResult, PlayerQuestionResultResult,
+  QuestionBody
 } from "./types";
 
 export enum SessionStatus {
@@ -107,7 +108,7 @@ export function adminQuizSessionStatus (quizId: number, sessionId: number): GetS
  * @returns {V2QuestionBody} Information about the current question
  * @returns {ErrorMessage} An error message
  */
-export function playerQuestionInfo (playerId: number, questionPosition: number): V2QuestionBody {
+export function playerQuestionInfo (playerId: number, questionPosition: number): QuestionBody {
   return {
     questionId: 5565,
     question: 'Thishfdoixhsddof',

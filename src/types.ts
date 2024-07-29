@@ -28,8 +28,14 @@ export type TokenObject = {
 export type Session = {
     sessionId: number,
     atQuestion: number,
-    players: string[],
+    players: Player[],
     state: SessionStatus
+}
+
+export type Player = {
+    name: string,
+    playerId: number,
+    score: number
 }
 
 // Types for dataStore

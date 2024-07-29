@@ -95,10 +95,12 @@ export function adminQuizSessionStatus (quizId: number, sessionId: number): GetS
   if (!sessionValid) {
     throw new BadRequest(`Session id ${sessionId} does not refer to valid session within quiz`);
   }
+
+  const playerNames = sessionValid.players.map(player => player.name);
   return {
     state: sessionValid.state,
     atQuestion: sessionValid.atQuestion,
-    players: sessionValid.players,
+    players: playerNames,
     metadata: {
       quizId: quiz.quizId,
       name: quiz.name,

@@ -1,6 +1,7 @@
 import { adminQuizRestore, adminAuthRegister, clear, adminQuizRemove, adminQuizInfo } from '../wrappers';
 import { adminQuizCreate } from '../quiz';
 import { SessionIdObject, QuizIdObject } from '../types';
+import { validQuestion } from '../helpers';
 
 const VALID_USER_INPUT = {
   EMAIL: 'admin@email.com',
@@ -43,7 +44,6 @@ describe('Success cases', () => {
   test('should successfully restore a quiz', () => {
     // Move the quiz to trash before restoring
     adminQuizRemove(sessionId, validQuizId);
-
     const result = adminQuizRestore(sessionId, validQuizId);
     expect(result).toEqual({
       jsonBody: {},
@@ -81,7 +81,7 @@ describe('Failure cases', () => {
       jsonBody: {
         error: expect.any(String),
       },
-      statusCode: 400,
+      statusCode: 403,
     });
   });
 

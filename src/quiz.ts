@@ -331,11 +331,14 @@ export function adminQuizRestore(token: string, quizId: number): QuizRestoreResu
   if (!user) {
     return { statusCode: 401, message: 'Token is empty or invalid.' };
   }
-
+  const quizExists = database.quizzes.find(q => q.quizId === quizId);
   const quizIndex = database.trash.findIndex(quiz => quiz.quizId === quizId);
+  console.log('quizindex is', quizIndex)
 
   const quiz = database.trash[quizIndex];
-  if (quiz.creatorId !== user.userId) {
+  if (!quizExists && quizIndex === -1) {
+    return { statusCode: 403, message: `Quiz '${quizId}' does not exist!.` };
+  } else if (quiz.creatorId !== user.userId) {
     return { statusCode: 403, message: `User is not the owner of quiz with ID '${quizId}'.` };
   }
 

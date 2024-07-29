@@ -382,7 +382,6 @@ app.post('/v1/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
   } else {
     res.status(200).json({});
   }
-  res.json(result);
 });
 
 app.post('/v2/admin/quiz/:quizid/restore', (req: Request, res: Response) => {

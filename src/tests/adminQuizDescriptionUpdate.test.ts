@@ -113,6 +113,7 @@ describe('Successful function run', () => {
           timeCreated: expect.any(Number),
           timeLastEdited: expect.any(Number),
           description: 'changed',
+          numQuestions: expect.any(Number),
           questions: [],
           duration: expect.any(Number)
         }
@@ -136,6 +137,7 @@ describe('Successful function run', () => {
           timeCreated: expect.any(Number),
           timeLastEdited: expect.any(Number),
           description: '',
+          numQuestions: expect.any(Number),
           questions: [],
           duration: expect.any(Number)
         }
@@ -155,6 +157,7 @@ describe('Successful function run', () => {
           timeCreated: expect.any(Number),
           timeLastEdited: expect.any(Number),
           description: 'changed twice',
+          numQuestions: expect.any(Number),
           questions: [],
           duration: expect.any(Number)
         }
@@ -172,6 +175,7 @@ describe('Successful function run', () => {
           timeCreated: expect.any(Number),
           timeLastEdited: expect.any(Number),
           description: 'changed quiz 2',
+          numQuestions: expect.any(Number),
           questions: [],
           duration: expect.any(Number)
         }
@@ -189,6 +193,7 @@ describe('Successful function run', () => {
           timeCreated: expect.any(Number),
           timeLastEdited: expect.any(Number),
           description: 'changed quiz 3',
+          numQuestions: expect.any(Number),
           questions: [],
           duration: expect.any(Number)
         }

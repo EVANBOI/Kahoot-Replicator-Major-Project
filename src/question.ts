@@ -95,16 +95,16 @@ export function adminQuizQuestionDuplicate(
   const user = findUserBySessionId(database, token);
 
   if (!user) {
-    throw new Error401('Token is not valid.');
+    throw new Unauthorised('Token is not valid.');
   }
 
   const quiz = findQuizWithId(database, quizId);
   if (!quiz) {
-    throw new Error403(`Quiz with ID '${quizId}' not found.`);
+    throw new Forbidden(`Quiz with ID '${quizId}' not found.`);
   }
 
   if (quiz.creatorId !== user.userId) {
-    throw new Error403('User is not the owner of the quiz.');
+    throw new Forbidden('User is not the owner of the quiz.');
   }
 
   if (!quiz.questions) {
@@ -113,7 +113,7 @@ export function adminQuizQuestionDuplicate(
 
   const question = quiz.questions.find(q => q.questionId === questionId);
   if (!question) {
-    throw new Error400('Question ID does not refer to a valid question within this quiz.');
+    throw new BadRequest('Question ID does not refer to a valid question within this quiz.');
   }
 
   const newQuestionId = parseInt(questionUid.seq());

@@ -1,6 +1,6 @@
 import { adminAuthRegister, clear } from '../wrappers';
 
-const REGISTRATED = {
+const REGISTERED = {
   statusCode: 200,
   jsonBody: { token: expect.any(String) }
 };
@@ -25,7 +25,7 @@ describe('Successful registration tests', () => {
     expect(adminAuthRegister(VALID_INPUTS.EMAIL,
       VALID_INPUTS.PASSWORD,
       VALID_INPUTS.FIRSTNAME,
-      VALID_INPUTS.LASTNAME)).toStrictEqual(REGISTRATED);
+      VALID_INPUTS.LASTNAME)).toStrictEqual(REGISTERED);
   });
 
   test('Check generated ids are unique', () => {
@@ -76,7 +76,7 @@ describe('Successful registration tests', () => {
       expect(adminAuthRegister(VALID_INPUTS.EMAIL,
         VALID_INPUTS.PASSWORD,
         nameFirst,
-        nameLast)).toStrictEqual(REGISTRATED);
+        nameLast)).toStrictEqual(REGISTERED);
     });
   });
 });

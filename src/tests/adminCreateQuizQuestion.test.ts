@@ -250,6 +250,7 @@ describe('Succesful Tests', () => {
       timeCreated: expect.any(Number),
       timeLastEdited: expect.any(Number),
       description: 'Description',
+      numQuestions: 1,
       questions: [validQuestion1],
       duration: expect.any(Number)
     });
@@ -272,6 +273,7 @@ describe('Succesful Tests', () => {
       timeCreated: expect.any(Number),
       timeLastEdited: expect.any(Number),
       description: 'Description',
+      numQuestions: 3,
       questions: [validQuestion1, validQuestion2, validQuestion3],
       duration: expect.any(Number)
     });
@@ -305,6 +307,7 @@ describe('Succesful Tests', () => {
       timeCreated: expect.any(Number),
       timeLastEdited: expect.any(Number),
       description: 'Description',
+      numQuestions: 2,
       questions: [validQuestion1, validQuestion2],
       duration: expect.any(Number)
     });
@@ -315,6 +318,7 @@ describe('Succesful Tests', () => {
       timeCreated: expect.any(Number),
       timeLastEdited: expect.any(Number),
       description: 'Description of other quiz',
+      numQuestions: 1,
       questions: [validQuestion3],
       duration: expect.any(Number)
     });
@@ -335,6 +339,7 @@ describe('Succesful Tests', () => {
       timeCreated: expect.any(Number),
       timeLastEdited: expect.any(Number),
       description: 'Description',
+      numQuestions: 2,
       questions: [validQuestion1, validQuestion2],
       duration: expect.any(Number)
     });
@@ -345,6 +350,7 @@ describe('Succesful Tests', () => {
       timeCreated: expect.any(Number),
       timeLastEdited: expect.any(Number),
       description: 'Description of other quiz',
+      numQuestions: 1,
       questions: [validQuestion3],
       duration: expect.any(Number)
     });

@@ -22,7 +22,7 @@ const quizUid = new ShortUniqueId({ dictionary: 'number' });
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
  *
- * @param {string} sessionId - unique id of a session
+ * @param {string} token - unique id of a session
  * @returns {{quizzes: {quizId: number, name: string}}} - an object containing identifiers of all quizzes
  * @returns {ErrorMessage} an error
  */
@@ -88,6 +88,7 @@ export function adminQuizCreate (
     timeCreated: timeStamp1,
     timeLastEdited: timeStamp2,
     description: description,
+    numQuestions: 0,
     questions: [],
     duration: 0
   });
@@ -154,6 +155,7 @@ export function adminQuizInfo (token: string, quizId: number): QuizInfoResult {
     timeCreated: quiz.timeCreated,
     timeLastEdited: quiz.timeLastEdited,
     description: quiz.description,
+    numQuestions: quiz.numQuestions,
     questions: quiz.questions,
     duration: quiz.duration
   };

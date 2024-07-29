@@ -74,6 +74,7 @@ export function adminCreateQuizQuestion(
   quiz.questions.push(questionBody);
   quiz.timeLastEdited = Math.floor(Date.now() / 1000);
   quiz.duration += questionBody.duration;
+  quiz.numQuestions += 1;
   setData(database);
   return { questionId: questionId };
 }

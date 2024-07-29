@@ -331,6 +331,7 @@ describe('Successful Updates', () => {
       timeCreated: expect.any(Number),
       timeLastEdited: expect.any(Number),
       description: 'Description',
+      numQuestions: expect.any(Number),
       questions: [validQuestion1]
     });
   });
@@ -367,6 +368,7 @@ describe('Successful Updates', () => {
       timeCreated: expect.any(Number),
       timeLastEdited: expect.any(Number),
       description: 'Description',
+      numQuestions: expect.any(Number),
       questions: [validQuestion2]
     });
   });
@@ -396,6 +398,7 @@ describe('Successful Updates', () => {
       timeCreated: expect.any(Number),
       timeLastEdited: expect.any(Number),
       description: 'Description',
+      numQuestions: expect.any(Number),
       questions: [validQuestion2, validQuestion3]
     });
   });

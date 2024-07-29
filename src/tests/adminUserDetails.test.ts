@@ -1,5 +1,5 @@
 import { adminUserDetails, clear } from '../wrappers';
-import { SessionIdObject, UserRegistrationResult, ErrorMessage } from '../types';
+import { TokenObject, UserRegistrationResult, ErrorMessage } from '../types';
 import { adminAuthRegister, adminAuthLogin } from '../auth';
 
 const VALID_INPUTS = {
@@ -22,7 +22,7 @@ describe('Successful user details retrieval tests', () => {
       VALID_INPUTS.LASTNAME
     ) as UserRegistrationResult;
 
-    const sessionId: string = (registerResponse as SessionIdObject).token;
+    const sessionId: string = (registerResponse as TokenObject).token;
     const userDetailsResponse = adminUserDetails(sessionId);
 
     expect(userDetailsResponse).toEqual({
@@ -47,7 +47,7 @@ describe('Successful user details retrieval tests', () => {
       VALID_INPUTS.LASTNAME
     ) as UserRegistrationResult;
 
-    const sessionId: string = (registerResponse as SessionIdObject).token;
+    const sessionId: string = (registerResponse as TokenObject).token;
 
     // Attempt a failed login with an invalid password
     adminAuthLogin(VALID_INPUTS.EMAIL, VALID_INPUTS.PASSWORD + 'blahblahblah');

@@ -1,6 +1,6 @@
 import { ERROR401, ERROR400 } from '../testConstants';
 import { adminAuthRegister } from '../wrappers';
-import { adminQuizCreate } from '../wrappers';
+import { adminQuizCreateV2 } from '../wrappers';
 import { clear } from '../wrappers';
 import { ok } from '../helpers';
 
@@ -27,11 +27,11 @@ beforeEach(() => {
 
 describe('When registering an user', () => {
   test('SessionId is not a Valid', () => {
-    expect(adminQuizCreate(sessionId + 1, 'Quiz 1', 'Pointers')).toStrictEqual(ERROR401);
+    expect(adminQuizCreateV2(sessionId + 1, 'Quiz 1', 'Pointers')).toStrictEqual(ERROR401);
   });
 
   test('Name contains invalid characters', () => {
-    expect(adminQuizCreate(sessionId, '汉', 'Pointers')).toStrictEqual(ERROR400);
+    expect(adminQuizCreateV2(sessionId, '汉', 'Pointers')).toStrictEqual(ERROR400);
   });
 
   test.each([
@@ -44,12 +44,12 @@ describe('When registering an user', () => {
       name: 'a'.repeat(31)
     }
   ])('Test $#: $testName', ({ name }) => {
-    expect(adminQuizCreate(sessionId, name, 'Pointers')).toStrictEqual(ERROR400);
+    expect(adminQuizCreateV2(sessionId, name, 'Pointers')).toStrictEqual(ERROR400);
   });
 
   test('Name is already used by the current logged in user', () => {
-    expect(adminQuizCreate(sessionId, 'Quiz 1', 'Pointers')).toStrictEqual(QUIZCREATED);
-    expect(adminQuizCreate(sessionId, 'Quiz 1', 'Linked Lists')).toStrictEqual(ERROR400);
+    expect(adminQuizCreateV2(sessionId, 'Quiz 1', 'Pointers')).toStrictEqual(QUIZCREATED);
+    expect(adminQuizCreateV2(sessionId, 'Quiz 1', 'Linked Lists')).toStrictEqual(ERROR400);
   });
 
   test.each([
@@ -62,15 +62,15 @@ describe('When registering an user', () => {
       description: 'b'.repeat(101)
     }
   ])('Test $#: $testName', ({ description }) => {
-    expect(adminQuizCreate(sessionId, 'Quiz 1', description)).toStrictEqual(ERROR400);
+    expect(adminQuizCreateV2(sessionId, 'Quiz 1', description)).toStrictEqual(ERROR400);
   });
 
   test('Correctly returns the quizId', () => {
-    expect(adminQuizCreate(sessionId, 'Quiz 1', 'Pointers')).toStrictEqual(QUIZCREATED);
+    expect(adminQuizCreateV2(sessionId, 'Quiz 1', 'Pointers')).toStrictEqual(QUIZCREATED);
   });
 
   test('Description is an empty string', () => {
-    expect(adminQuizCreate(sessionId, 'Quiz 1', ' ')).toStrictEqual(QUIZCREATED);
+    expect(adminQuizCreateV2(sessionId, 'Quiz 1', ' ')).toStrictEqual(QUIZCREATED);
   });
 
   test('Sucessfully give two quizIds', () => {
@@ -81,19 +81,19 @@ describe('When registering an user', () => {
         'Zhihao',
         'Cao'));
     const sessionId2 = jsonBody?.token;
-    expect(adminQuizCreate(sessionId, 'Quiz 1', ' ')).toStrictEqual(QUIZCREATED);
-    expect(adminQuizCreate(sessionId2, 'Quiz 2', 'Linked Lists')).toStrictEqual(QUIZCREATED);
-    expect(adminQuizCreate(sessionId, 'Quiz 1', ' '))
+    expect(adminQuizCreateV2(sessionId, 'Quiz 1', ' ')).toStrictEqual(QUIZCREATED);
+    expect(adminQuizCreateV2(sessionId2, 'Quiz 2', 'Linked Lists')).toStrictEqual(QUIZCREATED);
+    expect(adminQuizCreateV2(sessionId, 'Quiz 1', ' '))
       .not.toStrictEqual(
-        expect(adminQuizCreate(sessionId2, 'Quiz 2', 'Linked Lists'))
+        expect(adminQuizCreateV2(sessionId2, 'Quiz 2', 'Linked Lists'))
       );
   });
 
   test('Sucessfully give two quizIds for the same user', () => {
-    expect(adminQuizCreate(sessionId, 'Quiz 1', ' ')).toStrictEqual(QUIZCREATED);
-    expect(adminQuizCreate(sessionId, 'Quiz 2', 'Linked Lists')).toStrictEqual(QUIZCREATED);
-    expect(adminQuizCreate(sessionId,
-      'Quiz 1', ' ')).not.toStrictEqual(expect(adminQuizCreate(sessionId,
+    expect(adminQuizCreateV2(sessionId, 'Quiz 1', ' ')).toStrictEqual(QUIZCREATED);
+    expect(adminQuizCreateV2(sessionId, 'Quiz 2', 'Linked Lists')).toStrictEqual(QUIZCREATED);
+    expect(adminQuizCreateV2(sessionId,
+      'Quiz 1', ' ')).not.toStrictEqual(expect(adminQuizCreateV2(sessionId,
       'Quiz 2', 'Linked Lists')));
   });
 });

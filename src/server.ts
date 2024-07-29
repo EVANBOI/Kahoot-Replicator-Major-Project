@@ -197,16 +197,21 @@ app.post('/v1/admin/quiz', (req: Request, res: Response) => {
 
 app.post('/v2/admin/quiz', (req: Request, res: Response) => {
   const token = req.headers.token as string;
-  const { name, description } = req.body;
-  const result = adminQuizCreate(token, name, description);
-  const database = getData();
-  const user = findUserBySessionId(database, token);
-  if (!user && 'error' in result) {
-    return res.status(result.statusCode).json({ error: result.error });
-  } else if ('error' in result) {
-    return res.status(result.statusCode).json({ error: result.error });
+  try {
+    tokenCheck(token);
+  } catch (error) {
+    if (error instanceof Error401) {
+      return res.status(401).json({ error: error.message });
+    }
   }
-  return res.status(200).json(result);
+  const { name, description } = req.body;
+  try {
+    res.json(adminQuizCreate(token, name, description));
+  } catch (e) {
+    if (e instanceof Error400) {
+      return res.status(StatusCodes.BAD_REQUEST).json({ error: e.message });
+    }
+  }
 });
 
 app.put('/v1/admin/user/details', (req: Request, res: Response) => {
@@ -237,6 +242,7 @@ app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
   res.json(result);
 });
 
+// Evan
 app.get('/v2/admin/quiz/trash', (req: Request, res: Response) => {
   const token = req.headers.token as string;
   const result = adminQuizTrashView(token);
@@ -343,6 +349,7 @@ app.put('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Respo
   }
 });
 
+// Evan
 app.put('/v2/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
   const questionId = parseInt(req.params.questionid);

@@ -5,6 +5,7 @@ import {
   findQuizWithId,
   findUserBySessionId,
 } from './helpers';
+import { ERROR400 } from './testConstants';
 import {
   EmptyObject,
   ErrorMessage,
@@ -61,22 +62,14 @@ export function adminQuizCreate (
     quiz => quiz.name === name &&
     quiz.creatorId === user?.userId);
 
-  if (!user) {
-    return { statusCode: 401, error: 'Session ID is not valid' };
-  } else if (nameUsed) {
-    return { statusCode: 400, error: 'name has already been used by the user' };
+  if (nameUsed) {
+    throw new Error400('name has already been used by the user');
   } else if (!/^[a-zA-Z0-9 ]+$/.test(name)) {
-    return {
-      statusCode: 400,
-      error: 'name contains invalid characters. Valid characters are alphanumeric and spaces'
-    };
+    throw new Error400('name contains invalid characters. Valid characters are alphanumeric and spaces');
   } else if (name.length < 3 || name.length > 30) {
-    return {
-      statusCode: 400,
-      error: 'name is either less than 3 characters long or more than 30 charcters long'
-    };
+    throw new Error400('name is either less than 3 characters long or more than 30 charcters long');
   } else if (description.length > 100) {
-    return { statusCode: 400, error: 'description is more than 100 characters in length' };
+    throw new Error400('description is more than 100 characters in length');
   }
 
   const timeStamp1 = Math.floor(Date.now() / 1000);

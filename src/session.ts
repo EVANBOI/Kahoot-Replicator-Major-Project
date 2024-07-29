@@ -50,7 +50,7 @@ export function adminQuizSessionResultLink (quizId: number, sessionId: number, t
  * @param {number} questionposition The position of the question in this quiz.
  * @returns {PlayerQuestionResultResult} active and inactive Sessions
  */
-export function PlayerQuestionResult (playerId: number, questionposition: number): PlayerQuestionResultResult {
+export function playerQuestionResult (playerId: number, questionposition: number): PlayerQuestionResultResult {
   return {
     questionId: 1,
     playersCorrectList: [
@@ -72,8 +72,8 @@ export function PlayerQuestionResult (playerId: number, questionposition: number
  */
 
 export function adminQuizSessionUpdate(  
-  quizid: number,
-  sessionid: number, 
+  quizId: number,
+  sessionId: number, 
   token: string, 
   action: string): EmptyObject | Error {
     return {};
@@ -203,7 +203,11 @@ export function playerSendMessage (playerId: number, message: MessageObject): Em
  * @param {number[]} answerIds The IDs of the submitted answers.
  * @returns {PlayerQuestionAnswerResult} The result of the submission.
  */
-export function playerQuestionAnswer(playerId: number, questionPosition: number, answerIds: number[]): PlayerQuestionAnswerResult {
+export function playerQuestionAnswer(
+  playerId: number, 
+  questionPosition: number, 
+  answerIds: number[]
+): PlayerQuestionAnswerResult {
   return {};
 }
 

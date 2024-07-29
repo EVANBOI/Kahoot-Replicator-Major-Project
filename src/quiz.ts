@@ -22,7 +22,7 @@ const quizUid = new ShortUniqueId({ dictionary: 'number' });
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
  *
- * @param {string} sessionId - unique id of a session
+ * @param {string} token - unique id of a session
  * @returns {{quizzes: {quizId: number, name: string}}} - an object containing identifiers of all quizzes
  * @returns {ErrorMessage} an error
  */

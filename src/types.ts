@@ -20,7 +20,7 @@ export type AuthUserIdObject = {
     token: string
 }
 
-export type SessionIdObject = {
+export type TokenObject = {
     status: number,
     token: string
 };

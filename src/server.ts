@@ -560,21 +560,21 @@ app.get('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Respons
     if (error instanceof Unauthorised) {
       return res.status(401).json({ error: error.message });
     }
-  } 
+  }
   try {
     quizExistCheck(quizId, token);
   } catch (error) {
     if (error instanceof Forbidden) {
       return res.status(403).json({ error: error.message });
     }
-  } 
+  }
   try {
     return res.json(adminQuizSessionStatus(quizId, sessionId));
   } catch (error) {
     if (error instanceof BadRequest) {
       return res.status(400).json({ error: error.message });
     }
-  } 
+  }
 });
 
 app.get('/v1/player/:playerid/question/:questionposition', (req: Request, res: Response) => {

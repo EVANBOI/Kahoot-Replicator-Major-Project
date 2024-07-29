@@ -2,7 +2,7 @@ import { getData, setData } from './dataStore';
 import validator from 'validator';
 import { findUserBySessionId } from './helpers';
 import { Data, UserRegistrationResult, PasswordUpdateResult, UserUpdateResult, Userdetails, ErrorMessage, EmptyObject } from './types';
-import { Bad_Request, Unauthorised } from './error';
+import { BadRequest, Unauthorised } from './error';
 import ShortUniqueId from 'short-unique-id';
 const uid = new ShortUniqueId({ dictionary: 'number' });
 /**
@@ -23,25 +23,25 @@ export function adminAuthRegister (
   const dataBase = getData();
   const person = dataBase.users.find(person => person.email === email);
   if (person) {
-    throw new Bad_Request('Email address is used by another user.');
+    throw new BadRequest('Email address is used by another user.');
   }
   const nameRange = /^[a-zA-Z-' ]*$/;
   const passwordLetterRange = /^[a-zA-Z]/;
   const passwordNumberRange = /[0-9]/;
   if (!validator.isEmail(email)) {
-    throw new Bad_Request('Email is not a valid email');
+    throw new BadRequest('Email is not a valid email');
   } else if (!nameRange.test(nameFirst)) {
-    throw new Bad_Request('NameFirst contains invalid characters');
+    throw new BadRequest('NameFirst contains invalid characters');
   } else if (nameFirst.length < 2 || nameFirst.length > 20) {
-    throw new Bad_Request('NameFirst is less than 2 characters or more than 20 characters.');
+    throw new BadRequest('NameFirst is less than 2 characters or more than 20 characters.');
   } else if (!nameRange.test(nameLast)) {
-    throw new Bad_Request('NameFirst contains invalid characters');
+    throw new BadRequest('NameFirst contains invalid characters');
   } else if (nameLast.length < 2 || nameLast.length > 20) {
-    throw new Bad_Request('NameLast is less than 2 characters or more than 20 characters.');
+    throw new BadRequest('NameLast is less than 2 characters or more than 20 characters.');
   } else if (password.length < 8) {
-    throw new Bad_Request('Password is less than 8 characters.');
+    throw new BadRequest('Password is less than 8 characters.');
   } else if (!passwordLetterRange.test(password) || !passwordNumberRange.test(password)) {
-    throw new Bad_Request('Password does not contain at least one number and at least one letter.');
+    throw new BadRequest('Password does not contain at least one number and at least one letter.');
   }
 
   const id = dataBase.users.length + 1;
@@ -83,21 +83,21 @@ export function adminUserDetailsUpdate (
   if (person) {
     const isCorrectOwner = person.tokens.find(tokens => tokens.token === token);
     if (!isCorrectOwner) {
-      throw new Bad_Request('Email address is used by another user.');
+      throw new BadRequest('Email address is used by another user.');
     }
   }
 
   const nameRange = /^[a-zA-Z-' ]*$/;
   if (!validator.isEmail(email)) {
-    throw new Bad_Request('Email is not valid');
+    throw new BadRequest('Email is not valid');
   } else if (!nameRange.test(nameFirst)) {
-    throw new Bad_Request('NameFirst contains invalid characters');
+    throw new BadRequest('NameFirst contains invalid characters');
   } else if (nameFirst.length < 2 || nameFirst.length > 20) {
-    throw new Bad_Request('NameFirst is less than 2 characters or more than 20 characters.');
+    throw new BadRequest('NameFirst is less than 2 characters or more than 20 characters.');
   } else if (!nameRange.test(nameLast)) {
-    throw new Bad_Request('NameLast contains invalid characters');
+    throw new BadRequest('NameLast contains invalid characters');
   } else if (nameLast.length < 2 || nameLast.length > 20) {
-    throw new Bad_Request('NameLast is less than 2 characters or more than 20 characters.');
+    throw new BadRequest('NameLast is less than 2 characters or more than 20 characters.');
   }
 
   const user = findUserBySessionId(dataBase, token);
@@ -196,19 +196,19 @@ export function adminUserPasswordUpdate(
     throw new Unauthorised('sessionId is not valid.');
   }
   if (user.password !== oldPassword) {
-    throw new Bad_Request('Old Password is not the correct old password');
+    throw new BadRequest('Old Password is not the correct old password');
   }
   if (oldPassword === newPassword) {
-    throw new Bad_Request('Old Password and New Password match exactly');
+    throw new BadRequest('Old Password and New Password match exactly');
   }
   if (user.passwordUsedThisYear.includes(newPassword)) {
-    throw new Bad_Request('New Password has already been used before by this user');
+    throw new BadRequest('New Password has already been used before by this user');
   }
   if (newPassword.length < 8) {
-    throw new Bad_Request('Password should be more than 8 characters');
+    throw new BadRequest('Password should be more than 8 characters');
   }
   if (!/\d/.test(newPassword) || !/[a-zA-Z]/.test(newPassword)) {
-    throw new Bad_Request('Password needs to contain at least one number and at least one letter');
+    throw new BadRequest('Password needs to contain at least one number and at least one letter');
   }
   user.passwordUsedThisYear.push(oldPassword);
   user.password = newPassword;

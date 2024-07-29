@@ -19,7 +19,7 @@ import {
 
 import ShortUniqueId from 'short-unique-id';
 import { randomColor } from 'seed-to-color';
-import { Unauthorised, Bad_Request, Forbidden } from './error';
+import { Unauthorised, BadRequest, Forbidden } from './error';
 const answerUid = new ShortUniqueId({ dictionary: 'number' });
 const questionUid = new ShortUniqueId({ dictionary: 'number' });
 
@@ -58,11 +58,11 @@ export function adminCreateQuizQuestion(
   const validProtocol = /^https?:\/\//;
   if (v2 === true) {
     if (questionBody.thumbnailUrl === '') {
-      throw new Bad_Request('Thumbnail url is an empty string');
+      throw new BadRequest('Thumbnail url is an empty string');
     } else if (!validExtensions.test(questionBody.thumbnailUrl)) {
-      throw new Bad_Request('Not valid file type for thumbnail');
+      throw new BadRequest('Not valid file type for thumbnail');
     } else if (!validProtocol.test(questionBody.thumbnailUrl)) {
-      throw new Bad_Request('Invalid https protocol');
+      throw new BadRequest('Invalid https protocol');
     }
   }
   const questionId = parseInt(questionUid.seq());
@@ -198,11 +198,11 @@ export function adminQuizQuestionMove(
   const questionIndex = findQuestionIndex(database, quizId, questionId);
   const maxPosition = quiz.questions.length - 1;
   if (!question) {
-    throw new Bad_Request('Question Id does not refer to a valid question within this quiz');
+    throw new BadRequest('Question Id does not refer to a valid question within this quiz');
   } else if (moveInfo.newPosition > maxPosition || moveInfo.newPosition < 0) {
-    throw new Bad_Request('NewPosition is less than 0, or NewPosition is greater than n-1 where n is the number of questions');
+    throw new BadRequest('NewPosition is less than 0, or NewPosition is greater than n-1 where n is the number of questions');
   } else if (moveInfo.newPosition === questionIndex) {
-    throw new Bad_Request('NewPosition is the position of the current question');
+    throw new BadRequest('NewPosition is the position of the current question');
   }
   // swap them
   [quiz.questions[questionIndex], quiz.questions[moveInfo.newPosition]] = [quiz.questions[moveInfo.newPosition], quiz.questions[questionIndex]];

@@ -1,20 +1,20 @@
-import { 
-  EmptyObject, GetSessionStatus, MessageObject, QuizSessionViewResult, 
+import {
+  EmptyObject, GetSessionStatus, MessageObject, QuizSessionViewResult,
   QuizSessionResultLinkResult, PlayerQuestionResultResult,
   QuestionBody,
   PlayerStatusResult,
   PlayerChatlogResult,
   PlayerQuestionAnswerResult,
   SessionResults
-} from "./types";
+} from './types';
 
 export enum SessionStatus {
-  LOBBY, 
-  QUESTION_COUNTDOWN, 
-  QUESTION_OPEN, 
-  QUESTION_CLOSE, 
-  ANSWER_SHOW, 
-  FINAL_RESULTS, 
+  LOBBY,
+  QUESTION_COUNTDOWN,
+  QUESTION_OPEN,
+  QUESTION_CLOSE,
+  ANSWER_SHOW,
+  FINAL_RESULTS,
   END
 }
 
@@ -71,14 +71,13 @@ export function playerQuestionResult (playerId: number, questionposition: number
  * @returns {ErrorMessage} An error message
  */
 
-export function adminQuizSessionUpdate(  
+export function adminQuizSessionUpdate(
   quizId: number,
-  sessionId: number, 
-  token: string, 
+  sessionId: number,
+  token: string,
   action: string): EmptyObject | Error {
-    return {};
-  }
-
+  return {};
+}
 
 /**
  * Gives the status of a particular quiz session
@@ -133,10 +132,10 @@ export function adminQuizSessionStatus (quizId: number, sessionId: number): GetS
 
 export function playerStatus(playerid: number): PlayerStatusResult | Error {
   return {
-    state: "LOBBY",
+    state: 'LOBBY',
     numQuestions: 1,
     atQuestion: 1
-  }
+  };
 }
 
 /**
@@ -161,7 +160,7 @@ export function playerQuestionInfo (playerId: number, questionPosition: number):
         correct: true
       }
     ]
-  }
+  };
 }
 
 /**
@@ -174,13 +173,13 @@ export function playerChatlog(playerid: number): PlayerChatlogResult | Error {
   return {
     messages: [
       {
-        messageBody: "This is a message body",
+        messageBody: 'This is a message body',
         playerId: 5546,
-        playerName: "Yuchao Jiang",
+        playerName: 'Yuchao Jiang',
         timeSent: 1683019484
       }
     ]
-  }
+  };
 }
 
 /**
@@ -193,7 +192,7 @@ export function playerChatlog(playerid: number): PlayerChatlogResult | Error {
 export function playerSendMessage (playerId: number, message: MessageObject): EmptyObject | Error {
   // Check if message should be an message object with messageBody or just message body
 
-  return {}
+  return {};
 }
 
 /**
@@ -204,13 +203,12 @@ export function playerSendMessage (playerId: number, message: MessageObject): Em
  * @returns {PlayerQuestionAnswerResult} The result of the submission.
  */
 export function playerQuestionAnswer(
-  playerId: number, 
-  questionPosition: number, 
+  playerId: number,
+  questionPosition: number,
   answerIds: number[]
 ): PlayerQuestionAnswerResult {
   return {};
 }
-
 
 /**
  * Get the final results for all players for a completed quiz session.
@@ -255,21 +253,19 @@ export function adminQuizThumbnailUpdate(quizId: number, token: string, imgUrl: 
   return {};
 }
 
-
 export function adminQuizSessionStart(
-  quizId: number, 
-  token: string, 
+  quizId: number,
+  token: string,
   autoStartNum: number
 ): { sessionId: number } {
-  return { sessionId: 5546 }; 
+  return { sessionId: 5546 };
 }
 
-
 export function playerJoin(
-  sessionId: number, 
+  sessionId: number,
   name: string
 ): { playerId: number } {
-  return { playerId: 5546 }; 
+  return { playerId: 5546 };
 }
 
 export function playerResults(
@@ -287,5 +283,5 @@ export function playerResults(
         percentCorrect: 54
       }
     ]
-  }; 
+  };
 }

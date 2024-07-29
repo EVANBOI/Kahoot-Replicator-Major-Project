@@ -5,7 +5,7 @@ export class Unauthorised extends Error {
   }
 }
 
-export class Bad_Request extends Error {
+export class BadRequest extends Error {
   constructor(message: string) {
     super(message);
     this.name = 'Error401';

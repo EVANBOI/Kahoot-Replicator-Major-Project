@@ -1,5 +1,5 @@
 import { getData, setData } from './dataStore';
-import { Unauthorised, Bad_Request, Forbidden } from './error';
+import { Unauthorised, BadRequest, Forbidden } from './error';
 
 import {
   findQuizWithId,
@@ -8,7 +8,6 @@ import {
 import {
   EmptyObject,
   ErrorMessage,
-  Quiz,
   QuizIdObject,
   QuizInfoResult,
   TrashViewDetails,
@@ -222,7 +221,7 @@ export function adminQuizDescriptionUpdate(
   } else if (user.userId !== validQuizId.creatorId) {
     throw new Forbidden('Quiz ID does not refer to a quiz that this user owns.');
   } else if (description.length > 100) {
-    throw new Bad_Request('Description is more than 100 characters in length');
+    throw new BadRequest('Description is more than 100 characters in length');
   }
   validQuizId.description = description;
   validQuizId.timeLastEdited = Math.floor(Date.now() / 1000);
@@ -299,17 +298,17 @@ export function adminQuizTransfer(sessionId: string, quizId: number, newOwnerEma
   const newOwner = database.users.find(user => user.email === newOwnerEmail);
 
   if (!newOwner) {
-    throw new Bad_Request('User email is not a real user.');
+    throw new BadRequest('User email is not a real user.');
   }
   if (newOwner.userId === currentUser.userId) {
-    throw new Bad_Request('User email is the current logged in user.');
+    throw new BadRequest('User email is the current logged in user.');
   }
 
   const nameUsed = database.quizzes.some(
     q => q.name === quiz.name && q.creatorId === newOwner.userId && q.quizId !== quizId
   );
   if (nameUsed) {
-    throw new Bad_Request('Quiz ID refers to a quiz that has a name that is already used by the target user.');
+    throw new BadRequest('Quiz ID refers to a quiz that has a name that is already used by the target user.');
   }
 
   quiz.creatorId = newOwner.userId;
@@ -333,7 +332,6 @@ export function adminQuizRestore(token: string, quizId: number): QuizRestoreResu
   }
   const quizExists = database.quizzes.find(q => q.quizId === quizId);
   const quizIndex = database.trash.findIndex(quiz => quiz.quizId === quizId);
-  console.log('quizindex is', quizIndex)
 
   const quiz = database.trash[quizIndex];
   if (!quizExists && quizIndex === -1) {
@@ -358,5 +356,3 @@ export function adminQuizRestore(token: string, quizId: number): QuizRestoreResu
   setData(database);
   return { statusCode: 200, message: '{}' };
 }
-
-

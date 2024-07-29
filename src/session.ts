@@ -1,3 +1,5 @@
+import { getData } from './dataStore';
+import { BadRequest } from './error';
 import {
   EmptyObject, GetSessionStatus, MessageObject, QuizSessionViewResult,
   QuizSessionResultLinkResult, PlayerQuestionResultResult,
@@ -87,38 +89,26 @@ export function adminQuizSessionUpdate(
  * @returns {ErrorMessage} An error message
  */
 export function adminQuizSessionStatus (quizId: number, sessionId: number): GetSessionStatus {
+  const database = getData();
+  const quiz = database.quizzes.find(q => q.quizId === quizId);
+  const sessionValid = quiz.sessions.find(s => s.sessionId === sessionId);
+  if (!sessionValid) {
+    throw new BadRequest(`Session id ${sessionId} does not refer to valid session within quiz`);
+  }
   return {
-    state: SessionStatus.LOBBY,
-    atQuestion: 1,
-    players: [
-      'Hayden'
-    ],
+    state: sessionValid.state,
+    atQuestion: sessionValid.atQuestion,
+    players: sessionValid.players,
     metadata: {
-      quizId: 5546,
-      name: 'This is name of the quiz',
-      timeCreated: 102985709,
-      timeLastEdited: 102985709,
-      description: 'this is dsghsjkdfhjkh',
-      numQuestions: 1,
-      questions: [
-        {
-          questionId: 5565,
-          question: 'Thishfdoixhsddof',
-          duration: 44,
-          thumbnailUrl: 'http://google.com/some/image/path.jpg',
-          points: 5,
-          answers: [
-            {
-              answerId: 2384,
-              answer: 'Prince Charles',
-              colour: 'red',
-              correct: true
-            }
-          ]
-        }
-      ],
-      duration: 44,
-      thumbnailUrl: 'http://google.com/some/image/path.jpg'
+      quizId: quiz.quizId,
+      name: quiz.name,
+      timeCreated: quiz.timeCreated,
+      timeLastEdited: quiz.timeLastEdited,
+      description: quiz.description,
+      numQuestions: quiz.numQuestions,
+      questions: quiz.questions,
+      duration: quiz.duration,
+      thumbnailUrl: quiz.thumbnailUrl
     }
   };
 }
@@ -130,7 +120,7 @@ export function adminQuizSessionStatus (quizId: number, sessionId: number): GetS
  * @returns {ErrorMessage} An error message
  */
 
-export function playerStatus(playerid: number): PlayerStatusResult | Error {
+export function playerStatus(playerId: number): PlayerStatusResult | Error {
   return {
     state: 'LOBBY',
     numQuestions: 1,
@@ -169,7 +159,7 @@ export function playerQuestionInfo (playerId: number, questionPosition: number):
  * @returns {PlayerChatlogResult} All the player's messages
  * @returns {ErrorMessage} An error message
  */
-export function playerChatlog(playerid: number): PlayerChatlogResult | Error {
+export function playerChatlog(playerId: number): PlayerChatlogResult | Error {
   return {
     messages: [
       {

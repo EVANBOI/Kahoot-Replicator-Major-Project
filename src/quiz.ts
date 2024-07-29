@@ -88,6 +88,7 @@ export function adminQuizCreate (
     timeCreated: timeStamp1,
     timeLastEdited: timeStamp2,
     description: description,
+    numQuestions: 0,
     questions: [],
     duration: 0
   });
@@ -154,6 +155,7 @@ export function adminQuizInfo (token: string, quizId: number): QuizInfoResult {
     timeCreated: quiz.timeCreated,
     timeLastEdited: quiz.timeLastEdited,
     description: quiz.description,
+    numQuestions: quiz.numQuestions,
     questions: quiz.questions,
     duration: quiz.duration
   };

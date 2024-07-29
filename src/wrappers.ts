@@ -341,7 +341,7 @@ export const adminQuizSessionStart = (
   token: string,
   autoStartNum: number
 ) => {
-  return requestHelper('POST', `v1/admin/quiz/${quizid}/session/start`, { autoStartNum }, token);
+  return requestHelper('POST', `/v1/admin/quiz/${quizid}/session/start`, { autoStartNum }, token);
 };
 
 export const playerJoin = (

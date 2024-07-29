@@ -158,7 +158,7 @@ app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
   } catch (error) {
     if (error instanceof Error400) {
       return res.status(400).json({ error: error.message });
-    }    
+    }
   }
 });
 
@@ -362,14 +362,14 @@ app.put('/v2/admin/quiz/:quizid/question/:questionid', (req: Request, res: Respo
   } catch (e) {
     if (e instanceof Error401) {
       return res.status(StatusCodes.UNAUTHORIZED).json({ error: e.message });
-    }  
+    }
   }
   try {
     quizIdCheck(token, quizId);
   } catch (e) {
     if (e instanceof Error403) {
       return res.status(StatusCodes.FORBIDDEN).json({ error: e.message });
-    }  
+    }
   }
   try {
     res.json(adminQuizQuestionUpdate(quizId, questionId, questionBody, token));
@@ -518,42 +518,41 @@ app.put('/v1/admin/quiz/:quizid/question/:questionid/move', (req: Request, res: 
 
 // Evan's function don't change the order needs to be above
 app.put('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Response) => {
-  return res.json('test')
-})
-
+  return res.json('test');
+});
 
 app.get('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Response) => {
-  return res.json('test')
-})
+  return res.json('test');
+});
 
 app.get('/v1/player/:playerid/question/:questionposition', (req: Request, res: Response) => {
-  return res.json('test')
-})
+  return res.json('test');
+});
 
 app.post('/v1/player/:playerid/chat', (req: Request, res: Response) => {
-  return res.json('test')
-})
+  return res.json('test');
+});
 
 app.get('/v1/admin/quiz/:quizid/sessions', (req: Request, res: Response) => {
-  return res.json('test')
+  return res.json('test');
 });
 app.get('/v1/admin/quiz/:quizid/session/:sessionid/results/csv', (req: Request, res: Response) => {
-  return res.json('test')
+  return res.json('test');
 });
 
 app.get('/v1/player/:playerid/question/:questionposition/results', (req: Request, res: Response) => {
-  return res.json('test')
+  return res.json('test');
 });
 
 // Evan's function
 app.get('/v1/player/:playerid', (req: Request, res: Response) => {
-  return res.json('test')
-})
+  return res.json('test');
+});
 
 // Evan's function
 app.get('/v1/player/:playerid/chat', (req: Request, res: Response) => {
-  return res.json('test')
-})
+  return res.json('test');
+});
 
 // v2 functions
 

@@ -113,12 +113,12 @@ export const adminQuizCreate = (
 };
 
 export const adminQuizCreateV2 = (
-  token: string, 
-  name: string, 
+  token: string,
+  name: string,
   description: string
 ) => {
-  return requestHelper('POST', '/v2/admin/quiz', {name, description}, token)
-}
+  return requestHelper('POST', '/v2/admin/quiz', { name, description }, token);
+};
 
 export const adminQuizList = (token: string) => {
   return requestHelper('GET', '/v1/admin/quiz/list', { token });
@@ -221,7 +221,7 @@ export const adminQuizTrashView = (token: string) => {
 
 export const adminQuizTrashViewV2 = (token: string) => {
   return requestHelper('GET', '/v2/admin/quiz/trash', {}, token);
-}
+};
 
 export const adminUserDetails = (token: string) => {
   return requestHelper('GET', '/v1/admin/user/details', { token });
@@ -250,7 +250,7 @@ export const adminQuizQuestionUpdateV2 = (
 ) => {
   return requestHelper('PUT',
     `/v2/admin/quiz/${quizid}/question/${questionid}`,
-    {questionBody}, token);
+    { questionBody }, token);
 };
 
 export const adminQuizTrashEmpty = (token: string, quizIds: string) => {
@@ -300,9 +300,9 @@ export const adminQuizQuestionMoveV2 = (
 };
 
 export const adminQuizSessionStatus = (
-quizid: number,
-sessionid: number) => {
-return requestHelper('GET', `/v1/admin/quiz/${quizid}/session/${sessionid}`, {});
+  quizid: number,
+  sessionid: number) => {
+  return requestHelper('GET', `/v1/admin/quiz/${quizid}/session/${sessionid}`, {});
 };
 
 export const playerQuestionInfo = (
@@ -318,42 +318,41 @@ export const playerSendMessage = (
 };
 
 export const adminQuizSessionView = (
-  token: string, 
+  token: string,
   quizid: number) => {
   return requestHelper('GET', `/v1/admin/quiz/${quizid}/sessions`, { token });
-}
+};
 
 export const adminQuizSessionResultLink = (
   quizid: number,
   sessionid: number,
   token: string) => {
   return requestHelper('GET', `/v1/admin/quiz/${quizid}/session/${sessionid}/results/csv`, { token });
-}
+};
 
 export const PlayerQuestionResult = (
   playerid: number,
   questionposition: number) => {
   return requestHelper('GET', `/v1/player/${playerid}/question/${questionposition}/results`, {});
-}
+};
 
 export const adminQuizSessionUpdate = (
   quizid: number,
-  sessionid: number, 
-  token: string, 
+  sessionid: number,
+  token: string,
   action: string
 ) => {
-  return requestHelper('PUT', `/v1/admin/quiz/${quizid}/session/${sessionid}`, {action}, token)
-}
+  return requestHelper('PUT', `/v1/admin/quiz/${quizid}/session/${sessionid}`, { action }, token);
+};
 
 export const playerStatus = (
   playerid: number
 ) => {
-  return requestHelper('GET', `/v1/player/${playerid}`, {})
-}
+  return requestHelper('GET', `/v1/player/${playerid}`, {});
+};
 
 export const playerChatlog = (
   playerid: number
 ) => {
-  return requestHelper('GET', `v1/player/${playerid}/chat`, {})
-}
-
+  return requestHelper('GET', `v1/player/${playerid}/chat`, {});
+};

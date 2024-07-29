@@ -1,4 +1,4 @@
-import { SessionStatus } from "./session";
+import { SessionStatus } from './session';
 
 // Types for errors
 export type ErrorMessage = {
@@ -182,20 +182,20 @@ export type PlayerQuestionResultResult = {
 }
 
 export type PlayerStatusResult = {
-    state: string, 
-    numQuestions: number, 
-    atQuestion: number, 
+    state: string,
+    numQuestions: number,
+    atQuestion: number,
 }
 
 export type PlayerChatlogResult = {
-	messages: [
-		{
-			messageBody: string, 
-			playerId: number, 
-			playerName: string, 
-			timeSent: number
-		}
-	]
+  messages: [
+    {
+      messageBody: string,
+      playerId: number,
+      playerName: string,
+      timeSent: number
+    }
+  ]
 }
 
 // other types
@@ -218,12 +218,12 @@ export type QuizQuestionDeleteResult = {
     message: string
   };
 
-	export type PlayerQuestionAnswerResult = {
+export type PlayerQuestionAnswerResult = {
     statusCode?: number;
     error?: string;
   }
 
-  export type SessionResults = {
+export type SessionResults = {
     usersRankedByScore: {
       name: string;
       score: number;

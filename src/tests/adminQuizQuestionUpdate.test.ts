@@ -13,7 +13,6 @@ import {
   adminQuizCreateV2,
   adminQuizQuestionUpdateV2,
   adminQuizInfo,
-  adminQuizQuestionUpdate
 } from '../wrappers';
 
 const UPDATED = {

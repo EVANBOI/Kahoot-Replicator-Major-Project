@@ -125,8 +125,8 @@ export function adminAuthLogin (
   const correctPassword = dataBase.users.find(user =>
     user.email === email &&
     user.password === password);
-  if (!validEmail) { 
-    throw new Error400('Email address does not exist.')
+  if (!validEmail) {
+    throw new Error400('Email address does not exist.');
   } else if (!correctPassword) {
     validEmail.numFailedPasswordsSinceLastLogin += 1;
     setData(dataBase);

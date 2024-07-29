@@ -17,13 +17,13 @@ describe('400 Error Cases', () => {
   test('Return an error for a non-existent email address', () => {
     expect(adminAuthLogin(' ', 'abcde12345')).toStrictEqual(ERROR400);
   });
-  
+
   test('Return an error for a password that is not correct for the given email', () => {
     adminAuthRegister('evan.xiong@unsw.edu.au', 'abcde12345', 'Evan', 'Xiong');
     const wrongPassword = 'abcde12345' + 'a';
     expect(adminAuthLogin('evan.xiong@unsw.edu.au', wrongPassword)).toStrictEqual(ERROR400);
   });
-})
+});
 
 describe('200 Success Cases', () => {
   test('Correctly returns their sessionId', () => {

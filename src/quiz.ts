@@ -8,7 +8,6 @@ import {
 import {
   EmptyObject,
   ErrorMessage,
-  Quiz,
   QuizIdObject,
   QuizInfoResult,
   TrashViewDetails,

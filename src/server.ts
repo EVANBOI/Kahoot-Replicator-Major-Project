@@ -553,6 +553,7 @@ app.put('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Respons
 app.get('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Response) => {
   const quizId = parseInt(req.query.quizid as string);
   const sessionId = parseInt(req.query.sessionid as string);
+  const token = req.headers.token as string;
   const result = adminQuizSessionStatus(quizId, sessionId);
   return res.json(result);
 });

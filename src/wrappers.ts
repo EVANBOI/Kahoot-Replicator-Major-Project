@@ -278,8 +278,10 @@ export const adminQuizQuestionMoveV2 = (
 
 export const adminQuizSessionStatus = (
   quizid: number,
-  sessionid: number) => {
-  return requestHelper('GET', `/v1/admin/quiz/${quizid}/session/${sessionid}`, {});
+  sessionid: number,
+  token: string
+) => {
+  return requestHelper('GET', `/v1/admin/quiz/${quizid}/session/${sessionid}`, {}, token);
 };
 
 export const playerQuestionInfo = (

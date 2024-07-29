@@ -253,8 +253,8 @@ export const adminQuizQuestionDuplicate = (
 ) => {
   return requestHelper('POST', `/v1/admin/quiz/${quizId}/question/${questionId}/duplicate`, { token });
 };
-export const adminQuizRestore = (token: string, quizId: number) => {
-  return requestHelper('POST', `/v1/admin/quiz/${quizId}/restore`, { token });
+export const adminQuizRestore = (token: string, quizid: number) => {
+  return requestHelper('POST', `/v1/admin/quiz/${quizid}/restore`, { token });
 };
 
 export const adminQuizQuestionDelete = (token: string, quizId: number, questionId: number) => {

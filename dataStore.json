@@ -1,5 +1,1 @@
-<<<<<<< HEAD
 {"users":[],"quizzes":[],"trash":[]}
-=======
-{"users":[{"userId":1,"tokens":[{"token":"321360"}],"email":"admin@email.com","password":"password1","name":"Idk Idk","numSuccessfulLogins":1,"numFailedPasswordsSinceLastLogin":0,"passwordUsedThisYear":[]}],"quizzes":[],"trash":[]}
->>>>>>> 1ba47199ed4283261c47766d5849c30ace07683e

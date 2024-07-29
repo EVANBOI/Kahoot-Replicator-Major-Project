@@ -7,7 +7,9 @@ import {
   PlayerStatusResult,
   PlayerChatlogResult,
   PlayerQuestionAnswerResult,
-  SessionResults
+  SessionResults,
+  Quiz,
+  Session
 } from './types';
 
 export enum SessionStatus {
@@ -95,12 +97,10 @@ export function adminQuizSessionStatus (quizId: number, sessionId: number): GetS
   if (!sessionValid) {
     throw new BadRequest(`Session id ${sessionId} does not refer to valid session within quiz`);
   }
-
-  const playerNames = sessionValid.players.map(player => player.name);
   return {
     state: sessionValid.state,
     atQuestion: sessionValid.atQuestion,
-    players: playerNames,
+    players: sessionValid.players,
     metadata: {
       quizId: quiz.quizId,
       name: quiz.name,
@@ -134,24 +134,44 @@ export function playerStatus(playerId: number): PlayerStatusResult | Error {
  * Get the information about a question that the guest player is on.
  * @param {number} playerId The ID of the player playing.
  * @param {number} questionPosition The position of the question
- * @returns {V2QuestionBody} Information about the current question
+ * @returns {QuestionBody} Information about the current question
  * @returns {ErrorMessage} An error message
  */
 export function playerQuestionInfo (playerId: number, questionPosition: number): QuestionBody {
+  const database = getData();
+  let currentQuiz: Quiz | undefined;
+  let currentSession: Session | undefined;
+  for (const quiz of database.quizzes) {
+    currentSession = quiz.sessions?.find(session => 
+      session.players.find(player => player.playerId === playerId)
+    );
+    if (currentSession) {
+      currentQuiz = quiz;
+      break; // Exit the loop once the player and thus the session has been found
+    }
+  }
+  if (!currentSession) {
+    throw new BadRequest(`Player ${playerId} does not exist`)
+  }
+  if (currentQuiz.numQuestions < questionPosition) {
+    throw new BadRequest(`Question position ${questionPosition} is not valid`)
+  } else if (currentSession.atQuestion !== questionPosition) {
+    throw new BadRequest(`Session is not currently on question ${questionPosition}`)
+  } else if (currentSession.state === SessionStatus.LOBBY ||
+             currentSession.state === SessionStatus.QUESTION_COUNTDOWN ||
+             currentSession.state === SessionStatus.FINAL_RESULTS ||
+             currentSession.state === SessionStatus.END) {
+    throw new BadRequest(`Session is in state ${currentSession.state}`)
+  }
+  
+  const question = currentQuiz.questions[questionPosition - 1]
   return {
-    questionId: 5565,
-    question: 'Thishfdoixhsddof',
-    duration: 44,
-    thumbnailUrl: 'http://google.com/some/image/path.jpg',
-    points: 5,
-    answers: [
-      {
-        answerId: 2384,
-        answer: 'Prince Charles',
-        colour: 'red',
-        correct: true
-      }
-    ]
+    questionId: question.questionId,
+    question: question.question,
+    duration: question.duration,
+    thumbnailUrl: question.thumbnailUrl,
+    points: question.points,
+    answers: question.answers
   };
 }
 

@@ -158,7 +158,7 @@ export function adminQuizQuestionUpdate(
   );
 
   if (!question) {
-    throw new Error('Question Id does not refer to a valid question within the quiz');
+    throw new Error400('Question Id does not refer to a valid question within the quiz');
   }
 
   const totalDuration = quiz.duration + questionBody.duration - question.duration;

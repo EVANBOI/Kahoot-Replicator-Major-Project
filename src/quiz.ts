@@ -5,7 +5,6 @@ import {
   findQuizWithId,
   findUserBySessionId,
 } from './helpers';
-import { ERROR400 } from './testConstants';
 import {
   EmptyObject,
   ErrorMessage,
@@ -235,10 +234,7 @@ export function adminQuizTrashView(sessionId: string): TrashViewDetails {
   const database = getData();
   const user = findUserBySessionId(database, sessionId);
   if (!user) {
-    return {
-      statusCode: 401,
-      error: 'Token does not exist or is invalid'
-    };
+    throw new Error401('Token does not exist or is invalid.');
   }
   const creatorId = user.userId;
   const trashView = database.trash.filter(quiz => quiz.creatorId === creatorId);

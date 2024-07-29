@@ -14,9 +14,9 @@ export function quizIdCheck(token: string, quizId: number) {
   const isValidQuizId = getData().quizzes.find(q => q.quizId === quizId);
   const user = getData().users.find(user => user.tokens.some(tokens => tokens.token === token));
   if (!isValidQuizId) {
-    throw new Error('Quiz Id does not exist');
+    throw new Error403('Quiz Id does not exist');
   } else if (user.userId !== isValidQuizId.creatorId) {
-    throw new Error('Quiz does not belong to user');
+    throw new Error403('Quiz does not belong to user');
   }
 }
 

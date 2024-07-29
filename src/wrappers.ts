@@ -250,7 +250,7 @@ export const adminQuizQuestionUpdateV2 = (
 ) => {
   return requestHelper('PUT',
     `/v2/admin/quiz/${quizid}/question/${questionid}`,
-    { questionBody}, token);
+    {questionBody}, token);
 };
 
 export const adminQuizTrashEmpty = (token: string, quizIds: string) => {

@@ -43,7 +43,6 @@ describe('Success cases', () => {
   test('should successfully restore a quiz', () => {
     // Move the quiz to trash before restoring
     adminQuizRemove(sessionId, validQuizId);
-
     const result = adminQuizRestore(sessionId, validQuizId);
     expect(result).toEqual({
       jsonBody: {},
@@ -81,7 +80,7 @@ describe('Failure cases', () => {
       jsonBody: {
         error: expect.any(String),
       },
-      statusCode: 400,
+      statusCode: 403,
     });
   });
 

@@ -1,5 +1,5 @@
 import { getData, setData } from './dataStore';
-import { Error400, Error401, Error403 } from './error';
+import { Unauthorised, BadRequest, Forbidden } from './error';
 
 import {
   findQuizWithId,
@@ -8,7 +8,6 @@ import {
 import {
   EmptyObject,
   ErrorMessage,
-  Quiz,
   QuizIdObject,
   QuizInfoResult,
   TrashViewDetails,
@@ -31,7 +30,7 @@ export function adminQuizList (token: string): QuizListDetails {
   const database = getData();
   const user = findUserBySessionId(database, token);
   if (!user) {
-    throw new Error401('Session id is not valid.');
+    throw new Unauthorised('Session id is not valid.');
   }
   const creatorId = user.userId;
   const quizzes = database.quizzes.filter(quiz => quiz.creatorId === creatorId);
@@ -144,9 +143,9 @@ export function adminQuizInfo (token: string, quizId: number): QuizInfoResult {
   const quiz = findQuizWithId(database, quizId);
 
   if (!quiz) {
-    throw new Error403(`Quiz with ID '${quizId}' not found`);
+    throw new Forbidden(`Quiz with ID '${quizId}' not found`);
   } else if (quiz.creatorId !== user.userId) {
-    throw new Error403(`Quiz with ID ${quizId} is not owned by ${user.userId} (actual owner: ${quiz.creatorId})`);
+    throw new Forbidden(`Quiz with ID ${quizId} is not owned by ${user.userId} (actual owner: ${quiz.creatorId})`);
   }
 
   return {
@@ -216,13 +215,13 @@ export function adminQuizDescriptionUpdate(
   const user = findUserBySessionId(database, token);
   const validQuizId = database.quizzes.find(quiz => quiz.quizId === quizId);
   if (!user) {
-    throw new Error401('AuthUserId is not a valid user.');
+    throw new Unauthorised('AuthUserId is not a valid user.');
   } else if (!validQuizId) {
-    throw new Error403('Quiz ID does not refer to a valid quiz.');
+    throw new Forbidden('Quiz ID does not refer to a valid quiz.');
   } else if (user.userId !== validQuizId.creatorId) {
-    throw new Error403('Quiz ID does not refer to a quiz that this user owns.');
+    throw new Forbidden('Quiz ID does not refer to a quiz that this user owns.');
   } else if (description.length > 100) {
-    throw new Error400('Description is more than 100 characters in length');
+    throw new BadRequest('Description is more than 100 characters in length');
   }
   validQuizId.description = description;
   validQuizId.timeLastEdited = Math.floor(Date.now() / 1000);
@@ -284,32 +283,32 @@ export function adminQuizTransfer(sessionId: string, quizId: number, newOwnerEma
   const currentUser = findUserBySessionId(database, sessionId);
 
   if (!currentUser) {
-    throw new Error401('Session ID is not valid');
+    throw new Unauthorised('Session ID is not valid');
   }
   const quiz = findQuizWithId(database, quizId);
 
   if (!quiz) {
-    throw new Error403(`Quiz with ID '${quizId}' not found`);
+    throw new Forbidden(`Quiz with ID '${quizId}' not found`);
   }
 
   if (quiz.creatorId !== currentUser.userId) {
-    throw new Error403('You are not the creator of the quiz');
+    throw new Forbidden('You are not the creator of the quiz');
   }
 
   const newOwner = database.users.find(user => user.email === newOwnerEmail);
 
   if (!newOwner) {
-    throw new Error400('User email is not a real user.');
+    throw new BadRequest('User email is not a real user.');
   }
   if (newOwner.userId === currentUser.userId) {
-    throw new Error400('User email is the current logged in user.');
+    throw new BadRequest('User email is the current logged in user.');
   }
 
   const nameUsed = database.quizzes.some(
     q => q.name === quiz.name && q.creatorId === newOwner.userId && q.quizId !== quizId
   );
   if (nameUsed) {
-    throw new Error400('Quiz ID refers to a quiz that has a name that is already used by the target user.');
+    throw new BadRequest('Quiz ID refers to a quiz that has a name that is already used by the target user.');
   }
 
   quiz.creatorId = newOwner.userId;
@@ -331,11 +330,13 @@ export function adminQuizRestore(token: string, quizId: number): QuizRestoreResu
   if (!user) {
     return { statusCode: 401, message: 'Token is empty or invalid.' };
   }
-
+  const quizExists = database.quizzes.find(q => q.quizId === quizId);
   const quizIndex = database.trash.findIndex(quiz => quiz.quizId === quizId);
 
   const quiz = database.trash[quizIndex];
-  if (quiz.creatorId !== user.userId) {
+  if (!quizExists && quizIndex === -1) {
+    return { statusCode: 403, message: `Quiz '${quizId}' does not exist!.` };
+  } else if (quiz.creatorId !== user.userId) {
     return { statusCode: 403, message: `User is not the owner of quiz with ID '${quizId}'.` };
   }
 

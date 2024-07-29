@@ -19,7 +19,7 @@ import {
 
 import ShortUniqueId from 'short-unique-id';
 import { randomColor } from 'seed-to-color';
-import { Error401, Error403, Error400 } from './error';
+import { Unauthorised, BadRequest, Forbidden } from './error';
 const answerUid = new ShortUniqueId({ dictionary: 'number' });
 const questionUid = new ShortUniqueId({ dictionary: 'number' });
 
@@ -37,21 +37,33 @@ const questionUid = new ShortUniqueId({ dictionary: 'number' });
 export function adminCreateQuizQuestion(
   quizId: number,
   token: string,
-  questionBody: QuestionBody): CreateQuestionReturn {
+  questionBody: QuestionBody,
+  v2?: boolean): CreateQuestionReturn {
   const database = getData();
   const user = findUserBySessionId(database, token);
   if (!user) {
-    throw new Error401('Session ID is invalid');
+    throw new Unauthorised('Session ID is invalid');
   }
   const quiz = findQuizWithId(database, quizId);
   if (!quiz) {
-    throw new Error403('Quiz does not exist');
+    throw new Forbidden('Quiz does not exist');
   } else if (quiz.creatorId !== user.userId) {
-    throw new Error403('User is not an owner of quiz');
+    throw new Forbidden('User is not an owner of quiz');
   }
   const totalDuration = quiz.duration + questionBody.duration;
   if (typeof validQuestion(questionBody, totalDuration) === 'object') {
     return validQuestion(questionBody, totalDuration) as ErrorMessage;
+  }
+  const validExtensions = /\.(jpg|jpeg|png)$/i;
+  const validProtocol = /^https?:\/\//;
+  if (v2 === true) {
+    if (questionBody.thumbnailUrl === '') {
+      throw new BadRequest('Thumbnail url is an empty string');
+    } else if (!validExtensions.test(questionBody.thumbnailUrl)) {
+      throw new BadRequest('Not valid file type for thumbnail');
+    } else if (!validProtocol.test(questionBody.thumbnailUrl)) {
+      throw new BadRequest('Invalid https protocol');
+    }
   }
   const questionId = parseInt(questionUid.seq());
   questionBody.questionId = questionId;
@@ -186,11 +198,11 @@ export function adminQuizQuestionMove(
   const questionIndex = findQuestionIndex(database, quizId, questionId);
   const maxPosition = quiz.questions.length - 1;
   if (!question) {
-    throw new Error400('Question Id does not refer to a valid question within this quiz');
+    throw new BadRequest('Question Id does not refer to a valid question within this quiz');
   } else if (moveInfo.newPosition > maxPosition || moveInfo.newPosition < 0) {
-    throw new Error400('NewPosition is less than 0, or NewPosition is greater than n-1 where n is the number of questions');
+    throw new BadRequest('NewPosition is less than 0, or NewPosition is greater than n-1 where n is the number of questions');
   } else if (moveInfo.newPosition === questionIndex) {
-    throw new Error400('NewPosition is the position of the current question');
+    throw new BadRequest('NewPosition is the position of the current question');
   }
   // swap them
   [quiz.questions[questionIndex], quiz.questions[moveInfo.newPosition]] = [quiz.questions[moveInfo.newPosition], quiz.questions[questionIndex]];

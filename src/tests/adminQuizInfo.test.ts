@@ -79,6 +79,7 @@ describe('/v1/admin/quiz/{quizid}', () => {
           timeCreated: expect.any(Number),
           timeLastEdited: expect.any(Number),
           description: VALID_QUIZ_CREATE_INPUTS_1.DESCRIPTION,
+          numQuestions: 0,
           questions: [],
           duration: expect.any(Number)
         }
@@ -147,6 +148,7 @@ describe('/v2/admin/quiz/{quizid}', () => {
           timeCreated: expect.any(Number),
           timeLastEdited: expect.any(Number),
           description: VALID_QUIZ_CREATE_INPUTS_1.DESCRIPTION,
+          numQuestions: 0,
           questions: [],
           duration: expect.any(Number)
         }

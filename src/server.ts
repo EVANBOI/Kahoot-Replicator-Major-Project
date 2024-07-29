@@ -553,8 +553,28 @@ app.put('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Respons
 app.get('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Response) => {
   const quizId = parseInt(req.query.quizid as string);
   const sessionId = parseInt(req.query.sessionid as string);
-  const result = adminQuizSessionStatus(quizId, sessionId);
-  return res.json(result);
+  const token = req.headers.token as string;
+  try {
+    tokenCheck(token);
+  } catch (error) {
+    if (error instanceof Unauthorised) {
+      return res.status(401).json({ error: error.message });
+    }
+  }
+  try {
+    quizExistCheck(quizId, token);
+  } catch (error) {
+    if (error instanceof Forbidden) {
+      return res.status(403).json({ error: error.message });
+    }
+  }
+  try {
+    return res.json(adminQuizSessionStatus(quizId, sessionId));
+  } catch (error) {
+    if (error instanceof BadRequest) {
+      return res.status(400).json({ error: error.message });
+    }
+  }
 });
 
 app.get('/v1/player/:playerid/question/:questionposition', (req: Request, res: Response) => {
@@ -592,7 +612,7 @@ app.get('/v1/player/:playerid/question/:questionposition/results', (req: Request
   const result = playerQuestionResult(playerId, questionPosition);
   return res.json(result);
 });
-app.post('/v1/admin/quiz/{quizid}/session/start', (req: Request, res: Response) => {
+app.post('/v1/admin/quiz/:quizid/session/start', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
   const token = req.headers.token as string;
   const { autoStartNum } = req.body;

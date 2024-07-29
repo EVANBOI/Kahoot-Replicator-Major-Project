@@ -1,6 +1,6 @@
 import { adminQuizRestore, adminAuthRegister, clear, adminQuizRemove, adminQuizInfo } from '../wrappers';
 import { adminQuizCreate } from '../quiz';
-import { SessionIdObject, QuizIdObject } from '../types';
+import { TokenObject, QuizIdObject } from '../types';
 
 const VALID_USER_INPUT = {
   EMAIL: 'admin@email.com',
@@ -28,13 +28,13 @@ beforeEach(() => {
     VALID_USER_INPUT.PASSWORD,
     VALID_USER_INPUT.FIRSTNAME,
     VALID_USER_INPUT.LASTNAME
-  ).jsonBody as SessionIdObject).token;
+  ).jsonBody as TokenObject).token;
   sessionId2 = (adminAuthRegister(
     VALID_USER_INPUT2.EMAIL,
     VALID_USER_INPUT2.PASSWORD,
     VALID_USER_INPUT2.FIRSTNAME,
     VALID_USER_INPUT2.LASTNAME
-  ).jsonBody as SessionIdObject).token;
+  ).jsonBody as TokenObject).token;
   validQuizId = (adminQuizCreate(sessionId, 'dummyquiz', 'This is a dummy quiz for testing') as QuizIdObject).quizId;
   validQuizId2 = (adminQuizCreate(sessionId2, 'dummyquiz2', 'This is a dummy quiz for testing') as QuizIdObject).quizId;
 });

@@ -20,10 +20,23 @@ export type AuthUserIdObject = {
     token: string
 }
 
-export type SessionIdObject = {
+export type TokenObject = {
     status: number,
     token: string
 };
+
+export type Session = {
+    sessionId: number,
+    atQuestion: number,
+    players: Player[],
+    state: SessionStatus
+}
+
+export type Player = {
+    name: string,
+    playerId: number,
+    score: number
+}
 
 // Types for dataStore
 export type User = {
@@ -44,9 +57,11 @@ export type Quiz = {
     timeCreated: number,
     timeLastEdited: number,
     description: string,
+    numQuestions: number,
     questions: QuestionBody[],
     duration: number,
     thumbnailUrl?: string
+    sessions?: Session[]
 }
 
 export type Data = {
@@ -102,6 +117,7 @@ export type QuizInfoResult = {
     timeCreated: number,
     timeLastEdited: number,
     description: string,
+    numQuestions: number,
     questions: QuestionBody[]
     duration: number
 }

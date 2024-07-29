@@ -89,8 +89,7 @@ describe('Successful cases', () => {
           ],
           thumbnailUrl: 'http://google.com/some/image/path.jpg'
         }],
-        duration: 3,
-        thumbnailUrl: 'http://google.com/some/image/path.jpg'
+        duration: 3
       }
     });
   });
@@ -129,8 +128,7 @@ describe('Successful cases', () => {
           ],
           thumbnailUrl: 'http://google.com/some/image/path.jpg'
         }],
-        duration: 3,
-        thumbnailUrl: 'http://google.com/some/image/path.jpg'
+        duration: 3
       }
     });
   });
@@ -176,8 +174,7 @@ describe('Successful cases', () => {
           ],
           thumbnailUrl: 'http://google.com/some/image/path.jpg'
         }],
-        duration: 3,
-        thumbnailUrl: 'http://google.com/some/image/path.jpg'
+        duration: 3
       }
     });
   });

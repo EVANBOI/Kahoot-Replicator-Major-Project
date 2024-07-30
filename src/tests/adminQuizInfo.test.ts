@@ -156,7 +156,7 @@ describe('/v2/admin/quiz/{quizid}', () => {
           numQuestions: 0,
           questions: [],
           duration: expect.any(Number),
-          thumbnailUrl: "http://google.com/some/image/path.jpg"
+          thumbnailUrl: 'http://google.com/some/image/path.jpg'
         }
       });
     });

@@ -204,12 +204,14 @@ export type PlayerStatusResult = {
 }
 
 export type PlayerChatlogResult = {
-  messages: [{
-    messageBody: string,
-    playerId: number,
-    playerName: string,
-    timeSent: number
- }]
+  messages: [
+    {
+      messageBody: string,
+      playerId: number,
+      playerName: string,
+      timeSent: number
+    }
+  ]
 }
 
 // other types

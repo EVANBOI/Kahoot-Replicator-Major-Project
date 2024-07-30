@@ -1,6 +1,11 @@
 import { getData } from './dataStore';
 import { Forbidden, BadRequest, Unauthorised } from './error';
 import { Data, ErrorMessage, QuestionBody, User } from './types';
+import crypto from 'crypto';
+
+export function getHashOf(password: string) {
+  return crypto.createHash('sha256').update(password).digest('hex');
+}
 
 export function findUserWithId(authUserId: number) {
   return getData().users.find(user => user.userId === authUserId);
@@ -14,9 +19,9 @@ export function quizIdCheck(token: string, quizId: number) {
   const isValidQuizId = getData().quizzes.find(q => q.quizId === quizId);
   const user = getData().users.find(user => user.tokens.some(tokens => tokens.token === token));
   if (!isValidQuizId) {
-    throw new Error('Quiz Id does not exist');
+    throw new Forbidden('Quiz Id does not exist');
   } else if (user.userId !== isValidQuizId.creatorId) {
-    throw new Error('Quiz does not belong to user');
+    throw new Forbidden('Quiz does not belong to user');
   }
 }
 

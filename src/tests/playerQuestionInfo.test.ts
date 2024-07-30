@@ -1,4 +1,4 @@
-import { ERROR400, validQuestion1V2, validQuestion2V2, validQuestion3V2 } from '../testConstants';
+import { ERROR400, validQuestion1V2, validQuestion2V2 } from '../testConstants';
 import {
   clear,
   adminAuthRegister,
@@ -10,23 +10,18 @@ import {
   playerQuestionInfo
 } from '../wrappers';
 
-let token1: string, token2: string;
+let token1: string;
 let sessionId1: number;
 let quizId1: number;
-let questionId1: number
+let questionId1: number;
 let playerId1: number;
 beforeEach(() => {
   clear();
   token1 = adminAuthRegister(
     'admin1@gmail.com', 'SDFJKH2349081j', 'JJone', 'ZZ'
   ).jsonBody.token;
-  token2 = adminAuthRegister(
-    'admin2@gmail.com', 'SDFJKH2349081j', 'JJone', 'ZZ'
-  ).jsonBody.token;
   quizId1 = adminQuizCreate(token1, 'Quiz 1', '1st description').jsonBody.quizId;
   questionId1 = adminCreateQuizQuestionV2(quizId1, token1, validQuestion1V2).jsonBody.questionId;
-  questionId2 = adminCreateQuizQuestionV2(quizId1, token1, validQuestion2V2).jsonBody.questionId;
-  questionId3 = adminCreateQuizQuestionV2(quizId1, token1, validQuestion3V2).jsonBody.questionId;
   sessionId1 = adminQuizSessionStart(quizId1, token1, 5).jsonBody.sessionId;
   playerId1 = playerJoin(sessionId1, 'Yooiuiudsf').jsonBody.playerId;
 });

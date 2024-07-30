@@ -1,6 +1,6 @@
 import { getData, setData } from './dataStore';
 import validator from 'validator';
-import { findUserBySessionId } from './helpers';
+import { findUserBySessionId, getHashOf } from './helpers';
 import { Data, UserRegistrationResult, PasswordUpdateResult, UserUpdateResult, Userdetails, ErrorMessage, EmptyObject } from './types';
 import { BadRequest, Unauthorised } from './error';
 import ShortUniqueId from 'short-unique-id';
@@ -50,7 +50,7 @@ export function adminAuthRegister (
     userId: id,
     tokens: [token],
     email: email,
-    password: password,
+    password: getHashOf(password),
     name: `${nameFirst} ${nameLast}`,
     numSuccessfulLogins: 1,
     numFailedPasswordsSinceLastLogin: 0,
@@ -124,13 +124,13 @@ export function adminAuthLogin (
   const validEmail = dataBase.users.find(user => user.email === email);
   const correctPassword = dataBase.users.find(user =>
     user.email === email &&
-        user.password === password);
-  if (!validEmail) { // if validEmail is undefined, the condition is true
-    return { statusCode: 400, error: 'email address does not exist' };
+    user.password === getHashOf(password));
+  if (!validEmail) {
+    throw new BadRequest('Email address does not exist.');
   } else if (!correctPassword) {
     validEmail.numFailedPasswordsSinceLastLogin += 1;
     setData(dataBase);
-    return { statusCode: 400, error: 'password is not correct for the given email' };
+    throw new BadRequest('Password is not correct for the given email.');
   }
 
   correctPassword.numFailedPasswordsSinceLastLogin = 0;
@@ -160,7 +160,8 @@ export function adminUserDetails (sessionId: string): Userdetails {
   const database = getData();
   const user = findUserBySessionId(database, sessionId);
   if (!user) {
-    return { statusCode: 401, error: 'sessionId is not a valid user.' };
+    throw new Unauthorised('SessionId is not a valid user.');
+    // return { statusCode: 401, error: 'sessionId is not a valid user.' };
   }
 
   return {
@@ -195,13 +196,14 @@ export function adminUserPasswordUpdate(
   if (!user) {
     throw new Unauthorised('sessionId is not valid.');
   }
-  if (user.password !== oldPassword) {
+  if (user.password !== getHashOf(oldPassword)) {
     throw new BadRequest('Old Password is not the correct old password');
   }
-  if (oldPassword === newPassword) {
+
+  if (getHashOf(oldPassword) === getHashOf(newPassword)) {
     throw new BadRequest('Old Password and New Password match exactly');
   }
-  if (user.passwordUsedThisYear.includes(newPassword)) {
+  if (user.passwordUsedThisYear.includes(getHashOf(newPassword))) {
     throw new BadRequest('New Password has already been used before by this user');
   }
   if (newPassword.length < 8) {
@@ -210,8 +212,8 @@ export function adminUserPasswordUpdate(
   if (!/\d/.test(newPassword) || !/[a-zA-Z]/.test(newPassword)) {
     throw new BadRequest('Password needs to contain at least one number and at least one letter');
   }
-  user.passwordUsedThisYear.push(oldPassword);
-  user.password = newPassword;
+  user.passwordUsedThisYear.push(getHashOf(oldPassword));
+  user.password = getHashOf(newPassword);
   setData(dataBase);
   return {};
 }

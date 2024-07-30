@@ -34,9 +34,7 @@ import {
   adminAuthLogout
 } from './auth';
 import { clear } from './other';
-import { getData } from './dataStore';
 import {
-  findUserBySessionId,
   tokenCheck,
   quizExistWithCorrectCreatorCheck,
   allExistInTrashCheck,
@@ -179,7 +177,6 @@ app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
   }
 });
 
-// This is the get admin userdetails method from the swagger
 app.get('/v1/admin/user/details', (req: Request, res: Response) => {
   const token = req.query.token as string;
 
@@ -191,11 +188,6 @@ app.get('/v1/admin/user/details', (req: Request, res: Response) => {
       return res.status(StatusCodes.UNAUTHORIZED).json({ error: e.message });
     }
   }
-
-  // if ('error' in result) {
-  //   return res.status(result.statusCode).json({ error: result.error });
-  // }
-  // res.status(200).json(result);
 });
 
 app.get('/v2/admin/user/details', (req: Request, res: Response) => {
@@ -243,15 +235,20 @@ app.delete('/v2/admin/quiz/:quizid', (req: Request, res: Response) => {
 
 app.post('/v1/admin/quiz', (req: Request, res: Response) => {
   const { token, name, description } = req.body;
-  const result = adminQuizCreate(token, name, description);
-  const database = getData();
-  const user = findUserBySessionId(database, token);
-  if (!user && 'error' in result) {
-    return res.status(result.statusCode).json({ error: result.error });
-  } else if ('error' in result) {
-    return res.status(result.statusCode).json({ error: result.error });
+  try {
+    tokenCheck(token);
+  } catch (error) {
+    if (error instanceof Unauthorised) {
+      return res.status(StatusCodes.UNAUTHORIZED).json({ error: error.message });
+    }
   }
-  return res.status(200).json(result);
+  try {
+    res.json(adminQuizCreate(token, name, description));
+  } catch (e) {
+    if (e instanceof BadRequest) {
+      return res.status(StatusCodes.BAD_REQUEST).json({ error: e.message });
+    }
+  }
 });
 
 app.post('/v2/admin/quiz', (req: Request, res: Response) => {
@@ -294,11 +291,13 @@ app.put('/v1/admin/user/details', (req: Request, res: Response) => {
 
 app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
   const token = req.query.token as string;
-  const result = adminQuizTrashView(token);
-  if ('error' in result) {
-    return res.status(result.statusCode).json({ error: result.error });
+  try {
+    res.json(adminQuizTrashView(token));
+  } catch (e) {
+    if (e instanceof Unauthorised) {
+      return res.status(StatusCodes.UNAUTHORIZED).json({ error: e.message });
+    }
   }
-  res.json(result);
 });
 
 app.get('/v2/admin/quiz/trash', (req: Request, res: Response) => {

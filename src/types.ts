@@ -90,7 +90,7 @@ export type UserRegistrationResult = ErrorMessage | Token;
 export type GetSessionStatus = ErrorMessage | {
     state: SessionStatus,
     atQuestion: number,
-    players: string[],
+    players: Player[],
     metadata: {
         quizId: number,
         name: string,

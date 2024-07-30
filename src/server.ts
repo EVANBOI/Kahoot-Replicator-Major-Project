@@ -649,8 +649,13 @@ app.get('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Respons
 app.get('/v1/player/:playerid/question/:questionposition', (req: Request, res: Response) => {
   const playerId = parseInt(req.query.playerid as string);
   const questionPosition = parseInt(req.query.questionposition as string);
-  const result = playerQuestionInfo(playerId, questionPosition);
-  return res.json(result);
+  try {
+    return res.json(playerQuestionInfo(playerId, questionPosition));
+  } catch (error) {
+    if (error instanceof BadRequest) {
+      return res.status(400).json({ error: error.message });
+    }
+  }
 });
 
 app.post('/v1/player/:playerid/chat', (req: Request, res: Response) => {

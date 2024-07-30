@@ -293,7 +293,7 @@ export const playerQuestionInfo = (
 export const playerSendMessage = (
   playerid: number,
   message: MessageObject) => {
-  return requestHelper('GET', `/v1/player/${playerid}/chat}`, { message });
+  return requestHelper('POST', `/v1/player/${playerid}/chat`, { message });
 };
 
 export const adminQuizSessionView = (

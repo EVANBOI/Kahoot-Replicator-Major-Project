@@ -60,7 +60,8 @@ import {
   playerQuestionResult,
   playerResults,
   playerSendMessage,
-  playerStatus
+  playerStatus,
+  SessionAction
 } from './session';
 
 // Set up web app

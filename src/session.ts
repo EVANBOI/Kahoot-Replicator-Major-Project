@@ -22,6 +22,14 @@ export enum SessionStatus {
   END
 }
 
+export enum SessionAction {
+  NEXT_QUESTION,
+  SKIP_COUNTDOWN,
+  GO_TO_ANSWER,
+  GO_TO_FINAL_RESULTS,
+  END
+}
+
 /**
  * Retrieves active and inactive session ids (sorted in ascending order) for a quiz
  * @param {string} token - unique session id of a user
@@ -79,7 +87,7 @@ export function adminQuizSessionUpdate(
   quizId: number,
   sessionId: number,
   token: string,
-  action: string): EmptyObject | Error {
+  action: SessionAction): EmptyObject | Error {
   return {};
 }
 

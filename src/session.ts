@@ -34,7 +34,7 @@ export function adminQuizSessionView (quizId: number): QuizSessionViewResult {
   const result: QuizSessionViewResult = {
     activeSessions: [],
     inactiveSessions: []
-  }
+  };
   if (quiz.sessions) {
     quiz.sessions.forEach(session => {
       if (session.state === SessionStatus.END) {

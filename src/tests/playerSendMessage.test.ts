@@ -29,29 +29,29 @@ beforeEach(() => {
 
 describe('Unsuccessful tests', () => {
   test('Player id does not exist', () => {
-    const res = playerSendMessage(playerId1 - 999, { message: { messageBody: 'message1' } });
+    const res = playerSendMessage(playerId1 - 999, { messageBody: 'message1' });
     expect(res).toStrictEqual(ERROR400);
   });
 
   test('Message body is less than 1 character', () => {
-    const res = playerSendMessage(playerId1, { message: { messageBody: '' } });
+    const res = playerSendMessage(playerId1, { messageBody: '' });
     expect(res).toStrictEqual(ERROR400);
   });
 
   test('Message body is more than 100 characters', () => {
-    const res = playerSendMessage(playerId1, { message: { messageBody: 'a'.repeat(200) } });
+    const res = playerSendMessage(playerId1, { messageBody: 'a'.repeat(200) });
     expect(res).toStrictEqual(ERROR400);
   });
 });
 
 describe('Successful tests', () => {
   test.failing('Check return type', () => {
-    const res = playerSendMessage(playerId1, { message: { messageBody: 'message 1' } });
+    const res = playerSendMessage(playerId1, { messageBody: 'message 1' });
     expect(res).toStrictEqual(SUCCESS);
   });
 
   test.failing('Check 1 message is sent succesfully', () => {
-    playerSendMessage(playerId1, { message: { messageBody: 'message 1' } });
+    playerSendMessage(playerId1, { messageBody: 'message 1' });
     expect(playerChatlog(playerId1)).toStrictEqual({
       messages: [
         {
@@ -65,8 +65,8 @@ describe('Successful tests', () => {
   });
 
   test.failing('Check multiple messages are sent succesfully', () => {
-    playerSendMessage(playerId1, { message: { messageBody: 'message 1' } });
-    playerSendMessage(playerId1, { message: { messageBody: 'message 2' } });
+    playerSendMessage(playerId1, { messageBody: 'message 1' });
+    playerSendMessage(playerId1, { messageBody: 'message 2' });
     expect(playerChatlog(playerId1)).toStrictEqual({
       messages: [
         {

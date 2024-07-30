@@ -659,9 +659,9 @@ app.get('/v1/player/:playerid/question/:questionposition', (req: Request, res: R
 
 app.post('/v1/player/:playerid/chat', (req: Request, res: Response) => {
   const playerId = parseInt(req.params.playerid);
-  const { MessageObject } = req.body;
+  const { message } = req.body;
   try {
-    return res.json(playerSendMessage(playerId, MessageObject));
+    return res.json(playerSendMessage(playerId, message));
   } catch (error) {
     if (error instanceof BadRequest) {
       return res.status(400).json({ error: error.message });

@@ -85,9 +85,7 @@ export type MessageInfo = {
 }
 
 export type MessageObject = {
-    message: {
-      messageBody: string;
-    };
+    messageBody: string;
 };
 
 export type EmptyObject = Record<string, never>;

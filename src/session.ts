@@ -210,15 +210,15 @@ export function playerSendMessage (playerId: number, message: MessageObject): Em
   .find(p => p.playerId === playerId);
   if (!player) {
     throw new BadRequest(`Player ${playerId} does not exist`);
-  } else if (message.message.messageBody.length < 1) {
+  } else if (message.messageBody.length < 1) {
     throw new BadRequest('Message is less than one character');
-  } else if (message.message.messageBody.length > 100) {
+  } else if (message.messageBody.length > 100) {
     throw new BadRequest('Message is more than one hundred characters');
   }
 
   const timeSet = Math.floor(Date.now() / 1000);
   const messageInfo = {
-    messageBody: message.message.messageBody,
+    messageBody: message.messageBody,
     playerId: playerId,
     playerName: player.name,
     timeSet: timeSet

@@ -1,6 +1,6 @@
 import { getData, setData } from './dataStore';
 import validator from 'validator';
-import { findUserBySessionId } from './helpers';
+import { findUserBySessionId, getHashOf } from './helpers';
 import { Data, UserRegistrationResult, PasswordUpdateResult, UserUpdateResult, Userdetails, ErrorMessage, EmptyObject } from './types';
 import { BadRequest, Unauthorised } from './error';
 import ShortUniqueId from 'short-unique-id';
@@ -50,7 +50,7 @@ export function adminAuthRegister (
     userId: id,
     tokens: [token],
     email: email,
-    password: password,
+    password: getHashOf(password),
     name: `${nameFirst} ${nameLast}`,
     numSuccessfulLogins: 1,
     numFailedPasswordsSinceLastLogin: 0,
@@ -124,7 +124,7 @@ export function adminAuthLogin (
   const validEmail = dataBase.users.find(user => user.email === email);
   const correctPassword = dataBase.users.find(user =>
     user.email === email &&
-    user.password === password);
+    user.password === getHashOf(password));
   if (!validEmail) {
     throw new BadRequest('Email address does not exist.');
   } else if (!correctPassword) {
@@ -196,13 +196,14 @@ export function adminUserPasswordUpdate(
   if (!user) {
     throw new Unauthorised('sessionId is not valid.');
   }
-  if (user.password !== oldPassword) {
+  if (user.password !== getHashOf(oldPassword)) {
     throw new BadRequest('Old Password is not the correct old password');
   }
-  if (oldPassword === newPassword) {
+
+  if (getHashOf(oldPassword) === getHashOf(newPassword)) {
     throw new BadRequest('Old Password and New Password match exactly');
   }
-  if (user.passwordUsedThisYear.includes(newPassword)) {
+  if (user.passwordUsedThisYear.includes(getHashOf(newPassword))) {
     throw new BadRequest('New Password has already been used before by this user');
   }
   if (newPassword.length < 8) {
@@ -211,8 +212,8 @@ export function adminUserPasswordUpdate(
   if (!/\d/.test(newPassword) || !/[a-zA-Z]/.test(newPassword)) {
     throw new BadRequest('Password needs to contain at least one number and at least one letter');
   }
-  user.passwordUsedThisYear.push(oldPassword);
-  user.password = newPassword;
+  user.passwordUsedThisYear.push(getHashOf(oldPassword));
+  user.password = getHashOf(newPassword);
   setData(dataBase);
   return {};
 }

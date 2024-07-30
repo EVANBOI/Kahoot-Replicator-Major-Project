@@ -1,6 +1,11 @@
 import { getData } from './dataStore';
 import { Forbidden, BadRequest, Unauthorised } from './error';
 import { Data, ErrorMessage, QuestionBody, User } from './types';
+import crypto from 'crypto';
+
+export function getHashOf(password: string) {
+  return crypto.createHash('sha256').update(password).digest('hex')
+}
 
 export function findUserWithId(authUserId: number) {
   return getData().users.find(user => user.userId === authUserId);

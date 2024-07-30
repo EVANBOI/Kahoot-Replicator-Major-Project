@@ -5,6 +5,7 @@ import {
   ERROR401,
   SUCCESSFUL_UPDATE
 } from '../testConstants';
+import { getHashOf } from '../helpers';
 
 beforeEach(() => {
   clear();

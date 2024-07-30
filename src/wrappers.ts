@@ -112,6 +112,14 @@ export const adminQuizCreate = (
   return requestHelper('POST', '/v1/admin/quiz', { token: token, name, description });
 };
 
+export const adminQuizCreateV2 = (
+  token: string,
+  name: string,
+  description: string
+) => {
+  return requestHelper('POST', '/v2/admin/quiz', { name, description }, token);
+};
+
 export const adminQuizList = (token: string) => {
   return requestHelper('GET', '/v1/admin/quiz/list', { token });
 };
@@ -226,8 +234,16 @@ export const adminQuizTrashView = (token: string) => {
   return requestHelper('GET', '/v1/admin/quiz/trash', { token: token });
 };
 
+export const adminQuizTrashViewV2 = (token: string) => {
+  return requestHelper('GET', '/v2/admin/quiz/trash', {}, token);
+};
+
 export const adminUserDetails = (token: string) => {
   return requestHelper('GET', '/v1/admin/user/details', { token });
+};
+
+export const adminUserDetailsV2 = (token: string) => {
+  return requestHelper('GET', '/v2/admin/user/details', {}, token);
 };
 
 export const adminQuizRemove = (token: string, quizId: number) => {
@@ -243,6 +259,17 @@ export const adminQuizQuestionUpdate = (
   return requestHelper('PUT',
     `/v1/admin/quiz/${quizid}/question/${questionid}`,
     { questionBody, token });
+};
+
+export const adminQuizQuestionUpdateV2 = (
+  quizid: number,
+  questionid: number,
+  questionBody: QuestionBody,
+  token: string
+) => {
+  return requestHelper('PUT',
+    `/v2/admin/quiz/${quizid}/question/${questionid}`,
+    { questionBody }, token);
 };
 
 export const adminQuizTrashEmpty = (token: string, quizIds: string) => {

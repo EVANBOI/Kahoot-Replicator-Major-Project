@@ -60,22 +60,14 @@ export function adminQuizCreate (
     quiz => quiz.name === name &&
     quiz.creatorId === user?.userId);
 
-  if (!user) {
-    return { statusCode: 401, error: 'Session ID is not valid' };
-  } else if (nameUsed) {
-    return { statusCode: 400, error: 'name has already been used by the user' };
+  if (nameUsed) {
+    throw new BadRequest('name has already been used by the user');
   } else if (!/^[a-zA-Z0-9 ]+$/.test(name)) {
-    return {
-      statusCode: 400,
-      error: 'name contains invalid characters. Valid characters are alphanumeric and spaces'
-    };
+    throw new BadRequest('name contains invalid characters. Valid characters are alphanumeric and spaces');
   } else if (name.length < 3 || name.length > 30) {
-    return {
-      statusCode: 400,
-      error: 'name is either less than 3 characters long or more than 30 charcters long'
-    };
+    throw new BadRequest('name is either less than 3 characters long or more than 30 charcters long');
   } else if (description.length > 100) {
-    return { statusCode: 400, error: 'description is more than 100 characters in length' };
+    throw new BadRequest('description is more than 100 characters in length');
   }
 
   const timeStamp1 = Math.floor(Date.now() / 1000);
@@ -243,10 +235,7 @@ export function adminQuizTrashView(sessionId: string): TrashViewDetails {
   const database = getData();
   const user = findUserBySessionId(database, sessionId);
   if (!user) {
-    return {
-      statusCode: 401,
-      error: 'Token does not exist or is invalid'
-    };
+    throw new Unauthorised('Token does not exist or is invalid.');
   }
   const creatorId = user.userId;
   const trashView = database.trash.filter(quiz => quiz.creatorId === creatorId);

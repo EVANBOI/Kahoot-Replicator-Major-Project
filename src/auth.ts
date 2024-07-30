@@ -124,13 +124,13 @@ export function adminAuthLogin (
   const validEmail = dataBase.users.find(user => user.email === email);
   const correctPassword = dataBase.users.find(user =>
     user.email === email &&
-        user.password === password);
-  if (!validEmail) { // if validEmail is undefined, the condition is true
-    return { statusCode: 400, error: 'email address does not exist' };
+    user.password === password);
+  if (!validEmail) {
+    throw new BadRequest('Email address does not exist.');
   } else if (!correctPassword) {
     validEmail.numFailedPasswordsSinceLastLogin += 1;
     setData(dataBase);
-    return { statusCode: 400, error: 'password is not correct for the given email' };
+    throw new BadRequest('Password is not correct for the given email.');
   }
 
   correctPassword.numFailedPasswordsSinceLastLogin = 0;
@@ -160,7 +160,8 @@ export function adminUserDetails (sessionId: string): Userdetails {
   const database = getData();
   const user = findUserBySessionId(database, sessionId);
   if (!user) {
-    return { statusCode: 401, error: 'sessionId is not a valid user.' };
+    throw new Unauthorised('SessionId is not a valid user.');
+    // return { statusCode: 401, error: 'sessionId is not a valid user.' };
   }
 
   return {

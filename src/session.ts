@@ -203,7 +203,38 @@ export function playerChatlog(playerId: number): PlayerChatlogResult | Error {
  */
 export function playerSendMessage (playerId: number, message: MessageObject): EmptyObject | Error {
   // Check if message should be an message object with messageBody or just message body
+  const database = getData();
+  const player = database.quizzes
+    .flatMap(q => q.sessions || [])
+    .flatMap(s => s.players || [])
+    .find(p => p.playerId === playerId);
+  if (!player) {
+    throw new BadRequest(`Player ${playerId} does not exist`);
+  } else if (message.messageBody.length < 1) {
+    throw new BadRequest('Message is less than one character');
+  } else if (message.messageBody.length > 100) {
+    throw new BadRequest('Message is more than one hundred characters');
+  }
 
+  const timeSet = Math.floor(Date.now() / 1000);
+  const messageInfo = {
+    messageBody: message.messageBody,
+    playerId: playerId,
+    playerName: player.name,
+    timeSet: timeSet
+  };
+
+  let currentSession: Session | undefined;
+  for (const quiz of database.quizzes) {
+    currentSession = quiz.sessions?.find(session =>
+      session.players.find(player => player.playerId === playerId)
+    );
+
+    if (currentSession) {
+      break; // Exit the loop once the player and thus the session has been found
+    }
+  }
+  currentSession.messages.push(messageInfo);
   return {};
 }
 

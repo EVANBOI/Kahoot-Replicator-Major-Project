@@ -57,7 +57,9 @@ describe('GET /v1/admin/quiz/{quizid}/sessions', () => {
 
   describe('success cases', () => {
     test.failing('Successfully view session with only 1 active session existing', () => {
-      adminQuizSessionUpdate(quizId1, sessionId1, token1, 'LOBBY');
+      // all adminQuizSessionUpdate should change the third parameter to new one,
+      // when the actuall implementation is done.
+      adminQuizSessionUpdate(quizId1, sessionId1, token1, 'GO_TO_FINAL_RESULTS');
       expect(adminQuizSessionView(token1, quizId1).jsonBody).toStrictEqual({
         activeSessions: [sessionId1],
         inactiveSessions: []
@@ -84,7 +86,7 @@ describe('GET /v1/admin/quiz/{quizid}/sessions', () => {
     });
     test.failing('Successfully view session with both active and inactive sessions existing', () => {
       sessionId2 = adminQuizSessionStart(quizId1, token1, 5).jsonBody.sessionId;
-      adminQuizSessionUpdate(quizId1, sessionId1, token1, 'LOBBY');
+      adminQuizSessionUpdate(quizId1, sessionId1, token1, 'GO_TO_FINAL_RESULTS');
       adminQuizSessionUpdate(quizId1, sessionId2, token1, 'END');
       expect(adminQuizSessionView(token1, quizId1).jsonBody).toStrictEqual({
         activeSessions: [sessionId1],
@@ -93,8 +95,8 @@ describe('GET /v1/admin/quiz/{quizid}/sessions', () => {
     });
     test.failing('Successfully view session with multiple active sessions existing', () => {
       sessionId2 = adminQuizSessionStart(quizId1, token1, 5).jsonBody.sessionId;
-      adminQuizSessionUpdate(quizId1, sessionId1, token1, 'LOBBY');
-      adminQuizSessionUpdate(quizId1, sessionId2, token1, 'LOBBY');
+      adminQuizSessionUpdate(quizId1, sessionId1, token1, 'GO_TO_FINAL_RESULTS');
+      adminQuizSessionUpdate(quizId1, sessionId2, token1, 'GO_TO_FINAL_RESULTS');
       expect(adminQuizSessionView(token1, quizId1).jsonBody).toStrictEqual({
         activeSessions: [sessionId1, sessionId2],
         inactiveSessions: []

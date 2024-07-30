@@ -4,6 +4,7 @@ import {
   adminQuizInfoV2,
   adminQuizCreate,
   adminQuizCreateV2,
+  adminQuizThumbnailUpdate,
   clear
 } from '../wrappers';
 import {
@@ -141,6 +142,9 @@ describe('/v2/admin/quiz/{quizid}', () => {
     });
 
     test.failing('correct return value', () => {
+      // should be failing because of the thumbnailUrl, the third parameter of adminQuizThumbnailUpdate
+      // will change to the new route of its function.
+      adminQuizThumbnailUpdate(VALID_QUIZ_ID, VALID_TOKEN, 'http://google.com/some/image/path.jpg');
       expect(adminQuizInfoV2(VALID_TOKEN, VALID_QUIZ_ID)).toStrictEqual({
         statusCode: 200,
         jsonBody: {
@@ -152,7 +156,7 @@ describe('/v2/admin/quiz/{quizid}', () => {
           numQuestions: 0,
           questions: [],
           duration: expect.any(Number),
-          thumbnailUrl: expect.any(String)
+          thumbnailUrl: "http://google.com/some/image/path.jpg"
         }
       });
     });

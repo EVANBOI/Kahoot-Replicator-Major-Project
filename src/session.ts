@@ -1,5 +1,6 @@
 import { getData } from './dataStore';
 import { BadRequest } from './error';
+import { findQuizWithId } from './helpers';
 import {
   EmptyObject, GetSessionStatus, MessageObject, QuizSessionViewResult,
   QuizSessionResultLinkResult, PlayerQuestionResultResult,
@@ -24,15 +25,26 @@ export enum SessionStatus {
 
 /**
  * Retrieves active and inactive session ids (sorted in ascending order) for a quiz
- * @param {string} token - unique session id of a user
  * @param {number} quizId The ID of the quiz to be found.
  * @returns {QuizSessionViewResult} active and inactive Sessions
  */
-export function adminQuizSessionView (token: string, quizId: number): QuizSessionViewResult {
-  return {
-    activeSessions: [1, 2],
-    inactiveSessions: [3, 4]
+export function adminQuizSessionView (quizId: number): QuizSessionViewResult {
+  const database = getData();
+  const quiz = findQuizWithId(database, quizId);
+  const result: QuizSessionViewResult = {
+    activeSessions: [],
+    inactiveSessions: []
   };
+  if (quiz.sessions) {
+    quiz.sessions.forEach(session => {
+      if (session.state === SessionStatus.END) {
+        result.inactiveSessions.push(session.sessionId);
+      } else {
+        result.activeSessions.push(session.sessionId);
+      }
+    });
+  }
+  return result;
 }
 
 /**

@@ -2,7 +2,7 @@ import { getData, setData } from './dataStore';
 import validator from 'validator';
 import { findUserBySessionId } from './helpers';
 import { Data, UserRegistrationResult, PasswordUpdateResult, UserUpdateResult, Userdetails, ErrorMessage, EmptyObject } from './types';
-import { Error400, Error401 } from './error';
+import { BadRequest, Unauthorised } from './error';
 import ShortUniqueId from 'short-unique-id';
 const uid = new ShortUniqueId({ dictionary: 'number' });
 /**
@@ -23,25 +23,25 @@ export function adminAuthRegister (
   const dataBase = getData();
   const person = dataBase.users.find(person => person.email === email);
   if (person) {
-    throw new Error400('Email address is used by another user.');
+    throw new BadRequest('Email address is used by another user.');
   }
   const nameRange = /^[a-zA-Z-' ]*$/;
   const passwordLetterRange = /^[a-zA-Z]/;
   const passwordNumberRange = /[0-9]/;
   if (!validator.isEmail(email)) {
-    throw new Error400('Email is not a valid email');
+    throw new BadRequest('Email is not a valid email');
   } else if (!nameRange.test(nameFirst)) {
-    throw new Error400('NameFirst contains invalid characters');
+    throw new BadRequest('NameFirst contains invalid characters');
   } else if (nameFirst.length < 2 || nameFirst.length > 20) {
-    throw new Error400('NameFirst is less than 2 characters or more than 20 characters.');
+    throw new BadRequest('NameFirst is less than 2 characters or more than 20 characters.');
   } else if (!nameRange.test(nameLast)) {
-    throw new Error400('NameFirst contains invalid characters');
+    throw new BadRequest('NameFirst contains invalid characters');
   } else if (nameLast.length < 2 || nameLast.length > 20) {
-    throw new Error400('NameLast is less than 2 characters or more than 20 characters.');
+    throw new BadRequest('NameLast is less than 2 characters or more than 20 characters.');
   } else if (password.length < 8) {
-    throw new Error400('Password is less than 8 characters.');
+    throw new BadRequest('Password is less than 8 characters.');
   } else if (!passwordLetterRange.test(password) || !passwordNumberRange.test(password)) {
-    throw new Error400('Password does not contain at least one number and at least one letter.');
+    throw new BadRequest('Password does not contain at least one number and at least one letter.');
   }
 
   const id = dataBase.users.length + 1;
@@ -83,21 +83,21 @@ export function adminUserDetailsUpdate (
   if (person) {
     const isCorrectOwner = person.tokens.find(tokens => tokens.token === token);
     if (!isCorrectOwner) {
-      throw new Error400('Email address is used by another user.');
+      throw new BadRequest('Email address is used by another user.');
     }
   }
 
   const nameRange = /^[a-zA-Z-' ]*$/;
   if (!validator.isEmail(email)) {
-    throw new Error400('Email is not valid');
+    throw new BadRequest('Email is not valid');
   } else if (!nameRange.test(nameFirst)) {
-    throw new Error400('NameFirst contains invalid characters');
+    throw new BadRequest('NameFirst contains invalid characters');
   } else if (nameFirst.length < 2 || nameFirst.length > 20) {
-    throw new Error400('NameFirst is less than 2 characters or more than 20 characters.');
+    throw new BadRequest('NameFirst is less than 2 characters or more than 20 characters.');
   } else if (!nameRange.test(nameLast)) {
-    throw new Error400('NameLast contains invalid characters');
+    throw new BadRequest('NameLast contains invalid characters');
   } else if (nameLast.length < 2 || nameLast.length > 20) {
-    throw new Error400('NameLast is less than 2 characters or more than 20 characters.');
+    throw new BadRequest('NameLast is less than 2 characters or more than 20 characters.');
   }
 
   const user = findUserBySessionId(dataBase, token);
@@ -126,11 +126,11 @@ export function adminAuthLogin (
     user.email === email &&
     user.password === password);
   if (!validEmail) {
-    throw new Error400('Email address does not exist.');
+    throw new BadRequest('Email address does not exist.');
   } else if (!correctPassword) {
     validEmail.numFailedPasswordsSinceLastLogin += 1;
     setData(dataBase);
-    throw new Error400('Password is not correct for the given email.');
+    throw new BadRequest('Password is not correct for the given email.');
   }
 
   correctPassword.numFailedPasswordsSinceLastLogin = 0;
@@ -160,7 +160,8 @@ export function adminUserDetails (sessionId: string): Userdetails {
   const database = getData();
   const user = findUserBySessionId(database, sessionId);
   if (!user) {
-    return { statusCode: 401, error: 'sessionId is not a valid user.' };
+    throw new Unauthorised('SessionId is not a valid user.');
+    // return { statusCode: 401, error: 'sessionId is not a valid user.' };
   }
 
   return {
@@ -193,22 +194,22 @@ export function adminUserPasswordUpdate(
   const user = findUserBySessionId(dataBase, sessionId);
 
   if (!user) {
-    throw new Error401('sessionId is not valid.');
+    throw new Unauthorised('sessionId is not valid.');
   }
   if (user.password !== oldPassword) {
-    throw new Error400('Old Password is not the correct old password');
+    throw new BadRequest('Old Password is not the correct old password');
   }
   if (oldPassword === newPassword) {
-    throw new Error400('Old Password and New Password match exactly');
+    throw new BadRequest('Old Password and New Password match exactly');
   }
   if (user.passwordUsedThisYear.includes(newPassword)) {
-    throw new Error400('New Password has already been used before by this user');
+    throw new BadRequest('New Password has already been used before by this user');
   }
   if (newPassword.length < 8) {
-    throw new Error400('Password should be more than 8 characters');
+    throw new BadRequest('Password should be more than 8 characters');
   }
   if (!/\d/.test(newPassword) || !/[a-zA-Z]/.test(newPassword)) {
-    throw new Error400('Password needs to contain at least one number and at least one letter');
+    throw new BadRequest('Password needs to contain at least one number and at least one letter');
   }
   user.passwordUsedThisYear.push(oldPassword);
   user.password = newPassword;

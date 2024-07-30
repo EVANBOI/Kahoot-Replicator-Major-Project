@@ -88,7 +88,7 @@ export function playerQuestionResult (playerId: number, questionposition: number
     throw new BadRequest(`Question position ${questionposition} is not valid`);
   }
   if (currentSession.state !== SessionStatus.ANSWER_SHOW) {
-    throw new BadRequest(`Session is not in ANSWER_SHOW state`);
+    throw new BadRequest('Session is not in ANSWER_SHOW state');
   }
   if (currentSession.atQuestion !== questionposition) {
     throw new BadRequest(`Session is not currently on question ${questionposition}`);

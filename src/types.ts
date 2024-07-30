@@ -30,7 +30,8 @@ export type Session = {
     atQuestion: number,
     players: Player[],
     state: SessionStatus,
-    messages: MessageInfo[]
+    messages: MessageInfo[],
+    results: SessionResults
 }
 
 export type Player = {

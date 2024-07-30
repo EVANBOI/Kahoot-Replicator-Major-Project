@@ -1,6 +1,5 @@
-import { adminUserDetails, clear } from '../wrappers';
-import { SessionIdObject, UserRegistrationResult, ErrorMessage } from '../types';
-import { adminAuthRegister, adminAuthLogin } from '../auth';
+import { adminUserDetailsV2, clear, adminAuthRegister, adminAuthLogin } from '../wrappers';
+import { ErrorMessage } from '../types';
 
 const VALID_INPUTS = {
   EMAIL: 'admin@email.com',
@@ -15,15 +14,13 @@ beforeEach(() => {
 
 describe('Successful user details retrieval tests', () => {
   test('Valid sessionId returns user details', () => {
-    const registerResponse = adminAuthRegister(
+    const sessionId = adminAuthRegister(
       VALID_INPUTS.EMAIL,
       VALID_INPUTS.PASSWORD,
       VALID_INPUTS.FIRSTNAME,
       VALID_INPUTS.LASTNAME
-    ) as UserRegistrationResult;
-
-    const sessionId: string = (registerResponse as SessionIdObject).token;
-    const userDetailsResponse = adminUserDetails(sessionId);
+    ).jsonBody.token;
+    const userDetailsResponse = adminUserDetailsV2(sessionId);
 
     expect(userDetailsResponse).toEqual({
       jsonBody: {
@@ -40,19 +37,15 @@ describe('Successful user details retrieval tests', () => {
   });
 
   test('numFailedPasswordsSinceLastLogin updates after a failed login', () => {
-    const registerResponse = adminAuthRegister(
+    const sessionId = adminAuthRegister(
       VALID_INPUTS.EMAIL,
       VALID_INPUTS.PASSWORD,
       VALID_INPUTS.FIRSTNAME,
       VALID_INPUTS.LASTNAME
-    ) as UserRegistrationResult;
+    ).jsonBody.token;
 
-    const sessionId: string = (registerResponse as SessionIdObject).token;
-
-    // Attempt a failed login with an invalid password
-    adminAuthLogin(VALID_INPUTS.EMAIL, VALID_INPUTS.PASSWORD + 'blahblahblah');
-
-    const userDetailsResponse = adminUserDetails(sessionId);
+    expect(adminAuthLogin(VALID_INPUTS.EMAIL, VALID_INPUTS.PASSWORD + 'blahblahblah').statusCode).toStrictEqual(400);
+    const userDetailsResponse = adminUserDetailsV2(sessionId);
 
     expect(userDetailsResponse).toEqual({
       jsonBody: {
@@ -72,7 +65,7 @@ describe('Successful user details retrieval tests', () => {
 describe('Unsuccessful user details retrieval tests', () => {
   test('Invalid sessionId returns an error', () => {
     const invalidSessionId: string = 'invalid-session-id';
-    const userDetailsResponse = adminUserDetails(invalidSessionId) as ErrorMessage;
+    const userDetailsResponse = adminUserDetailsV2(invalidSessionId) as ErrorMessage;
 
     expect(userDetailsResponse).toStrictEqual({
       jsonBody: {
@@ -84,7 +77,7 @@ describe('Unsuccessful user details retrieval tests', () => {
 
   test('Empty sessionId returns an error', () => {
     const emptySessionId: string = '';
-    const userDetailsResponse = adminUserDetails(emptySessionId) as ErrorMessage;
+    const userDetailsResponse = adminUserDetailsV2(emptySessionId) as ErrorMessage;
 
     expect(userDetailsResponse).toStrictEqual({
       jsonBody: {

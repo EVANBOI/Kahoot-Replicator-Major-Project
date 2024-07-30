@@ -97,6 +97,7 @@ describe('adminQuizNameUpdate success cases tests', () => {
         timeCreated: expect.any(Number),
         timeLastEdited: expect.any(Number),
         description: 'This is a description.',
+        numQuestions: expect.any(Number),
         questions: [],
         duration: expect.any(Number)
       },

@@ -10,9 +10,9 @@ import {
   adminCreateQuizQuestion,
   clear,
   adminAuthRegister,
-  adminQuizCreate,
-  adminQuizQuestionUpdate,
-  adminQuizInfo
+  adminQuizCreateV2,
+  adminQuizQuestionUpdateV2,
+  adminQuizInfo,
 } from '../wrappers';
 
 const UPDATED = {
@@ -43,7 +43,7 @@ beforeEach(() => {
     'Last');
   sessionId2 = body2?.token;
 
-  const { jsonBody: body3 } = adminQuizCreate(
+  const { jsonBody: body3 } = adminQuizCreateV2(
     sessionId1,
     'Quiz 1',
     'Description');
@@ -58,7 +58,7 @@ beforeEach(() => {
 
 describe('Unsuccessful Updates: 401 errors', () => {
   test('Token is invalid', () => {
-    expect(adminQuizQuestionUpdate(
+    expect(adminQuizQuestionUpdateV2(
       quizId1,
       questionId1,
       validQuestion1,
@@ -66,7 +66,7 @@ describe('Unsuccessful Updates: 401 errors', () => {
   });
 
   test('Token is empty', () => {
-    expect(adminQuizQuestionUpdate(
+    expect(adminQuizQuestionUpdateV2(
       quizId1,
       questionId1,
       validQuestion1,
@@ -76,7 +76,7 @@ describe('Unsuccessful Updates: 401 errors', () => {
 
 describe('Unsuccessful Updates: 403 errors', () => {
   test('User is not an owner of the quiz', () => {
-    expect(adminQuizQuestionUpdate(
+    expect(adminQuizQuestionUpdateV2(
       quizId1,
       questionId1,
       validQuestion1,
@@ -84,7 +84,7 @@ describe('Unsuccessful Updates: 403 errors', () => {
   });
 
   test('Quiz does not exist', () => {
-    expect(adminQuizQuestionUpdate(
+    expect(adminQuizQuestionUpdateV2(
       quizId1 + 1,
       questionId1,
       validQuestion1,
@@ -94,7 +94,7 @@ describe('Unsuccessful Updates: 403 errors', () => {
 
 describe('Unsuccessful Updates: 400 errors', () => {
   test('Question Id is not valid', () => {
-    expect(adminQuizQuestionUpdate(
+    expect(adminQuizQuestionUpdateV2(
       quizId1,
       questionId1 + 1,
       validQuestion1,
@@ -102,7 +102,7 @@ describe('Unsuccessful Updates: 400 errors', () => {
   });
 
   test('Question string is less than 5 characters', () => {
-    const result = adminQuizQuestionUpdate(
+    const result = adminQuizQuestionUpdateV2(
       quizId1,
       questionId1,
       {
@@ -119,7 +119,7 @@ describe('Unsuccessful Updates: 400 errors', () => {
   });
 
   test('Question is greater than 50 characters', () => {
-    const result = adminQuizQuestionUpdate(
+    const result = adminQuizQuestionUpdateV2(
       quizId1,
       questionId1,
       {
@@ -136,7 +136,7 @@ describe('Unsuccessful Updates: 400 errors', () => {
   });
 
   test('Question has more than 6 answers', () => {
-    const result = adminQuizQuestionUpdate(
+    const result = adminQuizQuestionUpdateV2(
       quizId1,
       questionId1,
       {
@@ -159,7 +159,7 @@ describe('Unsuccessful Updates: 400 errors', () => {
   });
 
   test('Question has less than 2 answers', () => {
-    const result = adminQuizQuestionUpdate(
+    const result = adminQuizQuestionUpdateV2(
       quizId1,
       questionId1,
       {
@@ -175,7 +175,7 @@ describe('Unsuccessful Updates: 400 errors', () => {
   });
 
   test('Question duration is not positive', () => {
-    const result = adminQuizQuestionUpdate(
+    const result = adminQuizQuestionUpdateV2(
       quizId1,
       questionId1,
       {
@@ -192,7 +192,7 @@ describe('Unsuccessful Updates: 400 errors', () => {
   });
 
   test('Question duration exceeds 3 minutes', () => {
-    const result = adminQuizQuestionUpdate(
+    const result = adminQuizQuestionUpdateV2(
       quizId1,
       questionId1,
       {
@@ -209,7 +209,7 @@ describe('Unsuccessful Updates: 400 errors', () => {
   });
 
   test('Points awarded for the question is less than 1', () => {
-    const result = adminQuizQuestionUpdate(
+    const result = adminQuizQuestionUpdateV2(
       quizId1,
       questionId1,
       {
@@ -226,7 +226,7 @@ describe('Unsuccessful Updates: 400 errors', () => {
   });
 
   test('Points awarded for the question is greater than 10', () => {
-    const result = adminQuizQuestionUpdate(
+    const result = adminQuizQuestionUpdateV2(
       quizId1,
       questionId1,
       {
@@ -243,7 +243,7 @@ describe('Unsuccessful Updates: 400 errors', () => {
   });
 
   test('Length of the answer is shorter than 1 character', () => {
-    const result = adminQuizQuestionUpdate(
+    const result = adminQuizQuestionUpdateV2(
       quizId1,
       questionId1,
       {
@@ -260,7 +260,7 @@ describe('Unsuccessful Updates: 400 errors', () => {
   });
 
   test('Length of the answer is greater than 30 characters', () => {
-    const result = adminQuizQuestionUpdate(
+    const result = adminQuizQuestionUpdateV2(
       quizId1,
       questionId1,
       {
@@ -277,7 +277,7 @@ describe('Unsuccessful Updates: 400 errors', () => {
   });
 
   test('The questions has duplicate answers', () => {
-    const result = adminQuizQuestionUpdate(
+    const result = adminQuizQuestionUpdateV2(
       quizId1,
       questionId1,
       {
@@ -294,7 +294,7 @@ describe('Unsuccessful Updates: 400 errors', () => {
   });
 
   test('The question has no correct answers', () => {
-    const result = adminQuizQuestionUpdate(
+    const result = adminQuizQuestionUpdateV2(
       quizId1,
       questionId1,
       {
@@ -313,7 +313,7 @@ describe('Unsuccessful Updates: 400 errors', () => {
 
 describe('Successful Updates', () => {
   test('Returns Correct Type', () => {
-    const result = adminQuizQuestionUpdate(
+    const result = adminQuizQuestionUpdateV2(
       quizId1,
       questionId1,
       validQuestion1,
@@ -322,7 +322,7 @@ describe('Successful Updates', () => {
   });
 
   test('Successfully Update a Question', () => {
-    adminQuizQuestionUpdate(quizId1, questionId1, validQuestion1, sessionId1);
+    adminQuizQuestionUpdateV2(quizId1, questionId1, validQuestion1, sessionId1);
     const result = adminQuizInfo(sessionId1, quizId1);
     expect(result.jsonBody).toStrictEqual({
       quizId: quizId1,
@@ -331,13 +331,14 @@ describe('Successful Updates', () => {
       timeCreated: expect.any(Number),
       timeLastEdited: expect.any(Number),
       description: 'Description',
+      numQuestions: expect.any(Number),
       questions: [validQuestion1]
     });
   });
 
   test('Successfully updated the timeLastEdited key', () => {
     const startTime = Math.floor(Date.now() / 1000);
-    adminQuizQuestionUpdate(quizId1, questionId1, validQuestion1, sessionId1);
+    adminQuizQuestionUpdateV2(quizId1, questionId1, validQuestion1, sessionId1);
     const result = adminQuizInfo(sessionId1, quizId1);
 
     // Checking that the timestamps are within a 1 second range.
@@ -347,12 +348,12 @@ describe('Successful Updates', () => {
   });
 
   test('Successfully update the same question multiple times', () => {
-    adminQuizQuestionUpdate(
+    adminQuizQuestionUpdateV2(
       quizId1,
       questionId1,
       validQuestion1,
       sessionId1);
-    const result = adminQuizQuestionUpdate(
+    const result = adminQuizQuestionUpdateV2(
       quizId1,
       questionId1,
       validQuestion2,
@@ -367,12 +368,13 @@ describe('Successful Updates', () => {
       timeCreated: expect.any(Number),
       timeLastEdited: expect.any(Number),
       description: 'Description',
+      numQuestions: expect.any(Number),
       questions: [validQuestion2]
     });
   });
 
   test('Successfully update two different questions', () => {
-    const result1 = adminQuizQuestionUpdate(
+    const result1 = adminQuizQuestionUpdateV2(
       quizId1,
       questionId1,
       validQuestion2,
@@ -385,7 +387,7 @@ describe('Successful Updates', () => {
       validQuestion1);
     const questionId2 = body5?.questionId;
 
-    const result2 = adminQuizQuestionUpdate(quizId1, questionId2, validQuestion3, sessionId1);
+    const result2 = adminQuizQuestionUpdateV2(quizId1, questionId2, validQuestion3, sessionId1);
     expect(result2).toStrictEqual(UPDATED);
 
     const quizInfo = adminQuizInfo(sessionId1, quizId1);
@@ -396,6 +398,7 @@ describe('Successful Updates', () => {
       timeCreated: expect.any(Number),
       timeLastEdited: expect.any(Number),
       description: 'Description',
+      numQuestions: expect.any(Number),
       questions: [validQuestion2, validQuestion3]
     });
   });

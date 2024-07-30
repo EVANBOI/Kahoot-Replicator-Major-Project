@@ -22,7 +22,7 @@ beforeEach(() => {
     'admin1@gmail.com', 'SDFJKH2349081j', 'JJone', 'ZZ'
   ).jsonBody.token;
   quizId1 = adminQuizCreate(token1, 'Quiz 1', '1st description').jsonBody.quizId;
-  adminCreateQuizQuestionV2(quizId1, token1, validQuestion1V2).jsonBody.questionId;
+  adminCreateQuizQuestionV2(quizId1, token1, validQuestion1V2);
   sessionId1 = adminQuizSessionStart(quizId1, token1, 5).jsonBody.sessionId;
   playerId1 = playerJoin(sessionId1, 'Yooiuiudsf').jsonBody.playerId;
 });

@@ -142,7 +142,7 @@ export function playerQuestionInfo (playerId: number, questionPosition: number):
   let currentQuiz: Quiz | undefined;
   let currentSession: Session | undefined;
   for (const quiz of database.quizzes) {
-    currentSession = quiz.sessions?.find(session => 
+    currentSession = quiz.sessions?.find(session =>
       session.players.find(player => player.playerId === playerId)
     );
     if (currentSession) {
@@ -151,20 +151,20 @@ export function playerQuestionInfo (playerId: number, questionPosition: number):
     }
   }
   if (!currentSession) {
-    throw new BadRequest(`Player ${playerId} does not exist`)
+    throw new BadRequest(`Player ${playerId} does not exist`);
   }
   if (currentQuiz.numQuestions < questionPosition) {
-    throw new BadRequest(`Question position ${questionPosition} is not valid`)
+    throw new BadRequest(`Question position ${questionPosition} is not valid`);
   } else if (currentSession.atQuestion !== questionPosition) {
-    throw new BadRequest(`Session is not currently on question ${questionPosition}`)
+    throw new BadRequest(`Session is not currently on question ${questionPosition}`);
   } else if (currentSession.state === SessionStatus.LOBBY ||
              currentSession.state === SessionStatus.QUESTION_COUNTDOWN ||
              currentSession.state === SessionStatus.FINAL_RESULTS ||
              currentSession.state === SessionStatus.END) {
-    throw new BadRequest(`Session is in state ${currentSession.state}`)
+    throw new BadRequest(`Session is in state ${currentSession.state}`);
   }
-  
-  const question = currentQuiz.questions[questionPosition - 1]
+
+  const question = currentQuiz.questions[questionPosition - 1];
   return {
     questionId: question.questionId,
     question: question.question,

@@ -3,6 +3,7 @@ import {
   adminQuizInfo,
   adminQuizInfoV2,
   adminQuizCreate,
+  adminQuizCreateV2,
   clear
 } from '../wrappers';
 import {
@@ -109,7 +110,7 @@ describe('/v2/admin/quiz/{quizid}', () => {
     });
 
     test('Visitor is not creator', () => {
-      const newQuiz = adminQuizCreate(VALID_TOKEN, VALID_QUIZ_CREATE_INPUTS_1.NAME, VALID_QUIZ_CREATE_INPUTS_1.DESCRIPTION);
+      const newQuiz = adminQuizCreateV2(VALID_TOKEN, VALID_QUIZ_CREATE_INPUTS_1.NAME, VALID_QUIZ_CREATE_INPUTS_1.DESCRIPTION);
       VALID_QUIZ_ID = newQuiz.jsonBody?.quizId;
       const otherUser = adminAuthRegister(
         'validAnotherEmail@gmail.com',
@@ -131,7 +132,7 @@ describe('/v2/admin/quiz/{quizid}', () => {
         VALID_USER_REGISTER_INPUTS_1.LASTNAME
       );
       VALID_TOKEN = User.jsonBody?.token;
-      const Quiz = adminQuizCreate(
+      const Quiz = adminQuizCreateV2(
         VALID_TOKEN,
         VALID_QUIZ_CREATE_INPUTS_1.NAME,
         VALID_QUIZ_CREATE_INPUTS_1.DESCRIPTION

@@ -326,7 +326,7 @@ export const playerSendMessage = (
 export const adminQuizSessionView = (
   token: string,
   quizid: number) => {
-  return requestHelper('GET', `/v1/admin/quiz/${quizid}/sessions`, { token });
+  return requestHelper('GET', `/v1/admin/quiz/${quizid}/sessions`, {}, token);
 };
 
 export const adminQuizSessionResultLink = (

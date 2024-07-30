@@ -160,6 +160,7 @@ export function adminQuizInfo (token: string, quizId: number, v2?: boolean): Qui
       timeCreated: quiz.timeCreated,
       timeLastEdited: quiz.timeLastEdited,
       description: quiz.description,
+      numQuestions: quiz.questions.length,
       questions: quiz.questions,
       duration: quiz.duration,
     };

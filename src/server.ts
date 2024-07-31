@@ -276,7 +276,7 @@ app.put('/v1/admin/user/details', (req: Request, res: Response) => {
     tokenCheck(token);
   } catch (error) {
     if (error instanceof Unauthorised) {
-      return res.status(401).json({ error: error.message });
+      return res.status(StatusCodes.UNAUTHORIZED).json({ error: error.message });
     }
   }
 
@@ -284,7 +284,7 @@ app.put('/v1/admin/user/details', (req: Request, res: Response) => {
     res.json(adminUserDetailsUpdate(token, email, nameFirst, nameLast));
   } catch (error) {
     if (error instanceof BadRequest) {
-      return res.status(400).json({ error: error.message });
+      return res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
     }
   }
 });
@@ -318,14 +318,14 @@ app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
     tokenCheck(token);
   } catch (error) {
     if (error instanceof Unauthorised) {
-      return res.status(401).json({ error: error.message });
+      return res.status(StatusCodes.UNAUTHORIZED).json({ error: error.message });
     }
   }
   try {
     res.json(adminQuizInfo(token, quizId));
   } catch (error) {
     if (error instanceof Forbidden) {
-      return res.status(403).json({ error: error.message });
+      return res.status(StatusCodes.FORBIDDEN).json({ error: error.message });
     }
   }
 });
@@ -694,14 +694,14 @@ app.put('/v1/admin/quiz/:quizid/question/:questionid/move', (req: Request, res: 
     tokenCheck(moveInfo.token);
   } catch (error) {
     if (error instanceof Unauthorised) {
-      return res.status(401).json({ error: error.message });
+      return res.status(StatusCodes.UNAUTHORIZED).json({ error: error.message });
     }
   }
   try {
     quizExistCheck(quizId, moveInfo.token);
   } catch (error) {
     if (error instanceof Forbidden) {
-      return res.status(403).json({ error: error.message });
+      return res.status(StatusCodes.FORBIDDEN).json({ error: error.message });
     }
   }
   try {
@@ -764,16 +764,35 @@ app.get('/v1/player/:playerid/question/:questionposition', (req: Request, res: R
 
 app.post('/v1/player/:playerid/chat', (req: Request, res: Response) => {
   const playerId = parseInt(req.params.playerid);
-  const { MessageObject } = req.body;
-  const result = playerSendMessage(playerId, MessageObject);
-  return res.json(result);
+  const { message } = req.body;
+  try {
+    return res.json(playerSendMessage(playerId, message));
+  } catch (error) {
+    if (error instanceof BadRequest) {
+      return res.status(400).json({ error: error.message });
+    }
+  }
 });
 
 app.get('/v1/admin/quiz/:quizid/sessions', (req: Request, res: Response) => {
   const token = req.headers.token as string;
   const quizId = parseInt(req.params.quizid);
-  const result = adminQuizSessionView(token, quizId);
-  return res.json(result);
+  try {
+    tokenCheck(token);
+  } catch (error) {
+    if (error instanceof Unauthorised) {
+      return res.status(StatusCodes.UNAUTHORIZED).json({ error: error.message });
+    }
+  }
+  try {
+    quizExistCheck(quizId, token);
+  } catch (error) {
+    if (error instanceof Forbidden) {
+      return res.status(StatusCodes.FORBIDDEN).json({ error: error.message });
+    }
+  }
+
+  return res.json(adminQuizSessionView(quizId));
 });
 
 app.get('/v1/admin/quiz/:quizid/session/:sessionid/results/csv', (req: Request, res: Response) => {
@@ -877,7 +896,7 @@ app.get('/v2/admin/quiz/:quizid', (req: Request, res: Response) => {
     }
   }
   try {
-    res.json(adminQuizInfo(token, quizId));
+    res.json(adminQuizInfo(token, quizId, true));
   } catch (error) {
     if (error instanceof Forbidden) {
       return res.status(403).json({ error: error.message });
@@ -892,21 +911,21 @@ app.delete('/v2/admin/quiz/trash/empty', (req: Request, res: Response) => {
     tokenCheck(token);
   } catch (error) {
     if (error instanceof Unauthorised) {
-      return res.status(401).json({ error: error.message });
+      return res.status(StatusCodes.UNAUTHORIZED).json({ error: error.message });
     }
   }
   try {
     quizExistWithCorrectCreatorCheck(token, quizIds);
   } catch (error) {
     if (error instanceof Forbidden) {
-      return res.status(403).json({ error: error.message });
+      return res.status(StatusCodes.FORBIDDEN).json({ error: error.message });
     }
   }
   try {
     allExistInTrashCheck(quizIds);
   } catch (error) {
     if (error instanceof BadRequest) {
-      return res.status(400).json({ error: error.message });
+      return res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
     }
   }
 
@@ -926,21 +945,21 @@ app.put('/v2/admin/quiz/:quizid/question/:questionid/move', (req: Request, res: 
     tokenCheck(token);
   } catch (error) {
     if (error instanceof Unauthorised) {
-      return res.status(401).json({ error: error.message });
+      return res.status(StatusCodes.UNAUTHORIZED).json({ error: error.message });
     }
   }
   try {
     quizExistCheck(quizId, token);
   } catch (error) {
     if (error instanceof Forbidden) {
-      return res.status(403).json({ error: error.message });
+      return res.status(StatusCodes.FORBIDDEN).json({ error: error.message });
     }
   }
   try {
     res.json(adminQuizQuestionMove(quizId, questionId, moveInfo));
   } catch (error) {
     if (error instanceof BadRequest) {
-      return res.status(400).json({ error: error.message });
+      return res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
     }
   }
 });

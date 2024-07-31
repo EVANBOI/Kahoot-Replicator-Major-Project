@@ -352,13 +352,13 @@ export const playerQuestionInfo = (
 export const playerSendMessage = (
   playerid: number,
   message: MessageObject) => {
-  return requestHelper('GET', `/v1/player/${playerid}/chat}`, { message });
+  return requestHelper('POST', `/v1/player/${playerid}/chat`, { message });
 };
 
 export const adminQuizSessionView = (
   token: string,
   quizid: number) => {
-  return requestHelper('GET', `/v1/admin/quiz/${quizid}/sessions`, { token });
+  return requestHelper('GET', `/v1/admin/quiz/${quizid}/sessions`, {}, token);
 };
 
 export const adminQuizSessionResultLink = (

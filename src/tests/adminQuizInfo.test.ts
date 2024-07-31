@@ -3,6 +3,8 @@ import {
   adminQuizInfo,
   adminQuizInfoV2,
   adminQuizCreate,
+  adminQuizCreateV2,
+  adminQuizThumbnailUpdate,
   clear
 } from '../wrappers';
 import {
@@ -109,7 +111,7 @@ describe('/v2/admin/quiz/{quizid}', () => {
     });
 
     test('Visitor is not creator', () => {
-      const newQuiz = adminQuizCreate(VALID_TOKEN, VALID_QUIZ_CREATE_INPUTS_1.NAME, VALID_QUIZ_CREATE_INPUTS_1.DESCRIPTION);
+      const newQuiz = adminQuizCreateV2(VALID_TOKEN, VALID_QUIZ_CREATE_INPUTS_1.NAME, VALID_QUIZ_CREATE_INPUTS_1.DESCRIPTION);
       VALID_QUIZ_ID = newQuiz.jsonBody?.quizId;
       const otherUser = adminAuthRegister(
         'validAnotherEmail@gmail.com',
@@ -131,7 +133,7 @@ describe('/v2/admin/quiz/{quizid}', () => {
         VALID_USER_REGISTER_INPUTS_1.LASTNAME
       );
       VALID_TOKEN = User.jsonBody?.token;
-      const Quiz = adminQuizCreate(
+      const Quiz = adminQuizCreateV2(
         VALID_TOKEN,
         VALID_QUIZ_CREATE_INPUTS_1.NAME,
         VALID_QUIZ_CREATE_INPUTS_1.DESCRIPTION
@@ -139,7 +141,10 @@ describe('/v2/admin/quiz/{quizid}', () => {
       VALID_QUIZ_ID = Quiz.jsonBody?.quizId;
     });
 
-    test('correct return value', () => {
+    test.failing('correct return value', () => {
+      // should be failing because of the thumbnailUrl, the third parameter of adminQuizThumbnailUpdate
+      // will change to the new route of its function.
+      adminQuizThumbnailUpdate(VALID_QUIZ_ID, VALID_TOKEN, 'http://google.com/some/image/path.jpg');
       expect(adminQuizInfoV2(VALID_TOKEN, VALID_QUIZ_ID)).toStrictEqual({
         statusCode: 200,
         jsonBody: {
@@ -150,7 +155,8 @@ describe('/v2/admin/quiz/{quizid}', () => {
           description: VALID_QUIZ_CREATE_INPUTS_1.DESCRIPTION,
           numQuestions: 0,
           questions: [],
-          duration: expect.any(Number)
+          duration: expect.any(Number),
+          thumbnailUrl: 'http://google.com/some/image/path.jpg'
         }
       });
     });

@@ -1,6 +1,6 @@
 import { getData, setData } from './dataStore';
 import { BadRequest, Unauthorised, Forbidden } from './error';
-import { findUserBySessionId, findQuizWithId} from './helpers';
+import { findUserBySessionId, findQuizWithId } from './helpers';
 import {
   EmptyObject, GetSessionStatus, MessageObject, QuizSessionViewResult,
   QuizSessionResultLinkResult, PlayerQuestionResultResult,

@@ -4,16 +4,15 @@ import {
   adminAuthRegister,
   adminQuizCreate,
   adminQuizThumbnailUpdate,
-  adminQuizInfo
+  adminQuizInfoV2
 } from '../wrappers';
 
 let token1: string, token2: string;
 let quizId1: number;
 
 beforeEach(() => {
-    clear();
-  });
-  
+  clear();
+});
 
 beforeEach(() => {
   token1 = adminAuthRegister(
@@ -63,7 +62,7 @@ describe('Successful cases', () => {
     expect(res.statusCode).toBe(200);
     expect(res.jsonBody).toStrictEqual({});
 
-    const quizInfo = adminQuizInfo(token1, quizId1).jsonBody;
+    const quizInfo = adminQuizInfoV2(token1, quizId1).jsonBody;
     expect(quizInfo.thumbnailUrl).toBe(validUrl);
   });
 
@@ -79,9 +78,8 @@ describe('Successful cases', () => {
       expect(res.statusCode).toBe(200);
       expect(res.jsonBody).toStrictEqual({});
 
-      const quizInfo = adminQuizInfo(token1, quizId1).jsonBody;
+      const quizInfo = adminQuizInfoV2(token1, quizId1).jsonBody;
       expect(quizInfo.thumbnailUrl).toBe(url);
     });
   });
-  
 });

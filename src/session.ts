@@ -67,14 +67,35 @@ export function adminQuizSessionResultLink (quizId: number, sessionId: number, t
  * @returns {PlayerQuestionResultResult} active and inactive Sessions
  */
 export function playerQuestionResult (playerId: number, questionposition: number): PlayerQuestionResultResult {
-  return {
-    questionId: 1,
-    playersCorrectList: [
-      'Hayden'
-    ],
-    averageAnswerTime: 44,
-    percentCorrect: 100
-  };
+  const database = getData();
+  let currentQuiz: Quiz | undefined;
+  let currentSession: Session | undefined;
+
+  for (const quiz of database.quizzes) {
+    currentSession = quiz.sessions?.find(session =>
+      session.players.find(player => player.playerId === playerId)
+    );
+    if (currentSession) {
+      currentQuiz = quiz;
+      break; // Exit the loop once the player and thus the session has been found
+    }
+  }
+
+  if (!currentSession) {
+    throw new BadRequest(`Player ${playerId} does not exist`);
+  }
+  if (questionposition > currentQuiz.numQuestions || questionposition < 1) {
+    throw new BadRequest(`Question position ${questionposition} is not valid`);
+  }
+  if (currentSession.state !== SessionStatus.ANSWER_SHOW) {
+    throw new BadRequest('Session is not in ANSWER_SHOW state');
+  }
+  if (currentSession.atQuestion !== questionposition) {
+    throw new BadRequest(`Session is not currently on question ${questionposition}`);
+  }
+
+  const questionResult = currentSession.results.questionResults[questionposition - 1];
+  return questionResult;
 }
 
 /**

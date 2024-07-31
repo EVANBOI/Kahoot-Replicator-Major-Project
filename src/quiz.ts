@@ -131,7 +131,7 @@ export function adminQuizRemove (token: string, quizId: number): QuizRemoveResul
  * @param {number} quizId - unique id of a quiz
  * @returns {QuizInfoResult} - an object containing all the information about the quiz
  */
-export function adminQuizInfo (token: string, quizId: number): QuizInfoResult {
+export function adminQuizInfo (token: string, quizId: number, v2?: boolean): QuizInfoResult {
   const database = getData();
   const user = findUserBySessionId(database, token);
   const quiz = findQuizWithId(database, quizId);
@@ -142,16 +142,30 @@ export function adminQuizInfo (token: string, quizId: number): QuizInfoResult {
     throw new Forbidden(`Quiz with ID ${quizId} is not owned by ${user.userId} (actual owner: ${quiz.creatorId})`);
   }
 
-  return {
-    quizId: quiz.quizId,
-    name: quiz.name,
-    timeCreated: quiz.timeCreated,
-    timeLastEdited: quiz.timeLastEdited,
-    description: quiz.description,
-    numQuestions: quiz.numQuestions,
-    questions: quiz.questions,
-    duration: quiz.duration
-  };
+  if (v2 === true) {
+    return {
+      quizId: quiz.quizId,
+      name: quiz.name,
+      timeCreated: quiz.timeCreated,
+      timeLastEdited: quiz.timeLastEdited,
+      description: quiz.description,
+      numQuestions: quiz.questions.length,
+      questions: quiz.questions,
+      duration: quiz.duration,
+      thumbnailUrl: quiz.thumbnailUrl
+    };
+  } else {
+    return {
+      quizId: quiz.quizId,
+      name: quiz.name,
+      timeCreated: quiz.timeCreated,
+      timeLastEdited: quiz.timeLastEdited,
+      description: quiz.description,
+      numQuestions: quiz.questions.length,
+      questions: quiz.questions,
+      duration: quiz.duration,
+    };
+  }
 }
 
 /**

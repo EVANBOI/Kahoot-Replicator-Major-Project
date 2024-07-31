@@ -146,8 +146,30 @@ export function adminQuizSessionUpdate(
   } else if (session.state === SessionStatus.QUESTION_CLOSE) {
     if (action === SessionAction.END) {
       session.state = SessionStatus.END;
+    } else if (action === SessionAction.NEXT_QUESTION) {
+      if (session.atQuestion + 1 > quiz.numQuestions) {
+        session.state = SessionStatus.END;
+      } else {
+        session.state = SessionStatus.QUESTION_COUNTDOWN;
+        session.atQuestion = session.atQuestion + 1;
+      }
     } else if (action === SessionAction.GO_TO_ANSWER) {
       session.state = SessionStatus.ANSWER_SHOW;
+    } else if (action === SessionAction.GO_TO_FINAL_RESULTS) {
+      session.state = SessionStatus.FINAL_RESULTS
+    } else {
+      throw new BadRequest(`Action enum cannot be applied in the ${session.state}`);
+    }
+  } else if (session.state === SessionStatus.ANSWER_SHOW) {
+    if (action === SessionAction.END) {
+      session.state = SessionStatus.END;
+    } else if (action === SessionAction.NEXT_QUESTION) {
+      if (session.atQuestion + 1 > quiz.numQuestions) {
+        session.state = SessionStatus.END;
+      } else {
+        session.state = SessionStatus.QUESTION_COUNTDOWN;
+        session.atQuestion = session.atQuestion + 1;
+      }      
     } else if (action === SessionAction.GO_TO_FINAL_RESULTS) {
       session.state = SessionStatus.FINAL_RESULTS
     } else {

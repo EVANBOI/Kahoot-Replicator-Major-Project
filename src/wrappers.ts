@@ -220,7 +220,7 @@ export const adminQuizNameUpdate = (
   quizId: number,
   name: string) => {
   return requestHelper('PUT', `/v1/admin/quiz/${quizId}/name`,
-    { token, quizId, name });
+    { token, name });
 };
 
 export const adminQuizNameUpdateV2 = (
@@ -293,7 +293,7 @@ export const adminQuizTransferV2 = (
   quizId: number,
   userEmail: string
 ) => {
-  return requestHelper('POST', `/v2/admin/quiz/${quizId}/transfer`, { token, userEmail });
+  return requestHelper('POST', `/v1/admin/quiz/${quizId}/transfer`, { userEmail }, token);
 };
 
 export const adminQuizQuestionDuplicate = (
@@ -365,7 +365,7 @@ export const adminQuizSessionResultLink = (
   quizid: number,
   sessionid: number,
   token: string) => {
-  return requestHelper('GET', `/v1/admin/quiz/${quizid}/session/${sessionid}/results/csv`, { token });
+  return requestHelper('GET', `/v1/admin/quiz/${quizid}/session/${sessionid}/results/csv`, {}, token);
 };
 
 export const playerQuestionResult = (
@@ -435,4 +435,9 @@ export const adminQuizSessionResults = (
   token: string
 ) => {
   return requestHelper('GET', `/v1/admin/quiz/${quizid}/session/${sessionid}/results`, {}, token);
+};
+
+export const getCsvData = (url: string) => {
+  const res = request('GET', url);
+  return res.getBody('utf8');
 };

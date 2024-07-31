@@ -1,6 +1,8 @@
 import { getData, setData } from './dataStore';
 import { BadRequest, Unauthorised, Forbidden } from './error';
-import { findUserBySessionId, findQuizWithId } from './helpers';
+import { findUserBySessionId, findQuizWithId, convertSessionResultsToCSV } from './helpers';
+import * as path from 'path';
+import * as fs from 'fs';
 import {
   EmptyObject, GetSessionStatus, MessageObject, QuizSessionViewResult,
   QuizSessionResultLinkResult, PlayerQuestionResultResult,
@@ -51,12 +53,26 @@ export function adminQuizSessionView (quizId: number): QuizSessionViewResult {
  * Get the a link to the final results (in CSV format) for all players for a completed quiz session
  * @param {number} quizId The ID of the quiz to be found.
  * @param {number} sessionId The ID of the session to be found.
- * @param {string} token - unique session id of a user
+ * @param {string} host - The host of the server
  * @returns {QuizSessionResultResult} active and inactive Sessions
  */
-export function adminQuizSessionResultLink (quizId: number, sessionId: number, token: string): QuizSessionResultLinkResult {
+export function adminQuizSessionResultLink (quizId: number, sessionId: number, host: string): QuizSessionResultLinkResult {
+  const database = getData();
+  const quiz = findQuizWithId(database, quizId);
+  const session = quiz.sessions?.find(s => s.sessionId === sessionId);
+  if (!session) {
+    throw new BadRequest(`Session id ${sessionId} does not refer to valid session within quiz`);
+  }
+  if (session.state !== SessionStatus.FINAL_RESULTS) {
+    throw new BadRequest('Session is not in FINAL_RESULTS state');
+  }
+
+  const csvString = convertSessionResultsToCSV(session.results);
+  const filePath = path.join(__dirname, 'public', `${sessionId}results.csv`);
+  fs.writeFileSync(filePath, csvString);
+
   return {
-    url: 'http://google.com/some/image/path.csv'
+    url: `http://${host}/public/${sessionId}results.csv`
   };
 }
 

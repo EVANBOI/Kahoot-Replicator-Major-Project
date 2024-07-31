@@ -232,10 +232,7 @@ export type PositionObj = {
     newPosition: number
 }
 
-export type QuizRestoreResult = {
-    statusCode: number,
-    message: string
-  };
+export type QuizRestoreResult = ErrorMessage | EmptyObject
 
 export type QuizQuestionDeleteResult = {
     statusCode: number,
@@ -257,5 +254,15 @@ export type SessionResults = {
       playersCorrectList: string[];
       averageAnswerTime: number;
       percentCorrect: number;
+    }[];
+    questionResultsByPlayer?: {
+        playerName: string;
+        playerId: number;
+        questionResults: {
+            questionId: number;
+            score: number;
+            rank: number;
+            timeToAnswer: number;
+        }[];
     }[];
   };

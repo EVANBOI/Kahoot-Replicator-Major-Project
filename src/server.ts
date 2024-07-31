@@ -964,6 +964,28 @@ app.put('/v2/admin/quiz/:quizid/question/:questionid/move', (req: Request, res: 
   }
 });
 
+app.put('/v1/admin/quiz/:quizid/thumbnail', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  const { imgUrl } = req.body;
+  const quizId = parseInt(req.params.quizid);
+
+  try {
+    tokenCheck(token);
+  } catch (error) {
+    return res.status(401).json({ error: error.message });
+  }
+  try {
+    quizIdCheck(token, quizId);
+  } catch (error) {
+    return res.status(403).json({ error: error.message });
+  }
+  try {
+    res.json(adminQuizThumbnailUpdate(quizId, token, imgUrl));
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+});
+
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================

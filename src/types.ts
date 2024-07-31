@@ -252,4 +252,14 @@ export type SessionResults = {
       averageAnswerTime: number;
       percentCorrect: number;
     }[];
+    questionResultsByPlayer?: {
+        playerName: string;
+        playerId: number;
+        questionResults: {
+            questionId: number;
+            score: number;
+            rank: number;
+            timeToAnswer: number;
+        }[];
+    }[];
   };

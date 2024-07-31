@@ -341,7 +341,7 @@ export const adminQuizSessionResultLink = (
   quizid: number,
   sessionid: number,
   token: string) => {
-  return requestHelper('GET', `/v1/admin/quiz/${quizid}/session/${sessionid}/results/csv`, { token });
+  return requestHelper('GET', `/v1/admin/quiz/${quizid}/session/${sessionid}/results/csv`, {}, token);
 };
 
 export const playerQuestionResult = (
@@ -411,4 +411,9 @@ export const adminQuizSessionResults = (
   token: string
 ) => {
   return requestHelper('GET', `/v1/admin/quiz/${quizid}/session/${sessionid}/results`, {}, token);
+};
+
+export const getCsvData = (url: string) => {
+  const res = request('GET', url);
+  return res.getBody('utf8');
 };

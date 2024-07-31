@@ -5,7 +5,8 @@ import {
   findUserBySessionId,
   findQuestionInQuizId,
   findQuestionIndex,
-  validQuestion
+  validQuestion,
+  getRandomColour
 } from './helpers';
 import {
   CreateQuestionReturn,
@@ -18,10 +19,19 @@ import {
 } from './types';
 
 import ShortUniqueId from 'short-unique-id';
-import { randomColor } from 'seed-to-color';
 import { Unauthorised, BadRequest, Forbidden } from './error';
 const answerUid = new ShortUniqueId({ dictionary: 'number' });
 const questionUid = new ShortUniqueId({ dictionary: 'number' });
+
+export enum Colours {
+  red = 'red',
+  blue = 'blue',
+  green = 'green',
+  yellow = 'yellow',
+  purple = 'purple',
+  brown = 'brown',
+  orange = 'orange'
+}
 
 /**
  * Create questions for quizzes given the contents of the question and
@@ -29,7 +39,7 @@ const questionUid = new ShortUniqueId({ dictionary: 'number' });
  * Each answer is assigned a random colour code.
  *
  * @param {number} quizId - unique id of a quiz
- * @param {string} sessionId - unique session id of a quiz
+ * @param {string} token - unique session id of a quiz
  * @param {QuestionBody} questionBody - contains information of a question
  * @returns {{questionId: number}} - id of a question that is unique only inside a quiz
  * @returns {ErrorMessage} an error
@@ -69,7 +79,7 @@ export function adminCreateQuizQuestion(
   questionBody.questionId = questionId;
   for (const ans of questionBody.answers) {
     ans.answerId = parseInt(answerUid.seq());
-    ans.colour = randomColor(ans.answerId);
+    ans.colour = getRandomColour();
   }
   quiz.questions.push(questionBody);
   quiz.timeLastEdited = Math.floor(Date.now() / 1000);
@@ -172,7 +182,7 @@ export function adminQuizQuestionUpdate(
   question.answers = questionBody.answers.map(ans => ({ ...ans }));
   for (const ans of question.answers) {
     ans.answerId = parseInt(answerUid.seq());
-    ans.colour = randomColor(ans.answerId);
+    ans.colour = getRandomColour();
   }
   quiz.timeLastEdited = Math.floor(Date.now() / 1000);
   quiz.duration = totalDuration;

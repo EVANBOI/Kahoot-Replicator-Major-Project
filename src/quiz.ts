@@ -5,6 +5,7 @@ import {
   findQuizWithId,
   findUserBySessionId,
 } from './helpers';
+import { SessionStatus } from './session';
 import {
   EmptyObject,
   ErrorMessage,
@@ -269,7 +270,7 @@ export function adminQuizTrashEmpty(quizIds: string): QuizTrashEmptyResult {
  * @param {string} newOwnerEmail - The email of the new owner.
  * @returns {ErrorMessage | EmptyObject} - The result of the transfer operation.
  */
-export function adminQuizTransfer(sessionId: string, quizId: number, newOwnerEmail: string): EmptyObject {
+export function adminQuizTransfer(sessionId: string, quizId: number, newOwnerEmail: string, v2?: boolean): EmptyObject {
   const database = getData();
   const currentUser = findUserBySessionId(database, sessionId);
 
@@ -298,8 +299,11 @@ export function adminQuizTransfer(sessionId: string, quizId: number, newOwnerEma
   if (nameUsed) {
     throw new BadRequest('Quiz ID refers to a quiz that has a name that is already used by the target user.');
   }
-  if (quiz.sessions.find(s => s.state === staus)) {
-    throw new BadRequest('One or more session has not ended')
+
+  if (v2 === true) {
+    if (quiz.sessions.find(s => s.state === SessionStatus.END)) {
+      throw new BadRequest('At least one session has not ended');
+    }
   }
 
   quiz.creatorId = newOwner.userId;

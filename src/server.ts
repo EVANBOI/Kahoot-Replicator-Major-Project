@@ -572,6 +572,28 @@ app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
   }
 });
 
+app.post('/v2/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  const { userEmail } = req.body;
+  const quizId = parseInt(req.params.quizid);
+  try {
+    tokenCheck(token);
+  } catch (error) {
+    return res.status(401).json({ error: error.message });
+  }
+  try {
+    quizIdCheck(token, quizId);
+  } catch (error) {
+    return res.status(403).json({ error: error.message });
+  }
+  try {
+    const result = adminQuizTransfer(token, quizId, userEmail, true);
+    return res.json(result);
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+});
+
 app.post('/v1/admin/quiz/:quizid/question/:questionid/duplicate', (req: Request, res: Response) => {
   const { token } = req.body;
   const quizId = parseInt(req.params.quizid);

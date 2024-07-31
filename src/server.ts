@@ -219,9 +219,9 @@ app.post('/v1/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
   const result = adminQuizRestore(token, quizId);
 
   if (result.statusCode !== 200) {
-    res.status(result.statusCode).json({ error: result.message });
+    return res.status(result.statusCode).json({ error: result.message });
   } else {
-    res.status(200).json({});
+    return res.status(200).json({});
   }
   res.json(result);
 });

@@ -573,23 +573,24 @@ export function adminQuizRestore(token: string, quizId: number): QuizRestoreResu
   }
 
   const quizIndex = database.trash.findIndex(quiz => quiz.quizId === quizId);
-
-  const quiz = database.trash[quizIndex];
-  if (quizIndex === -1) {
-    return { statusCode: 400, message: `Quiz ID '${quizId}' does not refer to a quiz in the trash.` };
-  }
-  if (quiz.creatorId !== user.userId) {
+  const quizExists = database.quizzes.find(q => q.quizId === quizId);
+  const quizTrash = database.trash[quizIndex];
+  if (!quizExists && quizIndex === -1) {
+    return { statusCode: 403, message: `Quiz ID '${quizId}' does not exist` };
+  } else if (quizTrash && quizTrash.creatorId !== user.userId) {
     return { statusCode: 403, message: `User is not the owner of quiz with ID '${quizId}'.` };
   }
 
   // Check if quiz name is already used by another active quiz
-  if (database.quizzes.some(activeQuiz => activeQuiz.name === quiz.name)) {
-    return { statusCode: 400, message: `Quiz name '${quiz.name}' is already used by another active quiz.` };
+  if (quizExists) {
+    return { statusCode: 400, message: `Quiz ${quizExists.quizId} is not in trash` };
+  } else if (database.quizzes.some(activeQuiz => activeQuiz.name === quizTrash.name)) {
+    return { statusCode: 400, message: `Quiz name '${quizTrash.name}' is already used by another active quiz.` };
   }
 
   // Restore the quiz
-  quiz.timeLastEdited = Date.now();
-  database.quizzes.push(quiz);
+  quizTrash.timeLastEdited = Date.now();
+  database.quizzes.push(quizTrash);
   database.trash.splice(quizIndex, 1);
 
   setData(database);

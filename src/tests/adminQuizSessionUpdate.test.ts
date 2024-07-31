@@ -3,6 +3,7 @@ import { adminQuizSessionStatus, adminAuthRegister, adminCreateQuizQuestionV2, a
 import { ERROR400, ERROR401, ERROR403, validQuestion1V2 } from "../testConstants";
 import { SessionAction, SessionStatus } from "../session";
 import { turnQuestionClose } from "../session";
+import sleepSync from 'slync';
 
 let timerId: ReturnType<typeof setTimeout>;
 
@@ -166,6 +167,7 @@ describe('Unsuccessful Updates: 400 errors', () => {
 		timerId = setTimeout(() => {
 			turnQuestionClose(sessionId1, quizId1)
 		}, 3 * 1000);
+		sleepSync(3*1000);
 		const res = adminQuizSessionStatus(quizId1, sessionId1, token1).jsonBody.state;
 		expect(res).toStrictEqual(SessionStatus.QUESTION_CLOSE);
 		expect(adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN)).toStrictEqual(ERROR400);			

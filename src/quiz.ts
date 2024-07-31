@@ -365,6 +365,8 @@ export function adminQuizTransfer(sessionId: string, quizId: number, newOwnerEma
 
   if (!quiz) {
     return { statusCode: 403, error: `Quiz with ID '${quizId}' not found` };
+  } else if (quiz.creatorId !== currentUser.userId) {
+    return { statusCode: 403, error: `User does not own quiz ${quizId}`};
   }
 
   const newOwner = database.users.find(user => user.email === newOwnerEmail);

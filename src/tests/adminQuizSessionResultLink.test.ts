@@ -14,7 +14,8 @@ import {
     adminQuizSessionStatus,
     adminQuizInfo,
     playerQuestionAnswer,
-    adminQuizSessionResultLink
+    adminQuizSessionResultLink,
+    getCsvData
   } from '../wrappers';
   
   
@@ -83,5 +84,11 @@ import {
             expect(result).toMatch(/https:/);
             expect(result).toMatch(/.csv/);
         });
+        test('The final result is transfered to CSV sucessfully', () => {
+            adminQuizSessionUpdate(quizId1, sessionId1, token1, 'GO_TO_FINAL_RESULTS');
+            const url = adminQuizSessionResultLink(quizId1, sessionId1, token1).jsonBody.url;
+            const csvData = getCsvData(url);
+            expect(csvData).toStrictEqual('Player,question1score,question1rank\nHayden,0,1\n');
     });
-  })
+  });
+});

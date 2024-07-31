@@ -404,3 +404,8 @@ export const adminQuizSessionResults = (
 ) => {
   return requestHelper('GET', `/v1/admin/quiz/${quizid}/session/${sessionid}/results`, {}, token);
 };
+
+export const getCsvData = (url: string) => {
+  const res = request('GET', url);
+  return res.getBody('utf8');
+}

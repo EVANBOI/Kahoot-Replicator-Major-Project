@@ -103,14 +103,13 @@ export function adminQuizRemove (token: string, quizId: number): QuizRemoveResul
   const user = findUserBySessionId(database, token);
 
   if (!user) {
-    return { statusCode: 401, message: 'AuthUserId is not a valid user.' };
+    throw new Unauthorised('AuthUserId is not a valid user.');
   }
   const quiz = findQuizWithId(database, quizId);
   if (!quiz) {
-    return { statusCode: 403, message: `Quiz with ID '${quizId}' not found` };
-  }
-  if (quiz.creatorId !== user.userId) {
-    return { statusCode: 403, message: `Quiz with ID ${quizId} is not owned by ${user.userId} (actual owner: ${quiz.creatorId})` };
+    throw new Forbidden(`Quiz with ID '${quizId}' not found`);
+  } else if (quiz.creatorId !== user.userId) {
+    throw new Forbidden(`Quiz with ID ${quizId} is not owned by ${user.userId} (actual owner: ${quiz.creatorId})`);
   }
 
   const quizIndex = database.quizzes.findIndex(quiz => quiz.quizId === quizId);
@@ -118,10 +117,7 @@ export function adminQuizRemove (token: string, quizId: number): QuizRemoveResul
   database.quizzes.splice(quizIndex, 1);
 
   setData(database);
-  return {
-    statusCode: 200,
-    message: '{}'
-  };
+  return {};
 }
 
 /**
@@ -180,27 +176,27 @@ export function adminQuizNameUpdate(sessionId: string, quizId: number, name: str
   const database = getData();
   const user = findUserBySessionId(database, sessionId);
   if (!user) {
-    return { statusCode: 401, error: 'sessionId is not valid.' };
+    throw new Unauthorised('sessionId is not valid.');
   }
   const authUserId = user.userId;
   const quiz = findQuizWithId(database, quizId);
 
   const namePattern = /^[a-zA-Z0-9 ]+$/;
   if (!quiz) {
-    return { statusCode: 403, error: 'Quiz ID does not refer to a valid quiz.' };
+    throw new Forbidden('Quiz ID does not refer to a valid quiz.')
   }
   if (quiz.creatorId !== authUserId) {
-    return { statusCode: 403, error: 'Quiz ID does not refer to a quiz that this user owns.' };
+    throw new Forbidden('Quiz ID does not refer to a quiz that this user owns.')
   }
   if (!namePattern.test(name)) {
-    return { statusCode: 400, error: 'Name contains invalid characters. Valid characters are alphanumeric and spaces.' };
+    throw new BadRequest('Name contains invalid characters. Valid characters are alphanumeric and spaces.');
   }
   if (name.length < 3 || name.length > 30) {
-    return { statusCode: 400, error: 'Name is either less than 3 characters long or more than 30 characters long.' };
+    throw new BadRequest('Name is either less than 3 characters long or more than 30 characters long.');
   }
   const nameUsed = database.quizzes.find(q => q.creatorId === authUserId && q.name === name);
   if (nameUsed) {
-    return { statusCode: 400, error: 'Name is already used by the current logged in user for another quiz.' };
+    throw new BadRequest('Name is already used by the current logged in user for another quiz.');
   }
 
   quiz.name = name;

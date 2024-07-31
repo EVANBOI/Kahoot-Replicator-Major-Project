@@ -1,6 +1,6 @@
 import { getData } from './dataStore';
 import { Forbidden, BadRequest, Unauthorised } from './error';
-import { Data, ErrorMessage, QuestionBody, User } from './types';
+import { Data, ErrorMessage, QuestionBody, User, Quiz } from './types';
 import crypto from 'crypto';
 
 export function getHashOf(password: string) {
@@ -154,3 +154,4 @@ export function quizExistCheck(quizId: number, token: string) {
     throw new Forbidden('You are not the creator of the quiz');
   }
 }
+

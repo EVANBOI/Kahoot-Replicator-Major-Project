@@ -1,5 +1,6 @@
-import { getData } from './dataStore';
+import { dataStore, getData, setData } from './dataStore';
 import { BadRequest } from './error';
+import { findQuizWithId } from './helpers';
 import {
   EmptyObject, GetSessionStatus, MessageObject, QuizSessionViewResult,
   QuizSessionResultLinkResult, PlayerQuestionResultResult,
@@ -11,6 +12,8 @@ import {
   Quiz,
   Session
 } from './types';
+
+  const DELAY = 3;
 
 export enum SessionStatus {
   LOBBY,
@@ -86,10 +89,102 @@ export function playerQuestionResult (playerId: number, questionposition: number
 export function adminQuizSessionUpdate(
   quizId: number,
   sessionId: number,
-  token: string,
   action: SessionAction): EmptyObject | Error {
+  
+  const database = getData();
+  const quiz = findQuizWithId(database, quizId);
+  const session = quiz.sessions.find(s => s.sessionId === sessionId);
+  const questionIndex = session.atQuestion;
+  const question = quiz.questions[questionIndex - 1];
+
+  if (!session) {
+    throw new BadRequest('Session Id does not refer to a valid session within this quiz');
+  } else if (
+    action !== SessionAction.NEXT_QUESTION && 
+    action !== SessionAction.SKIP_COUNTDOWN && 
+    action !== SessionAction.GO_TO_ANSWER &&
+    action !== SessionAction.GO_TO_FINAL_RESULTS &&
+    action !== SessionAction.END
+  ) {
+    throw new BadRequest('Action provided is not a valid enum action');
+  }
+  
+  if (session.state === SessionStatus.LOBBY) {
+    if (action === SessionAction.NEXT_QUESTION) {
+      session.state = SessionStatus.QUESTION_COUNTDOWN;
+      database.sessionIdToTimerObject[sessionId] = setTimeout(() => {
+        turnQuestionOpen(sessionId, quizId);
+      },  DELAY * 1000);      
+    } else { 
+      throw new BadRequest(`Action enum cannot be applied in the ${session.state}`);
+    }
+  } else if (session.state === SessionStatus.QUESTION_COUNTDOWN) {
+    if (action === SessionAction.END) {
+      session.state = SessionStatus.END;
+    } else if (action === SessionAction.SKIP_COUNTDOWN) {
+      clearTimeout(database.sessionIdToTimerObject[sessionId]);
+      delete database.sessionIdToTimerObject[sessionId];      
+      session.state = SessionStatus.QUESTION_OPEN;
+      database.sessionIdToTimerObject[sessionId] = setTimeout(() => {
+        turnQuestionClose(sessionId, quizId);
+      },  question.duration * 1000);
+    } else {
+      throw new BadRequest(`Action enum cannot be applied in the ${session.state}`);
+    }
+  } else if (session.state === SessionStatus.QUESTION_OPEN) {
+    if (action === SessionAction.END) {
+      clearTimeout(database.sessionIdToTimerObject[sessionId]);
+      delete database.sessionIdToTimerObject[sessionId];
+      session.state = SessionStatus.END;
+    } else if (action === SessionAction.GO_TO_ANSWER) {
+      clearTimeout(database.sessionIdToTimerObject[sessionId]);
+      delete database.sessionIdToTimerObject[sessionId];
+      session.state = SessionStatus.ANSWER_SHOW
+    } else {
+      throw new BadRequest(`Action enum cannot be applied in the ${session.state}`);
+    }
+  } else if (session.state === SessionStatus.QUESTION_CLOSE) {
+    if (action === SessionAction.END) {
+      session.state = SessionStatus.END;
+    } else if (action === SessionAction.GO_TO_ANSWER) {
+      session.state = SessionStatus.ANSWER_SHOW;
+    } else if (action === SessionAction.GO_TO_FINAL_RESULTS) {
+      session.state = SessionStatus.FINAL_RESULTS
+    } else {
+      throw new BadRequest(`Action enum cannot be applied in the ${session.state}`);
+    }
+  } else if (session.state === SessionStatus.FINAL_RESULTS) {
+    if (action === SessionAction.END) {
+      session.state = SessionStatus.END;
+    } else {
+      throw new BadRequest(`Action enum cannot be applied in the ${session.state}`);
+    }    
+  } else if (session.state === SessionStatus.END) {
+    throw new BadRequest(`Action enum cannot be applied in the ${session.state}`);
+  }
+  setData(database);
   return {};
 }
+
+export const turnQuestionClose = (sessionId: number, quizId:  number) => {
+  const database = getData();
+  const quiz = findQuizWithId(database, quizId);
+  const session = quiz.sessions.find(s => s.sessionId === sessionId);
+  if (session) {
+    session.state = SessionStatus.QUESTION_CLOSE;
+    setData(database);
+  }
+};
+
+export const turnQuestionOpen = (sessionId: number, quizId:  number) => {
+  const database = getData();
+  const quiz = findQuizWithId(database, quizId);
+  const session = quiz.sessions.find(s => s.sessionId === sessionId);
+  if (session) {
+    session.state = SessionStatus.QUESTION_OPEN;
+    setData(database);
+  }
+};
 
 /**
  * Gives the status of a particular quiz session

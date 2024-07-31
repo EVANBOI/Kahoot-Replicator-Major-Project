@@ -4,7 +4,8 @@ import fs from 'fs';
 export const dataStore: Data = {
   users: [],
   quizzes: [],
-  trash: []
+  trash: [],
+  sessionIdToTimerObject: {}
 };
 
 // YOU SHOULD MODIFY THIS OBJECT ABOVE ONLY

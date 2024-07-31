@@ -408,4 +408,4 @@ export const adminQuizSessionResults = (
 export const getCsvData = (url: string) => {
   const res = request('GET', url);
   return res.getBody('utf8');
-}
+};

@@ -159,26 +159,26 @@ export function quizExistCheck(quizId: number, token: string) {
 
 export function convertSessionResultsToCSV(sessionResults: SessionResults): string {
   if (!sessionResults.questionResultsByPlayer) {
-      throw new Error("questionResultsByPlayer is required");
+    throw new Error('questionResultsByPlayer is required');
   }
 
-  let csvContent = "Player";
+  let csvContent = 'Player';
 
   // Add question headers
   sessionResults.questionResults.forEach((question, index) => {
-      csvContent += `,question${index + 1}score,question${index + 1}rank`;
+    csvContent += `,question${index + 1}score,question${index + 1}rank`;
   });
-  csvContent += "\n";
+  csvContent += '\n';
 
   // Add player scores and ranks to CSV content
   sessionResults.questionResultsByPlayer.forEach(playerResult => {
-      csvContent += playerResult.playerName;
+    csvContent += playerResult.playerName;
 
-      playerResult.questionResults.forEach(question => {
-          csvContent += `,${question.score},${question.rank}`;
-      });
+    playerResult.questionResults.forEach(question => {
+      csvContent += `,${question.score},${question.rank}`;
+    });
 
-      csvContent += "\n";
+    csvContent += '\n';
   });
 
   return csvContent;

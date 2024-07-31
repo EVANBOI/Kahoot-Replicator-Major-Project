@@ -68,9 +68,9 @@ export function adminQuizSessionResultLink (quizId: number, sessionId: number, h
   }
 
   const csvString = convertSessionResultsToCSV(session.results);
-  let filePath = path.join(__dirname, 'public', `${sessionId}results.csv`);
+  const filePath = path.join(__dirname, 'public', `${sessionId}results.csv`);
   fs.writeFileSync(filePath, csvString);
-  
+
   return {
     url: `http://${host}/public/${sessionId}results.csv`
   };

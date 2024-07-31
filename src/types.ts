@@ -269,4 +269,3 @@ export type SessionResults = {
         }[];
     }[];
   };
-

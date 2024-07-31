@@ -40,7 +40,6 @@ import {
   allExistInTrashCheck,
   quizExistCheck,
   quizIdCheck,
-  convertSessionResultsToCSV
 } from './helpers';
 import { adminQuizNameUpdate } from './quiz';
 import { Unauthorised, BadRequest, Forbidden } from './error';
@@ -701,7 +700,7 @@ app.get('/v1/admin/quiz/:quizid/session/:sessionid/results/csv', (req: Request, 
     if (error instanceof Unauthorised) {
       return res.status(StatusCodes.UNAUTHORIZED).json({ error: error.message });
     }
-  } 
+  }
   try {
     quizIdCheck(token, quizId);
   } catch (error) {

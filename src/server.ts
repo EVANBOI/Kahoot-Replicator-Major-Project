@@ -440,12 +440,17 @@ app.put('/v2/admin/quiz/:quizid/question/:questionid', (req: Request, res: Respo
 app.post('/v1/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
   const token = req.body.token as string;
   const quizId = parseInt(req.params.quizid);
-  const result = adminQuizRestore(token, quizId);
-
-  if (result.statusCode !== 200) {
-    return res.status(result.statusCode).json({ error: result.message });
-  } else {
-    return res.status(200).json({});
+  
+  try {
+    res.json(adminQuizRestore(token, quizId));
+  } catch (e) {
+    if (e instanceof Unauthorised) {
+      return res.status(StatusCodes.UNAUTHORIZED).json({ error: e.message });
+    } else if (e instanceof Forbidden) {
+      return res.status(StatusCodes.FORBIDDEN).json({ error: e.message });
+    } else if (e instanceof BadRequest) {
+      return res.status(StatusCodes.BAD_REQUEST).json({ error: e.message });
+    }
   }
 });
 

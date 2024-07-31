@@ -323,7 +323,7 @@ export function adminQuizRestore(token: string, quizId: number): QuizRestoreResu
   const user = findUserBySessionId(database, token);
 
   if (!user) {
-    return { statusCode: 401, message: 'Token is empty or invalid.' };
+    throw new Unauthorised('Token is empty or invalid.');
   }
   const quizIndex = database.trash.findIndex(quiz => quiz.quizId === quizId);
   const quizExists = database.quizzes.find(q => q.quizId === quizId);
@@ -347,5 +347,5 @@ export function adminQuizRestore(token: string, quizId: number): QuizRestoreResu
   database.trash.splice(quizIndex, 1);
 
   setData(database);
-  return { statusCode: 200, message: '{}' };
+  return {};
 }

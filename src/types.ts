@@ -232,10 +232,7 @@ export type PositionObj = {
     newPosition: number
 }
 
-export type QuizRestoreResult = {
-    statusCode: number,
-    message: string
-  };
+export type QuizRestoreResult = ErrorMessage | EmptyObject
 
 export type QuizQuestionDeleteResult = {
     statusCode: number,

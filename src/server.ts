@@ -346,7 +346,8 @@ app.put('/v1/admin/user/password', (req: Request, res: Response) => {
 });
 
 app.put('/v1/admin/quiz/:quizid/name', (req: Request, res: Response) => {
-  const { token, quizId, name } = req.body;
+  const quizId = parseInt(req.params.quizid);
+  const { token, name } = req.body;
   const result = adminQuizNameUpdate(token, quizId, name);
   if ('error' in result) {
     return res.status(result.statusCode).json({ error: result.error });
@@ -438,13 +439,18 @@ app.put('/v2/admin/quiz/:quizid/question/:questionid', (req: Request, res: Respo
 
 app.post('/v1/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
   const token = req.body.token as string;
-  const id = parseInt(req.params.quizid);
-  const result = adminQuizRestore(token, id);
+  const quizId = parseInt(req.params.quizid);
 
-  if (result.statusCode !== 200) {
-    res.status(result.statusCode).json({ error: result.message });
-  } else {
-    res.status(200).json({});
+  try {
+    res.json(adminQuizRestore(token, quizId));
+  } catch (e) {
+    if (e instanceof Unauthorised) {
+      return res.status(StatusCodes.UNAUTHORIZED).json({ error: e.message });
+    } else if (e instanceof Forbidden) {
+      return res.status(StatusCodes.FORBIDDEN).json({ error: e.message });
+    } else if (e instanceof BadRequest) {
+      return res.status(StatusCodes.BAD_REQUEST).json({ error: e.message });
+    }
   }
 });
 
@@ -476,6 +482,7 @@ app.delete('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Re
   } else {
     res.status(200).json({});
   }
+  res.json(result);
 });
 
 app.delete('/v2/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
@@ -564,6 +571,28 @@ app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
   }
   try {
     const result = adminQuizTransfer(token, quizId, userEmail);
+    return res.json(result);
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+});
+
+app.post('/v2/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  const { userEmail } = req.body;
+  const quizId = parseInt(req.params.quizid);
+  try {
+    tokenCheck(token);
+  } catch (error) {
+    return res.status(401).json({ error: error.message });
+  }
+  try {
+    quizIdCheck(token, quizId);
+  } catch (error) {
+    return res.status(403).json({ error: error.message });
+  }
+  try {
+    const result = adminQuizTransfer(token, quizId, userEmail, true);
     return res.json(result);
   } catch (error) {
     return res.status(400).json({ error: error.message });

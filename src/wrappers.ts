@@ -212,7 +212,7 @@ export const adminQuizNameUpdate = (
   quizId: number,
   name: string) => {
   return requestHelper('PUT', `/v1/admin/quiz/${quizId}/name`,
-    { token, quizId, name });
+    { token, name });
 };
 
 export const adminQuizTrashView = (token: string) => {
@@ -271,6 +271,14 @@ export const adminQuizTransfer = (
   userEmail: string
 ) => {
   return requestHelper('POST', `/v1/admin/quiz/${quizId}/transfer`, { token, userEmail });
+};
+
+export const adminQuizTransferV2 = (
+  token: string,
+  quizId: number,
+  userEmail: string
+) => {
+  return requestHelper('POST', `/v1/admin/quiz/${quizId}/transfer`, { userEmail }, token);
 };
 
 export const adminQuizQuestionDuplicate = (

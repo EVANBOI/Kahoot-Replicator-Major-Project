@@ -333,7 +333,7 @@ export const adminQuizSessionResultLink = (
   quizid: number,
   sessionid: number,
   token: string) => {
-  return requestHelper('GET', `/v1/admin/quiz/${quizid}/session/${sessionid}/results/csv`, { token });
+  return requestHelper('GET', `/v1/admin/quiz/${quizid}/session/${sessionid}/results/csv`, {}, token);
 };
 
 export const playerQuestionResult = (

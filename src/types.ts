@@ -1,3 +1,5 @@
+import { SessionStatus } from './session';
+
 // Types for errors
 export type ErrorMessage = {
     statusCode: number,
@@ -18,10 +20,23 @@ export type AuthUserIdObject = {
     token: string
 }
 
-export type SessionIdObject = {
+export type TokenObject = {
     status: number,
     token: string
 };
+
+export type Session = {
+    sessionId: number,
+    atQuestion: number,
+    players: Player[],
+    state: SessionStatus
+}
+
+export type Player = {
+    name: string,
+    playerId: number,
+    score: number
+}
 
 // Types for dataStore
 export type User = {
@@ -42,8 +57,11 @@ export type Quiz = {
     timeCreated: number,
     timeLastEdited: number,
     description: string,
+    numQuestions: number,
     questions: QuestionBody[],
-    duration: number
+    duration: number,
+    thumbnailUrl?: string
+    sessions?: Session[]
 }
 
 export type Data = {
@@ -57,10 +75,34 @@ export type QuestionIdObject = {
 }
 
 // Types for function return
+
+export type MessageObject = {
+    message: {
+      messageBody: string;
+    };
+};
+
 export type EmptyObject = Record<string, never>;
 export type ClearResult = EmptyObject;
-export type UserUpdateResult = EmptyObject | ErrorMessage
+export type UserUpdateResult = EmptyObject;
 export type UserRegistrationResult = ErrorMessage | Token;
+
+export type GetSessionStatus = ErrorMessage | {
+    state: SessionStatus,
+    atQuestion: number,
+    players: Player[],
+    metadata: {
+        quizId: number,
+        name: string,
+        timeCreated: number,
+        timeLastEdited: number,
+        description: string,
+        numQuestions: number,
+        questions: QuestionBody[],
+        duration: number,
+        thumbnailUrl: string
+    }
+}
 
 export type QuizListDetails = ErrorMessage | {
     quizzes: {
@@ -69,12 +111,13 @@ export type QuizListDetails = ErrorMessage | {
     }[]
 }
 
-export type QuizInfoResult = ErrorMessage | {
+export type QuizInfoResult = {
     quizId: number,
     name: string,
     timeCreated: number,
     timeLastEdited: number,
     description: string,
+    numQuestions: number,
     questions: QuestionBody[]
     duration: number
 }
@@ -122,6 +165,7 @@ export type QuestionBody = {
         colour?: string,
         correct: boolean
     }[]
+    thumbnailUrl?: string
 };
 
 export type CreateQuestionReturn = QuestionIdObject | ErrorMessage;
@@ -133,15 +177,53 @@ export type TrashViewDetails = ErrorMessage | {
     }[]
 }
 
-export type QuizTrashEmptyResult = EmptyObject | ErrorMessage;
+export type QuizTrashEmptyResult = EmptyObject;
 
-export type QuizQuestionMoveResult = EmptyObject | ErrorMessage;
+export type QuizQuestionMoveResult = EmptyObject;
+
+export type QuizSessionViewResult = {
+    activeSessions: number[],
+    inactiveSessions: number[]
+}
+
+export type QuizSessionResultLinkResult = {
+    url: string
+}
+
+export type PlayerQuestionResultResult = {
+    questionId: number,
+    playersCorrectList : string[],
+    averageAnswerTime: number,
+    percentCorrect: number
+}
+
+export type PlayerStatusResult = {
+    state: string,
+    numQuestions: number,
+    atQuestion: number,
+}
+
+export type PlayerChatlogResult = {
+  messages: [
+    {
+      messageBody: string,
+      playerId: number,
+      playerName: string,
+      timeSent: number
+    }
+  ]
+}
 
 // other types
 export type PositionWithTokenObj = {
     token: string,
     newPosition: number
 }
+
+export type PositionObj = {
+    newPosition: number
+}
+
 export type QuizRestoreResult = {
     statusCode: number,
     message: string
@@ -150,4 +232,22 @@ export type QuizRestoreResult = {
 export type QuizQuestionDeleteResult = {
     statusCode: number,
     message: string
+  };
+
+export type PlayerQuestionAnswerResult = {
+    statusCode?: number;
+    error?: string;
+  }
+
+export type SessionResults = {
+    usersRankedByScore: {
+      name: string;
+      score: number;
+    }[];
+    questionResults: {
+      questionId: number;
+      playersCorrectList: string[];
+      averageAnswerTime: number;
+      percentCorrect: number;
+    }[];
   };

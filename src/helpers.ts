@@ -1,5 +1,11 @@
 import { getData } from './dataStore';
+import { Forbidden, BadRequest, Unauthorised } from './error';
 import { Data, ErrorMessage, QuestionBody, User } from './types';
+import crypto from 'crypto';
+
+export function getHashOf(password: string) {
+  return crypto.createHash('sha256').update(password).digest('hex');
+}
 
 export function findUserWithId(authUserId: number) {
   return getData().users.find(user => user.userId === authUserId);
@@ -7,6 +13,23 @@ export function findUserWithId(authUserId: number) {
 
 export function findQuizWithId(database: Data, quizId: number) {
   return database.quizzes.find(quiz => quiz.quizId === quizId);
+}
+
+export function quizIdCheck(token: string, quizId: number) {
+  const isValidQuizId = getData().quizzes.find(q => q.quizId === quizId);
+  const user = getData().users.find(user => user.tokens.some(tokens => tokens.token === token));
+  if (!isValidQuizId) {
+    throw new Forbidden('Quiz Id does not exist');
+  } else if (user.userId !== isValidQuizId.creatorId) {
+    throw new Forbidden('Quiz does not belong to user');
+  }
+}
+
+export function tokenCheck(token: string) {
+  const isValidToken = getData().users.some(user => user.tokens.some(tokens => tokens.token === token));
+  if (!isValidToken) {
+    throw new Unauthorised('Invalid token provided');
+  }
 }
 
 export function ok<T>(item: T | { statusCode: number, error: string }): T {
@@ -49,18 +72,18 @@ export function validAnswers(questionBody: QuestionBody): boolean | ErrorMessage
   const existingAnswer: string[] = [];
   for (const ans of questionBody.answers) {
     if (ans.answer.length < 1) {
-      return { statusCode: 400, error: 'An answer is less than 1 character long' };
+      throw new BadRequest('An answer is less than 1 character long');
     } else if (ans.answer.length > 30) {
-      return { statusCode: 400, error: 'An answer is more than 30 character long' };
+      throw new BadRequest('An answer is more than 30 character long');
     } else if (existingAnswer.find(current => current === ans.answer)) {
-      return { statusCode: 400, error: 'There are duplicate answers' };
+      throw new BadRequest('There are duplicate answers');
     } else {
       existingAnswer.push(ans.answer);
     }
   }
   const correctExists = questionBody.answers.some(ans => ans.correct === true);
   if (!correctExists) {
-    return { statusCode: 400, error: 'There are no correct answers' };
+    throw new BadRequest('There are no correct answers');
   }
   return true;
 }
@@ -70,21 +93,21 @@ export function validQuestion(
   totalDuration: number
 ): boolean | ErrorMessage {
   if (questionBody.question.length > 50) {
-    return { statusCode: 400, error: 'Question string is greater than 50 characters' };
+    throw new BadRequest('Question string is greater than 50 characters');
   } else if (questionBody.question.length < 5) {
-    return { statusCode: 400, error: 'Question string is less than 5 characters' };
+    throw new BadRequest('Question string is less than 5 characters');
   } else if (questionBody.answers.length < 2) {
-    return { statusCode: 400, error: 'There are less than 2 answers' };
+    throw new BadRequest('There are less than 2 answers');
   } else if (questionBody.answers.length > 6) {
-    return { statusCode: 400, error: 'There are more than 6 answers' };
+    throw new BadRequest('There are more than 6 answers');
   } else if (questionBody.duration <= 0) {
-    return { statusCode: 400, error: 'Duration is negative' };
+    throw new BadRequest('Duration is negative');
   } else if (totalDuration > 180) {
-    return { statusCode: 400, error: 'Total duration is more than 3 min' };
+    throw new BadRequest('Total duration is more than 3 min');
   } else if (questionBody.points < 1) {
-    return { statusCode: 400, error: 'Point is less than 1' };
+    throw new BadRequest('Point is less than 1');
   } else if (questionBody.points > 10) {
-    return { statusCode: 400, error: 'Point is greater than 10' };
+    throw new BadRequest('Point is greater than 10');
   } else if (typeof validAnswers(questionBody) === 'object') {
     return validAnswers(questionBody) as ErrorMessage;
   }
@@ -93,7 +116,7 @@ export function validQuestion(
 
 // this function is the helper function of the adminQuizTrashEmpty, to determine if the given quiz array
 // is exist in trash or quizzesStore and creator is token owner
-export function isQuizExistWithCorrectCreator(token: string, quizIds: string): boolean {
+export function quizExistWithCorrectCreatorCheck(token: string, quizIds: string) {
   const data = getData();
   const UserId = findUserBySessionId(data, token)?.userId;
   const quizIdArray: number[] = JSON.parse(quizIds);
@@ -103,20 +126,31 @@ export function isQuizExistWithCorrectCreator(token: string, quizIds: string): b
     const isValidQuiz = isExistInTrash || isExistInQuizzesStore;
 
     if (!isValidQuiz) {
-      return false;
+      throw new Forbidden('Quiz does not exist');
     }
     const quiz = isExistInTrash || isExistInQuizzesStore;
     if (quiz?.creatorId !== UserId) {
-      return false;
+      throw new Forbidden('You are not the creator of the quiz');
     }
   }
-
-  return true;
 }
 
-export function isAllExistInTrash(quizIds: string): boolean {
+export function allExistInTrashCheck(quizIds: string) {
   const data = getData();
   const quizIdArray: number[] = JSON.parse(quizIds);
   const result = quizIdArray.every(elementId => data.trash.some(quiz => quiz.quizId === elementId));
-  return result;
+  if (result === false) {
+    throw new BadRequest('Not all quizzes are in trash');
+  }
+}
+
+// helper function to check if the quiz exist and the creator is the token owner
+export function quizExistCheck(quizId: number, token: string) {
+  const user = findUserBySessionId(getData(), token);
+  const quiz = findQuizWithId(getData(), quizId);
+  if (!quiz) {
+    throw new Forbidden('Quiz does not exist');
+  } else if (quiz.creatorId !== user.userId) {
+    throw new Forbidden('You are not the creator of the quiz');
+  }
 }

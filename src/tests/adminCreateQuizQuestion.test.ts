@@ -4,7 +4,8 @@ import {
   validQuestion3,
   ERROR400,
   ERROR401,
-  ERROR403
+  ERROR403,
+  validQuestion1V2
 } from '../testConstants';
 import {
   adminCreateQuizQuestion,
@@ -12,7 +13,8 @@ import {
   adminAuthRegister,
   adminQuizInfo,
   clear,
-  adminQuizQuestionDelete
+  adminQuizQuestionDelete,
+  adminCreateQuizQuestionV2
 } from '../wrappers';
 
 const SUCCESSFUL = {
@@ -41,7 +43,6 @@ beforeEach(() => {
 });
 
 describe('Unsuccesful Tests', () => {
-  // should I have some tests for cases where there are no users?
   describe('Expected error code is 401', () => {
     test('Empty sessionId', () => {
       const result = adminCreateQuizQuestion(quizId1, '', validQuestion1);
@@ -249,6 +250,7 @@ describe('Succesful Tests', () => {
       timeCreated: expect.any(Number),
       timeLastEdited: expect.any(Number),
       description: 'Description',
+      numQuestions: 1,
       questions: [validQuestion1],
       duration: expect.any(Number)
     });
@@ -271,6 +273,7 @@ describe('Succesful Tests', () => {
       timeCreated: expect.any(Number),
       timeLastEdited: expect.any(Number),
       description: 'Description',
+      numQuestions: 3,
       questions: [validQuestion1, validQuestion2, validQuestion3],
       duration: expect.any(Number)
     });
@@ -304,6 +307,7 @@ describe('Succesful Tests', () => {
       timeCreated: expect.any(Number),
       timeLastEdited: expect.any(Number),
       description: 'Description',
+      numQuestions: 2,
       questions: [validQuestion1, validQuestion2],
       duration: expect.any(Number)
     });
@@ -314,6 +318,7 @@ describe('Succesful Tests', () => {
       timeCreated: expect.any(Number),
       timeLastEdited: expect.any(Number),
       description: 'Description of other quiz',
+      numQuestions: 1,
       questions: [validQuestion3],
       duration: expect.any(Number)
     });
@@ -334,6 +339,7 @@ describe('Succesful Tests', () => {
       timeCreated: expect.any(Number),
       timeLastEdited: expect.any(Number),
       description: 'Description',
+      numQuestions: 2,
       questions: [validQuestion1, validQuestion2],
       duration: expect.any(Number)
     });
@@ -344,8 +350,107 @@ describe('Succesful Tests', () => {
       timeCreated: expect.any(Number),
       timeLastEdited: expect.any(Number),
       description: 'Description of other quiz',
+      numQuestions: 1,
       questions: [validQuestion3],
       duration: expect.any(Number)
     });
+  });
+});
+
+//= ===========================================================================//
+// V2 route tests
+describe('v2 unsuccessful tests: thumbnail url', () => {
+  test('url is an empty string', () => {
+    const result = adminCreateQuizQuestionV2(
+      quizId1,
+      sessionId1,
+      {
+        questionId: expect.any(Number),
+        question: 'Valid question 1?',
+        duration: 3,
+        points: 2,
+        answers: [
+          {
+            answerId: expect.any(Number),
+            colour: expect.any(String),
+            answer: 'A',
+            correct: true
+          },
+          {
+            answerId: expect.any(Number),
+            colour: expect.any(String),
+            answer: 'B',
+            correct: false
+          }
+        ],
+        thumbnailUrl: ''
+      }
+    );
+    expect(result).toStrictEqual(ERROR400);
+  });
+
+  test('url is invalid file type', () => {
+    const result = adminCreateQuizQuestionV2(
+      quizId1,
+      sessionId1,
+      {
+        questionId: expect.any(Number),
+        question: 'Valid question 1?',
+        duration: 3,
+        points: 2,
+        answers: [
+          {
+            answerId: expect.any(Number),
+            colour: expect.any(String),
+            answer: 'A',
+            correct: true
+          },
+          {
+            answerId: expect.any(Number),
+            colour: expect.any(String),
+            answer: 'B',
+            correct: false
+          }
+        ],
+        thumbnailUrl: 'http://google.com/some/image/path.jpe'
+      }
+    );
+    expect(result).toStrictEqual(ERROR400);
+  });
+
+  test('url does not begin with http or https', () => {
+    const result = adminCreateQuizQuestionV2(
+      quizId1,
+      sessionId1,
+      {
+        questionId: expect.any(Number),
+        question: 'Valid question 1?',
+        duration: 3,
+        points: 2,
+        answers: [
+          {
+            answerId: expect.any(Number),
+            colour: expect.any(String),
+            answer: 'A',
+            correct: true
+          },
+          {
+            answerId: expect.any(Number),
+            colour: expect.any(String),
+            answer: 'B',
+            correct: false
+          }
+        ],
+        thumbnailUrl: 'htteep://google.com/some/image/path.jpg'
+      }
+    );
+    expect(result).toStrictEqual(ERROR400);
+  });
+});
+
+describe('v2 successful question creation', () => {
+  test('Valid inputs include thumbnail', () => {
+    const result = adminCreateQuizQuestionV2(quizId1, sessionId1, validQuestion1V2);
+    expect(result).toStrictEqual(SUCCESSFUL);
   });
 });

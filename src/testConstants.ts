@@ -115,3 +115,40 @@ export const validQuestion3: QuestionBody = {
     { answerId: expect.any(Number), colour: expect.any(String), answer: 'Clsj', correct: false }
   ]
 };
+
+export const validQuestion1V2: QuestionBody = {
+  questionId: expect.any(Number),
+  question: 'Valid question 1?',
+  duration: 3,
+  points: 2,
+  answers: [
+    { answerId: expect.any(Number), colour: expect.any(String), answer: 'A', correct: true },
+    { answerId: expect.any(Number), colour: expect.any(String), answer: 'B', correct: false }
+  ],
+  thumbnailUrl: 'http://google.com/some/image/path.jpg'
+};
+
+export const validQuestion2V2: QuestionBody = {
+  questionId: expect.any(Number),
+  question: 'Valid question 2?',
+  duration: 150,
+  points: 2,
+  answers: [
+    { answerId: expect.any(Number), colour: expect.any(String), answer: 'Amb', correct: false },
+    { answerId: expect.any(Number), colour: expect.any(String), answer: 'Bsgd', correct: true }
+  ],
+  thumbnailUrl: 'http://google.com/some/image/path.jpg'
+};
+
+export const validQuestion3V2: QuestionBody = {
+  questionId: expect.any(Number),
+  question: 'Valid question 3?',
+  duration: 5,
+  points: 2,
+  answers: [
+    { answerId: expect.any(Number), colour: expect.any(String), answer: 'Amb', correct: false },
+    { answerId: expect.any(Number), colour: expect.any(String), answer: 'Bsgd', correct: true },
+    { answerId: expect.any(Number), colour: expect.any(String), answer: 'Clsj', correct: false }
+  ],
+  thumbnailUrl: 'http://google.com/some/image/path.jpg'
+};

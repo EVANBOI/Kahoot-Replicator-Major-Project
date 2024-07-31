@@ -3,7 +3,7 @@ import {
   adminAuthRegister,
   adminQuizCreate,
   adminQuizRemove,
-  adminQuizTrashView,
+  adminQuizTrashViewV2,
   clear
 } from '../wrappers';
 
@@ -30,17 +30,17 @@ beforeEach(() => {
 
 describe('Invalid Trash View', () => {
   test('Token is invalid', () => {
-    expect(adminQuizTrashView(sessionId + 1)).toStrictEqual(ERROR401);
+    expect(adminQuizTrashViewV2(sessionId + 1)).toStrictEqual(ERROR401);
   });
 
   test('Token is empty', () => {
-    expect(adminQuizTrashView(' ')).toStrictEqual(ERROR401);
+    expect(adminQuizTrashViewV2(' ')).toStrictEqual(ERROR401);
   });
 });
 
 describe('Valid Trash View', () => {
   test('Viewing a quiz in the trash', () => {
-    expect(adminQuizTrashView(sessionId)).toStrictEqual({
+    expect(adminQuizTrashViewV2(sessionId)).toStrictEqual({
       statusCode: 200,
       jsonBody: {
         quizzes: [
@@ -57,7 +57,7 @@ describe('Valid Trash View', () => {
     const { jsonBody: body3 } = adminQuizCreate(sessionId, 'Quiz 2', 'Linked Lists');
     const quizId2 = body3?.quizId;
     adminQuizRemove(sessionId, quizId2);
-    expect(adminQuizTrashView(sessionId)).toStrictEqual({
+    expect(adminQuizTrashViewV2(sessionId)).toStrictEqual({
       statusCode: 200,
       jsonBody: {
         quizzes: [

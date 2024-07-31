@@ -94,6 +94,7 @@ describe('adminQuizTransfer tests', () => {
         questions: expect.any(Array),
         timeCreated: expect.any(Number),
         timeLastEdited: expect.any(Number),
+        numQuestions: expect.any(Number),
         description: VALID_QUIZ_CREATE_INPUTS_1.DESCRIPTION,
         duration: expect.any(Number)
       },

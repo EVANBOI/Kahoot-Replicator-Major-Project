@@ -17,9 +17,6 @@ import {
     adminQuizSessionResultLink
   } from '../wrappers';
   
-  import { QuestionBody } from '../types';
-import { before } from 'node:test';
-import e from 'express';
   
   let token1: string;
   let sessionId1: number;
@@ -54,6 +51,7 @@ import e from 'express';
             expect(adminQuizSessionResultLink(quizId1, sessionId1, token1 + 1)).toStrictEqual(ERROR401);
         });
         test('Error 403: quiz does not exist', () => {
+            console.log(adminQuizSessionResultLink(quizId1 + 1, sessionId1, token1));
             expect(adminQuizSessionResultLink(quizId1 + 1, sessionId1, token1)).toStrictEqual(ERROR403);
         });
         test('Error 403: user is not owner of quiz', () => {
@@ -63,12 +61,17 @@ import e from 'express';
               VALID_USER_REGISTER_INPUTS_2.FIRSTNAME,
               VALID_USER_REGISTER_INPUTS_2.LASTNAME
             ).jsonBody.token;
+            console.log(adminQuizSessionResultLink(quizId1, sessionId1, token2));
             expect(adminQuizSessionResultLink(quizId1, sessionId1, token2)).toStrictEqual(ERROR403);
         });
         test('Error 400: session Id does not refer to a valid session within this quiz', () => {
+            console.log(quizId1, sessionId1 + 1, token1); 
+            console.log(adminQuizSessionResultLink(quizId1, sessionId1 + 1, token1));
             expect(adminQuizSessionResultLink(quizId1, sessionId1 + 1, token1)).toStrictEqual(ERROR400);
         });
         test('Error 400: session is not in FINAL_RESULTS state', () => {
+            console.log(quizId1, sessionId1, token1); 
+            console.log(adminQuizSessionResultLink(quizId1, sessionId1, token1));
             adminQuizSessionUpdate(quizId1, sessionId1, token1, 'GO_TO_NEXT_QUESTION');
             expect(adminQuizSessionResultLink(quizId1, sessionId1, token1)).toStrictEqual(ERROR400);
         });

@@ -157,7 +157,7 @@ export const adminQuizNameUpdate = (
   quizId: number,
   name: string) => {
   return requestHelper('PUT', `/v1/admin/quiz/${quizId}/name`,
-    { token, quizId, name });
+    { token, name });
 };
 
 export const adminQuizTrashView = (token: string) => {

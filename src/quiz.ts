@@ -282,7 +282,7 @@ export function adminQuizTransfer(sessionId: string, quizId: number, newOwnerEma
   if (!quiz) {
     throw new Forbidden(`Quiz with ID '${quizId}' not found`);
   } else if (quiz.creatorId !== currentUser.userId) {
-    throw new Forbidden( `User does not own quiz ${quizId}`);
+    throw new Forbidden(`User does not own quiz ${quizId}`);
   }
   const newOwner = database.users.find(user => user.email === newOwnerEmail);
 
@@ -329,16 +329,16 @@ export function adminQuizRestore(token: string, quizId: number): QuizRestoreResu
   const quizExists = database.quizzes.find(q => q.quizId === quizId);
   const quizTrash = database.trash[quizIndex];
   if (!quizExists && quizIndex === -1) {
-    throw new Forbidden(`Quiz '${quizId}' does not exist!.`)
+    throw new Forbidden(`Quiz '${quizId}' does not exist!.`);
   } else if (quizTrash && quizTrash.creatorId !== user.userId) {
-    throw new Forbidden( `User is not the owner of quiz with ID '${quizId}'.`)
+    throw new Forbidden(`User is not the owner of quiz with ID '${quizId}'.`);
   }
 
   // Check if quiz name is already used by another active quiz
   if (quizExists) {
     throw new BadRequest(`Quiz ${quizExists.quizId} is not in trash`);
   } else if (database.quizzes.some(activeQuiz => activeQuiz.name === quizTrash.name)) {
-    throw new BadRequest(`Quiz name '${quizTrash.name}' is already used by another active quiz.`)
+    throw new BadRequest(`Quiz name '${quizTrash.name}' is already used by another active quiz.`);
   }
 
   // Restore the quiz

@@ -2,9 +2,15 @@ import { clear } from "console"
 import { adminQuizSessionStatus, adminAuthRegister, adminCreateQuizQuestionV2, adminQuizCreateV2, adminQuizQuestionUpdateV2, adminQuizSessionStart, adminQuizSessionUpdate } from "../wrappers";
 import { ERROR400, ERROR401, ERROR403, validQuestion1V2 } from "../testConstants";
 import { SessionAction, SessionStatus } from "../session";
-import { token } from "morgan";
+
+const UPDATED = {
+  statusCode: 200,
+  jsonBody: { }
+};
+let timerId: ReturnType<typeof setTimeout>;
 
 beforeEach(() => {
+		clearTimeout(timerId);
     clear();
 });
 
@@ -81,9 +87,295 @@ describe('Unsuccessful Updates: 400 errors', () => {
 		expect(adminQuizSessionUpdate(quizId1, sessionId1, token1, invalidAction)).toStrictEqual(ERROR400);
 	});
 
-	test.failing('Action has not been provided', () => {
+	test.failing('SKIP_COUNTDOWN cannot be applied in the lobby state', () => {
 		const res = adminQuizSessionStatus(quizId1, sessionId1, token1).jsonBody.state;
 		expect(res).toStrictEqual(SessionStatus.LOBBY);
 		expect(adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN)).toStrictEqual(ERROR400);
-	})
+	});
+
+	test.failing('GO_TO_ANSWER cannot be applied in the lobby state', () => {
+		const res = adminQuizSessionStatus(quizId1, sessionId1, token1).jsonBody.state;
+		expect(res).toStrictEqual(SessionStatus.LOBBY);
+		expect(adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_ANSWER)).toStrictEqual(ERROR400);
+	});
+
+	test.failing('GO_TO_FINAL_RESULTS cannot be applied in the lobby state', () => {
+		const res = adminQuizSessionStatus(quizId1, sessionId1, token1).jsonBody.state;
+		expect(res).toStrictEqual(SessionStatus.LOBBY);
+		expect(adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_FINAL_RESULTS)).toStrictEqual(ERROR400);		
+	});
+
+	test.failing('NEXT_QUESTION cannot be applied in the question countdown state', () => {
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
+		const res = adminQuizSessionStatus(quizId1, sessionId1, token1).jsonBody.state;
+		expect(res).toStrictEqual(SessionStatus.QUESTION_COUNTDOWN);
+		expect(adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION)).toStrictEqual(ERROR400);	
+	});
+
+	test.failing('GO_TO_ANSWER cannot be applied in the question countdown state', () => {
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
+		const res = adminQuizSessionStatus(quizId1, sessionId1, token1).jsonBody.state;
+		expect(res).toStrictEqual(SessionStatus.QUESTION_COUNTDOWN);
+		expect(adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_ANSWER)).toStrictEqual(ERROR400);	
+	});
+
+	test.failing('GO_TO_FINAL_RESULTS cannot be applied in the question countdown state', () => {
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
+		const res = adminQuizSessionStatus(quizId1, sessionId1, token1).jsonBody.state;
+		expect(res).toStrictEqual(SessionStatus.QUESTION_COUNTDOWN);
+		expect(adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_FINAL_RESULTS)).toStrictEqual(ERROR400);		
+	});
+
+	test.failing('NEXT_QUESTION cannot be applied in the question open state', () => {
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
+		const res = adminQuizSessionStatus(quizId1, sessionId1, token1).jsonBody.state;
+		expect(res).toStrictEqual(SessionStatus.QUESTION_OPEN);
+		expect(adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION)).toStrictEqual(ERROR400);		
+	});
+
+	test.failing('END cannot be applied in the question open state', () => {
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
+		const res = adminQuizSessionStatus(quizId1, sessionId1, token1).jsonBody.state;
+		expect(res).toStrictEqual(SessionStatus.QUESTION_OPEN);
+		expect(adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.END)).toStrictEqual(ERROR400);			
+	});
+
+	test.failing('GO_TO_ANSWER cannot be applied in the question open state', () => {
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
+		const res = adminQuizSessionStatus(quizId1, sessionId1, token1).jsonBody.state;
+		expect(res).toStrictEqual(SessionStatus.QUESTION_OPEN);
+		expect(adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_ANSWER)).toStrictEqual(ERROR400);		
+	});
+
+	test.failing('GO_TO_FINAL_RESULTS cannot be applied in the question open state', () => {
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
+		const res = adminQuizSessionStatus(quizId1, sessionId1, token1).jsonBody.state;
+		expect(res).toStrictEqual(SessionStatus.QUESTION_OPEN);
+		expect(adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_FINAL_RESULTS)).toStrictEqual(ERROR400);	
+	});
+
+	test.failing('SKIP_QUESTION cannot be applied in the question open state', () => {
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
+		const res = adminQuizSessionStatus(quizId1, sessionId1, token1).jsonBody.state;
+		expect(res).toStrictEqual(SessionStatus.QUESTION_OPEN);
+		expect(adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_FINAL_RESULTS)).toStrictEqual(ERROR400);			
+	});
+
+	test.failing('SKIP_COUNTDOWN cannot be applied in the question close state', () => {
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
+		timerId = setTimeout(() => {
+			adminQuizSessionStatus(quizId1, sessionId1, token1).jsonBody.state = SessionStatus.QUESTION_CLOSE
+		}, 3 * 1000);
+		const res = adminQuizSessionStatus(quizId1, sessionId1, token1).jsonBody.state;
+		expect(res).toStrictEqual(SessionStatus.QUESTION_CLOSE);
+		expect(adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN)).toStrictEqual(ERROR400);			
+	});
+
+	test.failing('GO_TO_ANSWER cannot be applied in the  answer show state', () => {
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_ANSWER);
+		const res = adminQuizSessionStatus(quizId1, sessionId1, token1).jsonBody.state;
+		expect(res).toStrictEqual(SessionStatus.ANSWER_SHOW);
+		expect(adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_ANSWER)).toStrictEqual(ERROR400);			
+	});
+
+	test.failing('SKIP_COUNTDOWN cannot be applied in the answer show state', () => {
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_ANSWER);
+		const res = adminQuizSessionStatus(quizId1, sessionId1, token1).jsonBody.state;
+		expect(res).toStrictEqual(SessionStatus.ANSWER_SHOW);
+		expect(adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN)).toStrictEqual(ERROR400);			
+	});
+
+	test.failing('NEXT_QUESTION cannot be applied in the final results state', () => {
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_ANSWER);
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_FINAL_RESULTS);
+		const res = adminQuizSessionStatus(quizId1, sessionId1, token1).jsonBody.state;
+		expect(res).toStrictEqual(SessionStatus.FINAL_RESULTS);
+		expect(adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION)).toStrictEqual(ERROR400);			
+	});
+
+	test.failing('SKIP_COUNTDOWN cannot be applied in the final results state', () => {
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_ANSWER);
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_FINAL_RESULTS);
+		const res = adminQuizSessionStatus(quizId1, sessionId1, token1).jsonBody.state;
+		expect(res).toStrictEqual(SessionStatus.FINAL_RESULTS);
+		expect(adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN)).toStrictEqual(ERROR400);			
+	});
+
+	test.failing('GO_TO_ANSWER cannot be applied in the final results state', () => {
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_ANSWER);
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_FINAL_RESULTS);
+		const res = adminQuizSessionStatus(quizId1, sessionId1, token1).jsonBody.state;
+		expect(res).toStrictEqual(SessionStatus.FINAL_RESULTS);
+		expect(adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_ANSWER)).toStrictEqual(ERROR400);			
+	});
+
+	test.failing('GO_TO_FINAL_RESULTS cannot be applied in the final results state', () => {
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_ANSWER);
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_FINAL_RESULTS);
+		const res = adminQuizSessionStatus(quizId1, sessionId1, token1).jsonBody.state;
+		expect(res).toStrictEqual(SessionStatus.FINAL_RESULTS);
+		expect(adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_FINAL_RESULTS)).toStrictEqual(ERROR400);			
+	});
+
+	test.failing('NEXT_QUESTION cannot be applied in the end state', () => {
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_ANSWER);
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_FINAL_RESULTS);
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.END);
+		const res = adminQuizSessionStatus(quizId1, sessionId1, token1).jsonBody.state;
+		expect(res).toStrictEqual(SessionStatus.END);
+		expect(adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION)).toStrictEqual(ERROR400);			
+	});
+
+	test.failing('SKIP_COUNTDOWN cannot be applied in the end state', () => {
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_ANSWER);
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_FINAL_RESULTS);
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.END);
+		const res = adminQuizSessionStatus(quizId1, sessionId1, token1).jsonBody.state;
+		expect(res).toStrictEqual(SessionStatus.END);
+		expect(adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN)).toStrictEqual(ERROR400);			
+	});
+
+	test.failing('GO_TO_ANSWER cannot be applied in the end state', () => {
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_ANSWER);
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_FINAL_RESULTS);
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.END);
+		const res = adminQuizSessionStatus(quizId1, sessionId1, token1).jsonBody.state;
+		expect(res).toStrictEqual(SessionStatus.END);
+		expect(adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_ANSWER)).toStrictEqual(ERROR400);			
+	});
+
+	test.failing('GO_TO_FINAL_RESULTS cannot be applied in the end state', () => {
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_ANSWER);
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_FINAL_RESULTS);
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.END);
+		const res = adminQuizSessionStatus(quizId1, sessionId1, token1).jsonBody.state;
+		expect(res).toStrictEqual(SessionStatus.END);
+		expect(adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_FINAL_RESULTS)).toStrictEqual(ERROR400);			
+	});
+
+	test.failing('END cannot be applied in the end state', () => {
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_ANSWER);
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_FINAL_RESULTS);
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.END);
+		const res = adminQuizSessionStatus(quizId1, sessionId1, token1).jsonBody.state;
+		expect(res).toStrictEqual(SessionStatus.END);
+		expect(adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.END)).toStrictEqual(ERROR400);			
+	});
+});
+
+describe('Successful Updates', () => {
+
+	test('Return Correct Type', () => {
+		const result = adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
+		expect(result).toStrictEqual(UPDATED);
+	});
+
+	test.failing('Successfully update a session', () => {
+    adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
+    const result = adminQuizSessionStatus(quizId1, sessionId1, token1);
+		expect(result).toStrictEqual({
+      state: SessionStatus.QUESTION_COUNTDOWN,
+      atQuestion: 0,
+      players: [],
+      metadata: {
+        quizId: quizId1,
+        name: 'Quiz 1',
+        timeCreated: expect.any(Number),
+        timeLastEdited: expect.any(Number),
+        description: '1st description',
+        numQuestions: 1,
+        questions: [{
+          questionId: questionId1,
+          question: 'Valid question 1?',
+          duration: 3,
+          points: 2,
+          answers: [
+            {
+              answerId: expect.any(Number),
+              colour: expect.any(String),
+              answer: 'A',
+              correct: true
+            },
+            {
+              answerId: expect.any(Number),
+              colour: expect.any(String),
+              answer: 'B',
+              correct: false
+            }
+          ],
+          thumbnailUrl: 'http://google.com/some/image/path.jpg'
+        }],
+        duration: 3
+      }
+    });
+  });
+
+	test.failing('Successfully update a session twice', () => {
+    adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
+    const result = adminQuizSessionStatus(quizId1, sessionId1, token1);
+		expect(result).toStrictEqual({
+      state: SessionStatus.QUESTION_OPEN,
+      atQuestion: 0,
+      players: [],
+      metadata: {
+        quizId: quizId1,
+        name: 'Quiz 1',
+        timeCreated: expect.any(Number),
+        timeLastEdited: expect.any(Number),
+        description: '1st description',
+        numQuestions: 1,
+        questions: [{
+          questionId: questionId1,
+          question: 'Valid question 1?',
+          duration: 3,
+          points: 2,
+          answers: [
+            {
+              answerId: expect.any(Number),
+              colour: expect.any(String),
+              answer: 'A',
+              correct: true
+            },
+            {
+              answerId: expect.any(Number),
+              colour: expect.any(String),
+              answer: 'B',
+              correct: false
+            }
+          ],
+          thumbnailUrl: 'http://google.com/some/image/path.jpg'
+        }],
+        duration: 3
+      }
+    });
+  });
 });

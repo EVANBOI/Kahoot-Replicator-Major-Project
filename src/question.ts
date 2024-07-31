@@ -245,12 +245,12 @@ export function adminQuizQuestionDelete(token: string, quizId: number, questionI
   }
 
   if (quiz.creatorId !== user.userId) {
-    throw new Forbidden(`User is not the owner of quiz with ID '${quizId}'.`)
+    throw new Forbidden(`User is not the owner of quiz with ID '${quizId}'.`);
   }
 
   const questionIndex = quiz.questions.findIndex(question => question.questionId === questionId);
   if (questionIndex === -1) {
-    throw new BadRequest(`Question ID '${questionId}' does not refer to a valid question within quiz '${quizId}'.`)
+    throw new BadRequest(`Question ID '${questionId}' does not refer to a valid question within quiz '${quizId}'.`);
   }
 
   // Delete the question

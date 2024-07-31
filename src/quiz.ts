@@ -183,10 +183,10 @@ export function adminQuizNameUpdate(sessionId: string, quizId: number, name: str
 
   const namePattern = /^[a-zA-Z0-9 ]+$/;
   if (!quiz) {
-    throw new Forbidden('Quiz ID does not refer to a valid quiz.')
+    throw new Forbidden('Quiz ID does not refer to a valid quiz.');
   }
   if (quiz.creatorId !== authUserId) {
-    throw new Forbidden('Quiz ID does not refer to a quiz that this user owns.')
+    throw new Forbidden('Quiz ID does not refer to a quiz that this user owns.');
   }
   if (!namePattern.test(name)) {
     throw new BadRequest('Name contains invalid characters. Valid characters are alphanumeric and spaces.');

@@ -224,7 +224,7 @@ app.delete('/v2/admin/quiz/:quizid', (req: Request, res: Response) => {
   const token = req.headers.token as string;
   const quizId = parseInt(req.params.quizid);
 
-  try {    
+  try {
     res.json(adminQuizRemove(token, quizId));
   } catch (e) {
     if (e instanceof Unauthorised) {

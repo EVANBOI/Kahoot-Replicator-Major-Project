@@ -212,7 +212,7 @@ export const adminUserPasswordUpdateV2 = (
   oldPassword: string,
   newPassword: string) => {
   return requestHelper('PUT', '/v2/admin/user/password',
-    { token, oldPassword, newPassword });
+    { oldPassword, newPassword }, token);
 };
 
 export const adminQuizNameUpdate = (
@@ -309,7 +309,7 @@ export const adminQuizQuestionDuplicatV2 = (
   quizId: number,
   questionId: number
 ) => {
-  return requestHelper('POST', `/v2/admin/quiz/${quizId}/question/${questionId}/duplicate`, { token });
+  return requestHelper('POST', `/v2/admin/quiz/${quizId}/question/${questionId}/duplicate`, {}, token);
 };
 
 export const adminQuizRestore = (token: string, quizid: number) => {

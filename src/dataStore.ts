@@ -6,7 +6,7 @@ export const dataStore: Data = {
   quizzes: [],
   trash: [],
 };
-export const sessionIdToTimerObject: SessionIdToTimerObject = {}
+export const sessionIdToTimerObject: SessionIdToTimerObject = {};
 
 // YOU SHOULD MODIFY THIS OBJECT ABOVE ONLY
 

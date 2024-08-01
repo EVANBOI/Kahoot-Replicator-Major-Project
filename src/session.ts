@@ -141,7 +141,6 @@ export function adminQuizSessionUpdate(
   quizId: number,
   sessionId: number,
   action: SessionAction): EmptyObject | Error {
-
   const database = getData();
   const quiz = findQuizWithId(database, quizId);
   const session = quiz.sessions.find(s => s.sessionId === sessionId);
@@ -230,7 +229,7 @@ export function adminQuizSessionUpdate(
     }
   } else if (session.state === SessionStatus.END) {
     throw new BadRequest(`Action enum cannot be applied in the ${session.state}`);
-  } 
+  }
   setData(database);
   return {};
 }

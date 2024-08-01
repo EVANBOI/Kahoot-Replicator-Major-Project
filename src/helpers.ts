@@ -1,6 +1,6 @@
 import { getData } from './dataStore';
 import { Forbidden, BadRequest, Unauthorised } from './error';
-import { Data, ErrorMessage, QuestionBody, User } from './types';
+import { Data, ErrorMessage, QuestionBody, User, SessionResults } from './types';
 import crypto from 'crypto';
 
 export function getHashOf(password: string) {
@@ -153,4 +153,33 @@ export function quizExistCheck(quizId: number, token: string) {
   } else if (quiz.creatorId !== user.userId) {
     throw new Forbidden('You are not the creator of the quiz');
   }
+}
+
+// Function to convert data to CSV format
+
+export function convertSessionResultsToCSV(sessionResults: SessionResults): string {
+  if (!sessionResults.questionResultsByPlayer) {
+    throw new Error('questionResultsByPlayer is required');
+  }
+
+  let csvContent = 'Player';
+
+  // Add question headers
+  sessionResults.questionResults.forEach((question, index) => {
+    csvContent += `,question${index + 1}score,question${index + 1}rank`;
+  });
+  csvContent += '\n';
+
+  // Add player scores and ranks to CSV content
+  sessionResults.questionResultsByPlayer.forEach(playerResult => {
+    csvContent += playerResult.playerName;
+
+    playerResult.questionResults.forEach(question => {
+      csvContent += `,${question.score},${question.rank}`;
+    });
+
+    csvContent += '\n';
+  });
+
+  return csvContent;
 }

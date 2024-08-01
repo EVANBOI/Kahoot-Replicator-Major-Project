@@ -5,6 +5,7 @@ import {
   findQuizWithId,
   findUserBySessionId,
 } from './helpers';
+import { SessionStatus } from './session';
 import {
   EmptyObject,
   ErrorMessage,
@@ -130,7 +131,7 @@ export function adminQuizRemove (token: string, quizId: number): QuizRemoveResul
  * @param {number} quizId - unique id of a quiz
  * @returns {QuizInfoResult} - an object containing all the information about the quiz
  */
-export function adminQuizInfo (token: string, quizId: number): QuizInfoResult {
+export function adminQuizInfo (token: string, quizId: number, v2?: boolean): QuizInfoResult {
   const database = getData();
   const user = findUserBySessionId(database, token);
   const quiz = findQuizWithId(database, quizId);
@@ -141,16 +142,30 @@ export function adminQuizInfo (token: string, quizId: number): QuizInfoResult {
     throw new Forbidden(`Quiz with ID ${quizId} is not owned by ${user.userId} (actual owner: ${quiz.creatorId})`);
   }
 
-  return {
-    quizId: quiz.quizId,
-    name: quiz.name,
-    timeCreated: quiz.timeCreated,
-    timeLastEdited: quiz.timeLastEdited,
-    description: quiz.description,
-    numQuestions: quiz.numQuestions,
-    questions: quiz.questions,
-    duration: quiz.duration
-  };
+  if (v2 === true) {
+    return {
+      quizId: quiz.quizId,
+      name: quiz.name,
+      timeCreated: quiz.timeCreated,
+      timeLastEdited: quiz.timeLastEdited,
+      description: quiz.description,
+      numQuestions: quiz.questions.length,
+      questions: quiz.questions,
+      duration: quiz.duration,
+      thumbnailUrl: quiz.thumbnailUrl
+    };
+  } else {
+    return {
+      quizId: quiz.quizId,
+      name: quiz.name,
+      timeCreated: quiz.timeCreated,
+      timeLastEdited: quiz.timeLastEdited,
+      description: quiz.description,
+      numQuestions: quiz.questions.length,
+      questions: quiz.questions,
+      duration: quiz.duration,
+    };
+  }
 }
 
 /**
@@ -269,7 +284,7 @@ export function adminQuizTrashEmpty(quizIds: string): QuizTrashEmptyResult {
  * @param {string} newOwnerEmail - The email of the new owner.
  * @returns {ErrorMessage | EmptyObject} - The result of the transfer operation.
  */
-export function adminQuizTransfer(sessionId: string, quizId: number, newOwnerEmail: string): EmptyObject {
+export function adminQuizTransfer(sessionId: string, quizId: number, newOwnerEmail: string, v2?: boolean): EmptyObject {
   const database = getData();
   const currentUser = findUserBySessionId(database, sessionId);
 
@@ -280,12 +295,9 @@ export function adminQuizTransfer(sessionId: string, quizId: number, newOwnerEma
 
   if (!quiz) {
     throw new Forbidden(`Quiz with ID '${quizId}' not found`);
+  } else if (quiz.creatorId !== currentUser.userId) {
+    throw new Forbidden(`User does not own quiz ${quizId}`);
   }
-
-  if (quiz.creatorId !== currentUser.userId) {
-    throw new Forbidden('You are not the creator of the quiz');
-  }
-
   const newOwner = database.users.find(user => user.email === newOwnerEmail);
 
   if (!newOwner) {
@@ -300,6 +312,12 @@ export function adminQuizTransfer(sessionId: string, quizId: number, newOwnerEma
   );
   if (nameUsed) {
     throw new BadRequest('Quiz ID refers to a quiz that has a name that is already used by the target user.');
+  }
+
+  if (v2 === true) {
+    if (quiz.sessions.find(s => s.state === SessionStatus.END)) {
+      throw new BadRequest('At least one session has not ended');
+    }
   }
 
   quiz.creatorId = newOwner.userId;
@@ -319,31 +337,29 @@ export function adminQuizRestore(token: string, quizId: number): QuizRestoreResu
   const user = findUserBySessionId(database, token);
 
   if (!user) {
-    return { statusCode: 401, message: 'Token is empty or invalid.' };
+    throw new Unauthorised('Token is empty or invalid.');
   }
-  const quizExists = database.quizzes.find(q => q.quizId === quizId);
   const quizIndex = database.trash.findIndex(quiz => quiz.quizId === quizId);
-
-  const quiz = database.trash[quizIndex];
+  const quizExists = database.quizzes.find(q => q.quizId === quizId);
+  const quizTrash = database.trash[quizIndex];
   if (!quizExists && quizIndex === -1) {
-    return { statusCode: 403, message: `Quiz '${quizId}' does not exist!.` };
-  } else if (quiz.creatorId !== user.userId) {
-    return { statusCode: 403, message: `User is not the owner of quiz with ID '${quizId}'.` };
+    throw new Forbidden(`Quiz '${quizId}' does not exist!.`);
+  } else if (quizTrash && quizTrash.creatorId !== user.userId) {
+    throw new Forbidden(`User is not the owner of quiz with ID '${quizId}'.`);
   }
 
   // Check if quiz name is already used by another active quiz
-  if (database.quizzes.some(activeQuiz => activeQuiz.name === quiz.name)) {
-    return { statusCode: 400, message: `Quiz name '${quiz.name}' is already used by another active quiz.` };
+  if (quizExists) {
+    throw new BadRequest(`Quiz ${quizExists.quizId} is not in trash`);
+  } else if (database.quizzes.some(activeQuiz => activeQuiz.name === quizTrash.name)) {
+    throw new BadRequest(`Quiz name '${quizTrash.name}' is already used by another active quiz.`);
   }
 
-  if (quizIndex === -1) {
-    return { statusCode: 400, message: `Quiz ID '${quizId}' does not refer to a quiz in the trash.` };
-  }
   // Restore the quiz
-  quiz.timeLastEdited = Date.now();
-  database.quizzes.push(quiz);
+  quizTrash.timeLastEdited = Date.now();
+  database.quizzes.push(quizTrash);
   database.trash.splice(quizIndex, 1);
 
   setData(database);
-  return { statusCode: 200, message: '{}' };
+  return {};
 }

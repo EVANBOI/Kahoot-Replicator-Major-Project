@@ -96,4 +96,16 @@ describe('Failure cases', () => {
       statusCode: 403,
     });
   });
+  test('should return an error when restoring a quiz with an invalid quizId', (): void => {
+    // Move the quiz to trash before restoring
+    adminQuizRemove(sessionId, validQuizId);
+
+    const result = adminQuizRestore(sessionId, validQuizId2);
+    expect(result).toStrictEqual({
+      jsonBody: {
+        error: expect.any(String),
+      },
+      statusCode: 400,
+    });
+  });
 });

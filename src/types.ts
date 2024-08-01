@@ -29,7 +29,9 @@ export type Session = {
     sessionId: number,
     atQuestion: number,
     players: Player[],
-    state: SessionStatus
+    state: SessionStatus,
+    messages: MessageInfo[],
+    results: SessionResults
 }
 
 export type Player = {
@@ -77,10 +79,15 @@ export type QuestionIdObject = {
 
 // Types for function return
 
+export type MessageInfo = {
+    messageBody: string,
+    playerId: number,
+    playerName: string,
+    timeSet: number
+}
+
 export type MessageObject = {
-    message: {
-      messageBody: string;
-    };
+    messageBody: string;
 };
 
 export type EmptyObject = Record<string, never>;
@@ -118,9 +125,10 @@ export type QuizInfoResult = {
     timeCreated: number,
     timeLastEdited: number,
     description: string,
-    numQuestions: number,
+    numQuestions?: number,
     questions: QuestionBody[]
-    duration: number
+    duration: number,
+    thumbnailUrl?: string
 }
 
 export type UserdetailsResults = {
@@ -225,10 +233,7 @@ export type PositionObj = {
     newPosition: number
 }
 
-export type QuizRestoreResult = {
-    statusCode: number,
-    message: string
-  };
+export type QuizRestoreResult = ErrorMessage | EmptyObject
 
 export type QuizQuestionDeleteResult = {
     statusCode: number,
@@ -250,5 +255,15 @@ export type SessionResults = {
       playersCorrectList: string[];
       averageAnswerTime: number;
       percentCorrect: number;
+    }[];
+    questionResultsByPlayer?: {
+        playerName: string;
+        playerId: number;
+        questionResults: {
+            questionId: number;
+            score: number;
+            rank: number;
+            timeToAnswer: number;
+        }[];
     }[];
   };

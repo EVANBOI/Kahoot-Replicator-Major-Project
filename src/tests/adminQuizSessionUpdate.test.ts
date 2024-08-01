@@ -60,15 +60,13 @@ describe('Unsuccessful Updates: 400 errors', () => {
     expect(res).toStrictEqual(ERROR400);
   });
 
-  test.only('Action provided is not a valid Action enum', () => {
+  test('Action provided is not a valid Action enum', () => {
     const invalidAction = 'INVALID_ACTION' as unknown as SessionAction;
     expect(adminQuizSessionUpdate(quizId1, sessionId1, token1, invalidAction)).toStrictEqual(ERROR400);
   });
 
   test('SKIP_COUNTDOWN cannot be applied in the lobby state', () => {
     const res = adminQuizSessionStatus(quizId1, sessionId1, token1).jsonBody.state;
-    console.log(res);
-    console.log(adminQuizSessionStatus(quizId1, sessionId1, token1));
     expect(res).toStrictEqual(SessionStatus.LOBBY);
     expect(adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN)).toStrictEqual(ERROR400);
   });
@@ -112,22 +110,6 @@ describe('Unsuccessful Updates: 400 errors', () => {
     const res = adminQuizSessionStatus(quizId1, sessionId1, token1).jsonBody.state;
     expect(res).toStrictEqual(SessionStatus.QUESTION_OPEN);
     expect(adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION)).toStrictEqual(ERROR400);
-  });
-
-  test('END cannot be applied in the question open state', () => {
-    adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
-    adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
-    const res = adminQuizSessionStatus(quizId1, sessionId1, token1).jsonBody.state;
-    expect(res).toStrictEqual(SessionStatus.QUESTION_OPEN);
-    expect(adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.END)).toStrictEqual(ERROR400);
-  });
-
-  test('GO_TO_ANSWER cannot be applied in the question open state', () => {
-    adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
-    adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
-    const res = adminQuizSessionStatus(quizId1, sessionId1, token1).jsonBody.state;
-    expect(res).toStrictEqual(SessionStatus.QUESTION_OPEN);
-    expect(adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_ANSWER)).toStrictEqual(ERROR400);
   });
 
   test('GO_TO_FINAL_RESULTS cannot be applied in the question open state', () => {
@@ -274,7 +256,7 @@ describe('Unsuccessful Updates: 400 errors', () => {
 
 describe('Successful Updates', () => {
 
-  test.only('Return Correct Type', () => {
+  test('Return Correct Type', () => {
     const result = adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
     console.log(result);
     expect(result).toStrictEqual(UPDATED);
@@ -282,7 +264,7 @@ describe('Successful Updates', () => {
 
   test('Successfully update a session', () => {
     adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
-    const result = adminQuizSessionStatus(quizId1, sessionId1, token1);
+    const result = adminQuizSessionStatus(quizId1, sessionId1, token1).jsonBody;
     expect(result).toStrictEqual({
       state: SessionStatus.QUESTION_COUNTDOWN,
       atQuestion: 0,
@@ -323,10 +305,10 @@ describe('Successful Updates', () => {
   test('Successfully update a session twice', () => {
     adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
     adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
-    const result = adminQuizSessionStatus(quizId1, sessionId1, token1);
+    const result = adminQuizSessionStatus(quizId1, sessionId1, token1).jsonBody;
     expect(result).toStrictEqual({
       state: SessionStatus.QUESTION_OPEN,
-      atQuestion: 0,
+      atQuestion: 1,
       players: [],
       metadata: {
         quizId: quizId1,

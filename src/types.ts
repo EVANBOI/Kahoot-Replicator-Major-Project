@@ -69,7 +69,8 @@ export type Quiz = {
 export type Data = {
     users: User[],
     quizzes: Quiz[],
-    trash: Quiz[]
+    trash: Quiz[],
+    sessionIdToTimerObject: Record<number, ReturnType<typeof setTimeout>>
 }
 
 export type QuestionIdObject = {

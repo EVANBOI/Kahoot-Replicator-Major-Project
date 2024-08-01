@@ -1,18 +1,18 @@
 import {
-  validQuestion1,
+  validQuestion1V2,
   ERROR401,
   ERROR403,
   ERROR400,
-  validQuestion2,
-  validQuestion3
+  validQuestion2V2,
+  validQuestion3V2,
 } from '../testConstants';
 import {
-  adminCreateQuizQuestion,
+  adminCreateQuizQuestionV2,
   clear,
   adminAuthRegister,
   adminQuizCreateV2,
   adminQuizQuestionUpdateV2,
-  adminQuizInfo,
+  adminQuizInfoV2,
 } from '../wrappers';
 
 const UPDATED = {
@@ -49,10 +49,10 @@ beforeEach(() => {
     'Description');
   quizId1 = body3?.quizId;
 
-  const { jsonBody: body4 } = adminCreateQuizQuestion(
+  const { jsonBody: body4 } = adminCreateQuizQuestionV2(
     quizId1,
     sessionId1,
-    validQuestion1);
+    validQuestion1V2);
   questionId1 = body4?.questionId;
 });
 
@@ -61,7 +61,7 @@ describe('Unsuccessful Updates: 401 errors', () => {
     expect(adminQuizQuestionUpdateV2(
       quizId1,
       questionId1,
-      validQuestion1,
+      validQuestion1V2,
       sessionId1 + 1)).toStrictEqual(ERROR401);
   });
 
@@ -69,7 +69,7 @@ describe('Unsuccessful Updates: 401 errors', () => {
     expect(adminQuizQuestionUpdateV2(
       quizId1,
       questionId1,
-      validQuestion1,
+      validQuestion1V2,
       ' ')).toStrictEqual(ERROR401);
   });
 });
@@ -79,7 +79,7 @@ describe('Unsuccessful Updates: 403 errors', () => {
     expect(adminQuizQuestionUpdateV2(
       quizId1,
       questionId1,
-      validQuestion1,
+      validQuestion1V2,
       sessionId2)).toStrictEqual(ERROR403);
   });
 
@@ -87,7 +87,7 @@ describe('Unsuccessful Updates: 403 errors', () => {
     expect(adminQuizQuestionUpdateV2(
       quizId1 + 1,
       questionId1,
-      validQuestion1,
+      validQuestion1V2,
       sessionId1)).toStrictEqual(ERROR403);
   });
 });
@@ -97,7 +97,7 @@ describe('Unsuccessful Updates: 400 errors', () => {
     expect(adminQuizQuestionUpdateV2(
       quizId1,
       questionId1 + 1,
-      validQuestion1,
+      validQuestion1V2,
       sessionId1)).toStrictEqual(ERROR400);
   });
 
@@ -316,14 +316,14 @@ describe('Successful Updates', () => {
     const result = adminQuizQuestionUpdateV2(
       quizId1,
       questionId1,
-      validQuestion1,
+      validQuestion1V2,
       sessionId1);
     expect(result).toStrictEqual(UPDATED);
   });
 
   test('Successfully Update a Question', () => {
-    adminQuizQuestionUpdateV2(quizId1, questionId1, validQuestion1, sessionId1);
-    const result = adminQuizInfo(sessionId1, quizId1);
+    adminQuizQuestionUpdateV2(quizId1, questionId1, validQuestion1V2, sessionId1);
+    const result = adminQuizInfoV2(sessionId1, quizId1);
     expect(result.jsonBody).toStrictEqual({
       quizId: quizId1,
       duration: expect.any(Number),
@@ -332,14 +332,14 @@ describe('Successful Updates', () => {
       timeLastEdited: expect.any(Number),
       description: 'Description',
       numQuestions: expect.any(Number),
-      questions: [validQuestion1]
+      questions: [validQuestion1V2]
     });
   });
 
   test('Successfully updated the timeLastEdited key', () => {
     const startTime = Math.floor(Date.now() / 1000);
-    adminQuizQuestionUpdateV2(quizId1, questionId1, validQuestion1, sessionId1);
-    const result = adminQuizInfo(sessionId1, quizId1);
+    adminQuizQuestionUpdateV2(quizId1, questionId1, validQuestion1V2, sessionId1);
+    const result = adminQuizInfoV2(sessionId1, quizId1);
 
     // Checking that the timestamps are within a 1 second range.
     const endTime = Math.floor(Date.now() / 1000);
@@ -351,16 +351,16 @@ describe('Successful Updates', () => {
     adminQuizQuestionUpdateV2(
       quizId1,
       questionId1,
-      validQuestion1,
+      validQuestion1V2,
       sessionId1);
     const result = adminQuizQuestionUpdateV2(
       quizId1,
       questionId1,
-      validQuestion2,
+      validQuestion2V2,
       sessionId1);
 
     expect(result).toStrictEqual(UPDATED);
-    const quizInfo = adminQuizInfo(sessionId1, quizId1);
+    const quizInfo = adminQuizInfoV2(sessionId1, quizId1);
     expect(quizInfo.jsonBody).toStrictEqual({
       quizId: quizId1,
       duration: expect.any(Number),
@@ -369,7 +369,7 @@ describe('Successful Updates', () => {
       timeLastEdited: expect.any(Number),
       description: 'Description',
       numQuestions: expect.any(Number),
-      questions: [validQuestion2]
+      questions: [validQuestion2V2]
     });
   });
 
@@ -377,20 +377,20 @@ describe('Successful Updates', () => {
     const result1 = adminQuizQuestionUpdateV2(
       quizId1,
       questionId1,
-      validQuestion2,
+      validQuestion2V2,
       sessionId1);
     expect(result1).toStrictEqual(UPDATED);
 
-    const { jsonBody: body5 } = adminCreateQuizQuestion(
+    const { jsonBody: body5 } = adminCreateQuizQuestionV2(
       quizId1,
       sessionId1,
-      validQuestion1);
+      validQuestion1V2);
     const questionId2 = body5?.questionId;
 
-    const result2 = adminQuizQuestionUpdateV2(quizId1, questionId2, validQuestion3, sessionId1);
+    const result2 = adminQuizQuestionUpdateV2(quizId1, questionId2, validQuestion3V2, sessionId1);
     expect(result2).toStrictEqual(UPDATED);
 
-    const quizInfo = adminQuizInfo(sessionId1, quizId1);
+    const quizInfo = adminQuizInfoV2(sessionId1, quizId1);
     expect(quizInfo.jsonBody).toStrictEqual({
       quizId: quizId1,
       duration: expect.any(Number),
@@ -399,7 +399,7 @@ describe('Successful Updates', () => {
       timeLastEdited: expect.any(Number),
       description: 'Description',
       numQuestions: expect.any(Number),
-      questions: [validQuestion2, validQuestion3]
+      questions: [validQuestion2V2, validQuestion3V2]
     });
   });
 });

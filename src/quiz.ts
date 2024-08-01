@@ -302,6 +302,7 @@ export function adminQuizTransfer(sessionId: string, quizId: number, newOwnerEma
   }
 
   if (v2 === true) {
+    // should be tested after adminQuizSessionStart is implemented
     if (quiz.sessions.find(s => s.state === SessionStatus.END)) {
       throw new BadRequest('At least one session has not ended');
     }

@@ -225,7 +225,7 @@ app.delete('/v2/admin/quiz/:quizid', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
 
   try {
-    res.json(adminQuizRemove(token, quizId));
+    res.json(adminQuizRemove(token, quizId, true));
   } catch (e) {
     if (e instanceof Unauthorised) {
       return res.status(StatusCodes.UNAUTHORIZED).json({ error: e.message });
@@ -850,7 +850,6 @@ app.post('/v1/admin/quiz/:quizid/session/start', (req: Request, res: Response) =
   const quizId = parseInt(req.params.quizid);
   const token = req.headers.token as string;
   const { autoStartNum } = req.body;
-  //const result = adminQuizSessionStart(quizId, token, autoStartNum);
   try {
     return res.json(adminQuizSessionStart(quizId, token, autoStartNum));
   } catch (error) {
@@ -861,8 +860,6 @@ app.post('/v1/admin/quiz/:quizid/session/start', (req: Request, res: Response) =
     } else if (error instanceof BadRequest) {
       return res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });}
   }
-  //return res.json(result);
-
 });
 app.post('/v1/player/join', (req: Request, res: Response) => {
   const { sessionId, name } = req.body;

@@ -148,7 +148,7 @@ export type QuizCreateDetails = {
 
 export type PasswordUpdateResult = EmptyObject | ErrorMessage;
 
-export type QuizRemoveResult = Status;
+export type QuizRemoveResult = EmptyObject;
 
 export type Userdetails = ErrorMessage | {user: {
     userId: number,
@@ -234,10 +234,7 @@ export type PositionObj = {
 
 export type QuizRestoreResult = ErrorMessage | EmptyObject
 
-export type QuizQuestionDeleteResult = {
-    statusCode: number,
-    message: string
-  };
+export type QuizQuestionDeleteResult = ErrorMessage | EmptyObject
 
 export type PlayerQuestionAnswerResult = {
     statusCode?: number;

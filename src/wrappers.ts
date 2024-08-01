@@ -10,6 +10,7 @@ const SERVER_URL = `${url}:${port}`;
 // Our custom return types - you can pick your own if you wish!
 interface RequestHelperReturnType {
   statusCode: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   jsonBody?: Record<string, any>;
   error?: string;
 }
@@ -65,6 +66,7 @@ const requestHelper = (
       jsonBody: JSON.parse(bodyString),
       statusCode: res.statusCode,
     };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     bodyObject = {
       error: `\
@@ -248,6 +250,10 @@ export const adminUserDetailsV2 = (token: string) => {
 
 export const adminQuizRemove = (token: string, quizId: number) => {
   return requestHelper('DELETE', `/v1/admin/quiz/${quizId}`, { token });
+};
+
+export const adminQuizRemoveV2 = (token: string, quizId: number) => {
+  return requestHelper('DELETE', `/v2/admin/quiz/${quizId}`, { }, token);
 };
 
 export const adminQuizQuestionUpdate = (

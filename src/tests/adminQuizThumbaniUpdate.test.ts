@@ -53,6 +53,11 @@ describe('Unsuccessful cases', () => {
       expect(res).toStrictEqual(ERROR400);
     });
   });
+
+  test('Error 403: quiz does not exist', () => {
+    const res = adminQuizThumbnailUpdate(quizId1 + 1, token1, 'http://google.com/some/image/path.jpg');
+    expect(res).toStrictEqual(ERROR403);
+  });
 });
 
 describe('Successful cases', () => {

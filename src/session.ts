@@ -246,8 +246,6 @@ export const turnQuestionOpen = (sessionId: number, quizId: number) => {
   }
 };
 
-// tell me what to do
-
 /**
  * Gives the status of a particular quiz session
  * @param {number} quizId The ID of the quiz to be found.

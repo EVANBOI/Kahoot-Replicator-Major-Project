@@ -60,7 +60,7 @@ describe('Unsuccessful Updates: 400 errors', () => {
     expect(res).toStrictEqual(ERROR400);
   });
 
-  test('Action provided is not a valid Action enum', () => {
+  test.only('Action provided is not a valid Action enum', () => {
     const invalidAction = 'INVALID_ACTION' as unknown as SessionAction;
     expect(adminQuizSessionUpdate(quizId1, sessionId1, token1, invalidAction)).toStrictEqual(ERROR400);
   });

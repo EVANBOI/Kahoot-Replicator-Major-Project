@@ -858,7 +858,8 @@ app.post('/v1/admin/quiz/:quizid/session/start', (req: Request, res: Response) =
     } else if (error instanceof Forbidden) {
       return res.status(StatusCodes.FORBIDDEN).json({ error: error.message });
     } else if (error instanceof BadRequest) {
-      return res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });}
+      return res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
+    }
   }
 });
 app.post('/v1/player/join', (req: Request, res: Response) => {

@@ -373,12 +373,7 @@ export function adminQuizThumbnailUpdate(quizId: number, token: string, imgUrl: 
   return {};
 }
 
-
-
-
-
-
-/*export function adminQuizSessionStart(
+/* export function adminQuizSessionStart(
   quizId: number,
   token: string,
   autoStartNum: number
@@ -408,9 +403,7 @@ export function adminQuizThumbnailUpdate(quizId: number, token: string, imgUrl: 
     throw new BadRequest('The quiz is in trash.');
   }
 
-
-
-  // Check if there are active sessions for this quiz
+   // Check if there are active sessions for this quiz
   const activeSessions = adminQuizSessionView(quizId);
   if (activeSessions.activeSessions.length >= 10) {
     throw new BadRequest('There are already 10 active sessions for this quiz.');
@@ -422,10 +415,9 @@ export function adminQuizThumbnailUpdate(quizId: number, token: string, imgUrl: 
   }
 
   // Create and return a new session
-  const newSessionId = 5546; 
+  const newSessionId = 5546;
   return { sessionId: newSessionId };
 }
-
 
 export function playerResults(
   playerId: number
@@ -438,7 +430,7 @@ export function playerResults(
   }
 
   // Check if the session is in FINAL_RESULTS state
-  
+
   if ( !== SessionStatus.FINAL_RESULTS) {
     throw new BadRequest('Session is not in FINAL_RESULTS state.');
   }
@@ -458,20 +450,6 @@ export function playerResults(
     ]
   };
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 function generateRandomName(): string {
   const letters = 'abcdefghijklmnopqrstuvwxyz';
@@ -527,10 +505,10 @@ export function playerJoin(
 
   // Logic to generate a new player ID
   const allPlayers = database.quizzes.flatMap(quiz => quiz.sessions?.flatMap(session => session.players) || []);
-  const newPlayerId = allPlayers.length > 0 
-    ? Math.max(...allPlayers.map(p => p.playerId)) + 1 
+  const newPlayerId = allPlayers.length > 0
+    ? Math.max(...allPlayers.map(p => p.playerId)) + 1
     : 1;
-  
+
   // Add the new player to the session
   const newPlayer = { playerId: newPlayerId, name, score: 0 };
   session.players.push(newPlayer);
@@ -540,7 +518,6 @@ export function playerJoin(
 
   return { playerId: newPlayerId };
 }
-
 
 */
 
@@ -553,29 +530,28 @@ export function adminQuizSessionStart(quizId: number, token: string, autoStartNu
   }
   // Check if the quiz exists and is not in trash
   const quiz = findQuizWithId(database, quizId);
-  const quizCopy = JSON.parse(JSON.stringify(quiz));;
   const isInTrash = database.trash.find(trashQuiz => trashQuiz.quizId === quizId);
-  if (!quizCopy && !isInTrash) {
+  if (!quiz && !isInTrash) {
     throw new Forbidden('Quiz does not exist');
-  } else if (isInTrash && !quizCopy) {
+  } else if (isInTrash && !quiz) {
     if (isInTrash.creatorId !== user.userId) {
       throw new Forbidden('User does not own Quiz');
     }
-  } else if (!isInTrash && quizCopy) {
-    if (quizCopy.creatorId !== user.userId) {
+  } else if (!isInTrash && quiz) {
+    if (quiz.creatorId !== user.userId) {
       throw new Forbidden('User does not own Quiz');
     }
   }
   if (isInTrash) {
     throw new BadRequest('Quiz is in trash');
-  } else if (quizCopy.questions.length === 0) {
+  } else if (quiz.questions.length === 0) {
     throw new BadRequest('The quiz does not have any questions.');
-  } else if (quizCopy.sessions.length >= 10) {
+  } else if (quiz.sessions.length >= 10) {
     throw new BadRequest('There are already 10 active sessions for this quiz');
-  }  else if (autoStartNum > 50) {
+  } else if (autoStartNum > 50) {
     throw new BadRequest('autoStartNum exceeds maximum value');
   }
-
+  const quizCopy = JSON.parse(JSON.stringify(quiz));
   // Create a new session
   const newSessionId = parseInt(sessionUid.seq()); // Generate a unique session ID
   const newSession: Session = {
@@ -588,7 +564,8 @@ export function adminQuizSessionStart(quizId: number, token: string, autoStartNu
       usersRankedByScore: [],
       questionResults: []
     },
-    autoStartNum: autoStartNum
+    autoStartNum: autoStartNum,
+    quizCopy: JSON.parse(JSON.stringify(quiz))
   };
   quiz.sessions.push(newSession);
   setData(database);

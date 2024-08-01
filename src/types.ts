@@ -32,9 +32,23 @@ export type Session = {
     state: SessionStatus,
     messages: MessageInfo[],
     results: SessionResults,
-    autoStartNum?: number
+    autoStartNum?: number,
+    quizCopy: QuizCopy
 }
 
+// Quiz copy should not need hold arrays of session
+export type QuizCopy = {
+    creatorId: number,
+    quizId: number,
+    name: string,
+    timeCreated: number,
+    timeLastEdited: number,
+    description: string,
+    numQuestions: number,
+    questions: QuestionBody[],
+    duration: number,
+    thumbnailUrl?: string
+}
 export type Player = {
     name: string,
     playerId: number,

@@ -6,7 +6,7 @@ import {
   adminCreateQuizQuestionV2,
   adminQuizSessionStart,
   adminAuthLogin,
-  playerJoin, adminQuizInfo, adminQuizRemoveV2, 
+  playerJoin, adminQuizInfo, adminQuizRemoveV2,
   adminQuizSessionView
 } from '../wrappers';
 
@@ -32,32 +32,32 @@ beforeEach(() => {
 describe('Unsuccessful tests', () => {
   test('autoStartNum is greater than 50', () => {
     const res = adminQuizSessionStart(quizId1, token1, 51);
-  
+
     expect(res).toStrictEqual(ERROR400);
   });
 
   test('10 sessions are already active for the quiz', () => {
-      adminQuizSessionStart(quizId1, token1, 1);
-      adminQuizSessionStart(quizId1, token1, 1);
-      adminQuizSessionStart(quizId1, token1, 1);
-      adminQuizSessionStart(quizId1, token1, 1);
-      adminQuizSessionStart(quizId1, token1, 1);
-      adminQuizSessionStart(quizId1, token1, 1);
-      adminQuizSessionStart(quizId1, token1, 1);
-      adminQuizSessionStart(quizId1, token1, 1);
-      adminQuizSessionStart(quizId1, token1, 1);
-      adminQuizSessionStart(quizId1, token1, 1);
+    adminQuizSessionStart(quizId1, token1, 1);
+    adminQuizSessionStart(quizId1, token1, 1);
+    adminQuizSessionStart(quizId1, token1, 1);
+    adminQuizSessionStart(quizId1, token1, 1);
+    adminQuizSessionStart(quizId1, token1, 1);
+    adminQuizSessionStart(quizId1, token1, 1);
+    adminQuizSessionStart(quizId1, token1, 1);
+    adminQuizSessionStart(quizId1, token1, 1);
+    adminQuizSessionStart(quizId1, token1, 1);
+    adminQuizSessionStart(quizId1, token1, 1);
     const res = adminQuizSessionStart(quizId1, token1, 1);
     expect(res).toStrictEqual(ERROR400);
   });
 
   test('The quiz does not have any questions', () => {
-    const quiz2 = adminQuizCreate(token1, 'name', 'hih').jsonBody.quizId
+    const quiz2 = adminQuizCreate(token1, 'name', 'hih').jsonBody.quizId;
     const res = adminQuizSessionStart(quiz2, token1, 3);
     expect(res).toStrictEqual(ERROR400);
   });
 
-  test.only('The quiz is in trash', () => {
+  test('The quiz is in trash', () => {
     adminQuizRemoveV2(token1, quizId1);
     const res2 = adminQuizSessionStart(quizId1, token1, 3);
     expect(res2).toStrictEqual(ERROR400);
@@ -89,7 +89,7 @@ describe('Successful tests', () => {
     expect(res1).toStrictEqual(SUCCESS);
     expect(res2).toStrictEqual(SUCCESS);
     expect(adminQuizSessionView(token1, quizId1).jsonBody).toStrictEqual({
-      activeSessions: [ res1.jsonBody.sessionId, res2.jsonBody.sessionId ],
+      activeSessions: [res1.jsonBody.sessionId, res2.jsonBody.sessionId],
       inactiveSessions: []
     });
   });

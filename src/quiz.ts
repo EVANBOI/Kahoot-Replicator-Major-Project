@@ -87,7 +87,6 @@ export function adminQuizCreate (
     sessions: []
   });
 
-
   setData(database);
 
   return { quizId: id };
@@ -113,14 +112,12 @@ export function adminQuizRemove (token: string, quizId: number, v2?: boolean): Q
     throw new Forbidden(`Quiz with ID '${quizId}' not found`);
   } else if (quiz.creatorId !== user.userId) {
     throw new Forbidden(`Quiz with ID ${quizId} is not owned by ${user.userId} (actual owner: ${quiz.creatorId})`);
-  } 
+  }
   if (v2 === true) {
     if (quiz.sessions.some(s => s.state === SessionStatus.END) === true) {
-      throw new BadRequest('At least one session has not ended yet')
+      throw new BadRequest('At least one session has not ended yet');
     }
   }
-  
-  
 
   const quizIndex = database.quizzes.findIndex(quiz => quiz.quizId === quizId);
   database.trash.push(quiz);

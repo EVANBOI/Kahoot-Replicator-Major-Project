@@ -27,6 +27,7 @@ export enum SessionStatus {
 }
 import ShortUniqueId from 'short-unique-id';
 const sessionUid = new ShortUniqueId({ dictionary: 'number' });
+const playerUid = new ShortUniqueId({ dictionary: 'number' });
 
 /**
  * Retrieves active and inactive session ids (sorted in ascending order) for a quiz
@@ -412,61 +413,48 @@ export function playerJoin(
   name: string
 ): { playerId: number } {
    const database = getData();
-
-  // // Find the session that matches the sessionId
-  // let session: Session | undefined;
-  // for (const quiz of database.quizzes) {
-  //   session = quiz.sessions?.find(s => s.sessionId === sessionId);
-  //   if (session) break;
-  // }
-
-  // if (!session) {
-  //   throw new BadRequest('Session Id does not refer to a valid session.');
-  // }
-
-  // if (session.state !== SessionStatus.LOBBY) {
-  //   throw new BadRequest('Session is not in LOBBY state.');
-  // }
-
+  // Find the session that matches the sessionId
+  let session: Session | undefined;
+  for (const quiz of database.quizzes) {
+    session = quiz.sessions?.find(s => s.sessionId === sessionId);
+    if (session) {
+      break;
+    }
+  }
+  if (!session) {
+    throw new BadRequest('Session Id does not refer to a valid session.');
+  } else if (session.state !== SessionStatus.LOBBY) {
+    throw new BadRequest('Session is not in LOBBY state.');
+  }
   // // Check if the name is unique
-  if (name != '') {
-    const allPlayers = database.quizzes.flatMap(quiz => quiz.sessions?.flatMap(session => session.players) || []);
+  if (name !== '') {
+    const allPlayers = session.players;
     const existingPlayer = allPlayers.find(player => player.name === name);
     if (existingPlayer) {
       throw new BadRequest('Name of user entered is not unique.');
     }
-  } else {
-    // Generate a random name if none is provided
+  } else if (name === '') {
     let name = generateRandomString();
     console.log('Generated Name:', name);
-    
-    if (/^[a-z]{5}\d{3}$/.test(name)) {
-        console.log('Name matches the pattern:', name);
-    } else {
-        console.log('Name does not match the pattern:', name);
-    }
   }
   
-  // // Logic to generate a new player ID
-  // const allPlayers = database.quizzes.flatMap(quiz => quiz.sessions?.flatMap(session => session.players) || []);
-  // const newPlayerId = allPlayers.length > 0
-  //   ? Math.max(...allPlayers.map(p => p.playerId)) + 1
-  //   : 1;
+  // // Generate a random name if none is provided   
+  //   if (/^[a-z]{5}\d{3}$/.test(name)) {
+  //       console.log('Name matches the pattern:', name);
+  //   } else {
+  //       console.log('Name does not match the pattern:', name);
+  // }
+  
+  // Logic to generate a new player ID
+  const newPlayerId = parseInt(playerUid.seq()); 
+  // Add the new player to the session
+  const newPlayer = { playerId: newPlayerId, name: name, score: 0 };
+  session.players.push(newPlayer);
 
-  // // Add the new player to the session
-  // const newPlayer = { playerId: newPlayerId, name, score: 0 };
-  // session.players.push(newPlayer);
-
-  // // Save the updated data back to the datastore
-  // setData(database);
-
-  // return { playerId: newPlayerId };
-  return { playerId };
+  // Save the updated data back to the datastore
+  setData(database);
+  return { playerId: newPlayerId };
 }
-
-
-
-
 
 export function adminQuizSessionStart(quizId: number, token: string, autoStartNum: number) {
   const database = getData();

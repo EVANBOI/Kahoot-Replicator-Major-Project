@@ -864,9 +864,15 @@ app.post('/v1/admin/quiz/:quizid/session/start', (req: Request, res: Response) =
 });
 app.post('/v1/player/join', (req: Request, res: Response) => {
   const { sessionId, name } = req.body;
-  const result = playerJoin(sessionId, name);
-  return res.json(result);
+  try {
+    return res.json(playerJoin(sessionId, name));
+  } catch (error) {
+    if (error instanceof BadRequest) {
+      return res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
+    }
+  }
 });
+
 app.get('/v1/player/:playerid/results', (req: Request, res: Response) => {
   const playerId = parseInt(req.query.playerid as string);
   const result = playerResults(playerId);

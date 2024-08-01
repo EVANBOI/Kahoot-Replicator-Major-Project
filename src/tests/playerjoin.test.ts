@@ -1,5 +1,5 @@
-import { clear, adminQuizCreate, adminQuizSessionStart, playerJoin, adminAuthRegister } from '../wrappers';
-import { ERROR400 } from '../testConstants';
+import { clear, adminQuizCreate, adminQuizSessionStart, playerJoin, adminAuthRegister, adminCreateQuizQuestionV2 } from '../wrappers';
+import { ERROR400, validQuestion1V2 } from '../testConstants';
 import { generateRandomString } from '../helpers';
 const SUCCESSFUL = {
   statusCode: 200,
@@ -16,6 +16,7 @@ beforeEach(() => {
   ).jsonBody.token;
   const quizCreateResponse = adminQuizCreate(token1, 'Quiz Title', 'Description');
   const quizId = quizCreateResponse.jsonBody?.quizId;
+  adminCreateQuizQuestionV2(quizId, token1, validQuestion1V2);
   const sessionStartResponse = adminQuizSessionStart(quizId, token1, 3);
   validSessionId = sessionStartResponse.jsonBody?.sessionId;
 });
@@ -39,15 +40,15 @@ describe('POST /v1/player/join, successful cases', () => {
   });
 });
 
-describe('POST /v1/player/join, successful cases', () => {
-  test.failing('Failure to join due to non-unique name', () => {
+describe('POST /v1/player/join, unsuccessful cases', () => {
+  test('Failure to join due to non-unique name', () => {
     // Join the session with the first player
     playerJoin(validSessionId, PLAYER_NAME);
     const response = playerJoin(validSessionId, PLAYER_NAME); // Attempt to join with the same name
     expect(response).toStrictEqual(ERROR400);
   });
 
-  test.failing('Failure to join due to invalid session ID', () => {
+  test('Failure to join due to invalid session ID', () => {
     const response = playerJoin(INVALID_SESSION_ID, PLAYER_NAME);
     expect(response).toStrictEqual(ERROR400);
   });

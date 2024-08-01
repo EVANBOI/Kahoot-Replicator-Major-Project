@@ -1,4 +1,3 @@
-import { adminQuizInfo, adminQuizRemove } from '../quiz';
 import { ERROR400, ERROR401, ERROR403, SUCCESSFUL_UPDATE, validQuestion1V2 } from '../testConstants';
 import {
   clear,
@@ -6,7 +5,7 @@ import {
   adminQuizCreate,
   adminCreateQuizQuestionV2,
   adminQuizSessionStart,
-  playerJoin
+  playerJoin, adminQuizInfo, adminQuizRemoveV2 
 } from '../wrappers';
 
 const SUCCESS = {
@@ -59,7 +58,7 @@ describe('Unsuccessful tests', () => {
 
   test.only('The quiz is in trash', () => {
     
-    const res1 = adminQuizRemove(token1, quizId1);
+    const res1 = adminQuizRemoveV2(token1, quizId1);
    
     const res2 = adminQuizSessionStart(quizId1, token1, 3);
     console.log('2.', res2 )

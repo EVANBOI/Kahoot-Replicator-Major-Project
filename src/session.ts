@@ -1,6 +1,6 @@
 import { getData, setData } from './dataStore';
 import { BadRequest, Unauthorised, Forbidden } from './error';
-import { findQuizWithId, convertSessionResultsToCSV, findUserWithId,  } from './helpers';
+import { findUserBySessionId, findQuizWithId, convertSessionResultsToCSV } from './helpers';
 import * as path from 'path';
 import * as fs from 'fs';
 import {
@@ -16,8 +16,6 @@ import {
   MessageInfo,
   Player
 } from './types';
-import{findUserBySessionId, findQuestionInQuizId } from './helpers'
-import { error } from 'console';
 export enum SessionStatus {
   LOBBY,
   QUESTION_COUNTDOWN,
@@ -345,7 +343,33 @@ export function adminQuizSessionResults(
  * @returns {EmptyObject} Returns an empty object on success
  * @throws {Error} Throws an error if there is a problem with the update
  */
+
 export function adminQuizThumbnailUpdate(quizId: number, token: string, imgUrl: string): EmptyObject {
+  const database = getData();
+  const user = findUserBySessionId(database, token);
+
+  if (!user) {
+    throw new Unauthorised('Token is invalid');
+  }
+
+  const quiz = findQuizWithId(database, quizId);
+
+  if (!quiz) {
+    throw new BadRequest('Quiz not found');
+  }
+
+  if (quiz.creatorId !== user.userId) {
+    throw new Forbidden('User is not the owner of the quiz');
+  }
+
+  const validImageUrlPattern = /^https?:\/\/.+\.(jpg|jpeg|png)$/i;
+  if (!validImageUrlPattern.test(imgUrl)) {
+    throw new BadRequest('Invalid image URL format');
+  }
+
+  quiz.thumbnailUrl = imgUrl;
+  setData(database);
+
   return {};
 }
 
@@ -532,9 +556,16 @@ export function adminQuizSessionStart(quizId: number, token: string, autoStartNu
   // Check if the quiz exists and is not in trash
   const quiz = findQuizWithId(database, quizId);
   const isInTrash = database.trash.some(trashQuiz => trashQuiz.quizId === quizId);
+  console.log('111 is blah blah', quiz, isInTrash)
 
-  if (!quiz && !isInTrash) {
-    throw new Forbidden('Quiz does not exist');
+  if (!quiz ) {
+    console.log('222 is blah blah', quiz, isInTrash)
+    if (isInTrash === false) {
+      console.log('333 is blah blah', quiz, isInTrash)
+      throw new Forbidden('Quiz does not exist');
+      console.log('444 is blah blah', quiz, isInTrash)
+    }
+
   }
   console.log('quizid is blah blah', quiz.quizId)
 

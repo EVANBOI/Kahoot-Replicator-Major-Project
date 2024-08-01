@@ -142,7 +142,7 @@ export function adminQuizSessionUpdate(
   sessionId: number,
   action: SessionAction): EmptyObject | Error {
   const database = getData();
-  const quiz = findQuizWithId(database, quizId);
+  const quiz = database.quizzes.find(quiz => quiz.quizId === quizId);
   const session = quiz.sessions.find(s => s.sessionId === sessionId);
 
   if (!session) {

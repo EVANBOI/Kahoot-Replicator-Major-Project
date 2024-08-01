@@ -1,11 +1,13 @@
-import { ERROR400, ERROR401, ERROR403, SUCCESSFUL_UPDATE, validQuestion1V2 } from '../testConstants';
+import { ERROR400, ERROR401, ERROR403, validQuestion1V2 } from '../testConstants';
 import {
   clear,
   adminAuthRegister,
   adminQuizCreate,
   adminCreateQuizQuestionV2,
   adminQuizSessionStart,
-  playerJoin, adminQuizInfo, adminQuizRemoveV2 
+  adminAuthLogin,
+  playerJoin, adminQuizInfo, adminQuizRemoveV2, 
+  adminQuizSessionView
 } from '../wrappers';
 
 const SUCCESS = {
@@ -58,21 +60,17 @@ describe('Unsuccessful tests', () => {
   test.only('The quiz is in trash', () => {
     adminQuizRemoveV2(token1, quizId1);
     const res2 = adminQuizSessionStart(quizId1, token1, 3);
-    console.log('2.', res2 )
-
     expect(res2).toStrictEqual(ERROR400);
-
   });
 
   test('Token is empty or invalid', () => {
-    const res = adminQuizSessionStart(quizId1, token1+'-999', 3);
-    
-
+    const res = adminQuizSessionStart(quizId1, token1 + '-999', 3);
     expect(res).toStrictEqual(ERROR401);
   });
 
   test('Valid token but user is not the owner', () => {
-    const res = adminQuizSessionStart(quizId1, 'another_user_token', 3); // Assume 'another_user_token' is for a non-owner
+    const token2 = adminAuthRegister('admin2@ad.unsw.ed.au', 'SDFJKH2349081j', 'JJone', 'ZZ').jsonBody.token;
+    const res = adminQuizSessionStart(quizId1, token2, 3); // Assume 'another_user_token' is for a non-owner
     expect(res).toStrictEqual(ERROR403);
   });
 });
@@ -84,8 +82,15 @@ describe('Successful tests', () => {
     sessionId1 = res.jsonBody.sessionId;
   });
 
-  test('Check if sessionId is returned correctly', () => {
-    const res = adminQuizSessionStart(quizId1, token1, 3);
-    expect(res.jsonBody.sessionId).toBeGreaterThan(0);
+  test('Check if sessions can be started with same user but different tokens', () => {
+    const token2 = adminAuthLogin('admin1@gmail.com', 'SDFJKH2349081j').jsonBody.token;
+    const res1 = adminQuizSessionStart(quizId1, token1, 3);
+    const res2 = adminQuizSessionStart(quizId1, token2, 3);
+    expect(res1).toStrictEqual(SUCCESS);
+    expect(res2).toStrictEqual(SUCCESS);
+    expect(adminQuizSessionView(token1, quizId1).jsonBody).toStrictEqual({
+      activeSessions: [ res1.jsonBody.sessionId, res2.jsonBody.sessionId ],
+      inactiveSessions: []
+    });
   });
 });

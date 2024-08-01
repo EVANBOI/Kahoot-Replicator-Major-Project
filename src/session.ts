@@ -545,49 +545,34 @@ export function playerJoin(
 */
 
 export function adminQuizSessionStart(quizId: number, token: string, autoStartNum: number) {
-  
   const database = getData();
-
+  const user = findUserBySessionId(database, token);
   // Check if the token is valid
-  if (!token) {
+  if (!user) {
     throw new Unauthorised('Invalid token');
   }
-
   // Check if the quiz exists and is not in trash
   const quiz = findQuizWithId(database, quizId);
+  const quizCopy = JSON.parse(JSON.stringify(quiz));;
   const isInTrash = database.trash.find(trashQuiz => trashQuiz.quizId === quizId);
-  const user = findUserBySessionId(database, token);
-  if (!quiz && !isInTrash) {
+  if (!quizCopy && !isInTrash) {
     throw new Forbidden('Quiz does not exist');
-  } else if (isInTrash && !quiz) {
+  } else if (isInTrash && !quizCopy) {
     if (isInTrash.creatorId !== user.userId) {
       throw new Forbidden('User does not own Quiz');
     }
-  } else if (!isInTrash && quiz) {
-    if (quiz.creatorId !== user.userId) {
+  } else if (!isInTrash && quizCopy) {
+    if (quizCopy.creatorId !== user.userId) {
       throw new Forbidden('User does not own Quiz');
     }
   }
   if (isInTrash) {
     throw new BadRequest('Quiz is in trash');
-  }
-  console.log('quizid3 is blah blah', quiz.quizId)
-
-  if (quiz.questions.length === 0) {
+  } else if (quizCopy.questions.length === 0) {
     throw new BadRequest('The quiz does not have any questions.');
-  }
-  console.log('quizid4 is blah blah', quiz.quizId)
-
-  // Check if the quiz already has 10 active sessions
- // const activeSessions = adminQuizSessionView(quizId); // Make sure this function is defined and works correctly
-  console.log('5 is blah blah', quiz.sessions.length)
-  if (quiz.sessions.length >= 10) {
+  } else if (quizCopy.sessions.length >= 10) {
     throw new BadRequest('There are already 10 active sessions for this quiz');
-  }
-  console.log('6 is blah blah', quiz.sessions.length)
-
-  // Check if autoStartNum is within the valid range
-  if (autoStartNum > 50) {
+  }  else if (autoStartNum > 50) {
     throw new BadRequest('autoStartNum exceeds maximum value');
   }
 
@@ -603,15 +588,9 @@ export function adminQuizSessionStart(quizId: number, token: string, autoStartNu
       usersRankedByScore: [],
       questionResults: []
     },
-    autoStartNum: autoStartNum // Optional field
+    autoStartNum: autoStartNum
   };
-
-  // Initialize Array
-  console.log('7 is blah blah', quiz.sessions.length)
-
   quiz.sessions.push(newSession);
-  console.log('8 is blah blah', quiz.sessions.length)
   setData(database);
-
   return { sessionId: newSessionId };
 }

@@ -113,6 +113,8 @@ export function adminQuizRemove (token: string, quizId: number): QuizRemoveResul
     throw new Forbidden(`Quiz with ID '${quizId}' not found`);
   } else if (quiz.creatorId !== user.userId) {
     throw new Forbidden(`Quiz with ID ${quizId} is not owned by ${user.userId} (actual owner: ${quiz.creatorId})`);
+  } else if (quiz.sessions.some(s => s.state === SessionStatus.END) === true) {
+    throw new BadRequest('At least one session has not ended yet')
   }
 
   const quizIndex = database.quizzes.findIndex(quiz => quiz.quizId === quizId);

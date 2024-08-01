@@ -10,8 +10,22 @@ describe('POST /v1/player/join', () => {
 
   beforeEach(() => {
     clear();
-    const quizId = adminQuizCreate('token', 'Quiz Title', 'Description').jsonBody.quizId;
-    validSessionId = adminQuizSessionStart(quizId, 'token', 3).jsonBody.sessionId;
+
+    const quizCreateResponse = adminQuizCreate('token', 'Quiz Title', 'Description');
+    console.log('Quiz Create Response:', quizCreateResponse);
+    
+    const quizId = quizCreateResponse.jsonBody?.quizId;
+    if (!quizId) {
+      throw new Error('Quiz creation failed');
+    }
+
+    const sessionStartResponse = adminQuizSessionStart(quizId, 'token', 3);
+    console.log('Session Start Response:', sessionStartResponse);
+    
+    validSessionId = sessionStartResponse.jsonBody?.sessionId;
+    if (!validSessionId) {
+      throw new Error('Session start failed');
+    }
   });
 
   test('Successful join with valid data', () => {
@@ -39,14 +53,14 @@ describe('POST /v1/player/join', () => {
     const response = playerJoin(validSessionId, PLAYER_NAME); // Attempt to join with the same name
 
     expect(response.statusCode).toBe(400);
-    expect(response.jsonBody.error).toBe('Name is not unique');
+    expect(response.jsonBody.error).toBe('Name of user entered is not unique.');
   });
 
   test('Failure to join due to invalid session ID', () => {
     const response = playerJoin(INVALID_SESSION_ID, PLAYER_NAME);
 
     expect(response.statusCode).toBe(400);
-    expect(response.jsonBody.error).toBe('Invalid session ID');
+    expect(response.jsonBody.error).toBe('Session Id does not refer to a valid session.');
   });
 
   /*test('Failure to join due to session not in LOBBY state', () => {

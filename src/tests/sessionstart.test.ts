@@ -30,6 +30,7 @@ beforeEach(() => {
 describe('Unsuccessful tests', () => {
   test('autoStartNum is greater than 50', () => {
     const res = adminQuizSessionStart(quizId1, token1, 51);
+    console.log(token1)
     expect(res).toStrictEqual(ERROR400);
   });
 
@@ -57,7 +58,9 @@ describe('Unsuccessful tests', () => {
   });
 
   test('Token is empty or invalid', () => {
-    const res = adminQuizSessionStart(quizId1, 'invalid_token', 3);
+    const res = adminQuizSessionStart(quizId1, token1+'-999', 3);
+    
+
     expect(res).toStrictEqual(ERROR401);
   });
 

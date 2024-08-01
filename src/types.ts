@@ -31,7 +31,8 @@ export type Session = {
     players: Player[],
     state: SessionStatus,
     messages: MessageInfo[],
-    results: SessionResults
+    results: SessionResults,
+    autoStartNum?: number
 }
 
 export type Player = {

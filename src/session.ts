@@ -165,6 +165,8 @@ export function adminQuizSessionUpdate(
       database.sessionIdToTimerObject[sessionId] = setTimeout(() => {
         turnQuestionOpen(sessionId, quizId);
       }, DELAY * 1000);
+    } else if (action === SessionAction.END) {
+      session.state = SessionStatus.END;
     } else {
       throw new BadRequest(`Action enum cannot be applied in the ${session.state}`);
     }

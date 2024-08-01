@@ -555,26 +555,19 @@ export function adminQuizSessionStart(quizId: number, token: string, autoStartNu
 
   // Check if the quiz exists and is not in trash
   const quiz = findQuizWithId(database, quizId);
-  const isInTrash = database.trash.some(trashQuiz => trashQuiz.quizId === quizId);
-  console.log('111 is blah blah', quiz, isInTrash)
-
-  if (!quiz ) {
-    console.log('222 is blah blah', quiz, isInTrash)
-    if (isInTrash === false) {
-      console.log('333 is blah blah', quiz, isInTrash)
-      throw new Forbidden('Quiz does not exist');
-      console.log('444 is blah blah', quiz, isInTrash)
-    }
-
-  }
-  console.log('quizid is blah blah', quiz.quizId)
-
+  const isInTrash = database.trash.find(trashQuiz => trashQuiz.quizId === quizId);
   const user = findUserBySessionId(database, token);
-  if (quiz.creatorId !== user.userId) {
-    throw new Forbidden('User does not own Quiz');
+  if (!quiz && !isInTrash) {
+    throw new Forbidden('Quiz does not exist');
+  } else if (isInTrash && !quiz) {
+    if (isInTrash.creatorId !== user.userId) {
+      throw new Forbidden('User does not own Quiz');
+    }
+  } else if (!isInTrash && quiz) {
+    if (quiz.creatorId !== user.userId) {
+      throw new Forbidden('User does not own Quiz');
+    }
   }
-  console.log('quizid2 is blah blah', quiz.quizId)
-
   if (isInTrash) {
     throw new BadRequest('Quiz is in trash');
   }

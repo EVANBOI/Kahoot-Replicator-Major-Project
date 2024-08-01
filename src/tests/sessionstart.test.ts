@@ -35,7 +35,6 @@ describe('Unsuccessful tests', () => {
   });
 
   test('10 sessions are already active for the quiz', () => {
-    
       adminQuizSessionStart(quizId1, token1, 1);
       adminQuizSessionStart(quizId1, token1, 1);
       adminQuizSessionStart(quizId1, token1, 1);
@@ -57,9 +56,7 @@ describe('Unsuccessful tests', () => {
   });
 
   test.only('The quiz is in trash', () => {
-    
-    const res1 = adminQuizRemoveV2(token1, quizId1);
-   
+    adminQuizRemoveV2(token1, quizId1);
     const res2 = adminQuizSessionStart(quizId1, token1, 3);
     console.log('2.', res2 )
 

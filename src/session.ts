@@ -308,28 +308,36 @@ export function playerQuestionAnswer(
  * @param {number} sessionId - The ID of the session.
  * @param {string} token - The token of the user.
  * @returns {SessionResults} - The final results of the session.
- * @returns {ErrorMessage} - An error message.
  */
-export function adminQuizSessionResults(
-  quizId: number,
-  sessionId: number,
-  token: string
-): SessionResults {
+export function adminQuizSessionResults(quizId: number, sessionId: number, token: string): SessionResults {
+  const database = getData();
+
+  const user = findUserBySessionId(database, token);
+  if (!user) {
+    throw new Unauthorised('Invalid token provided');
+  }
+
+  const quiz = findQuizWithId(database, quizId);
+  if (!quiz) {
+    throw new Forbidden('Quiz does not exist');
+  }
+
+  if (quiz.creatorId !== user.userId) {
+    throw new Forbidden('User is not the owner of the quiz');
+  }
+
+  const session = quiz.sessions?.find(s => s.sessionId === sessionId);
+  if (!session) {
+    throw new BadRequest('Session ID does not exist');
+  }
+
+  if (typeof session.results !== 'object') {
+    throw new BadRequest('Session results are not in the correct format');
+  }
+
   return {
-    usersRankedByScore: [
-      {
-        name: 'Hayden',
-        score: 45,
-      },
-    ],
-    questionResults: [
-      {
-        questionId: 5546,
-        playersCorrectList: ['Hayden'],
-        averageAnswerTime: 45,
-        percentCorrect: 54,
-      },
-    ],
+    usersRankedByScore: session.results.usersRankedByScore,
+    questionResults: session.results.questionResults
   };
 }
 

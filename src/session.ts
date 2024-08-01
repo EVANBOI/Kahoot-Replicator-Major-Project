@@ -174,6 +174,8 @@ export function adminQuizSessionUpdate(
         turnQuestionOpen(sessionId, quizId);
       }, DELAY * 1000);
       console.log('KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK');
+    } else if (action === SessionAction.END) {
+      session.state = SessionStatus.END;
     } else {
       throw new BadRequest(`Action enum cannot be applied in the ${session.state}`);
     }

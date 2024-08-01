@@ -46,6 +46,16 @@ describe('adminQuizQuestionDuplicate tests', () => {
     const result = adminQuizQuestionDuplicate(sessionId, quizId + 42, questionId);
     expect(result).toStrictEqual(ERROR403);
   });
+  test('User does not own quiz', () => {
+    const user2 = adminAuthRegister(
+      VALID_USER_REGISTER_INPUTS_2.EMAIL, 
+      VALID_USER_REGISTER_INPUTS_2.PASSWORD, 
+      VALID_USER_REGISTER_INPUTS_2.FIRSTNAME, 
+      VALID_USER_REGISTER_INPUTS_2.LASTNAME);
+    const token2 = user2.jsonBody.token;
+    const result = adminQuizQuestionDuplicate(token2, quizId, questionId);
+    expect(result).toStrictEqual(ERROR403);
+  });
 
   test('Question ID does not refer to a valid question within this quiz', () => {
     const result = adminQuizQuestionDuplicate(sessionId, quizId, questionId + 42);

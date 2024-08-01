@@ -648,23 +648,13 @@ app.post('/v1/admin/quiz/:quizid/question/:questionid/duplicate', (req: Request,
   const quizId = parseInt(req.params.quizid);
   const questionId = parseInt(req.params.questionid);
   try {
-    tokenCheck(token);
+    return res.json(adminQuizQuestionDuplicate(token, quizId, questionId));
   } catch (error) {
     if (error instanceof Unauthorised) {
       return res.status(StatusCodes.UNAUTHORIZED).json({ error: error.message });
-    }
-  }
-  try {
-    quizExistCheck(quizId, token);
-  } catch (error) {
-    if (error instanceof Forbidden) {
+    } else if (error instanceof Forbidden) {
       return res.status(StatusCodes.FORBIDDEN).json({ error: error.message });
-    }
-  }
-  try {
-    return res.json(adminQuizQuestionDuplicate(token, quizId, questionId));
-  } catch (error) {
-    if (error instanceof BadRequest) {
+    } else if (error instanceof BadRequest) {
       return res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
     }
   }
@@ -675,23 +665,13 @@ app.post('/v2/admin/quiz/:quizid/question/:questionid/duplicate', (req: Request,
   const quizId = parseInt(req.params.quizid);
   const questionId = parseInt(req.params.questionid);
   try {
-    tokenCheck(token);
+    return res.json(adminQuizQuestionDuplicate(token, quizId, questionId));
   } catch (error) {
     if (error instanceof Unauthorised) {
       return res.status(StatusCodes.UNAUTHORIZED).json({ error: error.message });
-    }
-  }
-  try {
-    quizExistCheck(quizId, token);
-  } catch (error) {
-    if (error instanceof Forbidden) {
+    } else if (error instanceof Forbidden) {
       return res.status(StatusCodes.FORBIDDEN).json({ error: error.message });
-    }
-  }
-  try {
-    return res.json(adminQuizQuestionDuplicate(token, quizId, questionId));
-  } catch (error) {
-    if (error instanceof BadRequest) {
+    } else if (error instanceof BadRequest) {
       return res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
     }
   }

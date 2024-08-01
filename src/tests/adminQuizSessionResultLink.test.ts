@@ -1,7 +1,8 @@
 import { SessionAction } from '../session';
+import sleepSync from 'slync';
 import {
   ERROR401, ERROR403, ERROR400, VALID_USER_REGISTER_INPUTS_1, VALID_USER_REGISTER_INPUTS_2,
-  VALID_QUIZ_CREATE_INPUTS_1, validQuestion1V2
+  VALID_QUIZ_CREATE_INPUTS_1, validQuestionV2FAST
 } from '../testConstants';
 import {
   clear,
@@ -32,23 +33,23 @@ beforeEach(() => {
     VALID_QUIZ_CREATE_INPUTS_1.NAME,
     VALID_QUIZ_CREATE_INPUTS_1.DESCRIPTION
   ).jsonBody.quizId;
-  adminCreateQuizQuestionV2(quizId1, token1, validQuestion1V2);
+  adminCreateQuizQuestionV2(quizId1, token1, validQuestionV2FAST);
   sessionId1 = adminQuizSessionStart(quizId1, token1, 5).jsonBody.sessionId;
   playerJoin(sessionId1, 'Hayden');
 });
 
 describe('GET /v1/admin/quiz/{quizid}/session/{sessionid}/results/csv', () => {
   describe('error cases', () => {
-    test.skip('Error 401: token is empty', () => {
+    test('Error 401: token is empty', () => {
       expect(adminQuizSessionResultLink(quizId1, sessionId1, '')).toStrictEqual(ERROR401);
     });
-    test.skip('Error 401: token is invalid', () => {
+    test('Error 401: token is invalid', () => {
       expect(adminQuizSessionResultLink(quizId1, sessionId1, token1 + 1)).toStrictEqual(ERROR401);
     });
-    test.skip('Error 403: quiz does not exist', () => {
+    test('Error 403: quiz does not exist', () => {
       expect(adminQuizSessionResultLink(quizId1 + 1, sessionId1, token1)).toStrictEqual(ERROR403);
     });
-    test.skip('Error 403: user is not owner of quiz', () => {
+    test('Error 403: user is not owner of quiz', () => {
       const token2 = adminAuthRegister(
         VALID_USER_REGISTER_INPUTS_2.EMAIL,
         VALID_USER_REGISTER_INPUTS_2.PASSWORD,
@@ -57,23 +58,31 @@ describe('GET /v1/admin/quiz/{quizid}/session/{sessionid}/results/csv', () => {
       ).jsonBody.token;
       expect(adminQuizSessionResultLink(quizId1, sessionId1, token2)).toStrictEqual(ERROR403);
     });
-    test.skip('Error 400: session Id does not refer to a valid session within this quiz', () => {
+    test('Error 400: session Id does not refer to a valid session within this quiz', () => {
       expect(adminQuizSessionResultLink(quizId1, sessionId1 + 1, token1)).toStrictEqual(ERROR400);
     });
-    test.skip('Error 400: session is not in FINAL_RESULTS state', () => {
+    test('Error 400: session is not in FINAL_RESULTS state', () => {
         // the session state should be lobby
       expect(adminQuizSessionResultLink(quizId1, sessionId1, token1)).toStrictEqual(ERROR400);
     });
   });
   describe('success cases', () => {
     test.skip('Successfully return URL with CSV file', () => {
-      adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_FINAL_RESULTS);
+        adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
+        adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
+        
+        sleepSync(1);
+        adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_FINAL_RESULTS);
       const result = adminQuizSessionResultLink(quizId1, sessionId1, token1).jsonBody;
       const regex = /^https.*\.csv$/;
       expect(result).toMatch(regex);
     });
     test.skip('The final result is transfered to CSV sucessfully', () => {
-      adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_FINAL_RESULTS);
+        adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
+        adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
+        
+        sleepSync(1);
+        adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_FINAL_RESULTS);
       const url = adminQuizSessionResultLink(quizId1, sessionId1, token1).jsonBody.url;
       const csvData = getCsvData(url);
       expect(csvData).toStrictEqual('Player,question1score,question1rank\nHayden,0,1\n');

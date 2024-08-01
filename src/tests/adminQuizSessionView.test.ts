@@ -100,7 +100,6 @@ describe('GET /v1/admin/quiz/{quizid}/sessions', () => {
     test('Successfully view session with both active and inactive sessions existing', () => {
       sessionId1 = adminQuizSessionStart(quizId1, token1, 5).jsonBody.sessionId;
       sessionId2 = adminQuizSessionStart(quizId1, token1, 5).jsonBody.sessionId;
-      adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_FINAL_RESULTS);
       adminQuizSessionUpdate(quizId1, sessionId2, token1, SessionAction.END);
       expect(adminQuizSessionView(token1, quizId1).jsonBody).toStrictEqual({
         activeSessions: [sessionId1],

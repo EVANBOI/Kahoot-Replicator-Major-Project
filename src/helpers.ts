@@ -29,19 +29,19 @@ export function tokenCheck(token: string) {
 }
 
 export enum Colours {
-  red = 'red',
-  blue = 'blue',
-  green = 'green',
-  yellow = 'yellow',
-  purple = 'purple',
-  brown = 'brown',
-  orange = 'orange'
+  red,
+  blue,
+  green,
+  yellow,
+  purple,
+  brown,
+  orange
 }
 
-export function getRandomColour(): Colours {
-  const colours = Object.values(Colours);
-  const randomIndex = Math.floor(Math.random() * colours.length);
-  return colours[randomIndex];
+export function getRandomColour(): string {
+  const colourKeys = Object.keys(Colours).filter(key => isNaN(Number(key)));
+  const randomIndex = Math.floor(Math.random() * colourKeys.length);
+  return colourKeys[randomIndex];
 }
 
 export function findUserBySessionId(database: Data, sessionIdToFind: string): User | undefined {
@@ -93,7 +93,7 @@ export function validQuestion(
   } else if (questionBody.answers.length > 6) {
     throw new BadRequest('There are more than 6 answers');
   } else if (questionBody.duration <= 0) {
-    throw new BadRequest('Duration is negative');
+    throw new BadRequest('Duration is non positive');
   } else if (totalDuration > 180) {
     throw new BadRequest('Total duration is more than 3 min');
   } else if (questionBody.points < 1) {

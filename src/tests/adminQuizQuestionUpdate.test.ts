@@ -1,10 +1,12 @@
+import { Colours } from '../helpers';
 import {
   validQuestion1,
   ERROR401,
   ERROR403,
   ERROR400,
   validQuestion2,
-  validQuestion3
+  validQuestion3,
+  validQuestion1V2
 } from '../testConstants';
 import {
   adminCreateQuizQuestion,
@@ -13,6 +15,8 @@ import {
   adminQuizCreateV2,
   adminQuizQuestionUpdateV2,
   adminQuizInfo,
+  adminCreateQuizQuestionV2,
+  adminQuizInfoV2,
 } from '../wrappers';
 
 const UPDATED = {
@@ -335,6 +339,17 @@ describe('Successful Updates', () => {
       questions: [validQuestion1]
     });
   });
+
+  test('Check updated question has correct answers', () => {
+    adminCreateQuizQuestionV2(quizId1, sessionId1, validQuestion1V2).jsonBody;
+    const quiz = adminQuizInfoV2(sessionId1, quizId1).jsonBody;
+    const colours = Object.values(Colours);
+    for (const answer of quiz.questions[0].answers) {
+      expect(colours).toContain(answer.colour);
+      expect(answer.answerId).toEqual(expect.any(Number));
+      expect(['A', 'B']).toContain(answer.answer);
+    }
+  })
 
   test('Successfully updated the timeLastEdited key', () => {
     const startTime = Math.floor(Date.now() / 1000);

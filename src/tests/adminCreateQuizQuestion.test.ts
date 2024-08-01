@@ -1,3 +1,4 @@
+import { Colours } from '../helpers';
 import {
   validQuestion1,
   validQuestion2,
@@ -255,6 +256,17 @@ describe('Succesful Tests', () => {
       duration: expect.any(Number)
     });
   });
+
+  test('Check created questions has correct answers', () => {
+    adminCreateQuizQuestion(quizId1, sessionId1, validQuestion1).jsonBody;
+    const quiz = adminQuizInfo(sessionId1, quizId1).jsonBody;
+    const colours = Object.values(Colours);
+    for (const answer of quiz.questions[0].answers) {
+      expect(colours).toContain(answer.colour);
+      expect(answer.answerId).toEqual(expect.any(Number));
+      expect(['A', 'B']).toContain(answer.answer);
+    }
+  })
   test('Check that description time was updated successfully', () => {
     adminCreateQuizQuestion(quizId1, sessionId1, validQuestion1);
     const quizInfo = adminQuizInfo(sessionId1, quizId1);

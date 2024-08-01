@@ -61,7 +61,6 @@ import {
   playerResults,
   playerSendMessage,
   playerStatus,
-  SessionAction
 } from './session';
 
 // Set up web app

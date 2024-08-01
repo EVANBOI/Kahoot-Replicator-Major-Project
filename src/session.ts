@@ -1,6 +1,6 @@
 import { getData, setData } from './dataStore';
 import { BadRequest, Unauthorised, Forbidden } from './error';
-import { findUserBySessionId, findQuizWithId, convertSessionResultsToCSV } from './helpers';
+import { findUserBySessionId, findQuizWithId, convertSessionResultsToCSV, generateRandomString } from './helpers';
 import * as path from 'path';
 import * as fs from 'fs';
 import {
@@ -405,30 +405,13 @@ export function playerResults(
   };
 }
 
-// function generateRandomName(): string {
-//   const letters = 'abcdefghijklmnopqrstuvwxyz';
-//   const numbers = '0123456789';
-//   let name = '';
-//   while (name.length < 5) {
-//     const char = letters.charAt(Math.floor(Math.random() * letters.length));
-//     if (!name.includes(char)) {
-//       name += char;
-//     }
-//   }
-//   while (name.length < 8) {
-//     const num = numbers.charAt(Math.floor(Math.random() * numbers.length));
-//     if (!name.includes(num)) {
-//       name += num;
-//     }
-//   }
-//   return name;
-// }
+
 
 export function playerJoin(
   sessionId: number,
   name: string
 ): { playerId: number } {
-  // const database = getData();
+   const database = getData();
 
   // // Find the session that matches the sessionId
   // let session: Session | undefined;
@@ -446,17 +429,24 @@ export function playerJoin(
   // }
 
   // // Check if the name is unique
-  // if (name) {
-  //   const allPlayers = database.quizzes.flatMap(quiz => quiz.sessions?.flatMap(session => session.players) || []);
-  //   const existingPlayer = allPlayers.find(player => player.name === name);
-  //   if (existingPlayer) {
-  //     throw new BadRequest('Name of user entered is not unique.');
-  //   }
-  // } else {
-  //   // Generate a random name if none is provided
-  //   name = generateRandomName();
-  // }
-
+  if (name != '') {
+    const allPlayers = database.quizzes.flatMap(quiz => quiz.sessions?.flatMap(session => session.players) || []);
+    const existingPlayer = allPlayers.find(player => player.name === name);
+    if (existingPlayer) {
+      throw new BadRequest('Name of user entered is not unique.');
+    }
+  } else {
+    // Generate a random name if none is provided
+    let name = generateRandomString();
+    console.log('Generated Name:', name);
+    
+    if (/^[a-z]{5}\d{3}$/.test(name)) {
+        console.log('Name matches the pattern:', name);
+    } else {
+        console.log('Name does not match the pattern:', name);
+    }
+  }
+  
   // // Logic to generate a new player ID
   // const allPlayers = database.quizzes.flatMap(quiz => quiz.sessions?.flatMap(session => session.players) || []);
   // const newPlayerId = allPlayers.length > 0
@@ -471,8 +461,12 @@ export function playerJoin(
   // setData(database);
 
   // return { playerId: newPlayerId };
-  return { playerId: 5566 };
+  return { playerId };
 }
+
+
+
+
 
 export function adminQuizSessionStart(quizId: number, token: string, autoStartNum: number) {
   const database = getData();

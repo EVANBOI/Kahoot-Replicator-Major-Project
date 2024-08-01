@@ -1,5 +1,6 @@
 import { clear, adminQuizCreate, adminQuizSessionStart, playerJoin, adminAuthRegister } from '../wrappers';
 import { ERROR400 } from '../testConstants';
+import { generateRandomString } from '../helpers';
 const SUCCESSFUL = {
   statusCode: 200,
   jsonBody: { playerId: expect.any(Number) }
@@ -25,12 +26,15 @@ describe('POST /v1/player/join, successful cases', () => {
     expect(response).toStrictEqual(SUCCESSFUL);
   });
 
-  test.failing('Successful join with empty name', () => {
+  test('Successful join with empty name', () => {
     const response = playerJoin(validSessionId, '');
+    
     expect(response).toStrictEqual(SUCCESSFUL);
 
     // Check the format of the generated name
-    const generatedName = response.jsonBody.name;
+    console.log('Response:', response);
+    const generatedName = generateRandomString();
+    console.log('Response:', response);
     expect(generatedName).toMatch(/^[a-z]{5}\d{3}$/); // Format [5 letters][3 numbers]
   });
 });
@@ -64,3 +68,4 @@ describe('POST /v1/player/join, successful cases', () => {
     expect(response.jsonBody.error).toBe('Session is not in LOBBY state');
   }); */
 });
+

@@ -98,29 +98,13 @@ export function adminCreateQuizQuestion(
  * @returns {{ newQuestionId: number }} - The result of the duplication operation.
  */
 export function adminQuizQuestionDuplicate(
-  token: string,
   quizId: number,
   questionId: number
 ):{ newQuestionId: number } {
   const database = getData();
-  const user = findUserBySessionId(database, token);
 
-  if (!user) {
-    throw new Unauthorised('Token is not valid.');
-  }
 
   const quiz = findQuizWithId(database, quizId);
-  if (!quiz) {
-    throw new Forbidden(`Quiz with ID '${quizId}' not found`);
-  }
-
-  if (quiz.creatorId !== user.userId) {
-    throw new Forbidden('User is not the owner of the quiz.');
-  }
-
-  if (!quiz.questions) {
-    quiz.questions = [];
-  }
 
   const question = quiz.questions.find(q => q.questionId === questionId);
   if (!question) {

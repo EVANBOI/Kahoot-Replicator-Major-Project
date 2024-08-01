@@ -660,7 +660,7 @@ app.post('/v1/admin/quiz/:quizid/question/:questionid/duplicate', (req: Request,
     }
   }
   try {
-    return res.json(adminQuizQuestionDuplicate(token, quizId, questionId));
+    return res.json(adminQuizQuestionDuplicate(quizId, questionId));
   } catch (error) {
     if (error instanceof BadRequest) {
       return res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
@@ -687,7 +687,7 @@ app.post('/v2/admin/quiz/:quizid/question/:questionid/duplicate', (req: Request,
     }
   }
   try {
-    return res.json(adminQuizQuestionDuplicate(token, quizId, questionId));
+    return res.json(adminQuizQuestionDuplicate(quizId, questionId));
   } catch (error) {
     if (error instanceof BadRequest) {
       return res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });

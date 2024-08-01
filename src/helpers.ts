@@ -184,8 +184,6 @@ export function convertSessionResultsToCSV(sessionResults: SessionResults): stri
   return csvContent;
 }
 
-
-
 export function generateRandomString() {
   const letters = 'abcdefghijklmnopqrstuvwxyz';
   const numbers = '0123456789';
@@ -193,20 +191,19 @@ export function generateRandomString() {
 
   // Generate 5 unique letters
   while (result.length < 5) {
-      const randomLetter = letters[Math.floor(Math.random() * letters.length)];
-      if (!result.includes(randomLetter)) {
-          result += randomLetter;
-      }
+    const randomLetter = letters[Math.floor(Math.random() * letters.length)];
+    if (!result.includes(randomLetter)) {
+      result += randomLetter;
+    }
   }
 
   // Generate 3 unique numbers
   while (result.length < 8) {
-      const randomNumber = numbers[Math.floor(Math.random() * numbers.length)];
-      if (!result.includes(randomNumber)) {
-          result += randomNumber;
-      }
+    const randomNumber = numbers[Math.floor(Math.random() * numbers.length)];
+    if (!result.includes(randomNumber)) {
+      result += randomNumber;
+    }
   }
 
   return result;
 }
-

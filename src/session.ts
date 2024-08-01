@@ -406,13 +406,11 @@ export function playerResults(
   };
 }
 
-
-
 export function playerJoin(
   sessionId: number,
   name: string
 ): { playerId: number } {
-   const database = getData();
+  const database = getData();
   // Find the session that matches the sessionId
   let session: Session | undefined;
   for (const quiz of database.quizzes) {
@@ -434,19 +432,19 @@ export function playerJoin(
       throw new BadRequest('Name of user entered is not unique.');
     }
   } else if (name === '') {
-    let name = generateRandomString();
+    const name = generateRandomString();
     console.log('Generated Name:', name);
   }
-  
-  // // Generate a random name if none is provided   
+
+  // // Generate a random name if none is provided
   //   if (/^[a-z]{5}\d{3}$/.test(name)) {
   //       console.log('Name matches the pattern:', name);
   //   } else {
   //       console.log('Name does not match the pattern:', name);
   // }
-  
+
   // Logic to generate a new player ID
-  const newPlayerId = parseInt(playerUid.seq()); 
+  const newPlayerId = parseInt(playerUid.seq());
   // Add the new player to the session
   const newPlayer = { playerId: newPlayerId, name: name, score: 0 };
   session.players.push(newPlayer);

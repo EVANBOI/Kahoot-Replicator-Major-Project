@@ -208,12 +208,27 @@ export const adminUserPasswordUpdate = (
     { token, oldPassword, newPassword });
 };
 
+export const adminUserPasswordUpdateV2 = (
+  token: string,
+  oldPassword: string,
+  newPassword: string) => {
+  return requestHelper('PUT', '/v2/admin/user/password',
+    { oldPassword, newPassword }, token);
+};
+
 export const adminQuizNameUpdate = (
   token: string,
   quizId: number,
   name: string) => {
   return requestHelper('PUT', `/v1/admin/quiz/${quizId}/name`,
     { token, name });
+};
+
+export const adminQuizNameUpdateV2 = (
+  token: string,
+  quizId: number,
+  name: string) => {
+  return requestHelper('PUT', `/v2/admin/quiz/${quizId}/name`, { name }, token);
 };
 
 export const adminQuizTrashView = (token: string) => {
@@ -289,6 +304,15 @@ export const adminQuizQuestionDuplicate = (
 ) => {
   return requestHelper('POST', `/v1/admin/quiz/${quizId}/question/${questionId}/duplicate`, { token });
 };
+
+export const adminQuizQuestionDuplicatV2 = (
+  token: string,
+  quizId: number,
+  questionId: number
+) => {
+  return requestHelper('POST', `/v2/admin/quiz/${quizId}/question/${questionId}/duplicate`, {}, token);
+};
+
 export const adminQuizRestore = (token: string, quizid: number) => {
   return requestHelper('POST', `/v1/admin/quiz/${quizid}/restore`, { token });
 };

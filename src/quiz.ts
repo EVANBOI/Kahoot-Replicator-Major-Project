@@ -103,14 +103,13 @@ export function adminQuizRemove (token: string, quizId: number): QuizRemoveResul
   const user = findUserBySessionId(database, token);
 
   if (!user) {
-    return { statusCode: 401, message: 'AuthUserId is not a valid user.' };
+    throw new Unauthorised('AuthUserId is not a valid user.');
   }
   const quiz = findQuizWithId(database, quizId);
   if (!quiz) {
-    return { statusCode: 403, message: `Quiz with ID '${quizId}' not found` };
-  }
-  if (quiz.creatorId !== user.userId) {
-    return { statusCode: 403, message: `Quiz with ID ${quizId} is not owned by ${user.userId} (actual owner: ${quiz.creatorId})` };
+    throw new Forbidden(`Quiz with ID '${quizId}' not found`);
+  } else if (quiz.creatorId !== user.userId) {
+    throw new Forbidden(`Quiz with ID ${quizId} is not owned by ${user.userId} (actual owner: ${quiz.creatorId})`);
   }
 
   const quizIndex = database.quizzes.findIndex(quiz => quiz.quizId === quizId);
@@ -118,10 +117,7 @@ export function adminQuizRemove (token: string, quizId: number): QuizRemoveResul
   database.quizzes.splice(quizIndex, 1);
 
   setData(database);
-  return {
-    statusCode: 200,
-    message: '{}'
-  };
+  return {};
 }
 
 /**
@@ -180,7 +176,7 @@ export function adminQuizNameUpdate(sessionId: string, quizId: number, name: str
   const database = getData();
   const user = findUserBySessionId(database, sessionId);
   if (!user) {
-    throw new Unauthorised('Session ID is not valid.');
+    throw new Unauthorised('sessionId is not valid.');
   }
   const authUserId = user.userId;
   const quiz = findQuizWithId(database, quizId);

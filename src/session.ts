@@ -1,4 +1,4 @@
-import { getData, setData } from './dataStore';
+import { getData, setData, sessionIdToTimerObject } from './dataStore';
 import { BadRequest, Unauthorised, Forbidden } from './error';
 import { findUserBySessionId, findQuizWithId, convertSessionResultsToCSV } from './helpers';
 import * as path from 'path';
@@ -144,9 +144,7 @@ export function adminQuizSessionUpdate(
 
   const database = getData();
   const quiz = findQuizWithId(database, quizId);
-  console.log(quiz.quizId);
   const session = quiz.sessions.find(s => s.sessionId === sessionId);
-  console.log(`session: ${session}`);
 
   if (!session) {
     throw new BadRequest('Session Id does not refer to a valid session within this quiz');
@@ -161,19 +159,14 @@ export function adminQuizSessionUpdate(
   }
 
   const questionIndex = session.atQuestion;
-  const question = quiz.questions[questionIndex - 1];
-  console.log('HIIIIIIIIIIIIIIIIIII');
+  let question = session.quizCopy.questions[questionIndex - 1];
   if (session.state === SessionStatus.LOBBY) {
-    console.log(session.state);
     if (action === SessionAction.NEXT_QUESTION) {
-      console.log('PPPPPPPPPPPPPPPPPPPPPPPPPP');
       session.state = SessionStatus.QUESTION_COUNTDOWN;
-      console.log(session.state);
-      console.log('Transitioning from LOBBY to QUESTION_COUNTDOWN');
-      database.sessionIdToTimerObject[sessionId] = setTimeout(() => {
+      const timer = setTimeout(() => {
         turnQuestionOpen(sessionId, quizId);
       }, DELAY * 1000);
-      console.log('KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK');
+      sessionIdToTimerObject[sessionId] = timer;
     } else if (action === SessionAction.END) {
       session.state = SessionStatus.END;
     } else {
@@ -183,23 +176,26 @@ export function adminQuizSessionUpdate(
     if (action === SessionAction.END) {
       session.state = SessionStatus.END;
     } else if (action === SessionAction.SKIP_COUNTDOWN) {
-      clearTimeout(database.sessionIdToTimerObject[sessionId]);
-      delete database.sessionIdToTimerObject[sessionId];
+      session.atQuestion++;
+      question = session.quizCopy.questions[session.atQuestion - 1];
+      clearTimeout(sessionIdToTimerObject[sessionId]);
+      delete sessionIdToTimerObject[sessionId];
       session.state = SessionStatus.QUESTION_OPEN;
-      database.sessionIdToTimerObject[sessionId] = setTimeout(() => {
+      const timer = setTimeout(() => {
         turnQuestionClose(sessionId, quizId);
       }, question.duration * 1000);
+      sessionIdToTimerObject[sessionId] = timer;
     } else {
       throw new BadRequest(`Action enum cannot be applied in the ${session.state}`);
     }
   } else if (session.state === SessionStatus.QUESTION_OPEN) {
     if (action === SessionAction.END) {
-      clearTimeout(database.sessionIdToTimerObject[sessionId]);
-      delete database.sessionIdToTimerObject[sessionId];
+      clearTimeout(sessionIdToTimerObject[sessionId]);
+      delete sessionIdToTimerObject[sessionId];
       session.state = SessionStatus.END;
     } else if (action === SessionAction.GO_TO_ANSWER) {
-      clearTimeout(database.sessionIdToTimerObject[sessionId]);
-      delete database.sessionIdToTimerObject[sessionId];
+      clearTimeout(sessionIdToTimerObject[sessionId]);
+      delete sessionIdToTimerObject[sessionId];
       session.state = SessionStatus.ANSWER_SHOW;
     } else {
       throw new BadRequest(`Action enum cannot be applied in the ${session.state}`);
@@ -207,8 +203,20 @@ export function adminQuizSessionUpdate(
   } else if (session.state === SessionStatus.QUESTION_CLOSE) {
     if (action === SessionAction.END) {
       session.state = SessionStatus.END;
+    } else if (action === SessionAction.NEXT_QUESTION) {
+      session.state = SessionStatus.QUESTION_COUNTDOWN;
     } else if (action === SessionAction.GO_TO_ANSWER) {
       session.state = SessionStatus.ANSWER_SHOW;
+    } else if (action === SessionAction.GO_TO_FINAL_RESULTS) {
+      session.state = SessionStatus.FINAL_RESULTS;
+    } else {
+      throw new BadRequest(`Action enum cannot be applied in the ${session.state}`);
+    }
+  } else if (session.state === SessionStatus.ANSWER_SHOW) {
+    if (action === SessionAction.END) {
+      session.state = SessionStatus.END;
+    } else if (action === SessionAction.NEXT_QUESTION) {
+      session.state = SessionStatus.QUESTION_COUNTDOWN;
     } else if (action === SessionAction.GO_TO_FINAL_RESULTS) {
       session.state = SessionStatus.FINAL_RESULTS;
     } else {
@@ -222,9 +230,8 @@ export function adminQuizSessionUpdate(
     }
   } else if (session.state === SessionStatus.END) {
     throw new BadRequest(`Action enum cannot be applied in the ${session.state}`);
-  }
+  } 
   setData(database);
-  console.log('HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH')
   return {};
 }
 
@@ -243,6 +250,7 @@ export const turnQuestionOpen = (sessionId: number, quizId: number) => {
   const quiz = findQuizWithId(database, quizId);
   const session = quiz.sessions.find(s => s.sessionId === sessionId);
   if (session) {
+    session.atQuestion++;
     session.state = SessionStatus.QUESTION_OPEN;
     setData(database);
   }

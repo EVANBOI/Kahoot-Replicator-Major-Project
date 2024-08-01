@@ -23,6 +23,16 @@ import { Unauthorised, BadRequest, Forbidden } from './error';
 const answerUid = new ShortUniqueId({ dictionary: 'number' });
 const questionUid = new ShortUniqueId({ dictionary: 'number' });
 
+export enum Colours {
+  red = 'red',
+  blue = 'blue',
+  green = 'green',
+  yellow = 'yellow',
+  purple = 'purple',
+  brown = 'brown',
+  orange = 'orange'
+}
+
 /**
  * Create questions for quizzes given the contents of the question and
  * generate unique ids for the questions as well as the answers inside it.
@@ -86,13 +96,13 @@ export function adminCreateQuizQuestion(
  * @param {string} token - The session token of the current user.
  * @param {number} quizId - The ID of the quiz containing the question to duplicate.
  * @param {number} questionId - The ID of the question to duplicate.
- * @returns {ErrorMessage | { newQuestionId: number }} - The result of the duplication operation.
+ * @returns {{ newQuestionId: number }} - The result of the duplication operation.
  */
 export function adminQuizQuestionDuplicate(
   token: string,
   quizId: number,
   questionId: number
-): ErrorMessage | { newQuestionId: number } {
+):{ newQuestionId: number } {
   const database = getData();
   const user = findUserBySessionId(database, token);
 
@@ -113,7 +123,7 @@ export function adminQuizQuestionDuplicate(
     throw new BadRequest('Question ID does not refer to a valid question within this quiz.');
   }
   const question = quiz.questions.find(q => q.questionId === questionId);
-  if (!quiz.questions || !question) {
+  if (!question) {
     throw new BadRequest('Question ID does not refer to a valid question within this quiz.');
   }
 

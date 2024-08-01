@@ -234,7 +234,7 @@ export type PositionObj = {
 
 export type QuizRestoreResult = ErrorMessage | EmptyObject
 
-export type QuizQuestionDeleteResult = EmptyObject;
+export type QuizQuestionDeleteResult = ErrorMessage | EmptyObject
 
 export type PlayerQuestionAnswerResult = {
     statusCode?: number;

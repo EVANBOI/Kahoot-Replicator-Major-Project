@@ -257,7 +257,6 @@ describe('Unsuccessful Updates: 400 errors', () => {
 describe('Successful Updates', () => {
   test('Return Correct Type', () => {
     const result = adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
-    console.log(result);
     expect(result).toStrictEqual(UPDATED);
   });
 

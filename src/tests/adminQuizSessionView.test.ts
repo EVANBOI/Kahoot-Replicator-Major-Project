@@ -74,6 +74,7 @@ describe('GET /v1/admin/quiz/{quizid}/sessions', () => {
       });
     });
     test.skip('Successfully view session with no sessions existing', () => {
+      // there already exists a session from the beforeEach
       quizId2 = adminQuizCreateV2(
         token1,
         VALID_QUIZ_CREATE_INPUTS_2.NAME,

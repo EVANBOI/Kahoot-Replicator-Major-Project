@@ -6,7 +6,7 @@ import {
   adminCreateQuizQuestionV2,
   adminQuizSessionStart,
   adminAuthLogin,
-  playerJoin, adminQuizInfo, adminQuizRemoveV2,
+  adminQuizRemoveV2,
   adminQuizSessionView
 } from '../wrappers';
 
@@ -18,7 +18,6 @@ const SUCCESS = {
 };
 
 let token1: string;
-let sessionId1: number;
 let quizId1: number;
 beforeEach(() => {
   clear();
@@ -32,7 +31,6 @@ beforeEach(() => {
 describe('Unsuccessful tests', () => {
   test('autoStartNum is greater than 50', () => {
     const res = adminQuizSessionStart(quizId1, token1, 51);
-
     expect(res).toStrictEqual(ERROR400);
   });
 
@@ -73,13 +71,17 @@ describe('Unsuccessful tests', () => {
     const res = adminQuizSessionStart(quizId1, token2, 3); // Assume 'another_user_token' is for a non-owner
     expect(res).toStrictEqual(ERROR403);
   });
+
+  test('Quiz does not exist', () => {
+    const res = adminQuizSessionStart(quizId1 - 999, token1, 3);
+    expect(res).toStrictEqual(ERROR403);
+  });
 });
 
 describe('Successful tests', () => {
   test('Successful session start', () => {
     const res = adminQuizSessionStart(quizId1, token1, 3);
     expect(res).toStrictEqual(SUCCESS);
-    sessionId1 = res.jsonBody.sessionId;
   });
 
   test('Check if sessions can be started with same user but different tokens', () => {

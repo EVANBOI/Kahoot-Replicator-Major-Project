@@ -143,6 +143,11 @@ export function adminQuizSessionUpdate(
   action: SessionAction): EmptyObject | Error {
   const database = getData();
   const quiz = database.quizzes.find(quiz => quiz.quizId === quizId);
+
+  if (!quiz) {
+    throw new BadRequest('Quiz Id does not refer to a valid quiz');
+  }
+
   const session = quiz.sessions.find(s => s.sessionId === sessionId);
 
   if (!session) {

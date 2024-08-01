@@ -31,9 +31,24 @@ export type Session = {
     players: Player[],
     state: SessionStatus,
     messages: MessageInfo[],
-    results: SessionResults
+    results: SessionResults,
+    autoStartNum?: number,
+    quizCopy: QuizCopy
 }
 
+// Quiz copy should not need hold arrays of session
+export type QuizCopy = {
+    creatorId: number,
+    quizId: number,
+    name: string,
+    timeCreated: number,
+    timeLastEdited: number,
+    description: string,
+    numQuestions: number,
+    questions: QuestionBody[],
+    duration: number,
+    thumbnailUrl?: string
+}
 export type Player = {
     name: string,
     playerId: number,
@@ -63,7 +78,7 @@ export type Quiz = {
     questions: QuestionBody[],
     duration: number,
     thumbnailUrl?: string
-    sessions?: Session[]
+    sessions: Session[]
 }
 
 export type Data = {

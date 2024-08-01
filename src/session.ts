@@ -347,16 +347,7 @@ export function playerQuestionInfo (playerId: number, questionPosition: number):
  * @returns {ErrorMessage} An error message
  */
 export function playerChatlog(playerId: number): PlayerChatlogResult | Error {
-  return {
-    messages: [
-      {
-        messageBody: 'This is a message body',
-        playerId: 5546,
-        playerName: 'Yuchao Jiang',
-        timeSent: 1683019484
-      }
-    ]
-  };
+
 }
 
 /**
@@ -386,7 +377,7 @@ export function playerSendMessage (playerId: number, message: MessageObject): Em
     messageBody: message.messageBody,
     playerId: playerId,
     playerName: player.name,
-    timeSet: timeSet
+    timeSent: timeSet
   };
 
   let currentSession: Session | undefined;

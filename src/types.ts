@@ -83,7 +83,7 @@ export type MessageInfo = {
     messageBody: string,
     playerId: number,
     playerName: string,
-    timeSet: number
+    timeSent: number
 }
 
 export type MessageObject = {
@@ -213,14 +213,13 @@ export type PlayerStatusResult = {
 }
 
 export type PlayerChatlogResult = {
-  messages: [
+  messages:
     {
       messageBody: string,
       playerId: number,
       playerName: string,
       timeSent: number
-    }
-  ]
+    }[]
 }
 
 // other types

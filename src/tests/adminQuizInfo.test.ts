@@ -141,7 +141,7 @@ describe('/v2/admin/quiz/{quizid}', () => {
       VALID_QUIZ_ID = Quiz.jsonBody?.quizId;
     });
 
-    test.failing('correct return value', () => {
+    test('correct return value', () => {
       // should be failing because of the thumbnailUrl, the third parameter of adminQuizThumbnailUpdate
       // will change to the new route of its function.
       adminQuizThumbnailUpdate(VALID_QUIZ_ID, VALID_TOKEN, 'http://google.com/some/image/path.jpg');

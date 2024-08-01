@@ -28,10 +28,6 @@ export function tokenCheck(token: string) {
   }
 }
 
-export function ok<T>(item: T | { statusCode: number, error: string }): T {
-  return item as T;
-}
-
 export enum Colours {
   red = 'red',
   blue = 'blue',

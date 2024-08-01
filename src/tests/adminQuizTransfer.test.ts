@@ -5,7 +5,6 @@ import {
   adminQuizInfo,
   clear
 } from '../wrappers';
-import { ok } from '../helpers';
 import {
   VALID_USER_REGISTER_INPUTS_1,
   VALID_USER_REGISTER_INPUTS_2,
@@ -85,7 +84,7 @@ describe('adminQuizTransfer tests', () => {
 
   test('Successful quiz transfer - functionality', () => {
     adminQuizTransfer(sessionId, quizId, newOwnerEmail);
-    const updatedQuiz = ok(adminQuizInfo(validToken, quizId));
+    const updatedQuiz = adminQuizInfo(validToken, quizId);
     expect(updatedQuiz).toStrictEqual({
       statusCode: 200,
       jsonBody: {

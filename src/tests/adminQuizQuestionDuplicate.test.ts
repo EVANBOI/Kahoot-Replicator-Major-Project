@@ -6,7 +6,6 @@ import {
   adminCreateQuizQuestion,
   clear
 } from '../wrappers';
-import { ok } from '../helpers';
 import {
   VALID_USER_REGISTER_INPUTS_1,
   VALID_USER_REGISTER_INPUTS_2,
@@ -67,7 +66,7 @@ describe('adminQuizQuestionDuplicate tests', () => {
 
   test('Successful question duplicate - functionality', () => {
     const duplicateResult = adminQuizQuestionDuplicate(sessionId, quizId, questionId);
-    const updatedQuiz = ok(adminQuizInfo(sessionId, quizId));
+    const updatedQuiz = adminQuizInfo(sessionId, quizId);
     expect(updatedQuiz).toHaveProperty('jsonBody');
     expect(updatedQuiz.jsonBody.questions).toHaveLength(2);
     expect(updatedQuiz.jsonBody.questions[1]).toMatchObject({

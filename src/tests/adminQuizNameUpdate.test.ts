@@ -1,5 +1,4 @@
 import { adminAuthRegister, adminQuizCreate, adminQuizNameUpdate, adminQuizInfo, clear } from '../wrappers';
-import { ok } from '../helpers';
 import {
   VALID_USER_REGISTER_INPUTS_1,
   ERROR400,
@@ -88,7 +87,7 @@ describe('adminQuizNameUpdate success cases tests', () => {
 
   test('Successful quiz name update - functionality', () => {
     adminQuizNameUpdate(sessionId, quizId, 'New Quiz Name');
-    const updatedQuiz = ok(adminQuizInfo(sessionId, quizId));
+    const updatedQuiz = adminQuizInfo(sessionId, quizId);
     expect(updatedQuiz).toStrictEqual({
       statusCode: 200,
       jsonBody: {

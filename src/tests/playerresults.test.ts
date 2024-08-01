@@ -1,8 +1,5 @@
 import {
   ERROR400,
-  ERROR401,
-  ERROR403,
-  SUCCESSFUL_UPDATE,
   validQuestion1V2
 } from '../testConstants';
 import {

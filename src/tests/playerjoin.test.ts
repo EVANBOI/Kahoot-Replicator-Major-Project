@@ -1,7 +1,6 @@
-import { clear, adminQuizCreate, adminQuizSessionStart, playerJoin, adminQuizSessionStatus } from '../wrappers';
-import { ErrorMessage } from '../types';
+import { clear, adminQuizCreate, adminQuizSessionStart, playerJoin } from '../wrappers';
+import { ERROR400 } from '../testConstants';
 
-const VALID_QUIZ_ID = 1; // Example quiz ID
 const INVALID_SESSION_ID = 999999; // Example of an invalid session ID
 const PLAYER_NAME = 'JohnDoe';
 
@@ -51,16 +50,12 @@ describe('POST /v1/player/join', () => {
     playerJoin(validSessionId, PLAYER_NAME);
 
     const response = playerJoin(validSessionId, PLAYER_NAME); // Attempt to join with the same name
-
-    expect(response.statusCode).toBe(400);
-    expect(response.jsonBody.error).toBe('Name of user entered is not unique.');
+    expect(response).toStrictEqual(ERROR400);
   });
 
   test('Failure to join due to invalid session ID', () => {
     const response = playerJoin(INVALID_SESSION_ID, PLAYER_NAME);
-
-    expect(response.statusCode).toBe(400);
-    expect(response.jsonBody.error).toBe('Session Id does not refer to a valid session.');
+    expect(response).toStrictEqual(ERROR400);
   });
 
   /* test('Failure to join due to session not in LOBBY state', () => {

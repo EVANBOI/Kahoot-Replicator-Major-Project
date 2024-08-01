@@ -1,10 +1,6 @@
 import { getData } from './dataStore';
 import { Forbidden, BadRequest, Unauthorised } from './error';
-<<<<<<< HEAD
-import { Data, ErrorMessage, QuestionBody, User, Quiz } from './types';
-=======
 import { Data, ErrorMessage, QuestionBody, User, SessionResults } from './types';
->>>>>>> master
 import crypto from 'crypto';
 
 export function getHashOf(password: string) {
@@ -159,8 +155,6 @@ export function quizExistCheck(quizId: number, token: string) {
   }
 }
 
-<<<<<<< HEAD
-=======
 // Function to convert data to CSV format
 
 export function convertSessionResultsToCSV(sessionResults: SessionResults): string {
@@ -189,4 +183,3 @@ export function convertSessionResultsToCSV(sessionResults: SessionResults): stri
 
   return csvContent;
 }
->>>>>>> master

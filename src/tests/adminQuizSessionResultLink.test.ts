@@ -61,7 +61,7 @@ describe('GET /v1/admin/quiz/{quizid}/session/{sessionid}/results/csv', () => {
       expect(adminQuizSessionResultLink(quizId1, sessionId1 + 1, token1)).toStrictEqual(ERROR400);
     });
     test.skip('Error 400: session is not in FINAL_RESULTS state', () => {
-      adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
+        // the session state should be lobby
       expect(adminQuizSessionResultLink(quizId1, sessionId1, token1)).toStrictEqual(ERROR400);
     });
   });
@@ -69,8 +69,8 @@ describe('GET /v1/admin/quiz/{quizid}/session/{sessionid}/results/csv', () => {
     test.skip('Successfully return URL with CSV file', () => {
       adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_FINAL_RESULTS);
       const result = adminQuizSessionResultLink(quizId1, sessionId1, token1).jsonBody;
-      expect(result).toMatch(/https:/);
-      expect(result).toMatch(/.csv/);
+      const regex = /^https.*\.csv$/;
+      expect(result).toMatch(regex);
     });
     test.skip('The final result is transfered to CSV sucessfully', () => {
       adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_FINAL_RESULTS);

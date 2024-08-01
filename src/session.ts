@@ -12,9 +12,10 @@ import {
   PlayerQuestionAnswerResult,
   SessionResults,
   Quiz,
-  Session
+  Session,
+  // MessageInfo,
+  // Player
 } from './types';
-
 export enum SessionStatus {
   LOBBY,
   QUESTION_COUNTDOWN,
@@ -24,6 +25,8 @@ export enum SessionStatus {
   FINAL_RESULTS,
   END
 }
+import ShortUniqueId from 'short-unique-id';
+const sessionUid = new ShortUniqueId({ dictionary: 'number' });
 
 /**
  * Retrieves active and inactive session ids (sorted in ascending order) for a quiz
@@ -75,7 +78,6 @@ export function adminQuizSessionResultLink (quizId: number, sessionId: number, h
     url: `http://${host}/public/${sessionId}results.csv`
   };
 }
-
 /**
  * Get the results for a particular question of the session a player is playing in. Question position starts at 1
  * @param {number} playerId The ID of the player.
@@ -379,35 +381,153 @@ export function adminQuizThumbnailUpdate(quizId: number, token: string, imgUrl: 
   return {};
 }
 
-export function adminQuizSessionStart(
-  quizId: number,
-  token: string,
-  autoStartNum: number
-): { sessionId: number } {
-  return { sessionId: 5546 };
+export function playerResults(
+  playerId: number
+): SessionResults {
+  // const database = getData();
+
+  // // Check if the player ID is valid
+  // if (!playerId) {
+  //   throw new BadRequest('Player ID does not exist.');
+  // }
+
+  // // Check if the session is in FINAL_RESULTS state
+
+  // if ( !== SessionStatus.FINAL_RESULTS) {
+  //   throw new BadRequest('Session is not in FINAL_RESULTS state.');
+  // }
+
+  // Fetch and return player results
+  return {
+    usersRankedByScore: [
+      { name: 'Hayden', score: 45 } // Replace with actual player results logic
+    ],
+    questionResults: [
+      {
+        questionId: 5546, // Replace with actual question ID logic
+        playersCorrectList: ['Hayden'], // Replace with actual list of players who got the answer right
+        averageAnswerTime: 45, // Replace with actual average answer time
+        percentCorrect: 54 // Replace with actual percentage of correct answers
+      }
+    ]
+  };
 }
+
+// function generateRandomName(): string {
+//   const letters = 'abcdefghijklmnopqrstuvwxyz';
+//   const numbers = '0123456789';
+//   let name = '';
+//   while (name.length < 5) {
+//     const char = letters.charAt(Math.floor(Math.random() * letters.length));
+//     if (!name.includes(char)) {
+//       name += char;
+//     }
+//   }
+//   while (name.length < 8) {
+//     const num = numbers.charAt(Math.floor(Math.random() * numbers.length));
+//     if (!name.includes(num)) {
+//       name += num;
+//     }
+//   }
+//   return name;
+// }
 
 export function playerJoin(
   sessionId: number,
   name: string
 ): { playerId: number } {
-  return { playerId: 5546 };
+  // const database = getData();
+
+  // // Find the session that matches the sessionId
+  // let session: Session | undefined;
+  // for (const quiz of database.quizzes) {
+  //   session = quiz.sessions?.find(s => s.sessionId === sessionId);
+  //   if (session) break;
+  // }
+
+  // if (!session) {
+  //   throw new BadRequest('Session Id does not refer to a valid session.');
+  // }
+
+  // if (session.state !== SessionStatus.LOBBY) {
+  //   throw new BadRequest('Session is not in LOBBY state.');
+  // }
+
+  // // Check if the name is unique
+  // if (name) {
+  //   const allPlayers = database.quizzes.flatMap(quiz => quiz.sessions?.flatMap(session => session.players) || []);
+  //   const existingPlayer = allPlayers.find(player => player.name === name);
+  //   if (existingPlayer) {
+  //     throw new BadRequest('Name of user entered is not unique.');
+  //   }
+  // } else {
+  //   // Generate a random name if none is provided
+  //   name = generateRandomName();
+  // }
+
+  // // Logic to generate a new player ID
+  // const allPlayers = database.quizzes.flatMap(quiz => quiz.sessions?.flatMap(session => session.players) || []);
+  // const newPlayerId = allPlayers.length > 0
+  //   ? Math.max(...allPlayers.map(p => p.playerId)) + 1
+  //   : 1;
+
+  // // Add the new player to the session
+  // const newPlayer = { playerId: newPlayerId, name, score: 0 };
+  // session.players.push(newPlayer);
+
+  // // Save the updated data back to the datastore
+  // setData(database);
+
+  // return { playerId: newPlayerId };
+  return { playerId: 5566 };
 }
 
-export function playerResults(
-  playerId: number
-): SessionResults {
-  return {
-    usersRankedByScore: [
-      { name: 'Hayden', score: 45 }
-    ],
-    questionResults: [
-      {
-        questionId: 5546,
-        playersCorrectList: ['Hayden'],
-        averageAnswerTime: 45,
-        percentCorrect: 54
-      }
-    ]
+export function adminQuizSessionStart(quizId: number, token: string, autoStartNum: number) {
+  const database = getData();
+  const user = findUserBySessionId(database, token);
+  // Check if the token is valid
+  if (!user) {
+    throw new Unauthorised('Invalid token');
+  }
+  // Check if the quiz exists and is not in trash
+  const quiz = findQuizWithId(database, quizId);
+  const isInTrash = database.trash.find(trashQuiz => trashQuiz.quizId === quizId);
+  if (!quiz && !isInTrash) {
+    throw new Forbidden('Quiz does not exist');
+  } else if (isInTrash && !quiz) {
+    if (isInTrash.creatorId !== user.userId) {
+      throw new Forbidden('User does not own Quiz');
+    }
+  } else if (!isInTrash && quiz) {
+    if (quiz.creatorId !== user.userId) {
+      throw new Forbidden('User does not own Quiz');
+    }
+  }
+  if (isInTrash) {
+    throw new BadRequest('Quiz is in trash');
+  } else if (quiz.questions.length === 0) {
+    throw new BadRequest('The quiz does not have any questions.');
+  } else if (quiz.sessions.length >= 10) {
+    throw new BadRequest('There are already 10 active sessions for this quiz');
+  } else if (autoStartNum > 50) {
+    throw new BadRequest('autoStartNum exceeds maximum value');
+  }
+  // Create a new session
+  const newSessionId = parseInt(sessionUid.seq()); // Generate a unique session ID
+  const newSession: Session = {
+    sessionId: newSessionId,
+    atQuestion: 0, // Starting with question 0
+    players: [], // No players at the start
+    state: SessionStatus.LOBBY, // Initial state is LOBBY
+    messages: [], // No messages at the start
+    results: { // Initialize results
+      usersRankedByScore: [],
+      questionResults: []
+    },
+    autoStartNum: autoStartNum,
+    quizCopy: JSON.parse(JSON.stringify(quiz))
   };
+  quiz.sessions.push(newSession);
+  setData(database);
+  return { sessionId: newSessionId };
 }

@@ -7,10 +7,6 @@ export function getHashOf(password: string) {
   return crypto.createHash('sha256').update(password).digest('hex');
 }
 
-export function findUserWithId(authUserId: number) {
-  return getData().users.find(user => user.userId === authUserId);
-}
-
 export function findQuizWithId(database: Data, quizId: number) {
   return database.quizzes.find(quiz => quiz.quizId === quizId);
 }

@@ -1,9 +1,9 @@
-import request, { HttpVerb } from 'sync-request-curl';
+import request, { HttpVerb } from 'sync-request';
 import { port, url } from '../src/config.json';
-import { QuestionBody, PositionWithTokenObj, PositionObj, MessageObject } from './types';
+import { QuestionBody, PositionWithTokenObj, PositionObj, MessageObject, Data } from './types';
 
 const SERVER_URL = `${url}:${port}`;
-
+const DEPLOYED_URL = 'https://1531-24t2-t09a-aero.vercel.app'
 // The below stretch of code is taken from wrapper.test.ts in the week 5 example server
 // ========================================================================= //
 
@@ -92,6 +92,22 @@ Did you res.json(undefined)?`,
 
 //= ===========================================================================//
 // Wrappers
+
+const getData = () => {
+  // try {
+  return requestHelper('GET', '/data', {}); 
+  // } catch (e) {
+  //   return {
+  //     users: [],
+  //     quizzes: [],
+  //     trash: []
+  //   };
+  // }
+};
+
+export const setData = (newData: Data) => {
+  requestHelper('PUT', '/data', { data: newData });
+};
 
 export const adminAuthRegister = (
   email: string,

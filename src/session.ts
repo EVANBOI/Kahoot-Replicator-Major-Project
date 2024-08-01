@@ -148,8 +148,12 @@ export function adminQuizSessionUpdate(
     throw new BadRequest('Quiz Id does not refer to a valid quiz');
   }
 
-  const session = quiz.sessions.find(s => s.sessionId === sessionId);
+  if (!Array.isArray(quiz.sessions)) {
+    throw new BadRequest('Quiz does not contain a valid sessions array');
+  }
 
+  const session = quiz.sessions.find(s => s.sessionId === sessionId);
+  console.log('Session:', session);
   if (!session) {
     throw new BadRequest('Session Id does not refer to a valid session within this quiz');
   } else if (

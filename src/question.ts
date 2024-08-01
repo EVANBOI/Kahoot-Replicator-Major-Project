@@ -51,8 +51,9 @@ export function adminCreateQuizQuestion(
     throw new Forbidden('User is not an owner of quiz');
   }
   const totalDuration = quiz.duration + questionBody.duration;
-  if (typeof validQuestion(questionBody, totalDuration) === 'object') {
-    return validQuestion(questionBody, totalDuration) as ErrorMessage;
+  const isValidQuestion = validQuestion(questionBody, totalDuration);
+  if (typeof isValidQuestion === 'string') {
+    throw new BadRequest(isValidQuestion as string);
   }
   const validExtensions = /\.(jpg|jpeg|png)$/i;
   const validProtocol = /^https?:\/\//;
@@ -96,25 +97,24 @@ export function adminQuizQuestionDuplicate(
   const user = findUserBySessionId(database, token);
 
   if (!user) {
-    return { statusCode: 401, error: 'Token is not valid.' };
+    throw new Unauthorised('Token is not valid.');
   }
 
   const quiz = findQuizWithId(database, quizId);
   if (!quiz) {
-    return { statusCode: 403, error: `Quiz with ID '${quizId}' not found` };
+    throw new Forbidden(`Quiz with ID '${quizId}' not found`);
   }
 
   if (quiz.creatorId !== user.userId) {
-    return { statusCode: 403, error: 'User is not the owner of the quiz.' };
+    throw new Forbidden('User is not the owner of the quiz.');
   }
 
   if (!quiz.questions) {
-    quiz.questions = [];
+    throw new BadRequest('Question ID does not refer to a valid question within this quiz.');
   }
-
   const question = quiz.questions.find(q => q.questionId === questionId);
-  if (!question) {
-    return { statusCode: 400, error: 'Question ID does not refer to a valid question within this quiz.' };
+  if (!quiz.questions || !question) {
+    throw new BadRequest('Question ID does not refer to a valid question within this quiz.');
   }
 
   const newQuestionId = parseInt(questionUid.seq());
@@ -162,8 +162,9 @@ export function adminQuizQuestionUpdate(
   }
 
   const totalDuration = quiz.duration + questionBody.duration - question.duration;
-  if (typeof validQuestion(questionBody, totalDuration) === 'object') {
-    return validQuestion(questionBody, totalDuration) as ErrorMessage;
+  const isValidQuestion = validQuestion(questionBody, totalDuration);
+  if (typeof isValidQuestion === 'string') {
+    throw new BadRequest(isValidQuestion as string);
   }
 
   question.question = questionBody.question;
@@ -226,21 +227,21 @@ export function adminQuizQuestionDelete(token: string, quizId: number, questionI
   const user = findUserBySessionId(database, token);
 
   if (!user) {
-    return { statusCode: 401, message: 'Token is empty or invalid.' };
+    throw new Unauthorised('Token is empty or invalid.');
   }
 
   const quiz = findQuizWithId(database, quizId);
   if (!quiz) {
-    return { statusCode: 403, message: `Quiz with ID '${quizId}' does not exist.` };
+    throw new Forbidden(`Quiz with ID '${quizId}' does not exist.`);
   }
 
   if (quiz.creatorId !== user.userId) {
-    return { statusCode: 403, message: `User is not the owner of quiz with ID '${quizId}'.` };
+    throw new Forbidden(`User is not the owner of quiz with ID '${quizId}'.`);
   }
 
   const questionIndex = quiz.questions.findIndex(question => question.questionId === questionId);
   if (questionIndex === -1) {
-    return { statusCode: 400, message: `Question ID '${questionId}' does not refer to a valid question within quiz '${quizId}'.` };
+    throw new BadRequest(`Question ID '${questionId}' does not refer to a valid question within quiz '${quizId}'.`);
   }
 
   // Delete the question
@@ -248,5 +249,6 @@ export function adminQuizQuestionDelete(token: string, quizId: number, questionI
   quiz.timeLastEdited = Date.now();
 
   setData(database);
-  return { statusCode: 200, message: '{}' };
+  return {};
 }
+

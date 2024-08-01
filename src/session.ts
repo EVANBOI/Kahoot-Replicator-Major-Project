@@ -347,7 +347,27 @@ export function playerQuestionInfo (playerId: number, questionPosition: number):
  * @returns {ErrorMessage} An error message
  */
 export function playerChatlog(playerId: number): PlayerChatlogResult | Error {
+  const database = getData();
+  const player = database.quizzes
+    .flatMap(q => q.sessions || [])
+    .flatMap(s => s.players || [])
+    .find(p => p.playerId === playerId);
 
+  if (!player) {
+    throw new BadRequest(`Player ${playerId} does not exist`);
+  }
+
+  let currentSession: Session | undefined;
+  for (const quiz of database.quizzes) {
+    currentSession = quiz.sessions?.find(session =>
+      session.players.find(player => player.playerId === playerId)
+    );
+    if (currentSession) {
+      break;
+    }
+  }
+
+  return { messages: currentSession.messages };
 }
 
 /**

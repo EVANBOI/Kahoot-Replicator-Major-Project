@@ -22,7 +22,7 @@ beforeEach(() => {
 });
 
 describe('400 Error Case', () => {
-  test.failing('Player id does not exist', () => {
+  test('Player id does not exist', () => {
     const res = playerChatlog(playerId1 + 1);
     expect(res).toStrictEqual(ERROR400);
   });

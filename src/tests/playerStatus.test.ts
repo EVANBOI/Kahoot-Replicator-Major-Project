@@ -1,7 +1,7 @@
-import { SessionStatus } from "../session";
+import { SessionAction, SessionStatus } from "../session";
 import sleepSync from 'slync';
 import { ERROR400, validQuestion1V2, validQuestion2V2 } from "../testConstants";
-import { adminAuthRegister, adminCreateQuizQuestionV2, adminQuizCreate, adminQuizSessionStart, clear, playerJoin, playerStatus } from "../wrappers";
+import { adminAuthRegister, adminCreateQuizQuestionV2, adminQuizCreate, adminQuizDescriptionUpdate, adminQuizSessionStart, adminQuizSessionUpdate, clear, playerJoin, playerStatus } from "../wrappers";
 
 let token1: string;
 let sessionId1: number;
@@ -45,13 +45,15 @@ describe('200 Success Case', () => {
 
 	test.failing('The status is correctly returned when the quiz has more than one question', () => {
 		adminCreateQuizQuestionV2(quizId1, token1, validQuestion2V2);
-		sleepSync(3 * 1000);
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
+		sleepSync(validQuestion1V2.duration * 1000);
+		adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
 		const result = playerStatus(playerId1);
-
 		expect(result).toStrictEqual({
 			state: SessionStatus.LOBBY,
-			numQuestions: questionNum1,
-			atQuestions: atQuestion1
+			numQuestions: questionNum1 + 1,
+			atQuestions: atQuestion1 + 1
 		});		
 	})
 });

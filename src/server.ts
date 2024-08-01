@@ -763,8 +763,19 @@ app.post('/v1/admin/quiz/:quizid/session/start', (req: Request, res: Response) =
   const quizId = parseInt(req.params.quizid);
   const token = req.headers.token as string;
   const { autoStartNum } = req.body;
-  const result = adminQuizSessionStart(quizId, token, autoStartNum);
-  return res.json(result);
+  //const result = adminQuizSessionStart(quizId, token, autoStartNum);
+  try {
+    return res.json(adminQuizSessionStart(quizId, token, autoStartNum));
+  } catch (error) {
+    if (error instanceof Unauthorised) {
+      return res.status(StatusCodes.UNAUTHORIZED).json({ error: error.message });
+    } else if (error instanceof Forbidden) {
+      return res.status(StatusCodes.FORBIDDEN).json({ error: error.message });
+    } else if (error instanceof BadRequest) {
+      return res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });}
+  }
+  //return res.json(result);
+
 });
 app.post('/v1/player/join', (req: Request, res: Response) => {
   const { sessionId, name } = req.body;

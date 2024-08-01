@@ -1,3 +1,4 @@
+import { adminQuizInfo, adminQuizRemove } from '../quiz';
 import { ERROR400, ERROR401, ERROR403, SUCCESSFUL_UPDATE, validQuestion1V2 } from '../testConstants';
 import {
   clear,
@@ -30,31 +31,41 @@ beforeEach(() => {
 describe('Unsuccessful tests', () => {
   test('autoStartNum is greater than 50', () => {
     const res = adminQuizSessionStart(quizId1, token1, 51);
-    console.log(token1)
+  
     expect(res).toStrictEqual(ERROR400);
   });
 
   test('10 sessions are already active for the quiz', () => {
-    for (let i = 0; i < 10; i++) {
+    
       adminQuizSessionStart(quizId1, token1, 1);
-    }
+      adminQuizSessionStart(quizId1, token1, 1);
+      adminQuizSessionStart(quizId1, token1, 1);
+      adminQuizSessionStart(quizId1, token1, 1);
+      adminQuizSessionStart(quizId1, token1, 1);
+      adminQuizSessionStart(quizId1, token1, 1);
+      adminQuizSessionStart(quizId1, token1, 1);
+      adminQuizSessionStart(quizId1, token1, 1);
+      adminQuizSessionStart(quizId1, token1, 1);
+      adminQuizSessionStart(quizId1, token1, 1);
     const res = adminQuizSessionStart(quizId1, token1, 1);
     expect(res).toStrictEqual(ERROR400);
   });
 
   test('The quiz does not have any questions', () => {
-    clear();
-    const res = adminQuizSessionStart(quizId1, token1, 3);
+    const quiz2 = adminQuizCreate(token1, 'name', 'hih').jsonBody.quizId
+    const res = adminQuizSessionStart(quiz2, token1, 3);
     expect(res).toStrictEqual(ERROR400);
   });
 
-  test('The quiz is in trash', () => {
-    // Assume there's a function to move the quiz to trash
-    adminQuizCreate(token1, 'Quiz in trash', 'Description').jsonBody.quizId;
-    // Move the quiz to trash
-    clear(); // or relevant method to move quiz to trash
-    const res = adminQuizSessionStart(quizId1, token1, 3);
-    expect(res).toStrictEqual(ERROR400);
+  test.only('The quiz is in trash', () => {
+    
+    const res1 = adminQuizRemove(token1, quizId1);
+   
+    const res2 = adminQuizSessionStart(quizId1, token1, 3);
+    console.log('2.', res2 )
+
+    expect(res2).toStrictEqual(ERROR400);
+
   });
 
   test('Token is empty or invalid', () => {

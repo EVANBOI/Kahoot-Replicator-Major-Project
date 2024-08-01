@@ -83,8 +83,11 @@ export function adminQuizCreate (
     description: description,
     numQuestions: 0,
     questions: [],
-    duration: 0
+    duration: 0,
+    sessions: []
   });
+
+
   setData(database);
 
   return { quizId: id };

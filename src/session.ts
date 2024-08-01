@@ -27,6 +27,8 @@ export enum SessionStatus {
   FINAL_RESULTS,
   END
 }
+import ShortUniqueId from 'short-unique-id';
+const sessionUid = new ShortUniqueId({ dictionary: 'number' });
 
 /**
  * Retrieves active and inactive session ids (sorted in ascending order) for a quiz
@@ -519,29 +521,46 @@ export function playerJoin(
 */
 
 export function adminQuizSessionStart(quizId: number, token: string, autoStartNum: number) {
+  
   const database = getData();
 
   // Check if the token is valid
   if (!token) {
-    throw new BadRequest('Invalid token');
+    throw new Unauthorised('Invalid token');
   }
 
   // Check if the quiz exists and is not in trash
   const quiz = findQuizWithId(database, quizId);
-  if (!quiz) {
-    throw new BadRequest('Quiz does not exist');
-  }
-
   const isInTrash = database.trash.some(trashQuiz => trashQuiz.quizId === quizId);
+
+  if (!quiz && !isInTrash) {
+    throw new Forbidden('Quiz does not exist');
+  }
+  console.log('quizid is blah blah', quiz.quizId)
+
+  const user = findUserBySessionId(database, token);
+  if (quiz.creatorId !== user.userId) {
+    throw new Forbidden('User does not own Quiz');
+  }
+  console.log('quizid2 is blah blah', quiz.quizId)
+
   if (isInTrash) {
     throw new BadRequest('Quiz is in trash');
   }
+  console.log('quizid3 is blah blah', quiz.quizId)
+
+  if (quiz.questions.length === 0) {
+    throw new BadRequest('The quiz does not have any questions.');
+  }
+  console.log('quizid4 is blah blah', quiz.quizId)
 
   // Check if the quiz already has 10 active sessions
-  const activeSessions = adminQuizSessionView(quizId); // Make sure this function is defined and works correctly
-  if (activeSessions.activeSessions.length >= 10) {
+ // const activeSessions = adminQuizSessionView(quizId); // Make sure this function is defined and works correctly
+  console.log('5 is blah blah', quiz.sessions.length)
+  if (quiz.sessions.length >= 10) {
     throw new BadRequest('There are already 10 active sessions for this quiz');
   }
+  console.log('6 is blah blah', quiz.sessions.length)
 
   // Check if autoStartNum is within the valid range
   if (autoStartNum > 50) {
@@ -549,7 +568,7 @@ export function adminQuizSessionStart(quizId: number, token: string, autoStartNu
   }
 
   // Create a new session
-  const newSessionId = Math.floor(1000 + Math.random() * 900000); // Generate a unique session ID
+  const newSessionId = parseInt(sessionUid.seq()); // Generate a unique session ID
   const newSession: Session = {
     sessionId: newSessionId,
     atQuestion: 0, // Starting with question 0
@@ -560,14 +579,15 @@ export function adminQuizSessionStart(quizId: number, token: string, autoStartNu
       usersRankedByScore: [],
       questionResults: []
     },
-    autoStartNum // Optional field
+    autoStartNum: autoStartNum // Optional field
   };
 
-  // Add the new session to the database
-  if (!database.sessions) {
-    throw new BadRequest('Sessions array is undefined');
-  }
-  database.sessions.push(newSession);
+  // Initialize Array
+  console.log('7 is blah blah', quiz.sessions.length)
 
-  return newSession;
+  quiz.sessions.push(newSession);
+  console.log('8 is blah blah', quiz.sessions.length)
+  setData(database);
+
+  return { sessionId: newSessionId };
 }

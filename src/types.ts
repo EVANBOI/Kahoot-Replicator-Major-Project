@@ -64,7 +64,7 @@ export type Quiz = {
     questions: QuestionBody[],
     duration: number,
     thumbnailUrl?: string
-    sessions?: Session[]
+    sessions: Session[]
 }
 
 export type Data = {

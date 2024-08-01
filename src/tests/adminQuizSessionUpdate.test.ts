@@ -2,7 +2,6 @@
 import { adminQuizSessionStatus, adminAuthRegister, adminCreateQuizQuestionV2, adminQuizCreateV2, adminQuizSessionStart, adminQuizSessionUpdate, clear } from '../wrappers';
 import { ERROR400, ERROR401, ERROR403, validQuestion1V2 } from '../testConstants';
 import { SessionAction, SessionStatus } from '../session';
-import { turnQuestionClose } from '../session';
 
 const UPDATED = {
   statusCode: 200,
@@ -161,9 +160,9 @@ describe('Unsuccessful Updates: 400 errors', () => {
   test.skip('SKIP_COUNTDOWN cannot be applied in the question close state', () => {
     adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
     adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
-    setTimeout(() => {
-      turnQuestionClose(sessionId1, quizId1);
-    }, 3 * 1000);
+    // setTimeout(() => {
+    //   turnQuestionClose(sessionId1, quizId1);
+    // }, 3 * 1000);
     const res = adminQuizSessionStatus(quizId1, sessionId1, token1).jsonBody.state;
     expect(res).toStrictEqual(SessionStatus.QUESTION_CLOSE);
     expect(adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN)).toStrictEqual(ERROR400);

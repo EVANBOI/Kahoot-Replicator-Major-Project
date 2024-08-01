@@ -3,7 +3,10 @@ import {
   adminQuizCreate,
   adminQuizTransfer,
   adminQuizInfo,
-  clear
+  clear,
+  adminQuizTransferV2,
+  adminCreateQuizQuestionV2,
+  adminQuizSessionStart
 } from '../wrappers';
 import {
   VALID_USER_REGISTER_INPUTS_1,
@@ -12,10 +15,11 @@ import {
   ERROR400,
   ERROR401,
   ERROR403,
-  SUCCESSFUL_TRANSFER
+  SUCCESSFUL_TRANSFER,
+  validQuestion1V2
 } from '../testConstants';
 
-let sessionId: string;
+let token: string;
 let quizId: number;
 let newOwnerEmail: string;
 let validToken: string;
@@ -32,10 +36,10 @@ describe('adminQuizTransfer tests', () => {
       VALID_USER_REGISTER_INPUTS_1.FIRSTNAME,
       VALID_USER_REGISTER_INPUTS_1.LASTNAME
     );
-    sessionId = registerResponse.jsonBody.token;
+    token = registerResponse.jsonBody.token;
 
     const quizCreateResponse = adminQuizCreate(
-      sessionId,
+      token,
       VALID_QUIZ_CREATE_INPUTS_1.NAME,
       VALID_QUIZ_CREATE_INPUTS_1.DESCRIPTION
     );
@@ -52,38 +56,38 @@ describe('adminQuizTransfer tests', () => {
   });
 
   test('Invalid session ID', () => {
-    const result = adminQuizTransfer('invalidSessionId', quizId, newOwnerEmail);
+    const result = adminQuizTransfer('invalid token', quizId, newOwnerEmail);
     expect(result).toStrictEqual(ERROR401);
   });
 
   test('Invalid quiz ID', () => {
-    const result = adminQuizTransfer(sessionId, quizId + 42, newOwnerEmail);
+    const result = adminQuizTransfer(token, quizId + 42, newOwnerEmail);
     expect(result).toStrictEqual(ERROR403);
   });
 
   test('User email is not a real user', () => {
-    const result = adminQuizTransfer(sessionId, quizId, 'fakeuser@unsw.edu.au');
+    const result = adminQuizTransfer(token, quizId, 'fakeuser@unsw.edu.au');
     expect(result).toStrictEqual(ERROR400);
   });
 
   test('User email is the current logged in user', () => {
-    const result = adminQuizTransfer(sessionId, quizId, VALID_USER_REGISTER_INPUTS_1.EMAIL);
+    const result = adminQuizTransfer(token, quizId, VALID_USER_REGISTER_INPUTS_1.EMAIL);
     expect(result).toStrictEqual(ERROR400);
   });
 
   test('Quiz ID refers to a quiz that has a name that is already used by the target user', () => {
     adminQuizCreate(validToken, VALID_QUIZ_CREATE_INPUTS_1.NAME, 'Another description.');
-    const result = adminQuizTransfer(sessionId, quizId, newOwnerEmail);
+    const result = adminQuizTransfer(token, quizId, newOwnerEmail);
     expect(result).toStrictEqual(ERROR400);
   });
 
   test('Successful quiz transfer - correct return value', () => {
-    const result = adminQuizTransfer(sessionId, quizId, newOwnerEmail);
+    const result = adminQuizTransfer(token, quizId, newOwnerEmail);
     expect(result).toStrictEqual(SUCCESSFUL_TRANSFER);
   });
 
   test('Successful quiz transfer - functionality', () => {
-    adminQuizTransfer(sessionId, quizId, newOwnerEmail);
+    adminQuizTransfer(token, quizId, newOwnerEmail);
     const updatedQuiz = adminQuizInfo(validToken, quizId);
     expect(updatedQuiz).toStrictEqual({
       statusCode: 200,
@@ -99,4 +103,15 @@ describe('adminQuizTransfer tests', () => {
       },
     });
   });
+
+  describe('V2 adminQuizTransfer tests - error cases', () => {
+    // should failing ultill adminQuizSessionStart is implemented
+    test.skip('Error 400: At least one session has not ended', () => {
+      adminCreateQuizQuestionV2(quizId, token, validQuestion1V2);
+      adminQuizSessionStart(quizId, token, 5).jsonBody.sessionId; 
+      const result = adminQuizTransferV2(token, quizId, newOwnerEmail);
+      expect(result).toStrictEqual(ERROR400);
+    })
+  })
 });
+

@@ -278,7 +278,7 @@ export const adminQuizTransferV2 = (
   quizId: number,
   userEmail: string
 ) => {
-  return requestHelper('POST', `/v1/admin/quiz/${quizId}/transfer`, { userEmail }, token);
+  return requestHelper('POST', `/v2/admin/quiz/${quizId}/transfer`, { userEmail }, token);
 };
 
 export const adminQuizQuestionDuplicate = (

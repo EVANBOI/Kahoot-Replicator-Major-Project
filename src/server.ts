@@ -570,8 +570,7 @@ app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
     return res.status(403).json({ error: error.message });
   }
   try {
-    const result = adminQuizTransfer(token, quizId, userEmail);
-    return res.json(result);
+    res.json(adminQuizTransfer(token, quizId, userEmail));
   } catch (error) {
     return res.status(400).json({ error: error.message });
   }
@@ -592,8 +591,7 @@ app.post('/v2/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
     return res.status(403).json({ error: error.message });
   }
   try {
-    const result = adminQuizTransfer(token, quizId, userEmail, true);
-    return res.json(result);
+    res.json(adminQuizTransfer(token, quizId, userEmail, true));
   } catch (error) {
     return res.status(400).json({ error: error.message });
   }

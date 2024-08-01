@@ -287,17 +287,8 @@ export function adminQuizTrashEmpty(quizIds: string): QuizTrashEmptyResult {
 export function adminQuizTransfer(sessionId: string, quizId: number, newOwnerEmail: string, v2?: boolean): EmptyObject {
   const database = getData();
   const currentUser = findUserBySessionId(database, sessionId);
-
-  if (!currentUser) {
-    throw new Unauthorised('Session ID is not valid');
-  }
   const quiz = findQuizWithId(database, quizId);
 
-  if (!quiz) {
-    throw new Forbidden(`Quiz with ID '${quizId}' not found`);
-  } else if (quiz.creatorId !== currentUser.userId) {
-    throw new Forbidden(`User does not own quiz ${quizId}`);
-  }
   const newOwner = database.users.find(user => user.email === newOwnerEmail);
 
   if (!newOwner) {

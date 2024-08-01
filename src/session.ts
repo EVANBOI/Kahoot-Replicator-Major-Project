@@ -92,8 +92,9 @@ export function playerQuestionResult (playerId: number, questionposition: number
       session.players.find(player => player.playerId === playerId)
     );
     if (currentSession) {
+      // should be changed to currentQuiz = currentSession.quiz after sessionStart is implemented
       currentQuiz = quiz;
-      break; // Exit the loop once the player and thus the session has been found
+      break; 
     }
   }
 

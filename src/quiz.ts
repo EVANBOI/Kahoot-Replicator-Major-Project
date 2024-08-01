@@ -170,9 +170,9 @@ export function adminQuizInfo (token: string, quizId: number, v2?: boolean): Qui
  * @param {number} quizId - unique id of a quiz
  * @param {string} name- name of a user
  * @returns {} - empty object
- * @returns {ErrorMessage} an error
  */
-export function adminQuizNameUpdate(sessionId: string, quizId: number, name: string): EmptyObject | ErrorMessage {
+
+export function adminQuizNameUpdate(sessionId: string, quizId: number, name: string): EmptyObject {
   const database = getData();
   const user = findUserBySessionId(database, sessionId);
   if (!user) {

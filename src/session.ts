@@ -1,6 +1,12 @@
 import { getData, setData } from './dataStore';
 import { BadRequest } from './error';
+<<<<<<< HEAD
 import { findQuizWithId } from './helpers';
+=======
+import { findQuizWithId, convertSessionResultsToCSV } from './helpers';
+import * as path from 'path';
+import * as fs from 'fs';
+>>>>>>> master
 import {
   EmptyObject, GetSessionStatus, MessageObject, QuizSessionViewResult,
   QuizSessionResultLinkResult, PlayerQuestionResultResult,
@@ -35,27 +41,52 @@ export enum SessionAction {
 
 /**
  * Retrieves active and inactive session ids (sorted in ascending order) for a quiz
- * @param {string} token - unique session id of a user
  * @param {number} quizId The ID of the quiz to be found.
  * @returns {QuizSessionViewResult} active and inactive Sessions
  */
-export function adminQuizSessionView (token: string, quizId: number): QuizSessionViewResult {
-  return {
-    activeSessions: [1, 2],
-    inactiveSessions: [3, 4]
+export function adminQuizSessionView (quizId: number): QuizSessionViewResult {
+  const database = getData();
+  const quiz = findQuizWithId(database, quizId);
+  const result: QuizSessionViewResult = {
+    activeSessions: [],
+    inactiveSessions: []
   };
+  if (quiz.sessions) {
+    quiz.sessions.forEach(session => {
+      if (session.state === SessionStatus.END) {
+        result.inactiveSessions.push(session.sessionId);
+      } else {
+        result.activeSessions.push(session.sessionId);
+      }
+    });
+  }
+  return result;
 }
 
 /**
  * Get the a link to the final results (in CSV format) for all players for a completed quiz session
  * @param {number} quizId The ID of the quiz to be found.
  * @param {number} sessionId The ID of the session to be found.
- * @param {string} token - unique session id of a user
+ * @param {string} host - The host of the server
  * @returns {QuizSessionResultResult} active and inactive Sessions
  */
-export function adminQuizSessionResultLink (quizId: number, sessionId: number, token: string): QuizSessionResultLinkResult {
+export function adminQuizSessionResultLink (quizId: number, sessionId: number, host: string): QuizSessionResultLinkResult {
+  const database = getData();
+  const quiz = findQuizWithId(database, quizId);
+  const session = quiz.sessions?.find(s => s.sessionId === sessionId);
+  if (!session) {
+    throw new BadRequest(`Session id ${sessionId} does not refer to valid session within quiz`);
+  }
+  if (session.state !== SessionStatus.FINAL_RESULTS) {
+    throw new BadRequest('Session is not in FINAL_RESULTS state');
+  }
+
+  const csvString = convertSessionResultsToCSV(session.results);
+  const filePath = path.join(__dirname, 'public', `${sessionId}results.csv`);
+  fs.writeFileSync(filePath, csvString);
+
   return {
-    url: 'http://google.com/some/image/path.csv'
+    url: `http://${host}/public/${sessionId}results.csv`
   };
 }
 
@@ -66,14 +97,35 @@ export function adminQuizSessionResultLink (quizId: number, sessionId: number, t
  * @returns {PlayerQuestionResultResult} active and inactive Sessions
  */
 export function playerQuestionResult (playerId: number, questionposition: number): PlayerQuestionResultResult {
-  return {
-    questionId: 1,
-    playersCorrectList: [
-      'Hayden'
-    ],
-    averageAnswerTime: 44,
-    percentCorrect: 100
-  };
+  const database = getData();
+  let currentQuiz: Quiz | undefined;
+  let currentSession: Session | undefined;
+
+  for (const quiz of database.quizzes) {
+    currentSession = quiz.sessions?.find(session =>
+      session.players.find(player => player.playerId === playerId)
+    );
+    if (currentSession) {
+      currentQuiz = quiz;
+      break; // Exit the loop once the player and thus the session has been found
+    }
+  }
+
+  if (!currentSession) {
+    throw new BadRequest(`Player ${playerId} does not exist`);
+  }
+  if (questionposition > currentQuiz.numQuestions || questionposition < 1) {
+    throw new BadRequest(`Question position ${questionposition} is not valid`);
+  }
+  if (currentSession.state !== SessionStatus.ANSWER_SHOW) {
+    throw new BadRequest('Session is not in ANSWER_SHOW state');
+  }
+  if (currentSession.atQuestion !== questionposition) {
+    throw new BadRequest(`Session is not currently on question ${questionposition}`);
+  }
+
+  const questionResult = currentSession.results.questionResults[questionposition - 1];
+  return questionResult;
 }
 
 /**
@@ -321,7 +373,38 @@ export function playerChatlog(playerId: number): PlayerChatlogResult | Error {
  */
 export function playerSendMessage (playerId: number, message: MessageObject): EmptyObject | Error {
   // Check if message should be an message object with messageBody or just message body
+  const database = getData();
+  const player = database.quizzes
+    .flatMap(q => q.sessions || [])
+    .flatMap(s => s.players || [])
+    .find(p => p.playerId === playerId);
+  if (!player) {
+    throw new BadRequest(`Player ${playerId} does not exist`);
+  } else if (message.messageBody.length < 1) {
+    throw new BadRequest('Message is less than one character');
+  } else if (message.messageBody.length > 100) {
+    throw new BadRequest('Message is more than one hundred characters');
+  }
 
+  const timeSet = Math.floor(Date.now() / 1000);
+  const messageInfo = {
+    messageBody: message.messageBody,
+    playerId: playerId,
+    playerName: player.name,
+    timeSet: timeSet
+  };
+
+  let currentSession: Session | undefined;
+  for (const quiz of database.quizzes) {
+    currentSession = quiz.sessions?.find(session =>
+      session.players.find(player => player.playerId === playerId)
+    );
+
+    if (currentSession) {
+      break; // Exit the loop once the player and thus the session has been found
+    }
+  }
+  currentSession.messages.push(messageInfo);
   return {};
 }
 

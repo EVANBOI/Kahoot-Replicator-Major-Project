@@ -213,7 +213,7 @@ export const adminQuizNameUpdate = (
   quizId: number,
   name: string) => {
   return requestHelper('PUT', `/v1/admin/quiz/${quizId}/name`,
-    { token, quizId, name });
+    { token, name });
 };
 
 export const adminQuizTrashView = (token: string) => {
@@ -274,6 +274,14 @@ export const adminQuizTransfer = (
   return requestHelper('POST', `/v1/admin/quiz/${quizId}/transfer`, { token, userEmail });
 };
 
+export const adminQuizTransferV2 = (
+  token: string,
+  quizId: number,
+  userEmail: string
+) => {
+  return requestHelper('POST', `/v1/admin/quiz/${quizId}/transfer`, { userEmail }, token);
+};
+
 export const adminQuizQuestionDuplicate = (
   token: string,
   quizId: number,
@@ -321,20 +329,20 @@ export const playerQuestionInfo = (
 export const playerSendMessage = (
   playerid: number,
   message: MessageObject) => {
-  return requestHelper('GET', `/v1/player/${playerid}/chat}`, { message });
+  return requestHelper('POST', `/v1/player/${playerid}/chat`, { message });
 };
 
 export const adminQuizSessionView = (
   token: string,
   quizid: number) => {
-  return requestHelper('GET', `/v1/admin/quiz/${quizid}/sessions`, { token });
+  return requestHelper('GET', `/v1/admin/quiz/${quizid}/sessions`, {}, token);
 };
 
 export const adminQuizSessionResultLink = (
   quizid: number,
   sessionid: number,
   token: string) => {
-  return requestHelper('GET', `/v1/admin/quiz/${quizid}/session/${sessionid}/results/csv`, { token });
+  return requestHelper('GET', `/v1/admin/quiz/${quizid}/session/${sessionid}/results/csv`, {}, token);
 };
 
 export const playerQuestionResult = (
@@ -404,4 +412,9 @@ export const adminQuizSessionResults = (
   token: string
 ) => {
   return requestHelper('GET', `/v1/admin/quiz/${quizid}/session/${sessionid}/results`, {}, token);
+};
+
+export const getCsvData = (url: string) => {
+  const res = request('GET', url);
+  return res.getBody('utf8');
 };

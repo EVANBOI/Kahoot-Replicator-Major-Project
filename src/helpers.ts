@@ -1,6 +1,10 @@
 import { getData } from './dataStore';
 import { Forbidden, BadRequest, Unauthorised } from './error';
+<<<<<<< HEAD
 import { Data, ErrorMessage, QuestionBody, User, Quiz } from './types';
+=======
+import { Data, ErrorMessage, QuestionBody, User, SessionResults } from './types';
+>>>>>>> master
 import crypto from 'crypto';
 
 export function getHashOf(password: string) {
@@ -37,19 +41,19 @@ export function ok<T>(item: T | { statusCode: number, error: string }): T {
 }
 
 export enum Colours {
-  red = 'red',
-  blue = 'blue',
-  green = 'green',
-  yellow = 'yellow',
-  purple = 'purple',
-  brown = 'brown',
-  orange = 'orange'
+  red,
+  blue,
+  green,
+  yellow,
+  purple,
+  brown,
+  orange
 }
 
-export function getRandomColour(): Colours {
-  const colours = Object.values(Colours);
-  const randomIndex = Math.floor(Math.random() * colours.length);
-  return colours[randomIndex];
+export function getRandomColour(): string {
+  const colourKeys = Object.keys(Colours).filter(key => isNaN(Number(key)));
+  const randomIndex = Math.floor(Math.random() * colourKeys.length);
+  return colourKeys[randomIndex];
 }
 
 export function findUserBySessionId(database: Data, sessionIdToFind: string): User | undefined {
@@ -101,7 +105,7 @@ export function validQuestion(
   } else if (questionBody.answers.length > 6) {
     throw new BadRequest('There are more than 6 answers');
   } else if (questionBody.duration <= 0) {
-    throw new BadRequest('Duration is negative');
+    throw new BadRequest('Duration is non positive');
   } else if (totalDuration > 180) {
     throw new BadRequest('Total duration is more than 3 min');
   } else if (questionBody.points < 1) {
@@ -155,3 +159,34 @@ export function quizExistCheck(quizId: number, token: string) {
   }
 }
 
+<<<<<<< HEAD
+=======
+// Function to convert data to CSV format
+
+export function convertSessionResultsToCSV(sessionResults: SessionResults): string {
+  if (!sessionResults.questionResultsByPlayer) {
+    throw new Error('questionResultsByPlayer is required');
+  }
+
+  let csvContent = 'Player';
+
+  // Add question headers
+  sessionResults.questionResults.forEach((question, index) => {
+    csvContent += `,question${index + 1}score,question${index + 1}rank`;
+  });
+  csvContent += '\n';
+
+  // Add player scores and ranks to CSV content
+  sessionResults.questionResultsByPlayer.forEach(playerResult => {
+    csvContent += playerResult.playerName;
+
+    playerResult.questionResults.forEach(question => {
+      csvContent += `,${question.score},${question.rank}`;
+    });
+
+    csvContent += '\n';
+  });
+
+  return csvContent;
+}
+>>>>>>> master

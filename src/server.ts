@@ -62,6 +62,20 @@ import {
   playerSendMessage,
   playerStatus
 } from './session';
+import { createClient } from '@vercel/kv';
+
+// Replace this with your KV_REST_API_URL
+// E.g. https://large-poodle-44208.kv.vercel-storage.com
+const KV_REST_API_URL="https://decent-amoeba-45923.upstash.io";
+// Replace this with your KV_REST_API_TOKEN
+// E.g. AaywASQgOWE4MTVkN2UtODZh...
+const KV_REST_API_TOKEN="AbNjAAIncDFhNzE2M2ZlZTlhNGU0Y2EyYTNkMjBkNjYxMjlhZDdlMXAxNDU5MjM";
+
+const database = createClient({
+  url: KV_REST_API_URL,
+  token: KV_REST_API_TOKEN,
+});
+
 
 // Set up web app
 const app = express();
@@ -82,6 +96,17 @@ const HOST: string = process.env.IP || '127.0.0.1';
 // ====================================================================
 //  ================= WORK IS DONE BELOW THIS LINE ===================
 // ====================================================================
+
+app.get('/data', async (req: Request, res: Response) => {
+  const data = await database.hgetall("data:names");
+  res.status(200).json(data);
+});
+
+app.put('/data', async (req: Request, res: Response) => {
+  const { data } = req.body;
+  await database.hset("data:names", { data });
+  return res.status(200).json({});
+});
 
 // Example get request
 app.get('/echo', (req: Request, res: Response) => {

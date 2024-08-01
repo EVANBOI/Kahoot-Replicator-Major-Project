@@ -1,7 +1,7 @@
 import { SessionAction, SessionStatus } from "../session";
 import sleepSync from 'slync';
 import { ERROR400, validQuestion1V2, validQuestion2V2 } from "../testConstants";
-import { adminAuthRegister, adminCreateQuizQuestionV2, adminQuizCreate, adminQuizDescriptionUpdate, adminQuizSessionStart, adminQuizSessionUpdate, clear, playerJoin, playerStatus } from "../wrappers";
+import { adminAuthRegister, adminCreateQuizQuestionV2, adminQuizCreate, adminQuizSessionStart, adminQuizSessionUpdate, clear, playerJoin, playerStatus } from "../wrappers";
 
 let token1: string;
 let sessionId1: number;
@@ -27,7 +27,7 @@ beforeEach(() => {
 });
 
 describe('401 Error Case', () => {
-	test.failing('Player Id does not exist', () => {
+	test('Player Id does not exist', () => {
 		const result = playerStatus(playerId1 + 1);
 		expect(result).toStrictEqual(ERROR400);
 	});

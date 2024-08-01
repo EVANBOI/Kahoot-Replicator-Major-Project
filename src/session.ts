@@ -1,4 +1,4 @@
-import { dataStore, getData, setData } from './dataStore';
+import { getData, setData } from './dataStore';
 import { BadRequest } from './error';
 import { findQuizWithId } from './helpers';
 import {
@@ -226,10 +226,25 @@ export function adminQuizSessionStatus (quizId: number, sessionId: number): GetS
  */
 
 export function playerStatus(playerId: number): PlayerStatusResult | Error {
+  const database = getData();
+  let currentSession: Session | undefined;
+  let currentQuiz: Quiz | undefined;
+  for (const quiz of database.quizzes) {
+    currentSession = quiz.sessions?.find(session =>
+      session.players.find(player => player.playerId === playerId)
+    );
+    if (currentSession) {
+      currentQuiz = quiz;
+      break;
+    }
+  };
+  if (!currentSession) {
+    throw new BadRequest(`Player ${playerId} does not exist`);
+  };
   return {
-    state: 'LOBBY',
-    numQuestions: 1,
-    atQuestion: 1
+    state: currentSession.state,
+    numQuestions: currentQuiz.numQuestions,
+    atQuestion: currentSession.atQuestion
   };
 }
 

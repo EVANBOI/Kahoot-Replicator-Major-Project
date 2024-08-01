@@ -83,8 +83,10 @@ export function adminQuizCreate (
     description: description,
     numQuestions: 0,
     questions: [],
-    duration: 0
+    duration: 0,
+    sessions: []
   });
+
   setData(database);
 
   return { quizId: id };
@@ -98,7 +100,7 @@ export function adminQuizCreate (
  * @returns {} - empty object
  * @returns {ErrorMessage} an error
  */
-export function adminQuizRemove (token: string, quizId: number): QuizRemoveResult {
+export function adminQuizRemove (token: string, quizId: number, v2?: boolean): QuizRemoveResult {
   const database = getData();
   const user = findUserBySessionId(database, token);
 
@@ -110,6 +112,11 @@ export function adminQuizRemove (token: string, quizId: number): QuizRemoveResul
     throw new Forbidden(`Quiz with ID '${quizId}' not found`);
   } else if (quiz.creatorId !== user.userId) {
     throw new Forbidden(`Quiz with ID ${quizId} is not owned by ${user.userId} (actual owner: ${quiz.creatorId})`);
+  }
+  if (v2 === true) {
+    if (quiz.sessions.some(s => s.state === SessionStatus.END) === true) {
+      throw new BadRequest('At least one session has not ended yet');
+    }
   }
 
   const quizIndex = database.quizzes.findIndex(quiz => quiz.quizId === quizId);

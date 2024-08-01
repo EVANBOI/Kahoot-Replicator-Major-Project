@@ -12,7 +12,9 @@ import {
   PlayerQuestionAnswerResult,
   SessionResults,
   Quiz,
-  Session
+  Session,
+  MessageInfo,
+  Player
 } from './types';
 
 const DELAY = 3;
@@ -26,6 +28,8 @@ export enum SessionStatus {
   FINAL_RESULTS,
   END
 }
+import ShortUniqueId from 'short-unique-id';
+const sessionUid = new ShortUniqueId({ dictionary: 'number' });
 
 export enum SessionAction {
   NEXT_QUESTION,
@@ -85,7 +89,6 @@ export function adminQuizSessionResultLink (quizId: number, sessionId: number, h
     url: `http://${host}/public/${sessionId}results.csv`
   };
 }
-
 /**
  * Get the results for a particular question of the session a player is playing in. Question position starts at 1
  * @param {number} playerId The ID of the player.
@@ -138,11 +141,12 @@ export function adminQuizSessionUpdate(
   quizId: number,
   sessionId: number,
   action: SessionAction): EmptyObject | Error {
+
   const database = getData();
   const quiz = findQuizWithId(database, quizId);
+  console.log(quiz.quizId);
   const session = quiz.sessions.find(s => s.sessionId === sessionId);
-  const questionIndex = session.atQuestion;
-  const question = quiz.questions[questionIndex - 1];
+  console.log(`session: ${session}`);
 
   if (!session) {
     throw new BadRequest('Session Id does not refer to a valid session within this quiz');
@@ -156,12 +160,20 @@ export function adminQuizSessionUpdate(
     throw new BadRequest('Action provided is not a valid enum action');
   }
 
+  const questionIndex = session.atQuestion;
+  const question = quiz.questions[questionIndex - 1];
+  console.log('HIIIIIIIIIIIIIIIIIII');
   if (session.state === SessionStatus.LOBBY) {
+    console.log(session.state);
     if (action === SessionAction.NEXT_QUESTION) {
+      console.log('PPPPPPPPPPPPPPPPPPPPPPPPPP');
       session.state = SessionStatus.QUESTION_COUNTDOWN;
+      console.log(session.state);
+      console.log('Transitioning from LOBBY to QUESTION_COUNTDOWN');
       database.sessionIdToTimerObject[sessionId] = setTimeout(() => {
         turnQuestionOpen(sessionId, quizId);
       }, DELAY * 1000);
+      console.log('KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK');
     } else {
       throw new BadRequest(`Action enum cannot be applied in the ${session.state}`);
     }
@@ -210,6 +222,7 @@ export function adminQuizSessionUpdate(
     throw new BadRequest(`Action enum cannot be applied in the ${session.state}`);
   }
   setData(database);
+  console.log('HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH')
   return {};
 }
 
@@ -232,6 +245,8 @@ export const turnQuestionOpen = (sessionId: number, quizId: number) => {
     setData(database);
   }
 };
+
+// tell me what to do
 
 /**
  * Gives the status of a particular quiz session
@@ -472,35 +487,201 @@ export function adminQuizThumbnailUpdate(quizId: number, token: string, imgUrl: 
   return {};
 }
 
-export function adminQuizSessionStart(
+/* export function adminQuizSessionStart(
   quizId: number,
   token: string,
   autoStartNum: number
 ): { sessionId: number } {
-  return { sessionId: 5546 };
+  const database = getData();
+  const user = findUserBySessionId(database, token);
+
+  // Check if the token is valid
+  if (!token) {
+    throw new Unauthorised('Token is empty or invalid.');
+  }
+
+  // Check if the user is an owner of the quiz
+  const quiz = findQuizWithId(database, quizId);
+  if (!quiz || quiz.creatorId !== user.userId) {
+    throw new Forbidden('Valid token is provided, but user is not an owner of this quiz or quiz doesn\'t exist.');
+  }
+
+  // Check if autoStartNum is within allowed limits
+  if (autoStartNum > 50) {
+    throw new BadRequest('autoStartNum cannot be greater than 50.');
+  }
+
+  const quizIndex = database.trash.some(quiz => quiz.quizId === quizId);
+  // Check if the quiz is in trash
+  if (quizIndex === true) {
+    throw new BadRequest('The quiz is in trash.');
+  }
+
+   // Check if there are active sessions for this quiz
+  const activeSessions = adminQuizSessionView(quizId);
+  if (activeSessions.activeSessions.length >= 10) {
+    throw new BadRequest('There are already 10 active sessions for this quiz.');
+  }
+
+  // Check if the quiz has questions
+  if (quiz.questions.length === 0) {
+    throw new BadRequest('The quiz does not have any questions.');
+  }
+
+  // Create and return a new session
+  const newSessionId = 5546;
+  return { sessionId: newSessionId };
+}
+
+export function playerResults(
+  playerId: number
+): SessionResults {
+  const database = getData();
+
+  // Check if the player ID is valid
+  if (!playerId) {
+    throw new BadRequest('Player ID does not exist.');
+  }
+
+  // Check if the session is in FINAL_RESULTS state
+
+  if ( !== SessionStatus.FINAL_RESULTS) {
+    throw new BadRequest('Session is not in FINAL_RESULTS state.');
+  }
+
+  // Fetch and return player results
+  return {
+    usersRankedByScore: [
+      { name: 'Hayden', score: 45 } // Replace with actual player results logic
+    ],
+    questionResults: [
+      {
+        questionId: 5546, // Replace with actual question ID logic
+        playersCorrectList: ['Hayden'], // Replace with actual list of players who got the answer right
+        averageAnswerTime: 45, // Replace with actual average answer time
+        percentCorrect: 54 // Replace with actual percentage of correct answers
+      }
+    ]
+  };
+}
+
+function generateRandomName(): string {
+  const letters = 'abcdefghijklmnopqrstuvwxyz';
+  const numbers = '0123456789';
+  let name = '';
+  while (name.length < 5) {
+    const char = letters.charAt(Math.floor(Math.random() * letters.length));
+    if (!name.includes(char)) {
+      name += char;
+    }
+  }
+  while (name.length < 8) {
+    const num = numbers.charAt(Math.floor(Math.random() * numbers.length));
+    if (!name.includes(num)) {
+      name += num;
+    }
+  }
+  return name;
 }
 
 export function playerJoin(
   sessionId: number,
   name: string
 ): { playerId: number } {
-  return { playerId: 5546 };
+  const database = getData();
+
+  // Find the session that matches the sessionId
+  let session: Session | undefined;
+  for (const quiz of database.quizzes) {
+    session = quiz.sessions?.find(s => s.sessionId === sessionId);
+    if (session) break;
+  }
+
+  if (!session) {
+    throw new BadRequest('Session Id does not refer to a valid session.');
+  }
+
+  if (session.state !== SessionStatus.LOBBY) {
+    throw new BadRequest('Session is not in LOBBY state.');
+  }
+
+  // Check if the name is unique
+  if (name) {
+    const allPlayers = database.quizzes.flatMap(quiz => quiz.sessions?.flatMap(session => session.players) || []);
+    const existingPlayer = allPlayers.find(player => player.name === name);
+    if (existingPlayer) {
+      throw new BadRequest('Name of user entered is not unique.');
+    }
+  } else {
+    // Generate a random name if none is provided
+    name = generateRandomName();
+  }
+
+  // Logic to generate a new player ID
+  const allPlayers = database.quizzes.flatMap(quiz => quiz.sessions?.flatMap(session => session.players) || []);
+  const newPlayerId = allPlayers.length > 0
+    ? Math.max(...allPlayers.map(p => p.playerId)) + 1
+    : 1;
+
+  // Add the new player to the session
+  const newPlayer = { playerId: newPlayerId, name, score: 0 };
+  session.players.push(newPlayer);
+
+  // Save the updated data back to the datastore
+  setData(database);
+
+  return { playerId: newPlayerId };
 }
 
-export function playerResults(
-  playerId: number
-): SessionResults {
-  return {
-    usersRankedByScore: [
-      { name: 'Hayden', score: 45 }
-    ],
-    questionResults: [
-      {
-        questionId: 5546,
-        playersCorrectList: ['Hayden'],
-        averageAnswerTime: 45,
-        percentCorrect: 54
-      }
-    ]
+*/
+
+export function adminQuizSessionStart(quizId: number, token: string, autoStartNum: number) {
+  const database = getData();
+  const user = findUserBySessionId(database, token);
+  // Check if the token is valid
+  if (!user) {
+    throw new Unauthorised('Invalid token');
+  }
+  // Check if the quiz exists and is not in trash
+  const quiz = findQuizWithId(database, quizId);
+  const isInTrash = database.trash.find(trashQuiz => trashQuiz.quizId === quizId);
+  if (!quiz && !isInTrash) {
+    throw new Forbidden('Quiz does not exist');
+  } else if (isInTrash && !quiz) {
+    if (isInTrash.creatorId !== user.userId) {
+      throw new Forbidden('User does not own Quiz');
+    }
+  } else if (!isInTrash && quiz) {
+    if (quiz.creatorId !== user.userId) {
+      throw new Forbidden('User does not own Quiz');
+    }
+  }
+  if (isInTrash) {
+    throw new BadRequest('Quiz is in trash');
+  } else if (quiz.questions.length === 0) {
+    throw new BadRequest('The quiz does not have any questions.');
+  } else if (quiz.sessions.length >= 10) {
+    throw new BadRequest('There are already 10 active sessions for this quiz');
+  } else if (autoStartNum > 50) {
+    throw new BadRequest('autoStartNum exceeds maximum value');
+  }
+  const quizCopy = JSON.parse(JSON.stringify(quiz));
+  // Create a new session
+  const newSessionId = parseInt(sessionUid.seq()); // Generate a unique session ID
+  const newSession: Session = {
+    sessionId: newSessionId,
+    atQuestion: 0, // Starting with question 0
+    players: [], // No players at the start
+    state: SessionStatus.LOBBY, // Initial state is LOBBY
+    messages: [], // No messages at the start
+    results: { // Initialize results
+      usersRankedByScore: [],
+      questionResults: []
+    },
+    autoStartNum: autoStartNum,
+    quizCopy: JSON.parse(JSON.stringify(quiz))
   };
+  quiz.sessions.push(newSession);
+  setData(database);
+  return { sessionId: newSessionId };
 }

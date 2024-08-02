@@ -754,8 +754,8 @@ app.get('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Respons
 });
 
 app.get('/v1/player/:playerid/question/:questionposition', (req: Request, res: Response) => {
-  const playerId = parseInt(req.query.playerid as string);
-  const questionPosition = parseInt(req.query.questionposition as string);
+  const playerId = parseInt(req.params.playerid as string);
+  const questionPosition = parseInt(req.params.questionposition as string);
   try {
     return res.json(playerQuestionInfo(playerId, questionPosition));
   } catch (error) {

@@ -1,5 +1,406 @@
 {
-  "users": [],
-  "quizzes": [],
+  "users": [
+    {
+      "userId": 1,
+      "tokens": [
+        {
+          "token": "892468"
+        }
+      ],
+      "email": "admin1@gmail.com",
+      "password": "f42857add00a1047e650c6c4d0f909bfface390fe00310026b07bc77027dcf4e",
+      "name": "JJone ZZ",
+      "numSuccessfulLogins": 1,
+      "numFailedPasswordsSinceLastLogin": 0,
+      "passwordUsedThisYear": []
+    }
+  ],
+  "quizzes": [
+    {
+      "creatorId": 1,
+      "quizId": 59,
+      "name": "Quiz 1",
+      "timeCreated": 1722595825,
+      "timeLastEdited": 1722595825,
+      "description": "1st description",
+      "numQuestions": 2,
+      "questions": [
+        {
+          "questionId": 78,
+          "question": "Valid question 1?",
+          "duration": 3,
+          "points": 2,
+          "answers": [
+            {
+              "answerId": 24,
+              "colour": "red",
+              "answer": "A",
+              "correct": true
+            },
+            {
+              "answerId": 624,
+              "colour": "brown",
+              "answer": "B",
+              "correct": false
+            }
+          ],
+          "thumbnailUrl": "http://google.com/some/image/path.jpg"
+        },
+        {
+          "questionId": 48,
+          "question": "Valid question 3?",
+          "duration": 5,
+          "points": 2,
+          "answers": [
+            {
+              "answerId": 524,
+              "colour": "brown",
+              "answer": "Amb",
+              "correct": false
+            },
+            {
+              "answerId": 734,
+              "colour": "purple",
+              "answer": "Bsgd",
+              "correct": true
+            },
+            {
+              "answerId": 434,
+              "colour": "purple",
+              "answer": "Clsj",
+              "correct": false
+            }
+          ],
+          "thumbnailUrl": "http://google.com/some/image/path.jpg"
+        }
+      ],
+      "duration": 8,
+      "sessions": [
+        {
+          "sessionId": 16,
+          "atQuestion": 3,
+          "players": [
+            {
+              "playerId": 99,
+              "name": "erwr",
+              "score": 0
+            }
+          ],
+          "state": 3,
+          "messages": [],
+          "results": {
+            "usersRankedByScore": [
+              {
+                "name": "erwr",
+                "score": 0
+              }
+            ],
+            "questionResults": [
+              {
+                "questionId": 78,
+                "playersCorrectList": [],
+                "averageAnswerTime": 0,
+                "percentCorrect": 0
+              },
+              {
+                "questionId": 48,
+                "playersCorrectList": [],
+                "averageAnswerTime": 0,
+                "percentCorrect": 0
+              }
+            ],
+            "questionResultsByPlayer": [
+              {
+                "playerName": "erwr",
+                "playerId": 99,
+                "questionResults": [
+                  {
+                    "questionId": 78,
+                    "score": 0,
+                    "rank": 1,
+                    "timeToAnswer": -1
+                  },
+                  {
+                    "questionId": 48,
+                    "score": 0,
+                    "rank": 1,
+                    "timeToAnswer": -1
+                  }
+                ]
+              }
+            ],
+            "questionStartTime": [
+              1722595825,
+              1722595828,
+              1722595831
+            ]
+          },
+          "autoStartNum": 5,
+          "quizCopy": {
+            "creatorId": 1,
+            "quizId": 59,
+            "name": "Quiz 1",
+            "timeCreated": 1722595825,
+            "timeLastEdited": 1722595825,
+            "description": "1st description",
+            "numQuestions": 2,
+            "questions": [
+              {
+                "questionId": 78,
+                "question": "Valid question 1?",
+                "duration": 3,
+                "points": 2,
+                "answers": [
+                  {
+                    "answerId": 24,
+                    "colour": "red",
+                    "answer": "A",
+                    "correct": true
+                  },
+                  {
+                    "answerId": 624,
+                    "colour": "brown",
+                    "answer": "B",
+                    "correct": false
+                  }
+                ],
+                "thumbnailUrl": "http://google.com/some/image/path.jpg"
+              },
+              {
+                "questionId": 48,
+                "question": "Valid question 3?",
+                "duration": 5,
+                "points": 2,
+                "answers": [
+                  {
+                    "answerId": 524,
+                    "colour": "brown",
+                    "answer": "Amb",
+                    "correct": false
+                  },
+                  {
+                    "answerId": 734,
+                    "colour": "purple",
+                    "answer": "Bsgd",
+                    "correct": true
+                  },
+                  {
+                    "answerId": 434,
+                    "colour": "purple",
+                    "answer": "Clsj",
+                    "correct": false
+                  }
+                ],
+                "thumbnailUrl": "http://google.com/some/image/path.jpg"
+              }
+            ],
+            "duration": 8,
+            "sessions": []
+          }
+        },
+        {
+          "sessionId": 26,
+          "atQuestion": 1,
+          "players": [
+            {
+              "playerId": 9,
+              "name": "yoooooo",
+              "score": 0
+            }
+          ],
+          "state": 3,
+          "messages": [],
+          "results": {
+            "usersRankedByScore": [
+              {
+                "name": "yoooooo",
+                "score": 0
+              }
+            ],
+            "questionResults": [
+              {
+                "questionId": 78,
+                "playersCorrectList": [],
+                "averageAnswerTime": 0,
+                "percentCorrect": 0
+              },
+              {
+                "questionId": 48,
+                "playersCorrectList": [],
+                "averageAnswerTime": 0,
+                "percentCorrect": 0
+              }
+            ],
+            "questionResultsByPlayer": [
+              {
+                "playerName": "yoooooo",
+                "playerId": 9,
+                "questionResults": [
+                  {
+                    "questionId": 78,
+                    "score": 0,
+                    "rank": 1,
+                    "timeToAnswer": -1
+                  },
+                  {
+                    "questionId": 48,
+                    "score": 0,
+                    "rank": 1,
+                    "timeToAnswer": -1
+                  }
+                ]
+              }
+            ],
+            "questionStartTime": [
+              1722595828,
+              0
+            ]
+          },
+          "autoStartNum": 10,
+          "quizCopy": {
+            "creatorId": 1,
+            "quizId": 59,
+            "name": "Quiz 1",
+            "timeCreated": 1722595825,
+            "timeLastEdited": 1722595825,
+            "description": "1st description",
+            "numQuestions": 2,
+            "questions": [
+              {
+                "questionId": 78,
+                "question": "Valid question 1?",
+                "duration": 3,
+                "points": 2,
+                "answers": [
+                  {
+                    "answerId": 24,
+                    "colour": "red",
+                    "answer": "A",
+                    "correct": true
+                  },
+                  {
+                    "answerId": 624,
+                    "colour": "brown",
+                    "answer": "B",
+                    "correct": false
+                  }
+                ],
+                "thumbnailUrl": "http://google.com/some/image/path.jpg"
+              },
+              {
+                "questionId": 48,
+                "question": "Valid question 3?",
+                "duration": 5,
+                "points": 2,
+                "answers": [
+                  {
+                    "answerId": 524,
+                    "colour": "brown",
+                    "answer": "Amb",
+                    "correct": false
+                  },
+                  {
+                    "answerId": 734,
+                    "colour": "purple",
+                    "answer": "Bsgd",
+                    "correct": true
+                  },
+                  {
+                    "answerId": 434,
+                    "colour": "purple",
+                    "answer": "Clsj",
+                    "correct": false
+                  }
+                ],
+                "thumbnailUrl": "http://google.com/some/image/path.jpg"
+              }
+            ],
+            "duration": 8,
+            "sessions": [
+              {
+                "sessionId": 16,
+                "atQuestion": 0,
+                "players": [
+                  {
+                    "playerId": 99,
+                    "name": "erwr",
+                    "score": 0
+                  }
+                ],
+                "state": 0,
+                "messages": [],
+                "results": {
+                  "usersRankedByScore": [],
+                  "questionResults": []
+                },
+                "autoStartNum": 5,
+                "quizCopy": {
+                  "creatorId": 1,
+                  "quizId": 59,
+                  "name": "Quiz 1",
+                  "timeCreated": 1722595825,
+                  "timeLastEdited": 1722595825,
+                  "description": "1st description",
+                  "numQuestions": 2,
+                  "questions": [
+                    {
+                      "questionId": 78,
+                      "question": "Valid question 1?",
+                      "duration": 3,
+                      "points": 2,
+                      "answers": [
+                        {
+                          "answerId": 24,
+                          "colour": "red",
+                          "answer": "A",
+                          "correct": true
+                        },
+                        {
+                          "answerId": 624,
+                          "colour": "brown",
+                          "answer": "B",
+                          "correct": false
+                        }
+                      ],
+                      "thumbnailUrl": "http://google.com/some/image/path.jpg"
+                    },
+                    {
+                      "questionId": 48,
+                      "question": "Valid question 3?",
+                      "duration": 5,
+                      "points": 2,
+                      "answers": [
+                        {
+                          "answerId": 524,
+                          "colour": "brown",
+                          "answer": "Amb",
+                          "correct": false
+                        },
+                        {
+                          "answerId": 734,
+                          "colour": "purple",
+                          "answer": "Bsgd",
+                          "correct": true
+                        },
+                        {
+                          "answerId": 434,
+                          "colour": "purple",
+                          "answer": "Clsj",
+                          "correct": false
+                        }
+                      ],
+                      "thumbnailUrl": "http://google.com/some/image/path.jpg"
+                    }
+                  ],
+                  "duration": 8,
+                  "sessions": []
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
   "trash": []
 }

@@ -1,7 +1,7 @@
 import { ERROR401 } from '../testConstants';
 import {
   adminAuthRegister,
-  adminQuizCreate,
+  adminQuizCreateV2,
   adminQuizRemove,
   adminQuizTrashViewV2,
   clear
@@ -23,7 +23,8 @@ beforeEach(() => {
       'Xiong'
     );
   sessionId = body1?.token;
-  const { jsonBody: body2 } = adminQuizCreate(sessionId, 'Quiz 1', 'Pointers');
+  const { jsonBody: body2 } = adminQuizCreateV2(
+    sessionId, 'Quiz 1', 'Pointers');
   quizId = body2?.quizId;
   adminQuizRemove(sessionId, quizId);
 });
@@ -54,7 +55,8 @@ describe('Valid Trash View', () => {
   });
 
   test('Viewing multiple quizzes in the trash', () => {
-    const { jsonBody: body3 } = adminQuizCreate(sessionId, 'Quiz 2', 'Linked Lists');
+    const { jsonBody: body3 } = adminQuizCreateV2(
+      sessionId, 'Quiz 2', 'Linked Lists');
     const quizId2 = body3?.quizId;
     adminQuizRemove(sessionId, quizId2);
     expect(adminQuizTrashViewV2(sessionId)).toStrictEqual({

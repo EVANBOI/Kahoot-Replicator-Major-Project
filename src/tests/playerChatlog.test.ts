@@ -29,10 +29,10 @@ describe('400 Error Case', () => {
 });
 
 describe('200 Success Cases', () => {
-  test.failing('Return Correct Type', () => {
+  test('Return Correct Type', () => {
     playerSendMessage(playerId1, { messageBody: 'message 1' });
     const result = playerChatlog(playerId1);
-    expect(result).toStrictEqual({
+    expect(result.jsonBody).toStrictEqual({
       messages: [
         {
           messageBody: expect.any(String),
@@ -44,14 +44,14 @@ describe('200 Success Cases', () => {
     });
   });
 
-  test.failing('Succesfully updated the timeSent key', () => {
+  test('Succesfully updated the timeSent key', () => {
     const startTime = Math.floor(Date.now() / 1000);
     playerSendMessage(playerId1, { messageBody: 'message 1' });
-    const result = playerChatlog(playerId1).jsonBody.timeSent;
+    const result = playerChatlog(playerId1).jsonBody.messages[0];
 
     // Checking that the timestamps are within a 1 second range.
     const endTime = Math.floor(Date.now() / 1000);
-    expect(result.jsonBody?.timeLastEdited).toBeGreaterThanOrEqual(startTime);
-    expect(result.jsonBody?.timeLastEdited).toBeLessThanOrEqual(endTime);
+    expect(result.timeSent).toBeGreaterThanOrEqual(startTime);
+    expect(result.timeSent).toBeLessThanOrEqual(endTime);
   });
 });

@@ -472,6 +472,8 @@ export function playerChatlog(playerId: number): PlayerChatlogResult | Error {
       break;
     }
   }
+  console.log(currentSession);
+  console.log(currentSession.messages);
 
   return { messages: currentSession.messages };
 }
@@ -517,6 +519,7 @@ export function playerSendMessage (playerId: number, message: MessageObject): Em
     }
   }
   currentSession.messages.push(messageInfo);
+  setData(database);
   return {};
 }
 

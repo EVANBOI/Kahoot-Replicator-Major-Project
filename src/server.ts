@@ -929,8 +929,13 @@ app.put('/v1/player/:playerid/question/:questionposition/answer', (req: Request,
   const playerId = parseInt(req.params.playerid);
   const questionPosition = parseInt(req.params.questionposition);
   const { answerIds } = req.body;
-  const result = playerQuestionAnswer(playerId, questionPosition, answerIds);
-  return res.status(result.statusCode).json(result.jsonBody || {});
+  try {
+    res.json(playerQuestionAnswer(playerId, questionPosition, answerIds));
+  } catch (error) {
+    if (error instanceof BadRequest) {
+      return res.status(400).json({ error: error.message });
+    }
+  }
 });
 
 app.put('/v1/admin/quiz/:quizid:/thumbnail', (req: Request, res: Response) => {

@@ -4,13 +4,16 @@
       "userId": 1,
       "tokens": [
         {
-          "token": "504130"
+          "token": "159323"
+        },
+        {
+          "token": "728892"
         }
       ],
-      "email": "admin@email.com",
-      "password": "0b14d501a594442a01c6859541bcb3e8164d183d32937b851835442f69d5c94e",
-      "name": "Idk Idk",
-      "numSuccessfulLogins": 1,
+      "email": "evan.xiong@unsw.edu.au",
+      "password": "a7411a3704a56d0f9319ab779f26e6b14ab739435ecfa99f4b7c8dafb649b7d8",
+      "name": "Evan Xiong",
+      "numSuccessfulLogins": 2,
       "numFailedPasswordsSinceLastLogin": 0,
       "passwordUsedThisYear": []
     },
@@ -18,110 +21,20 @@
       "userId": 2,
       "tokens": [
         {
-          "token": "862386"
+          "token": "827670"
+        },
+        {
+          "token": "340892"
         }
       ],
-      "email": "user@email.com",
-      "password": "0b14d501a594442a01c6859541bcb3e8164d183d32937b851835442f69d5c94e",
-      "name": "Idk Idk",
-      "numSuccessfulLogins": 1,
+      "email": "jessie.zhang@unsw.edu.au",
+      "password": "39f886807bf8983aad7f3c4a6ed157d4c354c51369544fec67ab606f576d5048",
+      "name": "Jessie Zhang",
+      "numSuccessfulLogins": 2,
       "numFailedPasswordsSinceLastLogin": 0,
       "passwordUsedThisYear": []
     }
   ],
-  "quizzes": [
-    {
-      "creatorId": 1,
-      "quizId": 8,
-      "name": "ValidQuizName",
-      "timeCreated": 1722572424,
-      "timeLastEdited": 1722572424,
-      "description": "ValidDescription",
-      "numQuestions": 1,
-      "questions": [
-        {
-          "questionId": 7,
-          "question": "Valid question 1?",
-          "duration": 3,
-          "points": 2,
-          "answers": [
-            {
-              "answerId": 25,
-              "colour": "purple",
-              "answer": "A",
-              "correct": true
-            },
-            {
-              "answerId": 75,
-              "colour": "orange",
-              "answer": "B",
-              "correct": false
-            }
-          ],
-          "thumbnailUrl": "http://google.com/some/image/path.jpg"
-        }
-      ],
-      "duration": 3,
-      "sessions": [
-        {
-          "sessionId": 8,
-          "atQuestion": 1,
-          "players": [
-            {
-              "playerId": 1,
-              "name": "Player1",
-              "score": 0
-            },
-            {
-              "playerId": 31,
-              "name": "Player2",
-              "score": 0
-            }
-          ],
-          "state": 2,
-          "messages": [],
-          "results": {
-            "usersRankedByScore": [],
-            "questionResults": []
-          },
-          "autoStartNum": 5,
-          "quizCopy": {
-            "creatorId": 1,
-            "quizId": 8,
-            "name": "ValidQuizName",
-            "timeCreated": 1722572424,
-            "timeLastEdited": 1722572424,
-            "description": "ValidDescription",
-            "numQuestions": 1,
-            "questions": [
-              {
-                "questionId": 7,
-                "question": "Valid question 1?",
-                "duration": 3,
-                "points": 2,
-                "answers": [
-                  {
-                    "answerId": 25,
-                    "colour": "purple",
-                    "answer": "A",
-                    "correct": true
-                  },
-                  {
-                    "answerId": 75,
-                    "colour": "orange",
-                    "answer": "B",
-                    "correct": false
-                  }
-                ],
-                "thumbnailUrl": "http://google.com/some/image/path.jpg"
-              }
-            ],
-            "duration": 3,
-            "sessions": []
-          }
-        }
-      ]
-    }
-  ],
+  "quizzes": [],
   "trash": []
 }

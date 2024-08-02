@@ -3,6 +3,8 @@ import {
   sessionIdToTimerMap
 } from './dataStore';
 import { ClearResult } from './types';
+import * as path from 'path';
+import * as fs from 'fs';
 /**
  * Reset the state of the application back to the start.
  * @returns {} - empty object
@@ -17,6 +19,12 @@ export function clear (): ClearResult {
     clearTimeout(timer);
   }
   sessionIdToTimerMap.clear();
+
+  const dirPath = path.join(__dirname, 'csvresults');
+  if (fs.existsSync(dirPath)) {
+    fs.rmdirSync(dirPath, { recursive: true });
+  } 
+
   setData(store);
   return {};
 }

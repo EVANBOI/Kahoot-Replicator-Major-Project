@@ -2,7 +2,7 @@ import { SessionAction } from '../session';
 import sleepSync from 'slync';
 import {
   ERROR401, ERROR403, ERROR400, VALID_USER_REGISTER_INPUTS_1, VALID_USER_REGISTER_INPUTS_2,
-  VALID_QUIZ_CREATE_INPUTS_1, validQuestionV2FAST
+  VALID_QUIZ_CREATE_INPUTS_1, validQuestion1V2
 } from '../testConstants';
 import {
   clear,
@@ -33,7 +33,7 @@ beforeEach(() => {
     VALID_QUIZ_CREATE_INPUTS_1.NAME,
     VALID_QUIZ_CREATE_INPUTS_1.DESCRIPTION
   ).jsonBody.quizId;
-  adminCreateQuizQuestionV2(quizId1, token1, validQuestionV2FAST);
+  adminCreateQuizQuestionV2(quizId1, token1, validQuestion1V2);
   sessionId1 = adminQuizSessionStart(quizId1, token1, 5).jsonBody.sessionId;
   playerJoin(sessionId1, 'Hayden');
 });
@@ -67,21 +67,19 @@ describe('GET /v1/admin/quiz/{quizid}/session/{sessionid}/results/csv', () => {
     });
   });
   describe('success cases', () => {
-    test.skip('Successfully return URL with CSV file', () => {
+    test('Successfully return URL with CSV file', () => {
         adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
         adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
-        
-        sleepSync(1);
+        adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_ANSWER);
         adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_FINAL_RESULTS);
-      const result = adminQuizSessionResultLink(quizId1, sessionId1, token1).jsonBody;
-      const regex = /^https.*\.csv$/;
+      const result = adminQuizSessionResultLink(quizId1, sessionId1, token1).jsonBody.url;
+      const regex = /^http.*\.csv$/;
       expect(result).toMatch(regex);
     });
-    test.skip('The final result is transfered to CSV sucessfully', () => {
+    test('The final result is transfered to CSV sucessfully', () => {
         adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
         adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
-        
-        sleepSync(1);
+        adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_ANSWER);
         adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_FINAL_RESULTS);
       const url = adminQuizSessionResultLink(quizId1, sessionId1, token1).jsonBody.url;
       const csvData = getCsvData(url);

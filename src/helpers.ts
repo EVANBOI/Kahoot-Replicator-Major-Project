@@ -1,6 +1,6 @@
 import { getData } from './dataStore';
 import { Forbidden, BadRequest, Unauthorised } from './error';
-import { Data, ErrorMessage, QuestionBody, User, SessionResults } from './types';
+import { Data, ErrorMessage, QuestionBody, User, SessionResults, Session } from './types';
 import crypto from 'crypto';
 
 export function getHashOf(password: string) {
@@ -165,7 +165,7 @@ export function convertSessionResultsToCSV(sessionResults: SessionResults): stri
   let csvContent = 'Player';
 
   // Add question headers
-  sessionResults.questionResults.forEach((question, index) => {
+  sessionResults.questionResultsByPlayer[0].questionResults.forEach((question, index) => {
     csvContent += `,question${index + 1}score,question${index + 1}rank`;
   });
   csvContent += '\n';
@@ -206,4 +206,22 @@ export function generateRandomString() {
   }
 
   return result;
+}
+
+// this function will initialise detailed result for each player after the 
+// seession move out of the lobby state
+export function playerDetailedResultsInitialisation(session: Session) {
+  session.results.questionResultsByPlayer = [];
+  session.players.forEach(player => 
+    session.results.questionResultsByPlayer.push({
+      playerName: player.name,
+      playerId: player.playerId,
+      questionResults: session.quizCopy.questions.map(question => ({
+        questionId: question.questionId,
+        score: 0,
+        rank: 1,
+        timeToAnswer: -1
+      }))
+    })
+  );
 }

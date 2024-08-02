@@ -1,6 +1,14 @@
 import {
-  ERROR400, ERROR401, ERROR403, VALID_USER_REGISTER_INPUTS_1, VALID_USER_REGISTER_INPUTS_2, VALID_QUIZ_CREATE_INPUTS_1, validQuestion1V2, validQuestion2V2
+  ERROR400,
+  ERROR401,
+  ERROR403,
+  VALID_USER_REGISTER_INPUTS_1,
+  VALID_USER_REGISTER_INPUTS_2,
+  VALID_QUIZ_CREATE_INPUTS_1,
+  validQuestion1V2,
+  validQuestion3V2
 } from '../testConstants';
+import sleepSync from 'slync';
 import {
   clear,
   adminAuthRegister,
@@ -40,7 +48,7 @@ beforeEach(() => {
     VALID_QUIZ_CREATE_INPUTS_1.DESCRIPTION
   ).jsonBody.quizId;
   questionId1 = adminCreateQuizQuestionV2(quizId1, token1, validQuestion1V2).jsonBody.questionId;
-  questionId2 = adminCreateQuizQuestionV2(quizId1, token1, validQuestion2V2).jsonBody.questionId;
+  questionId2 = adminCreateQuizQuestionV2(quizId1, token1, validQuestion3V2).jsonBody.questionId;
   sessionId1 = adminQuizSessionStart(quizId1, token1, 5).jsonBody.sessionId;
   playerId1 = playerJoin(sessionId1, 'Player1').jsonBody.playerId;
   playerId2 = playerJoin(sessionId1, 'Player2').jsonBody.playerId;
@@ -90,6 +98,7 @@ describe('Get /v1/admin/quiz/{quizid}/session/{sessionid}/results', () => {
       playerQuestionAnswer(playerId1, 2, validAnswerIdsQ2);
       playerQuestionAnswer(playerId2, 2, validAnswerIdsQ2);
       adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_ANSWER);
+      adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_FINAL_RESULTS);
 
       const res = adminQuizSessionResults(quizId1, sessionId1, token1);
       expect(res.statusCode).toBe(200);

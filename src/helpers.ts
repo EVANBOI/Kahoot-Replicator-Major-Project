@@ -1,6 +1,6 @@
 import { getData } from './dataStore';
 import { Forbidden, BadRequest, Unauthorised } from './error';
-import { Data, ErrorMessage, QuestionBody, User, SessionResults } from './types';
+import { Data, ErrorMessage, QuestionBody, User, SessionResults, Session } from './types';
 import crypto from 'crypto';
 
 export function getHashOf(password: string) {
@@ -165,7 +165,7 @@ export function convertSessionResultsToCSV(sessionResults: SessionResults): stri
   let csvContent = 'Player';
 
   // Add question headers
-  sessionResults.questionResults.forEach((question, index) => {
+  sessionResults.questionResultsByPlayer[0].questionResults.forEach((question, index) => {
     csvContent += `,question${index + 1}score,question${index + 1}rank`;
   });
   csvContent += '\n';
@@ -206,4 +206,63 @@ export function generateRandomString() {
   }
 
   return result;
+}
+
+// this function will initialise detailed result for each player after the
+// seession move out of the lobby state
+export function playerDetailedResultsInitialisation(session: Session) {
+  // initialise the usersRankedByScore and questionResults
+  session.results.usersRankedByScore = session.players.map(player => ({
+    name: player.name,
+    score: 0
+  }));
+
+  session.results.questionResults = session.quizCopy.questions.map(question => ({
+    questionId: question.questionId,
+    playersCorrectList: [],
+    averageAnswerTime: 0,
+    percentCorrect: 0,
+  }));
+
+  // initialise the questionResultsByPlayer
+  session.results.questionResultsByPlayer = [];
+  session.players.forEach(player =>
+    session.results.questionResultsByPlayer.push({
+      playerName: player.name,
+      playerId: player.playerId,
+      questionResults: session.quizCopy.questions.map(question => ({
+        questionId: question.questionId,
+        score: 0,
+        rank: 1,
+        timeToAnswer: -1
+      }))
+    })
+  );
+}
+
+// this function will update the usersRankedByScore and questionResults when the question
+// closed or state is Answer show
+export function updateResults (session: Session) {
+  const questionIndex = session.atQuestion - 1;
+  let totalAnswerTime = 0;
+  let numAnsweredPlayer = 0;
+  session.results.questionResultsByPlayer.forEach(player => {
+    // update the score of the player and correct list
+    if (player.questionResults[questionIndex].score !== 0) {
+      session.results.usersRankedByScore.find(user => user.name === player.playerName).score += player.questionResults[questionIndex].score;
+      session.results.questionResults[questionIndex].playersCorrectList.push(player.playerName);
+    }
+    // if the player answered the question, update the total time and player answered
+    if (player.questionResults[questionIndex].timeToAnswer !== -1) {
+      totalAnswerTime += player.questionResults[questionIndex].timeToAnswer;
+      numAnsweredPlayer++;
+    }
+  });
+
+  // update the average time and percent correct and percentCorrect
+  session.results.questionResults[questionIndex].averageAnswerTime = totalAnswerTime / numAnsweredPlayer;
+  session.results.questionResults[questionIndex].percentCorrect = session.results.questionResults[questionIndex].playersCorrectList.length / session.players.length * 100;
+
+  // sort the rank of the player
+  session.results.usersRankedByScore.sort((a, b) => b.score - a.score);
 }

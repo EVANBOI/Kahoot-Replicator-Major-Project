@@ -399,7 +399,7 @@ export const playerStatus = (
 export const playerChatlog = (
   playerid: number
 ) => {
-  return requestHelper('GET', `v1/player/${playerid}/chat`, {});
+  return requestHelper('GET', `/v1/player/${playerid}/chat`, {});
 };
 
 export const adminQuizSessionStart = (

@@ -17,7 +17,6 @@ import { SessionAction } from '../session';
 import { QuizInfoResult } from '../types';
 
 let token: string;
-let token2: string;
 let quizId: number;
 let sessionId: number;
 let questionId: number;

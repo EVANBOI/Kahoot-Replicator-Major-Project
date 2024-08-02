@@ -16,13 +16,15 @@ import {
 
 import { SessionAction } from '../session'; 
 
-import { QuestionBody } from '../types';
+import { QuestionBody, QuizInfoResult } from '../types';
 
 let token1: string;
 let sessionId1: number;
 let quizId1: number;
 let questionId1: number, questionId2: number;
 let playerId1: number, playerId2: number;
+let validAnswerIdsQ1: number[];
+let validAnswerIdsQ2: number[];
 
 beforeEach(() => {
   clear();
@@ -72,15 +74,22 @@ describe('Get /v1/admin/quiz/{quizid}/session/{sessionid}/results', () => {
 
   describe('success cases', () => {
     test('Successfully get session results', () => {
-      const questions: QuestionBody[] = adminQuizInfoV2(token1, quizId1).jsonBody.questions;
-      const correctAnswerId1 = questions[0].answers.find(answer => answer.correct).answerId;
-      const correctAnswerId2 = questions[1].answers.find(answer => answer.correct).answerId;
-
-      playerQuestionAnswer(playerId1, 1, [correctAnswerId1]);
-      playerQuestionAnswer(playerId2, 1, [correctAnswerId1]);
-      playerQuestionAnswer(playerId1, 2, [correctAnswerId2]);
-      playerQuestionAnswer(playerId2, 2, [correctAnswerId2]);
+      const quizInfo = adminQuizInfoV2(token1, quizId1).jsonBody as QuizInfoResult;
+      validAnswerIdsQ1 = quizInfo.questions
+          .find(question => question.questionId === questionId1).answers.map(answer => answer.answerId);
+      validAnswerIdsQ2 = quizInfo.questions
+          .find(question => question.questionId === questionId2).answers.map(answer => answer.answerId);
       adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
+      adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
+      playerQuestionAnswer(playerId1, 1, validAnswerIdsQ1);
+      playerQuestionAnswer(playerId2, 1, validAnswerIdsQ1);
+      adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_ANSWER);
+
+      adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
+      adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
+      playerQuestionAnswer(playerId1, 2, validAnswerIdsQ2);
+      playerQuestionAnswer(playerId2, 2, validAnswerIdsQ2);
+      adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_ANSWER);
 
       const res = adminQuizSessionResults(quizId1, sessionId1, token1);
       expect(res.statusCode).toBe(200);

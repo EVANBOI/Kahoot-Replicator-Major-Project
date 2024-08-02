@@ -520,7 +520,7 @@ export function playerQuestionAnswer(
   playerId: number,
   questionPosition: number,
   answerIds: number[]
-): { statusCode: number, jsonBody?: object } {
+): EmptyObject {
   const database = getData();
   let currentSession: Session | undefined;
 
@@ -534,40 +534,34 @@ export function playerQuestionAnswer(
   }
 
   if (!currentSession) {
-    return { statusCode: 400 }; 
-  }
-
-  if (currentSession.state !== SessionStatus.QUESTION_OPEN) {
-    return { statusCode: 400 }; 
-  }
-
-  if (currentSession.atQuestion !== questionPosition) {
-    return { statusCode: 400 }; 
+    throw new BadRequest('player id does not exist'); 
+  } else if (currentSession.state !== SessionStatus.QUESTION_OPEN) {
+    throw new BadRequest('session is not question open state');
+  } else if (currentSession.atQuestion !== questionPosition) {
+    throw new BadRequest('session is not at this question position');
   }
 
   const question = currentSession.quizCopy.questions[questionPosition - 1];
   if (!question) {
-    return { statusCode: 400 }; 
+    throw new BadRequest('question position is not valid');
   }
 
   const validAnswerIds = question.answers.map(answer => answer.answerId);
   for (const answerId of answerIds) {
     if (!validAnswerIds.includes(answerId)) {
-      return { statusCode: 400 }; 
+      throw new BadRequest('invalid answer id');
     }
   }
 
   if (new Set(answerIds).size !== answerIds.length) {
-    return { statusCode: 400 }; 
+    throw new BadRequest('there are duplicate answer ids');
+  } else if (answerIds.length < 1) {
+    throw new BadRequest('less than 1 answerId was submitted'); 
   }
 
-  if (answerIds.length < 1) {
-    return { statusCode: 400 }; 
-  }
 
   setData(database);
-
-  return { statusCode: 200, jsonBody: {} };
+  return {};
 }
 
 /**

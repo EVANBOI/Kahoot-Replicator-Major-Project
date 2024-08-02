@@ -4,39 +4,26 @@
       "userId": 1,
       "tokens": [
         {
-          "token": "635472"
+          "token": "156264"
         }
       ],
-      "email": "admin1@gmail.com",
-      "password": "f42857add00a1047e650c6c4d0f909bfface390fe00310026b07bc77027dcf4e",
-      "name": "JJone ZZ",
-      "numSuccessfulLogins": 1,
-      "numFailedPasswordsSinceLastLogin": 0,
-      "passwordUsedThisYear": []
-    },
-    {
-      "userId": 2,
-      "tokens": [
-        {
-          "token": "510172"
-        }
-      ],
-      "email": "admin2@gmail.com",
-      "password": "f42857add00a1047e650c6c4d0f909bfface390fe00310026b07bc77027dcf4e",
-      "name": "JJone ZZ",
+      "email": "evan.xiong@unsw.edu.au",
+      "password": "5ab391a1758373cb2bd34ffbfda3398214dcd4b0ea0c9075c0965514f2e0cee5",
+      "name": "Evan Xiong",
       "numSuccessfulLogins": 1,
       "numFailedPasswordsSinceLastLogin": 0,
       "passwordUsedThisYear": []
     }
   ],
-  "quizzes": [
+  "quizzes": [],
+  "trash": [
     {
       "creatorId": 1,
-      "quizId": 14,
+      "quizId": 94,
       "name": "Quiz 1",
-      "timeCreated": 1722573842,
-      "timeLastEdited": 1722573842,
-      "description": "changed quiz 1",
+      "timeCreated": 1722574140,
+      "timeLastEdited": 1722574140,
+      "description": "Pointers",
       "numQuestions": 0,
       "questions": [],
       "duration": 0,
@@ -44,28 +31,15 @@
     },
     {
       "creatorId": 1,
-      "quizId": 24,
+      "quizId": 4,
       "name": "Quiz 2",
-      "timeCreated": 1722573842,
-      "timeLastEdited": 1722573842,
-      "description": "this is second original description",
-      "numQuestions": 0,
-      "questions": [],
-      "duration": 0,
-      "sessions": []
-    },
-    {
-      "creatorId": 2,
-      "quizId": 54,
-      "name": "Quiz 3",
-      "timeCreated": 1722573842,
-      "timeLastEdited": 1722573842,
-      "description": "changed quiz 3",
+      "timeCreated": 1722574140,
+      "timeLastEdited": 1722574140,
+      "description": "Linked Lists",
       "numQuestions": 0,
       "questions": [],
       "duration": 0,
       "sessions": []
     }
-  ],
-  "trash": []
+  ]
 }

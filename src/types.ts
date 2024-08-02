@@ -84,8 +84,7 @@ export type Quiz = {
 export type Data = {
     users: User[],
     quizzes: Quiz[],
-    trash: Quiz[],
-    sessionIdToTimerObject: Record<number, ReturnType<typeof setTimeout>>
+    trash: Quiz[]
 }
 
 export type QuestionIdObject = {
@@ -98,7 +97,7 @@ export type MessageInfo = {
     messageBody: string,
     playerId: number,
     playerName: string,
-    timeSet: number
+    timeSent: number
 }
 
 export type MessageObject = {
@@ -222,20 +221,19 @@ export type PlayerQuestionResultResult = {
 }
 
 export type PlayerStatusResult = {
-    state: string,
+    state: SessionStatus,
     numQuestions: number,
     atQuestion: number,
 }
 
 export type PlayerChatlogResult = {
-  messages: [
+  messages:
     {
       messageBody: string,
       playerId: number,
       playerName: string,
       timeSent: number
-    }
-  ]
+    }[]
 }
 
 // other types

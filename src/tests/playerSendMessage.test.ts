@@ -45,14 +45,14 @@ describe('Unsuccessful tests', () => {
 });
 
 describe('Successful tests', () => {
-  test.failing('Check return type', () => {
+  test('Check return type', () => {
     const res = playerSendMessage(playerId1, { messageBody: 'message 1' });
-    expect(res).toStrictEqual(SUCCESS);
+    expect(res.jsonBody).toStrictEqual(SUCCESS);
   });
 
-  test.failing('Check 1 message is sent succesfully', () => {
+  test.only('Check 1 message is sent succesfully', () => {
     playerSendMessage(playerId1, { messageBody: 'message 1' });
-    expect(playerChatlog(playerId1)).toStrictEqual({
+    expect(playerChatlog(playerId1).jsonBody).toStrictEqual({
       messages: [
         {
           messageBody: 'message 1',

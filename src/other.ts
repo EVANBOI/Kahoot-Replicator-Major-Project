@@ -1,4 +1,7 @@
-import { setData, getData } from './dataStore';
+import {
+  setData, getData,
+  sessionIdToTimerMap
+} from './dataStore';
 import { ClearResult } from './types';
 /**
  * Reset the state of the application back to the start.
@@ -9,12 +12,11 @@ export function clear (): ClearResult {
   store.users = [];
   store.quizzes = [];
   store.trash = [];
-  if (store.sessionIdToTimerObject) {
-    for (const [sessionId, timer] of Object.entries(store.sessionIdToTimerObject)) {
-      clearTimeout(timer);
-      delete store.sessionIdToTimerObject[Number(sessionId)];
-    }
+
+  for (const timer of Array.from(sessionIdToTimerMap.values())) {
+    clearTimeout(timer);
   }
+  sessionIdToTimerMap.clear();
   setData(store);
   return {};
 }

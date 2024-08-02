@@ -453,16 +453,29 @@ export function playerQuestionInfo (playerId: number, questionPosition: number):
  * @returns {ErrorMessage} An error message
  */
 export function playerChatlog(playerId: number): PlayerChatlogResult | Error {
-  return {
-    messages: [
-      {
-        messageBody: 'This is a message body',
-        playerId: 5546,
-        playerName: 'Yuchao Jiang',
-        timeSent: 1683019484
-      }
-    ]
-  };
+  const database = getData();
+  const player = database.quizzes
+    .flatMap(q => q.sessions || [])
+    .flatMap(s => s.players || [])
+    .find(p => p.playerId === playerId);
+
+  if (!player) {
+    throw new BadRequest(`Player ${playerId} does not exist`);
+  }
+
+  let currentSession: Session | undefined;
+  for (const quiz of database.quizzes) {
+    currentSession = quiz.sessions?.find(session =>
+      session.players.find(player => player.playerId === playerId)
+    );
+    if (currentSession) {
+      break;
+    }
+  }
+  console.log(currentSession);
+  console.log(currentSession.messages);
+
+  return { messages: currentSession.messages };
 }
 
 /**
@@ -492,7 +505,7 @@ export function playerSendMessage (playerId: number, message: MessageObject): Em
     messageBody: message.messageBody,
     playerId: playerId,
     playerName: player.name,
-    timeSet: timeSet
+    timeSent: timeSet
   };
 
   let currentSession: Session | undefined;
@@ -506,6 +519,7 @@ export function playerSendMessage (playerId: number, message: MessageObject): Em
     }
   }
   currentSession.messages.push(messageInfo);
+  setData(database);
   return {};
 }
 

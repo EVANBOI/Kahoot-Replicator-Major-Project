@@ -202,7 +202,6 @@ app.get('/v2/admin/user/details', (req: Request, res: Response) => {
   }
 });
 
-
 app.delete('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
   const token = req.query.token as string;
   const id = parseInt(req.params.quizid);

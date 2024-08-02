@@ -58,7 +58,7 @@ describe('adminQuizTransfer tests for v1', () => {
       const result = adminQuizTransfer('invalid token', quizId, newOwnerEmail);
       expect(result).toStrictEqual(ERROR401);
     });
-  
+
     test('Invalid quiz ID', () => {
       const result = adminQuizTransfer(token, quizId + 42, newOwnerEmail);
       expect(result).toStrictEqual(ERROR403);
@@ -68,15 +68,15 @@ describe('adminQuizTransfer tests for v1', () => {
       const result = adminQuizTransfer(token, quizId, 'fakeuser@unsw.edu.au');
       expect(result).toStrictEqual(ERROR400);
     });
-  })
+  });
 
   describe('success case', () => {
     test('Successful quiz transfer - correct return value', () => {
       const result = adminQuizTransfer(token, quizId, newOwnerEmail);
       expect(result).toStrictEqual(SUCCESSFUL_TRANSFER);
-    })
-  })    
-})
+    });
+  });
+});
 
 // v2 route
 describe('adminQuizTransfer tests for v2', () => {
@@ -85,22 +85,22 @@ describe('adminQuizTransfer tests for v2', () => {
       const result = adminQuizTransferV2('invalid token', quizId, newOwnerEmail);
       expect(result).toStrictEqual(ERROR401);
     });
-  
+
     test('Invalid quiz ID', () => {
       const result = adminQuizTransferV2(token, quizId + 42, newOwnerEmail);
       expect(result).toStrictEqual(ERROR403);
     });
-  
+
     test('User email is not a real user', () => {
       const result = adminQuizTransferV2(token, quizId, 'fakeuser@unsw.edu.au');
       expect(result).toStrictEqual(ERROR400);
     });
-  
+
     test('User email is the current logged in user', () => {
       const result = adminQuizTransferV2(token, quizId, VALID_USER_REGISTER_INPUTS_1.EMAIL);
       expect(result).toStrictEqual(ERROR400);
     });
-  
+
     test('Quiz ID refers to a quiz that has a name that is already used by the target user', () => {
       adminQuizCreate(validToken, VALID_QUIZ_CREATE_INPUTS_1.NAME, 'Another description.');
       const result = adminQuizTransferV2(token, quizId, newOwnerEmail);
@@ -109,17 +109,17 @@ describe('adminQuizTransfer tests for v2', () => {
 
     test('Error 400: At least one session has not ended', () => {
       adminCreateQuizQuestionV2(quizId, token, validQuestion1V2);
-      adminQuizSessionStart(quizId, token, 5).jsonBody.sessionId; 
+      adminQuizSessionStart(quizId, token, 5);
       const result = adminQuizTransferV2(token, quizId, newOwnerEmail);
       expect(result).toStrictEqual(ERROR400);
-    })
-  })
+    });
+  });
   describe('success cases', () => {
     test('Successful quiz transfer - correct return value', () => {
       const result = adminQuizTransferV2(token, quizId, newOwnerEmail);
       expect(result).toStrictEqual(SUCCESSFUL_TRANSFER);
     });
-  
+
     test('Successful quiz transfer - functionality', () => {
       adminQuizTransferV2(token, quizId, newOwnerEmail);
       const updatedQuiz = adminQuizInfo(validToken, quizId);
@@ -137,6 +137,5 @@ describe('adminQuizTransfer tests for v2', () => {
         },
       });
     });
-  })
+  });
 });
-

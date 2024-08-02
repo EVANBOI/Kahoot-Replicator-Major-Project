@@ -1,9 +1,9 @@
-import { 
-  adminQuizRemove, 
-  adminAuthRegister, 
-  clear, adminQuizCreate, 
+import {
+  adminQuizRemove,
+  adminAuthRegister,
+  clear, adminQuizCreate,
   adminQuizRemoveV2,
-  adminCreateQuizQuestionV2, 
+  adminCreateQuizQuestionV2,
   adminQuizSessionStart
 } from '../wrappers';
 import { TokenObject } from '../types';
@@ -52,12 +52,12 @@ describe('v1 route successful', () => {
       statusCode: 200,
     });
   });
-})
+});
 
 describe('v1 route unsuccessful', () => {
   test('should return an error when removing a quiz with an invalid sessionId', () => {
     const result = adminQuizRemove(sessionId + 1241, validQuizId);
-  
+
     expect(result).toStrictEqual({
       jsonBody: {
         error: expect.any(String),
@@ -65,7 +65,7 @@ describe('v1 route unsuccessful', () => {
       statusCode: 401,
     });
   });
-  
+
   test('should return an error when removing a quiz with an invalid quizId', (): void => {
     const result = adminQuizRemove(sessionId, validQuizId + 1029);
     expect(result).toStrictEqual({
@@ -75,7 +75,7 @@ describe('v1 route unsuccessful', () => {
       statusCode: 403,
     });
   });
-})
+});
 
 // v2 route tests
 describe('v2 route successful', () => {
@@ -86,7 +86,7 @@ describe('v2 route successful', () => {
       statusCode: 200,
     });
   });
-})
+});
 
 describe('v2 route unsuccessful', () => {
   test('should return an error when removing a quiz with an invalid sessionId', () => {
@@ -98,7 +98,7 @@ describe('v2 route unsuccessful', () => {
       statusCode: 401,
     });
   });
-  
+
   test('should return an error when removing a quiz with an invalid quizId', (): void => {
     const result = adminQuizRemoveV2(sessionId, validQuizId + 1029);
     expect(result).toStrictEqual({
@@ -108,7 +108,7 @@ describe('v2 route unsuccessful', () => {
       statusCode: 403,
     });
   });
-  
+
   test('should return an error when removing a quiz that the user does not own', (): void => {
     const result = adminQuizRemoveV2(sessionId, validQuizId2);
     expect(result).toStrictEqual({
@@ -130,5 +130,4 @@ describe('v2 route unsuccessful', () => {
       statusCode: 400,
     });
   });
-})
-
+});

@@ -13,18 +13,13 @@ beforeEach(() => {
 
 // v1 route tests
 describe('error cases for v1', () => {
-  let sessionId1: string, sessionId2: string;
+  let sessionId1: string;
   let quizId1: number;
   beforeEach(() => {
     const { jsonBody: body1 } = adminAuthRegister(
       'admin1@gmail.com', 'SDFJKH2349081j', 'JJone', 'ZZ'
     );
     sessionId1 = body1?.token;
-
-    const { jsonBody: body2 } = adminAuthRegister(
-      'admin2@gmail.com', 'SDFJKH2349081j', 'JJone', 'ZZ'
-    );
-    sessionId2 = body2?.token;
 
     const { jsonBody: Quiz1 } = adminQuizCreate(
       sessionId1, 'Quiz 1', 'this is first original description');
@@ -53,7 +48,7 @@ describe('error cases for v1', () => {
         jsonBody: { error: expect.any(String) }
       });
   });
-})
+});
 
 describe('success cases for v1', () => {
   test('Check return type', () => {
@@ -66,7 +61,7 @@ describe('success cases for v1', () => {
     expect(statusCode).toStrictEqual(200);
     expect(jsonBody).toStrictEqual({});
   });
-})
+});
 
 // v2 route tests
 describe('Error cases for v2', () => {

@@ -33,10 +33,10 @@ describe('Failure case for v1', () => {
 describe('Success case for v1', () => {
   test('Check if it returns an empty object', () => {
     expect(adminAuthLogout(sessionId)).toStrictEqual(LOGOUT_SUCCESSFUL);
-  });    
+  });
 });
 
-//============================================================================//
+//= ===========================================================================//
 // v2 route tests
 describe('Failure cases for v2', () => {
   test('Session id is empty', () => {

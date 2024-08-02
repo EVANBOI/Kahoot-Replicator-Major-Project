@@ -1,10 +1,10 @@
-import { 
-  adminAuthRegister, 
-  adminQuizCreate, 
-  adminQuizNameUpdate, 
+import {
+  adminAuthRegister,
+  adminQuizCreate,
+  adminQuizNameUpdate,
   adminQuizNameUpdateV2,
-  adminQuizInfo, 
-  clear 
+  adminQuizInfo,
+  clear
 } from '../wrappers';
 import {
   VALID_USER_REGISTER_INPUTS_1,
@@ -49,7 +49,7 @@ describe('adminQuizNameUpdate failure cases for v1', () => {
     const result = adminQuizNameUpdate(sessionId, quizId, 'Invalid@Name');
     expect(result).toStrictEqual(ERROR400);
   });
-})
+});
 
 describe('adminQuizNameUpdate success cases for v1', () => {
   beforeEach(() => {
@@ -68,7 +68,7 @@ describe('adminQuizNameUpdate success cases for v1', () => {
     const result = adminQuizNameUpdate(sessionId, quizId, 'New Quiz Name');
     expect(result).toStrictEqual(SUCCESSFUL_UPDATE);
   });
-})
+});
 
 // v2 tests
 describe('adminQuizNameUpdate failure cases tests for v2', () => {

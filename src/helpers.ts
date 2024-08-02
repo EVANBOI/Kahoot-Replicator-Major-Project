@@ -77,10 +77,10 @@ export function validQuestion(
   } else if (totalDuration > 180) {
     return 'Total duration is more than 3 min';
   } else if (questionBody.points < 1) {
-    return 'Point is less than 1'
+    return 'Point is less than 1';
   } else if (questionBody.points > 10) {
-    return 'Point is greater than 10'
-  } 
+    return 'Point is greater than 10';
+  }
   const existingAnswer: string[] = [];
   for (const ans of questionBody.answers) {
     if (ans.answer.length < 1) {
@@ -95,7 +95,7 @@ export function validQuestion(
   }
   const correctExists = questionBody.answers.some(ans => ans.correct === true);
   if (!correctExists) {
-    return 'There are no correct answers'
+    return 'There are no correct answers';
   }
   return true;
 }

@@ -35,7 +35,7 @@ describe('unsuccesful test for v1', () => {
   test('Token is invalid', () => {
     expect(adminQuizTrashView(sessionId + 1)).toStrictEqual(ERROR401);
   });
-})
+});
 describe('successful test for v1', () => {
   test('Viewing a quiz in the trash', () => {
     expect(adminQuizTrashView(sessionId)).toStrictEqual({
@@ -50,7 +50,7 @@ describe('successful test for v1', () => {
       }
     });
   });
-})
+});
 
 // v2 route tests
 describe('Invalid Trash View for v2', () => {

@@ -31,7 +31,7 @@ describe('adminUserPasswordUpdate success test for v1', () => {
       'newPassword1'
     )).toStrictEqual(SUCCESSFUL_UPDATE);
   });
-})
+});
 
 describe('adminUserPasswordUpdate failure test for v1', () => {
   let sessionId: string;
@@ -60,7 +60,7 @@ describe('adminUserPasswordUpdate failure test for v1', () => {
       'newPassword1')
     ).toStrictEqual(ERROR400);
   });
-})
+});
 
 // v2 route tests
 describe('adminUserPasswordUpdate success tests for v2', () => {

@@ -191,7 +191,7 @@ export function adminUserPasswordUpdate(
 ): PasswordUpdateResult {
   const dataBase: Data = getData();
   const user = findUserBySessionId(dataBase, sessionId);
-  
+
   if (user.password !== getHashOf(oldPassword)) {
     throw new BadRequest('Old Password is not the correct old password');
   }

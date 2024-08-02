@@ -1,11 +1,11 @@
-import { 
-  clear, 
-  adminQuizTrashEmpty, 
-  adminQuizTrashEmptyV2, 
-  adminAuthRegister, 
-  adminQuizRemove, 
-  adminQuizCreate, 
-  adminQuizTrashView 
+import {
+  clear,
+  adminQuizTrashEmpty,
+  adminQuizTrashEmptyV2,
+  adminAuthRegister,
+  adminQuizRemove,
+  adminQuizCreate,
+  adminQuizTrashView
 } from '../wrappers';
 import {
   ERROR400, ERROR403, ERROR401, VALID_USER_REGISTER_INPUTS_1, VALID_USER_REGISTER_INPUTS_2,

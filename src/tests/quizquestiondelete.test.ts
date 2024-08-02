@@ -69,8 +69,7 @@ describe('success case for v1', () => {
       expect.objectContaining({ questionId: validQuestionId })
     );
   });
-})
-
+});
 
 describe('unsuccesful case for v1', () => {
   test('should return an error when deleting a question with an invalid sessionId', () => {
@@ -102,8 +101,7 @@ describe('unsuccesful case for v1', () => {
       },
     });
   });
-})
-
+});
 
 // v2 route tests
 describe('Success cases for v2', () => {
@@ -161,10 +159,10 @@ describe('Failure cases for v2', () => {
         error: expect.any(String),
       },
     });
-  })
+  });
 
   test('One or more quiz session has not ended yet', () => {
-    adminQuizSessionStart(validQuizId, sessionId, 3)
+    adminQuizSessionStart(validQuizId, sessionId, 3);
     const result = adminQuizQuestionDeleteV2(sessionId, validQuizId, validQuestionId);
     expect(result).toStrictEqual({
       statusCode: 400,
@@ -172,5 +170,5 @@ describe('Failure cases for v2', () => {
         error: expect.any(String),
       },
     });
-  })
+  });
 });

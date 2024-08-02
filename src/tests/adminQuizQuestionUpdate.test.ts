@@ -69,7 +69,7 @@ describe('Error cases for v1', () => {
         validQuestion1,
         sessionId1 + 1)).toStrictEqual(ERROR401);
     });
-  
+
     test('Token is empty', () => {
       expect(adminQuizQuestionUpdate(
         quizId1,
@@ -78,7 +78,7 @@ describe('Error cases for v1', () => {
         ' ')).toStrictEqual(ERROR401);
     });
   });
-  
+
   describe('Unsuccessful Updates: 403 errors', () => {
     test('User is not an owner of the quiz', () => {
       expect(adminQuizQuestionUpdate(
@@ -88,7 +88,7 @@ describe('Error cases for v1', () => {
         sessionId2)).toStrictEqual(ERROR403);
     });
   });
-  
+
   describe('Unsuccessful Updates: 400 errors', () => {
     test('Question Id is not valid', () => {
       expect(adminQuizQuestionUpdate(
@@ -98,7 +98,7 @@ describe('Error cases for v1', () => {
         sessionId1)).toStrictEqual(ERROR400);
     });
   });
-})
+});
 
 describe('Successful Updates for v1', () => {
   test('Returns Correct Type', () => {
@@ -393,7 +393,7 @@ describe('Successful Updates for v2', () => {
   });
 
   test('Check updated question has correct answers', () => {
-    adminCreateQuizQuestionV2(quizId1, sessionId1, validQuestion1V2).jsonBody;
+    adminCreateQuizQuestionV2(quizId1, sessionId1, validQuestion1V2);
     const quiz = adminQuizInfoV2(sessionId1, quizId1).jsonBody;
     const colours = Object.values(Colours);
     for (const answer of quiz.questions[0].answers) {
@@ -401,7 +401,7 @@ describe('Successful Updates for v2', () => {
       expect(answer.answerId).toEqual(expect.any(Number));
       expect(['A', 'B']).toContain(answer.answer);
     }
-  })
+  });
 
   test('Successfully updated the timeLastEdited key', () => {
     const startTime = Math.floor(Date.now() / 1000);

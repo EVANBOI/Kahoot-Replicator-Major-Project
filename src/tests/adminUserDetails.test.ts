@@ -1,9 +1,9 @@
-import { 
-  adminUserDetailsV2, 
+import {
+  adminUserDetailsV2,
   adminUserDetails,
-  clear, 
-  adminAuthRegister, 
-  adminAuthLogin 
+  clear,
+  adminAuthRegister,
+  adminAuthLogin
 } from '../wrappers';
 
 import { ErrorMessage } from '../types';
@@ -41,8 +41,8 @@ describe('Successful user details retrieval tests', () => {
       },
       statusCode: 200
     });
-  })
-})
+  });
+});
 
 describe('Unsuccessful user details retrieval tests', () => {
   test('Empty sessionId returns an error', () => {
@@ -54,8 +54,8 @@ describe('Unsuccessful user details retrieval tests', () => {
       },
       statusCode: 401
     });
-  })
-})
+  });
+});
 
 // V2 route tests
 describe('Successful user details retrieval tests for v2 version', () => {

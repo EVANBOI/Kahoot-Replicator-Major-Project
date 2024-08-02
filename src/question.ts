@@ -265,7 +265,7 @@ export function adminQuizQuestionDelete(token: string, quizId: number, questionI
   const questionIndex = quiz.questions.findIndex(question => question.questionId === questionId);
   if (questionIndex === -1) {
     throw new BadRequest(`Question ID '${questionId}' does not refer to a valid question within quiz '${quizId}'.`);
-  } 
+  }
 
   if (v2 === true) {
     if (quiz.sessions.some(s => s.state !== SessionStatus.END)) {
@@ -279,4 +279,3 @@ export function adminQuizQuestionDelete(token: string, quizId: number, questionI
   setData(database);
   return {};
 }
-

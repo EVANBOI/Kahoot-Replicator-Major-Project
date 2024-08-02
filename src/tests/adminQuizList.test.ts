@@ -8,24 +8,22 @@ beforeEach(() => {
 // v1 route tests
 describe('Success case for v1 ', () => {
   test('Succesful view empty list', () => {
-    let sessionId1: string;
     const { jsonBody } = adminAuthRegister('admin@unsw.edu.au', 'Password1', 'JJ', 'HH');
-    sessionId1 = jsonBody?.token;
+    const sessionId1 = jsonBody?.token;
     expect(adminQuizList(sessionId1)).toStrictEqual({
       statusCode: 200,
       jsonBody: { quizzes: [] }
     });
   });
-})
+});
 
 describe('Failure case for v1 ', () => {
   test('Invalid session id', () => {
-    let sessionId1: string;
     const { jsonBody } = adminAuthRegister('admin@unsw.edu.au', 'Password1', 'JJ', 'HH');
-    sessionId1 = jsonBody?.token;
+    const sessionId1 = jsonBody?.token;
     expect(adminQuizList(sessionId1 + '3434')).toStrictEqual(ERROR401);
   });
-})
+});
 
 // v2 route tests
 test('Session id is not valid for v2', () => {

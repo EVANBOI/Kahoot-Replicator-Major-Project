@@ -4,7 +4,7 @@
       "userId": 1,
       "tokens": [
         {
-          "token": "472047"
+          "token": "845397"
         }
       ],
       "email": "admin@email.com",
@@ -18,12 +18,12 @@
       "userId": 2,
       "tokens": [
         {
-          "token": "450033"
+          "token": "783375"
         }
       ],
-      "email": "admin2@email.com",
+      "email": "user@email.com",
       "password": "0b14d501a594442a01c6859541bcb3e8164d183d32937b851835442f69d5c94e",
-      "name": "Idka Idka",
+      "name": "Idk Idk",
       "numSuccessfulLogins": 1,
       "numFailedPasswordsSinceLastLogin": 0,
       "passwordUsedThisYear": []
@@ -32,29 +32,16 @@
   "quizzes": [
     {
       "creatorId": 2,
-      "quizId": 1,
-      "name": "dummyquiz2",
-      "timeCreated": 1722574601,
-      "timeLastEdited": 1722574601,
-      "description": "This is a dummy quiz for testing",
+      "quizId": 87,
+      "name": "ValidQuizName",
+      "timeCreated": 1722575395,
+      "timeLastEdited": 1722575395,
+      "description": "ValidDescription",
       "numQuestions": 0,
       "questions": [],
       "duration": 0,
       "sessions": []
     }
   ],
-  "trash": [
-    {
-      "creatorId": 1,
-      "quizId": 31,
-      "name": "dummyquiz",
-      "timeCreated": 1722574601,
-      "timeLastEdited": 1722574601,
-      "description": "This is a dummy quiz for testing",
-      "numQuestions": 0,
-      "questions": [],
-      "duration": 0,
-      "sessions": []
-    }
-  ]
+  "trash": []
 }

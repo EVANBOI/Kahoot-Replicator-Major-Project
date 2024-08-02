@@ -26,92 +26,117 @@ let validToken: string;
 
 beforeEach(() => {
   clear();
+  const registerResponse = adminAuthRegister(
+    VALID_USER_REGISTER_INPUTS_1.EMAIL,
+    VALID_USER_REGISTER_INPUTS_1.PASSWORD,
+    VALID_USER_REGISTER_INPUTS_1.FIRSTNAME,
+    VALID_USER_REGISTER_INPUTS_1.LASTNAME
+  );
+  token = registerResponse.jsonBody.token;
+
+  const quizCreateResponse = adminQuizCreate(
+    token,
+    VALID_QUIZ_CREATE_INPUTS_1.NAME,
+    VALID_QUIZ_CREATE_INPUTS_1.DESCRIPTION
+  );
+  quizId = quizCreateResponse.jsonBody.quizId;
+
+  const newUserRegisterResponse = adminAuthRegister(
+    VALID_USER_REGISTER_INPUTS_2.EMAIL,
+    VALID_USER_REGISTER_INPUTS_2.PASSWORD,
+    VALID_USER_REGISTER_INPUTS_2.FIRSTNAME,
+    VALID_USER_REGISTER_INPUTS_2.LASTNAME
+  );
+  newOwnerEmail = VALID_USER_REGISTER_INPUTS_2.EMAIL;
+  validToken = newUserRegisterResponse.jsonBody.token;
 });
 
-describe('adminQuizTransfer tests', () => {
-  beforeEach(() => {
-    const registerResponse = adminAuthRegister(
-      VALID_USER_REGISTER_INPUTS_1.EMAIL,
-      VALID_USER_REGISTER_INPUTS_1.PASSWORD,
-      VALID_USER_REGISTER_INPUTS_1.FIRSTNAME,
-      VALID_USER_REGISTER_INPUTS_1.LASTNAME
-    );
-    token = registerResponse.jsonBody.token;
-
-    const quizCreateResponse = adminQuizCreate(
-      token,
-      VALID_QUIZ_CREATE_INPUTS_1.NAME,
-      VALID_QUIZ_CREATE_INPUTS_1.DESCRIPTION
-    );
-    quizId = quizCreateResponse.jsonBody.quizId;
-
-    const newUserRegisterResponse = adminAuthRegister(
-      VALID_USER_REGISTER_INPUTS_2.EMAIL,
-      VALID_USER_REGISTER_INPUTS_2.PASSWORD,
-      VALID_USER_REGISTER_INPUTS_2.FIRSTNAME,
-      VALID_USER_REGISTER_INPUTS_2.LASTNAME
-    );
-    newOwnerEmail = VALID_USER_REGISTER_INPUTS_2.EMAIL;
-    validToken = newUserRegisterResponse.jsonBody.token;
-  });
-
-  test('Invalid session ID', () => {
-    const result = adminQuizTransfer('invalid token', quizId, newOwnerEmail);
-    expect(result).toStrictEqual(ERROR401);
-  });
-
-  test('Invalid quiz ID', () => {
-    const result = adminQuizTransfer(token, quizId + 42, newOwnerEmail);
-    expect(result).toStrictEqual(ERROR403);
-  });
-
-  test('User email is not a real user', () => {
-    const result = adminQuizTransfer(token, quizId, 'fakeuser@unsw.edu.au');
-    expect(result).toStrictEqual(ERROR400);
-  });
-
-  test('User email is the current logged in user', () => {
-    const result = adminQuizTransfer(token, quizId, VALID_USER_REGISTER_INPUTS_1.EMAIL);
-    expect(result).toStrictEqual(ERROR400);
-  });
-
-  test('Quiz ID refers to a quiz that has a name that is already used by the target user', () => {
-    adminQuizCreate(validToken, VALID_QUIZ_CREATE_INPUTS_1.NAME, 'Another description.');
-    const result = adminQuizTransfer(token, quizId, newOwnerEmail);
-    expect(result).toStrictEqual(ERROR400);
-  });
-
-  test('Successful quiz transfer - correct return value', () => {
-    const result = adminQuizTransfer(token, quizId, newOwnerEmail);
-    expect(result).toStrictEqual(SUCCESSFUL_TRANSFER);
-  });
-
-  test('Successful quiz transfer - functionality', () => {
-    adminQuizTransfer(token, quizId, newOwnerEmail);
-    const updatedQuiz = adminQuizInfo(validToken, quizId);
-    expect(updatedQuiz).toStrictEqual({
-      statusCode: 200,
-      jsonBody: {
-        quizId: expect.any(Number),
-        name: VALID_QUIZ_CREATE_INPUTS_1.NAME,
-        questions: expect.any(Array),
-        timeCreated: expect.any(Number),
-        timeLastEdited: expect.any(Number),
-        numQuestions: expect.any(Number),
-        description: VALID_QUIZ_CREATE_INPUTS_1.DESCRIPTION,
-        duration: expect.any(Number)
-      },
+// v1 route
+describe('adminQuizTransfer tests for v1', () => {
+  describe('error cases', () => {
+    test('Invalid session ID', () => {
+      const result = adminQuizTransfer('invalid token', quizId, newOwnerEmail);
+      expect(result).toStrictEqual(ERROR401);
     });
-  });
+  
+    test('Invalid quiz ID', () => {
+      const result = adminQuizTransfer(token, quizId + 42, newOwnerEmail);
+      expect(result).toStrictEqual(ERROR403);
+    });
 
-  describe('V2 adminQuizTransfer tests - error cases', () => {
-    // should failing ultill adminQuizSessionStart is implemented
-    test.skip('Error 400: At least one session has not ended', () => {
+    test('User email is not a real user', () => {
+      const result = adminQuizTransfer(token, quizId, 'fakeuser@unsw.edu.au');
+      expect(result).toStrictEqual(ERROR400);
+    });
+  })
+
+  describe('success case', () => {
+    test('Successful quiz transfer - correct return value', () => {
+      const result = adminQuizTransfer(token, quizId, newOwnerEmail);
+      expect(result).toStrictEqual(SUCCESSFUL_TRANSFER);
+    })
+  })    
+})
+
+// v2 route
+describe('adminQuizTransfer tests for v2', () => {
+  describe('failure cases', () => {
+    test('Invalid session ID', () => {
+      const result = adminQuizTransferV2('invalid token', quizId, newOwnerEmail);
+      expect(result).toStrictEqual(ERROR401);
+    });
+  
+    test('Invalid quiz ID', () => {
+      const result = adminQuizTransferV2(token, quizId + 42, newOwnerEmail);
+      expect(result).toStrictEqual(ERROR403);
+    });
+  
+    test('User email is not a real user', () => {
+      const result = adminQuizTransferV2(token, quizId, 'fakeuser@unsw.edu.au');
+      expect(result).toStrictEqual(ERROR400);
+    });
+  
+    test('User email is the current logged in user', () => {
+      const result = adminQuizTransferV2(token, quizId, VALID_USER_REGISTER_INPUTS_1.EMAIL);
+      expect(result).toStrictEqual(ERROR400);
+    });
+  
+    test('Quiz ID refers to a quiz that has a name that is already used by the target user', () => {
+      adminQuizCreate(validToken, VALID_QUIZ_CREATE_INPUTS_1.NAME, 'Another description.');
+      const result = adminQuizTransferV2(token, quizId, newOwnerEmail);
+      expect(result).toStrictEqual(ERROR400);
+    });
+
+    test('Error 400: At least one session has not ended', () => {
       adminCreateQuizQuestionV2(quizId, token, validQuestion1V2);
       adminQuizSessionStart(quizId, token, 5).jsonBody.sessionId; 
       const result = adminQuizTransferV2(token, quizId, newOwnerEmail);
       expect(result).toStrictEqual(ERROR400);
     })
+  })
+  describe('success cases', () => {
+    test('Successful quiz transfer - correct return value', () => {
+      const result = adminQuizTransferV2(token, quizId, newOwnerEmail);
+      expect(result).toStrictEqual(SUCCESSFUL_TRANSFER);
+    });
+  
+    test('Successful quiz transfer - functionality', () => {
+      adminQuizTransferV2(token, quizId, newOwnerEmail);
+      const updatedQuiz = adminQuizInfo(validToken, quizId);
+      expect(updatedQuiz).toStrictEqual({
+        statusCode: 200,
+        jsonBody: {
+          quizId: expect.any(Number),
+          name: VALID_QUIZ_CREATE_INPUTS_1.NAME,
+          questions: expect.any(Array),
+          timeCreated: expect.any(Number),
+          timeLastEdited: expect.any(Number),
+          numQuestions: expect.any(Number),
+          description: VALID_QUIZ_CREATE_INPUTS_1.DESCRIPTION,
+          duration: expect.any(Number)
+        },
+      });
+    });
   })
 });
 

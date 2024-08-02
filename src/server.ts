@@ -905,14 +905,6 @@ app.put('/v1/player/:playerid/question/:questionposition/answer', (req: Request,
   return res.json(result);
 });
 
-app.put('/v1/admin/quiz/:quizid:/thumbnail', (req: Request, res: Response) => {
-  const playerId = parseInt(req.params.playerid);
-  const token = req.headers.token as string;
-  const { imgUrl } = req.body;
-  const result = adminQuizThumbnailUpdate(playerId, token, imgUrl);
-  return res.json(result);
-});
-
 app.put('/v1/admin/quiz/:quizid/session/:sessionid/results', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid as string);
   const sessionId = parseInt(req.params.sessionid as string);

@@ -1,7 +1,9 @@
+import exp from 'constants';
 import { ERROR401, ERROR400 } from '../testConstants';
 import { adminAuthRegister } from '../wrappers';
-import { adminQuizCreateV2 } from '../wrappers';
+import { adminQuizCreateV2, adminQuizCreate } from '../wrappers';
 import { clear } from '../wrappers';
+import { token } from 'morgan';
 
 const QUIZCREATED = {
   statusCode: 200,
@@ -23,6 +25,24 @@ beforeEach(() => {
       'Xiong');
   sessionId = jsonBody?.token;
 });
+
+describe('v1 route for adminquizcreate test', () => {
+  describe('success case', () => {
+    test('successful quiz create', () => {
+      expect(adminQuizCreate(sessionId, 'neaer', 'doihsidfh')).toStrictEqual(QUIZCREATED)
+    });
+  })
+
+  describe('failure case', () => {
+    test('SessionId is not a Valid', () => {
+      expect(adminQuizCreate(sessionId + 1, 'Quiz 1', 'Pointers')).toStrictEqual(ERROR401);
+    });
+  
+    test('Name contains invalid characters', () => {
+      expect(adminQuizCreate(sessionId, '汉', 'Pointers')).toStrictEqual(ERROR400);
+    });
+  })
+})
 
 describe('When registering an user', () => {
   test('SessionId is not a Valid', () => {

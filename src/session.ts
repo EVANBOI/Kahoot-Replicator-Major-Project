@@ -602,8 +602,13 @@ export function playerQuestionAnswer(
   if (submittedCorrectAnswers) {
     player.score += question.points;
   }
-  let results = currentSession.results
-  results.usersRankedByScore.push({})
+  let results = currentSession.results.questionResultsByPlayer.find(p => p.playerId === playerId);
+  results.questionResults[questionPosition - 1] = {
+    questionId: question.questionId,
+    score: question.points,
+    rank: 1,
+    timeToAnswer:  Math.floor(Date.now() / 1000)
+  }
   setData(database);
   return {};
 }

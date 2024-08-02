@@ -270,6 +270,17 @@ export function updateResults (session: Session) {
 
   // sort the rank of the player
   session.results.usersRankedByScore.sort((a, b) => b.score - a.score);
+
+  // for each player, sort the rank of the question
+  session.results.questionResultsByPlayer.sort((a, b) => {
+    const aScore = b.questionResults[questionIndex].score;
+    const bScore = a.questionResults[questionIndex].score;
+    return aScore - bScore;
+  });
+  session.results.questionResultsByPlayer.forEach((player, index) => {
+    player.questionResults[questionIndex].rank = index + 1;
+  })
+
 }
 
 // record the actuall time when the question is open

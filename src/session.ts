@@ -257,10 +257,11 @@ export function adminQuizSessionUpdate(
       throw new BadRequest(`Action enum cannot be applied in the ${session.state}`);
     }
   } else if (session.state === SessionStatus.QUESTION_CLOSE) {
-    updateResults(session);
     if (action === SessionAction.END) {
+      updateResults(session);
       session.state = SessionStatus.END;
     } else if (action === SessionAction.NEXT_QUESTION) {
+      updateResults(session);
       console.log('QUESTION_CLOSE to QUESTION_COUNTDOWN');
       session.state = SessionStatus.QUESTION_COUNTDOWN;
       const timer = setTimeout(() => {
@@ -284,8 +285,10 @@ export function adminQuizSessionUpdate(
       }, question.duration * 1000);
       sessionIdToTimerMap.set(sessionId, newTimer);
     } else if (action === SessionAction.GO_TO_ANSWER) {
+      updateResults(session);
       session.state = SessionStatus.ANSWER_SHOW;
     } else if (action === SessionAction.GO_TO_FINAL_RESULTS) {
+      updateResults(session);
       console.log('QUESTION_CLOSE to FINAL_RESULTS');
       session.state = SessionStatus.FINAL_RESULTS;
     } else {

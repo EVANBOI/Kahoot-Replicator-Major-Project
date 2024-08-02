@@ -902,7 +902,7 @@ app.get('/v1/player/:playerid/results', (req: Request, res: Response) => {
 
 // Evan's function
 app.get('/v1/player/:playerid', (req: Request, res: Response) => {
-  const playerId = parseInt(req.query.playerid as string);
+  const playerId = parseInt(req.params.playerid as string);
   try {
     return res.json(playerStatus(playerId));
   } catch (error) {

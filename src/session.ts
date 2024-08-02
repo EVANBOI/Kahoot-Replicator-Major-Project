@@ -320,7 +320,6 @@ export function adminQuizSessionUpdate(
 export const turnQuestionClose = (sessionId: number, quizId: number) => {
   const database = getData();
   const quiz = findQuizWithId(database, quizId);
-  console.log('thing', quiz);
   const session = quiz.sessions.find(s => s.sessionId === sessionId);
   if (session) {
     session.state = SessionStatus.QUESTION_CLOSE;
@@ -379,6 +378,7 @@ export function adminQuizSessionStatus (quizId: number, sessionId: number): GetS
  */
 
 export function playerStatus(playerId: number): PlayerStatusResult | Error {
+  console.log(playerId);
   const database = getData();
   let currentSession: Session | undefined;
   let currentQuiz: Quiz | undefined;

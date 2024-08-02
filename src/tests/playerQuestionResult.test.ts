@@ -58,7 +58,7 @@ describe('Get /v1/player/{playerid}/question/{questionposition}/results', () => 
     test.skip('Error 400: Session is not in ANSWER_SHOW state', () => {
       expect(playerQuestionResult(playerId1, 1)).toStrictEqual(ERROR400);
     });
-    test.skip.failing('Error 400: session is not currently on this question', () => {
+    test.skip('Error 400: session is not currently on this question', () => {
       expect(adminQuizSessionStatus(questionId1, sessionId1, token1).jsonBody.atQuestion).toStrictEqual(1);
       expect(playerQuestionResult(playerId1, 2)).toStrictEqual(ERROR400);
     });

@@ -76,6 +76,13 @@ describe('Unsuccessful tests', () => {
     const res = adminQuizSessionStart(quizId1 - 999, token1, 3);
     expect(res).toStrictEqual(ERROR403);
   });
+  test('User does not own quiz', () => {
+    const token2 = adminAuthRegister(
+      'admin2@gmail.com', 'SDFJKH2349081j', 'JJone', 'ZZ'
+    ).jsonBody.token;
+    const res = adminQuizSessionStart(quizId1, token2, 3);
+    expect(res).toStrictEqual(ERROR403);
+  });
 });
 
 describe('Successful tests', () => {

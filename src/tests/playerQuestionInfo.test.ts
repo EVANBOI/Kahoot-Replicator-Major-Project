@@ -86,7 +86,7 @@ describe('Successful cases', () => {
   test('All valid inputs and player is on second question', () => {
     adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
     adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
-    sleepSync(validQuestion1V2.duration * 1000)
+    sleepSync(validQuestion1V2.duration * 1000);
     adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
     adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
     expect(playerQuestionInfo(playerId1, 2).jsonBody).toStrictEqual({

@@ -914,14 +914,6 @@ app.put('/v1/player/:playerid/question/:questionposition/answer', (req: Request,
   }
 });
 
-app.put('/v1/admin/quiz/:quizid/session/:sessionid/results', (req: Request, res: Response) => {
-  const quizId = parseInt(req.params.quizid as string);
-  const sessionId = parseInt(req.params.sessionid as string);
-  const token = req.headers.token as string;
-  const result = adminQuizSessionResults(quizId, sessionId, token);
-  return res.json(result);
-});
-
 // v2 functions
 app.put('/v2/admin/user/details', (req: Request, res: Response) => {
   const { email, nameFirst, nameLast } = req.body;

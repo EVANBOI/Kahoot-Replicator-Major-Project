@@ -208,11 +208,11 @@ export function generateRandomString() {
   return result;
 }
 
-// this function will initialise detailed result for each player after the 
+// this function will initialise detailed result for each player after the
 // seession move out of the lobby state
 export function playerDetailedResultsInitialisation(session: Session) {
   session.results.questionResultsByPlayer = [];
-  session.players.forEach(player => 
+  session.players.forEach(player =>
     session.results.questionResultsByPlayer.push({
       playerName: player.name,
       playerId: player.playerId,

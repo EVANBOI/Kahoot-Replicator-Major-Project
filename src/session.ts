@@ -540,26 +540,35 @@ export function playerQuestionAnswer(
   } else if (currentSession.atQuestion !== questionPosition) {
     throw new BadRequest('session is not at this question position');
   }
-
   const question = currentSession.quizCopy.questions[questionPosition - 1];
   if (!question) {
     throw new BadRequest('question position is not valid');
   }
-
   const validAnswerIds = question.answers.map(answer => answer.answerId);
   for (const answerId of answerIds) {
     if (!validAnswerIds.includes(answerId)) {
       throw new BadRequest('invalid answer id');
     }
   }
-
   if (new Set(answerIds).size !== answerIds.length) {
     throw new BadRequest('there are duplicate answer ids');
   } else if (answerIds.length < 1) {
     throw new BadRequest('less than 1 answerId was submitted'); 
   }
 
-
+  const correctAnswerIds = currentSession.quizCopy.questions
+  .flatMap(question => 
+    question.answers
+      .filter(answer => answer.correct)
+      .map(answer => answer.answerId)
+  );
+  const submittedCorrectAnswers = answerIds.filter(a => correctAnswerIds.includes(a));
+  const player = currentSession.players.find(p => p.playerId === playerId)
+  if (submittedCorrectAnswers) {
+    player.score += question.points;
+  }
+  let results = currentSession.results
+  results.usersRankedByScore.push({})
   setData(database);
   return {};
 }

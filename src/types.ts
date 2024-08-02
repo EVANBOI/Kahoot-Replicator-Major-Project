@@ -221,7 +221,7 @@ export type PlayerQuestionResultResult = {
 }
 
 export type PlayerStatusResult = {
-    state: string,
+    state: SessionStatus,
     numQuestions: number,
     atQuestion: number,
 }

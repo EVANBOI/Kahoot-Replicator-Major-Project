@@ -60,7 +60,7 @@ import {
   playerQuestionResult,
   playerResults,
   playerSendMessage,
-  playerStatus
+  playerStatus,
 } from './session';
 
 // Set up web app
@@ -433,6 +433,7 @@ app.put('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Respo
   const quizId = parseInt(req.params.quizid);
   const questionId = parseInt(req.params.questionid);
   const { token, questionBody } = req.body;
+  console.log(`Hi ${token}`);
   try {
     tokenCheck(token);
   } catch (error) {
@@ -726,17 +727,36 @@ app.put('/v1/admin/quiz/:quizid/question/:questionid/move', (req: Request, res: 
 
 // Evan's function don't change the order needs to be above
 app.put('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
   const quizId = parseInt(req.params.quizid);
   const sessionId = parseInt(req.params.sessionid);
-  const token = req.headers.token as string;
   const { action } = req.body;
-  const result = adminQuizSessionUpdate(quizId, sessionId, token, action);
-  return res.json(result);
+  try {
+    tokenCheck(token);
+  } catch (e) {
+    if (e instanceof Unauthorised) {
+      return res.status(StatusCodes.UNAUTHORIZED).json({ error: e.message });
+    }
+  }
+  try {
+    quizIdCheck(token, quizId);
+  } catch (e) {
+    if (e instanceof Forbidden) {
+      return res.status(StatusCodes.FORBIDDEN).json({ error: e.message });
+    }
+  }
+  try {
+    res.json(adminQuizSessionUpdate(quizId, sessionId, action));
+  } catch (e) {
+    if (e instanceof BadRequest) {
+      return res.status(StatusCodes.BAD_REQUEST).json({ error: e.message });
+    }
+  }
 });
 
 app.get('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Response) => {
-  const quizId = parseInt(req.query.quizid as string);
-  const sessionId = parseInt(req.query.sessionid as string);
+  const quizId = parseInt(req.params.quizid as string);
+  const sessionId = parseInt(req.params.sessionid as string);
   const token = req.headers.token as string;
   try {
     tokenCheck(token);
@@ -864,20 +884,32 @@ app.post('/v1/admin/quiz/:quizid/session/start', (req: Request, res: Response) =
 });
 app.post('/v1/player/join', (req: Request, res: Response) => {
   const { sessionId, name } = req.body;
-  const result = playerJoin(sessionId, name);
-  return res.json(result);
+  try {
+    return res.json(playerJoin(sessionId, name));
+  } catch (error) {
+    if (error instanceof BadRequest) {
+      return res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
+    }
+  }
 });
+
 app.get('/v1/player/:playerid/results', (req: Request, res: Response) => {
   const playerId = parseInt(req.query.playerid as string);
   const result = playerResults(playerId);
+
   return res.json(result);
 });
 
 // Evan's function
 app.get('/v1/player/:playerid', (req: Request, res: Response) => {
-  const playerId = parseInt(req.query.playerid as string);
-  const result = playerStatus(playerId);
-  return res.json(result);
+  const playerId = parseInt(req.params.playerid as string);
+  try {
+    return res.json(playerStatus(playerId));
+  } catch (error) {
+    if (error instanceof BadRequest) {
+      return res.status(400).json({ error: error.message });
+    }
+  }
 });
 
 // Evan's function

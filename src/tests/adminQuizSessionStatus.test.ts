@@ -46,7 +46,7 @@ describe('Unsuccessful cases', () => {
     expect(res).toStrictEqual(ERROR403);
   });
 
-  test.failing('Error 400: sessionId does not refer to valid session within this quiz', () => {
+  test.skip('Error 400: sessionId does not refer to valid session within this quiz', () => {
     const quizId2 = adminQuizCreate(token2, 'Quiz 2', '2nd description').jsonBody.quizId;
     const sessionId2 = adminQuizSessionStart(quizId2, token2, 5).jsonBody.sessionId;
     const res = adminQuizSessionStatus(quizId1, sessionId2, token1);

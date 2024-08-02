@@ -1,6 +1,7 @@
 import request, { HttpVerb } from 'sync-request-curl';
 import { port, url } from '../src/config.json';
 import { QuestionBody, PositionWithTokenObj, PositionObj, MessageObject } from './types';
+import { SessionAction } from './session';
 
 const SERVER_URL = `${url}:${port}`;
 
@@ -10,6 +11,7 @@ const SERVER_URL = `${url}:${port}`;
 // Our custom return types - you can pick your own if you wish!
 interface RequestHelperReturnType {
   statusCode: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   jsonBody?: Record<string, any>;
   error?: string;
 }
@@ -65,6 +67,7 @@ const requestHelper = (
       jsonBody: JSON.parse(bodyString),
       statusCode: res.statusCode,
     };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     bodyObject = {
       error: `\
@@ -250,6 +253,10 @@ export const adminQuizRemove = (token: string, quizId: number) => {
   return requestHelper('DELETE', `/v1/admin/quiz/${quizId}`, { token });
 };
 
+export const adminQuizRemoveV2 = (token: string, quizId: number) => {
+  return requestHelper('DELETE', `/v2/admin/quiz/${quizId}`, { }, token);
+};
+
 export const adminQuizQuestionUpdate = (
   quizid: number,
   questionid: number,
@@ -378,7 +385,7 @@ export const adminQuizSessionUpdate = (
   quizid: number,
   sessionid: number,
   token: string,
-  action: string
+  action: SessionAction
 ) => {
   return requestHelper('PUT', `/v1/admin/quiz/${quizid}/session/${sessionid}`, { action }, token);
 };

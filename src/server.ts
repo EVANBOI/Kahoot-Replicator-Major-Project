@@ -828,7 +828,7 @@ app.get('/v1/admin/quiz/:quizid/sessions', (req: Request, res: Response) => {
 
 app.get('/v1/admin/quiz/:quizid/session/:sessionid/results/csv', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
-  const sessionId = parseInt(req.query.sessionid as string);
+  const sessionId = parseInt(req.params.sessionid as string);
   const token = req.headers.token as string;
   try {
     tokenCheck(token);
@@ -853,11 +853,11 @@ app.get('/v1/admin/quiz/:quizid/session/:sessionid/results/csv', (req: Request, 
   }
 });
 
-app.use('/public', express.static(path.join(__dirname, 'public')));
+app.use('/csvresults', express.static(path.join(__dirname, 'csvresults')));
 
 app.get('/v1/player/:playerid/question/:questionposition/results', (req: Request, res: Response) => {
-  const playerId = parseInt(req.query.playerid as string);
-  const questionPosition = parseInt(req.query.questionposition as string);
+  const playerId = parseInt(req.params.playerid as string);
+  const questionPosition = parseInt(req.params.questionposition as string);
   try {
     res.json(playerQuestionResult(playerId, questionPosition));
   } catch (error) {
@@ -914,9 +914,15 @@ app.get('/v1/player/:playerid', (req: Request, res: Response) => {
 
 // Evan's function
 app.get('/v1/player/:playerid/chat', (req: Request, res: Response) => {
-  const playerId = parseInt(req.query.playerid as string);
-  const result = playerChatlog(playerId);
-  return res.json(result);
+  const playerId = parseInt(req.params.playerid as string);
+
+  try {
+    return res.json(playerChatlog(playerId));
+  } catch (error) {
+    if (error instanceof BadRequest) {
+      return res.status(400).json({ error: error.message });
+    }
+  }
 });
 
 app.put('/v1/player/:playerid/question/:questionposition/answer', (req: Request, res: Response) => {

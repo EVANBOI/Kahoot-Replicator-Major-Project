@@ -11,7 +11,6 @@ import {
   adminCreateQuizQuestionV2,
   playerJoin,
   playerQuestionResult,
-  adminQuizSessionStatus,
   adminQuizInfo,
   playerQuestionAnswer
 } from '../wrappers';
@@ -46,21 +45,23 @@ beforeEach(() => {
 
 describe('Get /v1/player/{playerid}/question/{questionposition}/results', () => {
   describe('error cases', () => {
-    test.skip('Error 400: player ID does not exist', () => {
-      // failling cuz of adminQuizSessionUpdate
-      adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_ANSWER);
+    test('Error 400: player ID does not exist', () => {
       expect(playerQuestionResult(playerId1 + 1, 1)).toStrictEqual(ERROR400);
     });
-    test.skip('Error 400: question position is not valid for the session this player is in', () => {
-      adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_ANSWER);
+    test('Error 400: question position is not valid for the session this player is in', () => {
       expect(playerQuestionResult(playerId1, 3)).toStrictEqual(ERROR400);
     });
-    test.skip('Error 400: Session is not in ANSWER_SHOW state', () => {
+    test('Error 400: Session is not in ANSWER_SHOW state', () => {
       expect(playerQuestionResult(playerId1, 1)).toStrictEqual(ERROR400);
     });
-    test.skip('Error 400: session is not currently on this question', () => {
-      expect(adminQuizSessionStatus(questionId1, sessionId1, token1).jsonBody.atQuestion).toStrictEqual(1);
-      expect(playerQuestionResult(playerId1, 2)).toStrictEqual(ERROR400);
+    test('Error 400: session is not currently on this question', () => {
+      adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
+      adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
+      adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_ANSWER);
+      adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
+      adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
+      adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_ANSWER);
+      expect(playerQuestionResult(playerId1, 1)).toStrictEqual(ERROR400);
     });
   });
   describe('success cases', () => {

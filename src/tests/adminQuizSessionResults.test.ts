@@ -8,7 +8,6 @@ import {
   validQuestion1V2,
   validQuestion3V2
 } from '../testConstants';
-import sleepSync from 'slync';
 import {
   clear,
   adminAuthRegister,

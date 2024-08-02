@@ -3,9 +3,9 @@ import {
   sessionIdToTimerMap
 } from './dataStore';
 import { BadRequest, Unauthorised, Forbidden } from './error';
-import { 
-  findUserBySessionId, findQuizWithId, convertSessionResultsToCSV, 
-  generateRandomString, playerDetailedResultsInitialisation 
+import {
+  findUserBySessionId, findQuizWithId, convertSessionResultsToCSV,
+  generateRandomString, playerDetailedResultsInitialisation
 } from './helpers';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -87,11 +87,11 @@ export function adminQuizSessionResultLink (quizId: number, sessionId: number, h
     throw new BadRequest('Session is not in FINAL_RESULTS state');
   }
   const csvString = convertSessionResultsToCSV(session.results);
-  
+
   const dirPath = path.join(__dirname, 'csvresults');
   if (!fs.existsSync(dirPath)) {
     fs.mkdirSync(dirPath);
-  } 
+  }
   const filePath = path.join(__dirname, 'csvresults', `${sessionId}results.csv`);
   fs.writeFileSync(filePath, csvString);
 
@@ -117,7 +117,7 @@ export function playerQuestionResult (playerId: number, questionposition: number
     if (currentSession) {
       // should be changed to currentQuiz = currentSession.quiz after sessionStart is implemented
       currentQuiz = quiz;
-      break; 
+      break;
     }
   }
 

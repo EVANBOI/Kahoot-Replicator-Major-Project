@@ -23,7 +23,7 @@ export function clear (): ClearResult {
   const dirPath = path.join(__dirname, 'csvresults');
   if (fs.existsSync(dirPath)) {
     fs.rmdirSync(dirPath, { recursive: true });
-  } 
+  }
 
   setData(store);
   return {};

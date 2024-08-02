@@ -4,12 +4,12 @@
       "userId": 1,
       "tokens": [
         {
-          "token": "845397"
+          "token": "452823"
         }
       ],
-      "email": "admin@email.com",
-      "password": "0b14d501a594442a01c6859541bcb3e8164d183d32937b851835442f69d5c94e",
-      "name": "Idk Idk",
+      "email": "admin1@ad.unsw.edu.au",
+      "password": "0ec89f726bd307bbc7eb3f20c3d60b337280eb45af5fee7e3315d667a137d69a",
+      "name": "First Last",
       "numSuccessfulLogins": 1,
       "numFailedPasswordsSinceLastLogin": 0,
       "passwordUsedThisYear": []
@@ -18,12 +18,12 @@
       "userId": 2,
       "tokens": [
         {
-          "token": "783375"
+          "token": "327237"
         }
       ],
-      "email": "user@email.com",
-      "password": "0b14d501a594442a01c6859541bcb3e8164d183d32937b851835442f69d5c94e",
-      "name": "Idk Idk",
+      "email": "admin2@ad.unsw.edu.au",
+      "password": "b4d5a2103d739d4dd5fcc42f585cd381bf93534b09479c13c228a49be63853cf",
+      "name": "First Last",
       "numSuccessfulLogins": 1,
       "numFailedPasswordsSinceLastLogin": 0,
       "passwordUsedThisYear": []
@@ -31,15 +31,64 @@
   ],
   "quizzes": [
     {
-      "creatorId": 2,
-      "quizId": 87,
-      "name": "ValidQuizName",
-      "timeCreated": 1722575395,
-      "timeLastEdited": 1722575395,
-      "description": "ValidDescription",
-      "numQuestions": 0,
-      "questions": [],
-      "duration": 0,
+      "creatorId": 1,
+      "quizId": 162,
+      "name": "Quiz 1",
+      "timeCreated": 1722575931,
+      "timeLastEdited": 1722575931,
+      "description": "Description",
+      "numQuestions": 2,
+      "questions": [
+        {
+          "questionId": 429,
+          "question": "Valid question 2?",
+          "duration": 150,
+          "points": 2,
+          "answers": [
+            {
+              "answerId": 804,
+              "colour": "yellow",
+              "answer": "Amb",
+              "correct": false
+            },
+            {
+              "answerId": 904,
+              "colour": "purple",
+              "answer": "Bsgd",
+              "correct": true
+            }
+          ],
+          "thumbnailUrl": "http://google.com/some/image/path.jpg"
+        },
+        {
+          "questionId": 679,
+          "question": "Valid question 3?",
+          "duration": 5,
+          "points": 2,
+          "answers": [
+            {
+              "answerId": 154,
+              "colour": "brown",
+              "answer": "Amb",
+              "correct": false
+            },
+            {
+              "answerId": 354,
+              "colour": "purple",
+              "answer": "Bsgd",
+              "correct": true
+            },
+            {
+              "answerId": 254,
+              "colour": "purple",
+              "answer": "Clsj",
+              "correct": false
+            }
+          ],
+          "thumbnailUrl": "http://google.com/some/image/path.jpg"
+        }
+      ],
+      "duration": 155,
       "sessions": []
     }
   ],

@@ -43,7 +43,7 @@ beforeEach(() => {
   quizId1 = body3?.quizId;
 });
 
-describe('Unsuccesful Tests', () => {
+describe('Unsuccesful Tests for v1', () => {
   describe('Expected error code is 401', () => {
     test('Empty sessionId', () => {
       const result = adminCreateQuizQuestion(quizId1, '', validQuestion1);
@@ -237,7 +237,7 @@ describe('Unsuccesful Tests', () => {
   });
 });
 
-describe('Succesful Tests', () => {
+describe('Succesful Tests for v1', () => {
   test('Check return type', () => {
     const result = adminCreateQuizQuestion(quizId1, sessionId1, validQuestion1);
     expect(result).toStrictEqual(SUCCESSFUL);

@@ -12,6 +12,7 @@ import {
   clear,
   adminAuthRegister,
   adminQuizCreateV2,
+  adminQuizQuestionUpdate,
   adminQuizQuestionUpdateV2,
   adminQuizInfoV2,
 } from '../wrappers';
@@ -57,7 +58,60 @@ beforeEach(() => {
   questionId1 = body4?.questionId;
 });
 
-describe('Unsuccessful Updates: 401 errors', () => {
+// v1 route tests
+describe('Error cases for v1', () => {
+  describe('Unsuccessful Updates: 401 errors', () => {
+    test('Token is invalid', () => {
+      expect(adminQuizQuestionUpdate(
+        quizId1,
+        questionId1,
+        validQuestion1V2,
+        sessionId1 + 1)).toStrictEqual(ERROR401);
+    });
+  
+    test('Token is empty', () => {
+      expect(adminQuizQuestionUpdate(
+        quizId1,
+        questionId1,
+        validQuestion1V2,
+        ' ')).toStrictEqual(ERROR401);
+    });
+  });
+  
+  describe('Unsuccessful Updates: 403 errors', () => {
+    test('User is not an owner of the quiz', () => {
+      expect(adminQuizQuestionUpdate(
+        quizId1,
+        questionId1,
+        validQuestion1V2,
+        sessionId2)).toStrictEqual(ERROR403);
+    });
+  });
+  
+  describe('Unsuccessful Updates: 400 errors', () => {
+    test('Question Id is not valid', () => {
+      expect(adminQuizQuestionUpdate(
+        quizId1,
+        questionId1 + 1,
+        validQuestion1V2,
+        sessionId1)).toStrictEqual(ERROR400);
+    });
+  });
+})
+
+describe('Successful Updates for v1', () => {
+  test('Returns Correct Type', () => {
+    const result = adminQuizQuestionUpdate(
+      quizId1,
+      questionId1,
+      validQuestion1V2,
+      sessionId1);
+    expect(result).toStrictEqual(UPDATED);
+  });
+});
+
+// v2 route tests
+describe('Unsuccessful Updates for v2: 401 errors', () => {
   test('Token is invalid', () => {
     expect(adminQuizQuestionUpdateV2(
       quizId1,
@@ -75,7 +129,7 @@ describe('Unsuccessful Updates: 401 errors', () => {
   });
 });
 
-describe('Unsuccessful Updates: 403 errors', () => {
+describe('Unsuccessful Update for v2: 403 errors', () => {
   test('User is not an owner of the quiz', () => {
     expect(adminQuizQuestionUpdateV2(
       quizId1,
@@ -93,7 +147,7 @@ describe('Unsuccessful Updates: 403 errors', () => {
   });
 });
 
-describe('Unsuccessful Updates: 400 errors', () => {
+describe('Unsuccessful Updates for v2: 400 errors', () => {
   test('Question Id is not valid', () => {
     expect(adminQuizQuestionUpdateV2(
       quizId1,
@@ -312,7 +366,7 @@ describe('Unsuccessful Updates: 400 errors', () => {
   });
 });
 
-describe('Successful Updates', () => {
+describe('Successful Updates for v2', () => {
   test('Returns Correct Type', () => {
     const result = adminQuizQuestionUpdateV2(
       quizId1,

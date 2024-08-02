@@ -3,7 +3,7 @@ import {
   sessionIdToTimerMap
 } from './dataStore';
 import { BadRequest, Unauthorised, Forbidden } from './error';
-import { findUserBySessionId, findQuizWithId, convertSessionResultsToCSV } from './helpers';
+import { findUserBySessionId, findQuizWithId, convertSessionResultsToCSV, generateRandomString } from './helpers';
 import * as path from 'path';
 import * as fs from 'fs';
 import {
@@ -33,6 +33,7 @@ export enum SessionStatus {
 }
 import ShortUniqueId from 'short-unique-id';
 const sessionUid = new ShortUniqueId({ dictionary: 'number' });
+const playerUid = new ShortUniqueId({ dictionary: 'number' });
 
 export enum SessionAction {
   NEXT_QUESTION,
@@ -609,73 +610,52 @@ export function playerResults(
   };
 }
 
-// function generateRandomName(): string {
-//   const letters = 'abcdefghijklmnopqrstuvwxyz';
-//   const numbers = '0123456789';
-//   let name = '';
-//   while (name.length < 5) {
-//     const char = letters.charAt(Math.floor(Math.random() * letters.length));
-//     if (!name.includes(char)) {
-//       name += char;
-//     }
-//   }
-//   while (name.length < 8) {
-//     const num = numbers.charAt(Math.floor(Math.random() * numbers.length));
-//     if (!name.includes(num)) {
-//       name += num;
-//     }
-//   }
-//   return name;
-// }
-
 export function playerJoin(
   sessionId: number,
   name: string
 ): { playerId: number } {
-  // const database = getData();
-
-  // // Find the session that matches the sessionId
-  // let session: Session | undefined;
-  // for (const quiz of database.quizzes) {
-  //   session = quiz.sessions?.find(s => s.sessionId === sessionId);
-  //   if (session) break;
-  // }
-
-  // if (!session) {
-  //   throw new BadRequest('Session Id does not refer to a valid session.');
-  // }
-
-  // if (session.state !== SessionStatus.LOBBY) {
-  //   throw new BadRequest('Session is not in LOBBY state.');
-  // }
-
+  const database = getData();
+  // Find the session that matches the sessionId
+  let session: Session | undefined;
+  for (const quiz of database.quizzes) {
+    session = quiz.sessions?.find(s => s.sessionId === sessionId);
+    if (session) {
+      break;
+    }
+  }
+  if (!session) {
+    throw new BadRequest('Session Id does not refer to a valid session.');
+  } else if (session.state !== SessionStatus.LOBBY) {
+    throw new BadRequest('Session is not in LOBBY state.');
+  }
   // // Check if the name is unique
-  // if (name) {
-  //   const allPlayers = database.quizzes.flatMap(quiz => quiz.sessions?.flatMap(session => session.players) || []);
-  //   const existingPlayer = allPlayers.find(player => player.name === name);
-  //   if (existingPlayer) {
-  //     throw new BadRequest('Name of user entered is not unique.');
-  //   }
-  // } else {
-  //   // Generate a random name if none is provided
-  //   name = generateRandomName();
+  if (name !== '') {
+    const allPlayers = session.players;
+    const existingPlayer = allPlayers.find(player => player.name === name);
+    if (existingPlayer) {
+      throw new BadRequest('Name of user entered is not unique.');
+    }
+  } else if (name === '') {
+    const name = generateRandomString();
+    console.log('Generated Name:', name);
+  }
+
+  // // Generate a random name if none is provided
+  //   if (/^[a-z]{5}\d{3}$/.test(name)) {
+  //       console.log('Name matches the pattern:', name);
+  //   } else {
+  //       console.log('Name does not match the pattern:', name);
   // }
 
-  // // Logic to generate a new player ID
-  // const allPlayers = database.quizzes.flatMap(quiz => quiz.sessions?.flatMap(session => session.players) || []);
-  // const newPlayerId = allPlayers.length > 0
-  //   ? Math.max(...allPlayers.map(p => p.playerId)) + 1
-  //   : 1;
+  // Logic to generate a new player ID
+  const newPlayerId = parseInt(playerUid.seq());
+  // Add the new player to the session
+  const newPlayer = { playerId: newPlayerId, name: name, score: 0 };
+  session.players.push(newPlayer);
 
-  // // Add the new player to the session
-  // const newPlayer = { playerId: newPlayerId, name, score: 0 };
-  // session.players.push(newPlayer);
-
-  // // Save the updated data back to the datastore
-  // setData(database);
-
-  // return { playerId: newPlayerId };
-  return { playerId: 5566 };
+  // Save the updated data back to the datastore
+  setData(database);
+  return { playerId: newPlayerId };
 }
 
 export function adminQuizSessionStart(quizId: number, token: string, autoStartNum: number) {

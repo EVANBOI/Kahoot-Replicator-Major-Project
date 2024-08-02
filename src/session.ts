@@ -5,7 +5,7 @@ import {
 import { BadRequest, Unauthorised, Forbidden } from './error';
 import {
   findUserBySessionId, findQuizWithId, convertSessionResultsToCSV,
-  generateRandomString, playerDetailedResultsInitialisation
+  generateRandomString, playerDetailedResultsInitialisation, updateResults
 } from './helpers';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -241,6 +241,7 @@ export function adminQuizSessionUpdate(
       clearTimeout(timer);
       sessionIdToTimerMap.delete(sessionId);
       session.state = SessionStatus.END;
+      updateResults(session);
     } else if (action === SessionAction.GO_TO_ANSWER) {
       const timer = sessionIdToTimerMap.get(sessionId);
       if (timer === undefined) {
@@ -249,10 +250,12 @@ export function adminQuizSessionUpdate(
       clearTimeout(timer);
       sessionIdToTimerMap.delete(sessionId);
       session.state = SessionStatus.ANSWER_SHOW;
+      updateResults(session);
     } else {
       throw new BadRequest(`Action enum cannot be applied in the ${session.state}`);
     }
   } else if (session.state === SessionStatus.QUESTION_CLOSE) {
+    updateResults(session);
     if (action === SessionAction.END) {
       session.state = SessionStatus.END;
     } else if (action === SessionAction.NEXT_QUESTION) {

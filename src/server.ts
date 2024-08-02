@@ -856,8 +856,8 @@ app.get('/v1/admin/quiz/:quizid/session/:sessionid/results/csv', (req: Request, 
 app.use('/csvresults', express.static(path.join(__dirname, 'csvresults')));
 
 app.get('/v1/player/:playerid/question/:questionposition/results', (req: Request, res: Response) => {
-  const playerId = parseInt(req.query.playerid as string);
-  const questionPosition = parseInt(req.query.questionposition as string);
+  const playerId = parseInt(req.params.playerid as string);
+  const questionPosition = parseInt(req.params.questionposition as string);
   try {
     res.json(playerQuestionResult(playerId, questionPosition));
   } catch (error) {

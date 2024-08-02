@@ -300,7 +300,7 @@ export const adminQuizTransferV2 = (
   quizId: number,
   userEmail: string
 ) => {
-  return requestHelper('POST', `/v1/admin/quiz/${quizId}/transfer`, { userEmail }, token);
+  return requestHelper('POST', `/v2/admin/quiz/${quizId}/transfer`, { userEmail }, token);
 };
 
 export const adminQuizQuestionDuplicate = (
@@ -323,8 +323,16 @@ export const adminQuizRestore = (token: string, quizid: number) => {
   return requestHelper('POST', `/v1/admin/quiz/${quizid}/restore`, { token });
 };
 
+export const adminQuizRestoreV2 = (token: string, quizid: number) => {
+  return requestHelper('POST', `/v2/admin/quiz/${quizid}/restore`, { }, token);
+};
+
 export const adminQuizQuestionDelete = (token: string, quizId: number, questionId: number) => {
   return requestHelper('DELETE', `/v1/admin/quiz/${quizId}/question/${questionId}`, { token });
+};
+
+export const adminQuizQuestionDeleteV2 = (token: string, quizId: number, questionId: number) => {
+  return requestHelper('DELETE', `/v2/admin/quiz/${quizId}/question/${questionId}`, { }, token);
 };
 
 export const adminQuizQuestionMove = (

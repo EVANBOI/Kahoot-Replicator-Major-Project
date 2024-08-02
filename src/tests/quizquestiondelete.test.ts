@@ -1,4 +1,4 @@
-import { adminQuizQuestionDelete, adminAuthRegister, clear, adminQuizInfo } from '../wrappers';
+import { adminQuizQuestionDelete, adminQuizQuestionDeleteV2, adminAuthRegister, clear, adminQuizInfo, adminQuizSessionStart } from '../wrappers';
 import { TokenObject, QuizIdObject, QuestionBody } from '../types';
 import { adminQuizCreate } from '../quiz';
 import { adminCreateQuizQuestion } from '../question';
@@ -54,7 +54,8 @@ beforeEach(() => {
   validQuestionId = (adminCreateQuizQuestion(validQuizId, sessionId, questionBody) as { questionId: number }).questionId;
 });
 
-describe('Success cases', () => {
+// v1 route tests
+describe('success case for v1', () => {
   test('should successfully delete a quiz question', () => {
     const result = adminQuizQuestionDelete(sessionId, validQuizId, validQuestionId);
     expect(result).toEqual({
@@ -70,7 +71,7 @@ describe('Success cases', () => {
   });
 });
 
-describe('Failure cases', () => {
+describe('unsuccesful case for v1', () => {
   test('should return an error when deleting a question with an invalid sessionId', () => {
     const result = adminQuizQuestionDelete(sessionId + 'invalid', validQuizId, validQuestionId);
     expect(result).toStrictEqual({
@@ -95,6 +96,76 @@ describe('Failure cases', () => {
     const result = adminQuizQuestionDelete(sessionId, validQuizId2, validQuestionId);
     expect(result).toStrictEqual({
       statusCode: 403,
+      jsonBody: {
+        error: expect.any(String),
+      },
+    });
+  });
+});
+
+// v2 route tests
+describe('Success cases for v2', () => {
+  test('should successfully delete a quiz question', () => {
+    const result = adminQuizQuestionDeleteV2(sessionId, validQuizId, validQuestionId);
+    expect(result).toEqual({
+      statusCode: 200,
+      jsonBody: {}
+    });
+
+    // Verify the question is actually removed
+    const quizInfo = adminQuizInfo(sessionId, validQuizId);
+    expect(quizInfo.jsonBody?.questions).not.toContainEqual(
+      expect.objectContaining({ questionId: validQuestionId })
+    );
+  });
+});
+
+describe('Failure cases for v2', () => {
+  test('should return an error when deleting a question with an invalid sessionId', () => {
+    const result = adminQuizQuestionDeleteV2(sessionId + 'invalid', validQuizId, validQuestionId);
+    expect(result).toStrictEqual({
+      statusCode: 401,
+      jsonBody: {
+        error: expect.any(String),
+      },
+    });
+  });
+
+  test('should return an error when deleting a question with an invalid questionId', (): void => {
+    const result = adminQuizQuestionDeleteV2(sessionId, validQuizId, validQuestionId + 1029);
+    expect(result).toStrictEqual({
+      statusCode: 400,
+      jsonBody: {
+        error: expect.any(String),
+      },
+    });
+  });
+
+  test('should return an error when deleting a question from a quiz that the user does not own', (): void => {
+    const result = adminQuizQuestionDeleteV2(sessionId, validQuizId2, validQuestionId);
+    expect(result).toStrictEqual({
+      statusCode: 403,
+      jsonBody: {
+        error: expect.any(String),
+      },
+    });
+  });
+
+  test('Quiz ID does not exist', () => {
+    const result = adminQuizQuestionDeleteV2(sessionId, validQuizId + validQuizId2, validQuestionId);
+    expect(result).toStrictEqual({
+      statusCode: 403,
+      jsonBody: {
+        error: expect.any(String),
+      },
+    });
+  });
+
+  test('One or more quiz session has not ended yet', () => {
+    adminQuizSessionStart(validQuizId, sessionId, 3);
+    const result = adminQuizQuestionDeleteV2(sessionId, validQuizId, validQuestionId);
+    expect(result).toStrictEqual({
+      statusCode: 400,
       jsonBody: {
         error: expect.any(String),
       },

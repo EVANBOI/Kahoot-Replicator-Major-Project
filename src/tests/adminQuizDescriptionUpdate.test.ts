@@ -3,17 +3,71 @@ import {
   adminQuizDescriptionUpdate,
   clear,
   adminQuizCreate,
-  adminQuizInfo
+  adminQuizInfo,
+  adminQuizDescriptionUpdateV2
 } from '../wrappers';
 
 beforeEach(() => {
   clear();
 });
 
-describe('Error cases', () => {
+// v1 route tests
+describe('error cases for v1', () => {
+  let sessionId1: string;
+  let quizId1: number;
+  beforeEach(() => {
+    const { jsonBody: body1 } = adminAuthRegister(
+      'admin1@gmail.com', 'SDFJKH2349081j', 'JJone', 'ZZ'
+    );
+    sessionId1 = body1?.token;
+
+    const { jsonBody: Quiz1 } = adminQuizCreate(
+      sessionId1, 'Quiz 1', 'this is first original description');
+    quizId1 = Quiz1?.quizId;
+  });
+
+  test('Session id does not exist', () => {
+    expect(adminQuizDescriptionUpdate('-999', quizId1, 'changed description'))
+      .toStrictEqual({
+        statusCode: 401,
+        jsonBody: { error: expect.any(String) }
+      });
+  });
+  test('Quiz id does not exist', () => {
+    expect(adminQuizDescriptionUpdate(sessionId1, -999, 'changed description'))
+      .toStrictEqual({
+        statusCode: 403,
+        jsonBody: { error: expect.any(String) }
+      });
+  });
+
+  test('Description length is more than 100 characters', () => {
+    expect(adminQuizDescriptionUpdate(sessionId1, quizId1, 'a'.repeat(200)))
+      .toStrictEqual({
+        statusCode: 400,
+        jsonBody: { error: expect.any(String) }
+      });
+  });
+});
+
+describe('success cases for v1', () => {
+  test('Check return type', () => {
+    const token = adminAuthRegister(
+      'admin1@gmail.com', 'SDFJKH2349081j', 'JJone', 'ZZ'
+    ).jsonBody.token;
+    const quizId1 = adminQuizCreate(
+      token, 'Quiz 1', 'this is first original description').jsonBody.quizId;
+    const { jsonBody, statusCode } = adminQuizDescriptionUpdate(token, quizId1, 'changed');
+    expect(statusCode).toStrictEqual(200);
+    expect(jsonBody).toStrictEqual({});
+  });
+});
+
+// v2 route tests
+describe('Error cases for v2', () => {
   describe('No users exists in database', () => {
     test('Invalid sessionId', () => {
-      expect(adminQuizDescriptionUpdate('-1', 1, 'no data in database')).toStrictEqual({
+      expect(adminQuizDescriptionUpdateV2('-1', 1, 'no data in database')).toStrictEqual({
         statusCode: 401,
         jsonBody: { error: expect.any(String) }
       });
@@ -39,28 +93,28 @@ describe('Error cases', () => {
     });
 
     test('Session id does not exist', () => {
-      expect(adminQuizDescriptionUpdate('-999', quizId1, 'changed description'))
+      expect(adminQuizDescriptionUpdateV2('-999', quizId1, 'changed description'))
         .toStrictEqual({
           statusCode: 401,
           jsonBody: { error: expect.any(String) }
         });
     });
     test('Quiz id does not exist', () => {
-      expect(adminQuizDescriptionUpdate(sessionId1, -999, 'changed description'))
+      expect(adminQuizDescriptionUpdateV2(sessionId1, -999, 'changed description'))
         .toStrictEqual({
           statusCode: 403,
           jsonBody: { error: expect.any(String) }
         });
     });
     test('User does not own quiz to be updated', () => {
-      expect(adminQuizDescriptionUpdate(sessionId2, quizId1, 'changed description'))
+      expect(adminQuizDescriptionUpdateV2(sessionId2, quizId1, 'changed description'))
         .toStrictEqual({
           statusCode: 403,
           jsonBody: { error: expect.any(String) }
         });
     });
     test('Description length is more than 100 characters', () => {
-      expect(adminQuizDescriptionUpdate(sessionId1, quizId1, 'a'.repeat(200)))
+      expect(adminQuizDescriptionUpdateV2(sessionId1, quizId1, 'a'.repeat(200)))
         .toStrictEqual({
           statusCode: 400,
           jsonBody: { error: expect.any(String) }
@@ -69,7 +123,7 @@ describe('Error cases', () => {
   });
 });
 
-describe('Successful function run', () => {
+describe('Successful function run for v2', () => {
   let sessionId1: string, sessionId2: string;
   let quizId1: number, quizId2: number, quizId3: number;
   beforeEach(() => {
@@ -97,13 +151,13 @@ describe('Successful function run', () => {
 
   describe('Update description once', () => {
     test('Check return type', () => {
-      const { jsonBody, statusCode } = adminQuizDescriptionUpdate(sessionId1, quizId1, 'changed');
+      const { jsonBody, statusCode } = adminQuizDescriptionUpdateV2(sessionId1, quizId1, 'changed');
       expect(statusCode).toStrictEqual(200);
       expect(jsonBody).toStrictEqual({});
     });
 
     test('Quiz is updated once correctly', () => {
-      adminQuizDescriptionUpdate(sessionId1, quizId1, 'changed');
+      adminQuizDescriptionUpdateV2(sessionId1, quizId1, 'changed');
       const quizInfo = adminQuizInfo(sessionId1, quizId1);
       expect(quizInfo).toStrictEqual({
         statusCode: 200,
@@ -121,13 +175,13 @@ describe('Successful function run', () => {
     });
 
     test('Time last edited is updated correctly', () => {
-      adminQuizDescriptionUpdate(sessionId1, quizId1, 'changed');
+      adminQuizDescriptionUpdateV2(sessionId1, quizId1, 'changed');
       const { jsonBody: quizInfo } = adminQuizInfo(sessionId1, quizId1);
       expect(quizInfo?.timeCreated).toBeLessThanOrEqual((quizInfo?.timeLastEdited));
     });
 
     test('Description update can be an empty string', () => {
-      adminQuizDescriptionUpdate(sessionId1, quizId1, '');
+      adminQuizDescriptionUpdateV2(sessionId1, quizId1, '');
       const quizInfo = adminQuizInfo(sessionId1, quizId1);
       expect(quizInfo).toStrictEqual({
         statusCode: 200,
@@ -147,8 +201,8 @@ describe('Successful function run', () => {
 
   describe('Update description multiple times', () => {
     test('User updates same quiz multiple times', () => {
-      adminQuizDescriptionUpdate(sessionId1, quizId1, 'changed');
-      adminQuizDescriptionUpdate(sessionId1, quizId1, 'changed twice');
+      adminQuizDescriptionUpdateV2(sessionId1, quizId1, 'changed');
+      adminQuizDescriptionUpdateV2(sessionId1, quizId1, 'changed twice');
       expect(adminQuizInfo(sessionId1, quizId1)).toStrictEqual({
         statusCode: 200,
         jsonBody: {
@@ -165,8 +219,8 @@ describe('Successful function run', () => {
     });
 
     test('User updates multiple different quizzes', () => {
-      adminQuizDescriptionUpdate(sessionId1, quizId1, 'changed quiz 1');
-      adminQuizDescriptionUpdate(sessionId1, quizId2, 'changed quiz 2');
+      adminQuizDescriptionUpdateV2(sessionId1, quizId1, 'changed quiz 1');
+      adminQuizDescriptionUpdateV2(sessionId1, quizId2, 'changed quiz 2');
       expect(adminQuizInfo(sessionId1, quizId2)).toStrictEqual({
         statusCode: 200,
         jsonBody: {
@@ -183,8 +237,8 @@ describe('Successful function run', () => {
     });
 
     test('Different users updates different quizzes', () => {
-      adminQuizDescriptionUpdate(sessionId1, quizId1, 'changed quiz 1');
-      adminQuizDescriptionUpdate(sessionId2, quizId3, 'changed quiz 3');
+      adminQuizDescriptionUpdateV2(sessionId1, quizId1, 'changed quiz 1');
+      adminQuizDescriptionUpdateV2(sessionId2, quizId3, 'changed quiz 3');
       expect(adminQuizInfo(sessionId2, quizId3)).toStrictEqual({
         statusCode: 200,
         jsonBody: {

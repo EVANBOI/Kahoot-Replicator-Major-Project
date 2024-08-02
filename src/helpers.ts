@@ -265,7 +265,11 @@ export function updateResults (session: Session) {
   });
 
   // update the average time and percent correct and percentCorrect
-  session.results.questionResults[questionIndex].averageAnswerTime = totalAnswerTime / numAnsweredPlayer;
+  if (totalAnswerTime === 0) {
+    session.results.questionResults[questionIndex].averageAnswerTime = 0;
+  } else {
+    session.results.questionResults[questionIndex].averageAnswerTime = totalAnswerTime / numAnsweredPlayer;
+  }
   session.results.questionResults[questionIndex].percentCorrect = session.results.questionResults[questionIndex].playersCorrectList.length / session.players.length * 100;
 
   // sort the rank of the player

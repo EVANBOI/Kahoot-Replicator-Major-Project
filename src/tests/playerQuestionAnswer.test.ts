@@ -96,7 +96,6 @@ describe('Success cases', () => {
         adminQuizSessionUpdate(quizId, sessionId, token, SessionAction.NEXT_QUESTION);
         adminQuizSessionUpdate(quizId, sessionId, token, SessionAction.SKIP_COUNTDOWN);
         const res = playerQuestionAnswer(playerId, 1, validAnswerIds);
-        console.log(res);
         expect(res.statusCode).toBe(200);
         expect(res.jsonBody).toStrictEqual({});
     });

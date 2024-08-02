@@ -1,5 +1,115 @@
 {
-  "users": [],
-  "quizzes": [],
+  "users": [
+    {
+      "userId": 1,
+      "tokens": [
+        {
+          "token": "697191"
+        }
+      ],
+      "email": "admin1@gmail.com",
+      "password": "f42857add00a1047e650c6c4d0f909bfface390fe00310026b07bc77027dcf4e",
+      "name": "JJone ZZ",
+      "numSuccessfulLogins": 1,
+      "numFailedPasswordsSinceLastLogin": 0,
+      "passwordUsedThisYear": []
+    }
+  ],
+  "quizzes": [
+    {
+      "creatorId": 1,
+      "quizId": 479,
+      "name": "Quiz 1",
+      "timeCreated": 1722591262,
+      "timeLastEdited": 1722591262,
+      "description": "1st description",
+      "numQuestions": 1,
+      "questions": [
+        {
+          "questionId": 321,
+          "question": "Valid question 1?",
+          "duration": 3,
+          "points": 2,
+          "answers": [
+            {
+              "answerId": 927,
+              "colour": "purple",
+              "answer": "A",
+              "correct": true
+            },
+            {
+              "answerId": 527,
+              "colour": "blue",
+              "answer": "B",
+              "correct": false
+            }
+          ],
+          "thumbnailUrl": "http://google.com/some/image/path.jpg"
+        }
+      ],
+      "duration": 3,
+      "sessions": [
+        {
+          "sessionId": 788,
+          "atQuestion": 0,
+          "players": [
+            {
+              "playerId": 71,
+              "name": "Yooiuiudsf",
+              "score": 0
+            }
+          ],
+          "state": 0,
+          "messages": [
+            {
+              "messageBody": "message 1",
+              "playerId": 71,
+              "playerName": "Yooiuiudsf",
+              "timeSent": 1722591262
+            }
+          ],
+          "results": {
+            "usersRankedByScore": [],
+            "questionResults": []
+          },
+          "autoStartNum": 5,
+          "quizCopy": {
+            "creatorId": 1,
+            "quizId": 479,
+            "name": "Quiz 1",
+            "timeCreated": 1722591262,
+            "timeLastEdited": 1722591262,
+            "description": "1st description",
+            "numQuestions": 1,
+            "questions": [
+              {
+                "questionId": 321,
+                "question": "Valid question 1?",
+                "duration": 3,
+                "points": 2,
+                "answers": [
+                  {
+                    "answerId": 927,
+                    "colour": "purple",
+                    "answer": "A",
+                    "correct": true
+                  },
+                  {
+                    "answerId": 527,
+                    "colour": "blue",
+                    "answer": "B",
+                    "correct": false
+                  }
+                ],
+                "thumbnailUrl": "http://google.com/some/image/path.jpg"
+              }
+            ],
+            "duration": 3,
+            "sessions": []
+          }
+        }
+      ]
+    }
+  ],
   "trash": []
 }

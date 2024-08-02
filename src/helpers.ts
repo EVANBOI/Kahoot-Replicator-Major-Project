@@ -1,6 +1,6 @@
 import { getData } from './dataStore';
 import { Forbidden, BadRequest, Unauthorised } from './error';
-import { Data, QuestionBody, User, SessionResults } from './types';
+import { Data, ErrorMessage, QuestionBody, User, SessionResults, Session } from './types';
 import crypto from 'crypto';
 
 export function getHashOf(password: string) {
@@ -151,7 +151,7 @@ export function convertSessionResultsToCSV(sessionResults: SessionResults): stri
   let csvContent = 'Player';
 
   // Add question headers
-  sessionResults.questionResults.forEach((question, index) => {
+  sessionResults.questionResultsByPlayer[0].questionResults.forEach((question, index) => {
     csvContent += `,question${index + 1}score,question${index + 1}rank`;
   });
   csvContent += '\n';
@@ -168,4 +168,46 @@ export function convertSessionResultsToCSV(sessionResults: SessionResults): stri
   });
 
   return csvContent;
+}
+
+export function generateRandomString() {
+  const letters = 'abcdefghijklmnopqrstuvwxyz';
+  const numbers = '0123456789';
+  let result = '';
+
+  // Generate 5 unique letters
+  while (result.length < 5) {
+    const randomLetter = letters[Math.floor(Math.random() * letters.length)];
+    if (!result.includes(randomLetter)) {
+      result += randomLetter;
+    }
+  }
+
+  // Generate 3 unique numbers
+  while (result.length < 8) {
+    const randomNumber = numbers[Math.floor(Math.random() * numbers.length)];
+    if (!result.includes(randomNumber)) {
+      result += randomNumber;
+    }
+  }
+
+  return result;
+}
+
+// this function will initialise detailed result for each player after the
+// seession move out of the lobby state
+export function playerDetailedResultsInitialisation(session: Session) {
+  session.results.questionResultsByPlayer = [];
+  session.players.forEach(player =>
+    session.results.questionResultsByPlayer.push({
+      playerName: player.name,
+      playerId: player.playerId,
+      questionResults: session.quizCopy.questions.map(question => ({
+        questionId: question.questionId,
+        score: 0,
+        rank: 1,
+        timeToAnswer: -1
+      }))
+    })
+  );
 }

@@ -4,24 +4,10 @@
       "userId": 1,
       "tokens": [
         {
-          "token": "023466"
+          "token": "841354"
         }
       ],
       "email": "admin1@gmail.com",
-      "password": "f42857add00a1047e650c6c4d0f909bfface390fe00310026b07bc77027dcf4e",
-      "name": "JJone ZZ",
-      "numSuccessfulLogins": 1,
-      "numFailedPasswordsSinceLastLogin": 0,
-      "passwordUsedThisYear": []
-    },
-    {
-      "userId": 2,
-      "tokens": [
-        {
-          "token": "085193"
-        }
-      ],
-      "email": "admin2@gmail.com",
       "password": "f42857add00a1047e650c6c4d0f909bfface390fe00310026b07bc77027dcf4e",
       "name": "JJone ZZ",
       "numSuccessfulLogins": 1,
@@ -32,28 +18,28 @@
   "quizzes": [
     {
       "creatorId": 1,
-      "quizId": 3,
+      "quizId": 35,
       "name": "Quiz 1",
-      "timeCreated": 1722586903,
-      "timeLastEdited": 1722586903,
+      "timeCreated": 1722587008,
+      "timeLastEdited": 1722587008,
       "description": "1st description",
       "numQuestions": 1,
       "questions": [
         {
-          "questionId": 53,
+          "questionId": 41,
           "question": "Valid question 1?",
           "duration": 3,
           "points": 2,
           "answers": [
             {
-              "answerId": 10,
-              "colour": "yellow",
+              "answerId": 39,
+              "colour": "blue",
               "answer": "A",
               "correct": true
             },
             {
-              "answerId": 40,
-              "colour": "red",
+              "answerId": 99,
+              "colour": "green",
               "answer": "B",
               "correct": false
             }
@@ -64,27 +50,30 @@
       "duration": 3,
       "sessions": [
         {
-          "sessionId": 20,
+          "sessionId": 51,
           "atQuestion": 0,
           "players": [
             {
-              "playerId": 3,
-              "name": "AAAA",
-              "score": 0
-            },
-            {
-              "playerId": 1,
-              "name": "Abbb",
-              "score": 0
-            },
-            {
-              "playerId": 2,
-              "name": "cdeerr4",
+              "playerId": 60,
+              "name": "Yooiuiudsf",
               "score": 0
             }
           ],
           "state": 0,
-          "messages": [],
+          "messages": [
+            {
+              "messageBody": "message 1",
+              "playerId": 60,
+              "playerName": "Yooiuiudsf",
+              "timeSent": 1722587008
+            },
+            {
+              "messageBody": "message 2",
+              "playerId": 60,
+              "playerName": "Yooiuiudsf",
+              "timeSent": 1722587008
+            }
+          ],
           "results": {
             "usersRankedByScore": [],
             "questionResults": []
@@ -92,28 +81,28 @@
           "autoStartNum": 5,
           "quizCopy": {
             "creatorId": 1,
-            "quizId": 3,
+            "quizId": 35,
             "name": "Quiz 1",
-            "timeCreated": 1722586903,
-            "timeLastEdited": 1722586903,
+            "timeCreated": 1722587008,
+            "timeLastEdited": 1722587008,
             "description": "1st description",
             "numQuestions": 1,
             "questions": [
               {
-                "questionId": 53,
+                "questionId": 41,
                 "question": "Valid question 1?",
                 "duration": 3,
                 "points": 2,
                 "answers": [
                   {
-                    "answerId": 10,
-                    "colour": "yellow",
+                    "answerId": 39,
+                    "colour": "blue",
                     "answer": "A",
                     "correct": true
                   },
                   {
-                    "answerId": 40,
-                    "colour": "red",
+                    "answerId": 99,
+                    "colour": "green",
                     "answer": "B",
                     "correct": false
                   }

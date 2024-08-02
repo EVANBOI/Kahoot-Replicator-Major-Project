@@ -131,9 +131,9 @@ describe('Unsuccessful Updates: 400 errors', () => {
   test('SKIP_COUNTDOWN cannot be applied in the question close state', () => {
     adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
     adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
-    setTimeout(() => {
-      turnQuestionClose(sessionId1, quizId1);
-    }, 3 * 1000);
+    // setTimeout(() => {
+    //   turnQuestionClose(sessionId1, quizId1);
+    // }, 3 * 1000);
     sleepSync(3 * 1000);
     const res = adminQuizSessionStatus(quizId1, sessionId1, token1).jsonBody.state;
     expect(res).toStrictEqual(SessionStatus.QUESTION_CLOSE);

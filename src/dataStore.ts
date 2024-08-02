@@ -6,7 +6,7 @@ import fs from 'fs';
 export const dataStore: Data = {
   users: [],
   quizzes: [],
-  trash: [],
+  trash: []
 };
 // export const sessionIdToTimerObject: SessionIdToTimerObject = {};
 export const sessionIdToTimerMap = new Map<number, ReturnType<typeof setTimeout>>();
@@ -42,6 +42,6 @@ export function getData(): Data {
 
 // Use set(newData) to pass in the entire data object, with modifications made
 export function setData(newData: Data) {
-  const data = JSON.stringify(newData);
+  const data = JSON.stringify(newData, null, 2);
   fs.writeFileSync(filePath, data, { flag: 'w' });
 }

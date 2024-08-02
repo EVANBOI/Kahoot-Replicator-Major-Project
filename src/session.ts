@@ -177,9 +177,9 @@ export function adminQuizSessionUpdate(
         try {
           turnQuestionOpen(sessionId, quizId);
           sessionIdToTimerMap.delete(sessionId);
-          console.log(`Succesffully deleted timer with id ${sessionId} after ${DELAY} seconds`);
+          console.log(`Succesffully deleted session with id ${sessionId} after ${DELAY} seconds`);
         } catch {
-          console.log(`Failed to delete announcement with id ${sessionId} after ${DELAY} seconds`);
+          console.log(`Failed to delete session with id ${sessionId} after ${DELAY} seconds`);
         }
       }, DELAY * 1000);
       sessionIdToTimerMap.set(sessionId, timer);
@@ -190,14 +190,20 @@ export function adminQuizSessionUpdate(
     }
   } else if (session.state === SessionStatus.QUESTION_COUNTDOWN) {
     if (action === SessionAction.END) {
+      const timer = sessionIdToTimerMap.get(sessionId);
+      if (timer === undefined) {
+        throw new Error(`There is no scheduled removal for the session with ID: ${sessionId}`);
+      }
+      clearTimeout(timer);
+      sessionIdToTimerMap.delete(sessionId);
       session.state = SessionStatus.END;
+
     } else if (action === SessionAction.SKIP_COUNTDOWN) {
       session.atQuestion++;
       question = session.quizCopy.questions[session.atQuestion - 1];
-
       const timer = sessionIdToTimerMap.get(sessionId);
       if (timer === undefined) {
-        throw new Error(`There is no scheduled removal for the announcement with ID: ${sessionId}`);
+        throw new Error(`There is no scheduled removal for the session with ID: ${sessionId}`);
       }
       clearTimeout(timer);
       sessionIdToTimerMap.delete(sessionId);
@@ -206,7 +212,7 @@ export function adminQuizSessionUpdate(
         try {
           turnQuestionClose(sessionId, quizId);
           sessionIdToTimerMap.delete(sessionId);
-          console.log(`Succesffully turned skipped countdown with id ${sessionId} after ${question.duration} seconds`);
+          console.log(`Succesfully turned skipped countdown with id ${sessionId} after ${question.duration} seconds`);
         } catch {
           console.log(`Failed to skip countdown with id ${sessionId} after ${question.duration} seconds`);
         }
@@ -219,7 +225,7 @@ export function adminQuizSessionUpdate(
     if (action === SessionAction.END) {
       const timer = sessionIdToTimerMap.get(sessionId);
       if (timer === undefined) {
-        throw new Error(`There is no scheduled removal for the announcement with ID: ${sessionId}`);
+        throw new Error(`There is no scheduled removal for the session with ID: ${sessionId}`);
       }
       clearTimeout(timer);
       sessionIdToTimerMap.delete(sessionId);
@@ -227,7 +233,7 @@ export function adminQuizSessionUpdate(
     } else if (action === SessionAction.GO_TO_ANSWER) {
       const timer = sessionIdToTimerMap.get(sessionId);
       if (timer === undefined) {
-        throw new Error(`There is no scheduled removal for the announcement with ID: ${sessionId}`);
+        throw new Error(`There is no scheduled removal for the session with ID: ${sessionId}`);
       }
       clearTimeout(timer);
       sessionIdToTimerMap.delete(sessionId);
@@ -240,6 +246,26 @@ export function adminQuizSessionUpdate(
       session.state = SessionStatus.END;
     } else if (action === SessionAction.NEXT_QUESTION) {
       session.state = SessionStatus.QUESTION_COUNTDOWN;
+      const timer = setTimeout(() => {
+        try {
+          turnQuestionOpen(sessionId, quizId);
+          sessionIdToTimerMap.delete(sessionId);
+          console.log(`Succesffully deleted session with id ${sessionId} after ${DELAY} seconds`);
+        } catch {
+          console.log(`Failed to delete session with id ${sessionId} after ${DELAY} seconds`);
+        }
+      }, DELAY * 1000);
+      sessionIdToTimerMap.set(sessionId, timer);
+      const newTimer = setTimeout(() => {
+        try {
+          turnQuestionClose(sessionId, quizId);
+          sessionIdToTimerMap.delete(sessionId);
+          console.log(`Succesfully turned skipped countdown with id ${sessionId} after ${question.duration} seconds`);
+        } catch {
+          console.log(`Failed to skip countdown with id ${sessionId} after ${question.duration} seconds`);
+        }
+      }, question.duration * 1000);
+      sessionIdToTimerMap.set(sessionId, newTimer);
     } else if (action === SessionAction.GO_TO_ANSWER) {
       session.state = SessionStatus.ANSWER_SHOW;
     } else if (action === SessionAction.GO_TO_FINAL_RESULTS) {
@@ -252,6 +278,27 @@ export function adminQuizSessionUpdate(
       session.state = SessionStatus.END;
     } else if (action === SessionAction.NEXT_QUESTION) {
       session.state = SessionStatus.QUESTION_COUNTDOWN;
+      const timer = setTimeout(() => {
+        try {
+          turnQuestionOpen(sessionId, quizId);
+          sessionIdToTimerMap.delete(sessionId);
+          console.log(`Succesffully deleted session with id ${sessionId} after ${DELAY} seconds`);
+        } catch {
+          console.log(`Failed to delete session with id ${sessionId} after ${DELAY} seconds`);
+        }
+      }, DELAY * 1000);
+      sessionIdToTimerMap.set(sessionId, timer);
+
+      const newTimer = setTimeout(() => {
+        try {
+          turnQuestionClose(sessionId, quizId);
+          sessionIdToTimerMap.delete(sessionId);
+          console.log(`Succesfully turned skipped countdown with id ${sessionId} after ${question.duration} seconds`);
+        } catch {
+          console.log(`Failed to skip countdown with id ${sessionId} after ${question.duration} seconds`);
+        }
+      }, question.duration * 1000);
+      sessionIdToTimerMap.set(sessionId, newTimer);
     } else if (action === SessionAction.GO_TO_FINAL_RESULTS) {
       session.state = SessionStatus.FINAL_RESULTS;
     } else {
@@ -273,6 +320,7 @@ export function adminQuizSessionUpdate(
 export const turnQuestionClose = (sessionId: number, quizId: number) => {
   const database = getData();
   const quiz = findQuizWithId(database, quizId);
+  console.log('thing', quiz)
   const session = quiz.sessions.find(s => s.sessionId === sessionId);
   if (session) {
     session.state = SessionStatus.QUESTION_CLOSE;
@@ -310,15 +358,15 @@ export function adminQuizSessionStatus (quizId: number, sessionId: number): GetS
     atQuestion: sessionValid.atQuestion,
     players: sessionValid.players,
     metadata: {
-      quizId: quiz.quizId,
-      name: quiz.name,
-      timeCreated: quiz.timeCreated,
-      timeLastEdited: quiz.timeLastEdited,
-      description: quiz.description,
-      numQuestions: quiz.numQuestions,
-      questions: quiz.questions,
-      duration: quiz.duration,
-      thumbnailUrl: quiz.thumbnailUrl
+      quizId: sessionValid.quizCopy.quizId,
+      name: sessionValid.quizCopy.name,
+      timeCreated: sessionValid.quizCopy.timeCreated,
+      timeLastEdited: sessionValid.quizCopy.timeLastEdited,
+      description: sessionValid.quizCopy.description,
+      numQuestions: sessionValid.quizCopy.numQuestions,
+      questions: sessionValid.quizCopy.questions,
+      duration: sessionValid.quizCopy.duration,
+      thumbnailUrl: sessionValid.quizCopy.thumbnailUrl
     }
   };
 }

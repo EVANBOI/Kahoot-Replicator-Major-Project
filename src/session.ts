@@ -3,7 +3,7 @@ import {
   sessionIdToTimerMap
 } from './dataStore';
 import { BadRequest, Unauthorised, Forbidden } from './error';
-import { findUserBySessionId, findQuizWithId, convertSessionResultsToCSV } from './helpers';
+import { findUserBySessionId, findQuizWithId, convertSessionResultsToCSV, generateRandomString } from './helpers';
 import * as path from 'path';
 import * as fs from 'fs';
 import {
@@ -33,6 +33,7 @@ export enum SessionStatus {
 }
 import ShortUniqueId from 'short-unique-id';
 const sessionUid = new ShortUniqueId({ dictionary: 'number' });
+const playerUid = new ShortUniqueId({ dictionary: 'number' });
 
 export enum SessionAction {
   NEXT_QUESTION,
@@ -319,7 +320,6 @@ export function adminQuizSessionUpdate(
 export const turnQuestionClose = (sessionId: number, quizId: number) => {
   const database = getData();
   const quiz = findQuizWithId(database, quizId);
-  console.log('thing', quiz);
   const session = quiz.sessions.find(s => s.sessionId === sessionId);
   if (session) {
     session.state = SessionStatus.QUESTION_CLOSE;
@@ -378,10 +378,26 @@ export function adminQuizSessionStatus (quizId: number, sessionId: number): GetS
  */
 
 export function playerStatus(playerId: number): PlayerStatusResult | Error {
+  console.log(playerId);
+  const database = getData();
+  let currentSession: Session | undefined;
+  let currentQuiz: Quiz | undefined;
+  for (const quiz of database.quizzes) {
+    currentSession = quiz.sessions?.find(session =>
+      session.players.find(player => player.playerId === playerId)
+    );
+    if (currentSession) {
+      currentQuiz = quiz;
+      break;
+    }
+  }
+  if (!currentSession) {
+    throw new BadRequest(`Player ${playerId} does not exist`);
+  }
   return {
-    state: 'LOBBY',
-    numQuestions: 1,
-    atQuestion: 1
+    state: currentSession.state,
+    numQuestions: currentQuiz.numQuestions,
+    atQuestion: currentSession.atQuestion
   };
 }
 
@@ -437,16 +453,29 @@ export function playerQuestionInfo (playerId: number, questionPosition: number):
  * @returns {ErrorMessage} An error message
  */
 export function playerChatlog(playerId: number): PlayerChatlogResult | Error {
-  return {
-    messages: [
-      {
-        messageBody: 'This is a message body',
-        playerId: 5546,
-        playerName: 'Yuchao Jiang',
-        timeSent: 1683019484
-      }
-    ]
-  };
+  const database = getData();
+  const player = database.quizzes
+    .flatMap(q => q.sessions || [])
+    .flatMap(s => s.players || [])
+    .find(p => p.playerId === playerId);
+
+  if (!player) {
+    throw new BadRequest(`Player ${playerId} does not exist`);
+  }
+
+  let currentSession: Session | undefined;
+  for (const quiz of database.quizzes) {
+    currentSession = quiz.sessions?.find(session =>
+      session.players.find(player => player.playerId === playerId)
+    );
+    if (currentSession) {
+      break;
+    }
+  }
+  console.log(currentSession);
+  console.log(currentSession.messages);
+
+  return { messages: currentSession.messages };
 }
 
 /**
@@ -476,7 +505,7 @@ export function playerSendMessage (playerId: number, message: MessageObject): Em
     messageBody: message.messageBody,
     playerId: playerId,
     playerName: player.name,
-    timeSet: timeSet
+    timeSent: timeSet
   };
 
   let currentSession: Session | undefined;
@@ -490,6 +519,7 @@ export function playerSendMessage (playerId: number, message: MessageObject): Em
     }
   }
   currentSession.messages.push(messageInfo);
+  setData(database);
   return {};
 }
 
@@ -617,73 +647,52 @@ export function playerResults(
   };
 }
 
-// function generateRandomName(): string {
-//   const letters = 'abcdefghijklmnopqrstuvwxyz';
-//   const numbers = '0123456789';
-//   let name = '';
-//   while (name.length < 5) {
-//     const char = letters.charAt(Math.floor(Math.random() * letters.length));
-//     if (!name.includes(char)) {
-//       name += char;
-//     }
-//   }
-//   while (name.length < 8) {
-//     const num = numbers.charAt(Math.floor(Math.random() * numbers.length));
-//     if (!name.includes(num)) {
-//       name += num;
-//     }
-//   }
-//   return name;
-// }
-
 export function playerJoin(
   sessionId: number,
   name: string
 ): { playerId: number } {
-  // const database = getData();
-
-  // // Find the session that matches the sessionId
-  // let session: Session | undefined;
-  // for (const quiz of database.quizzes) {
-  //   session = quiz.sessions?.find(s => s.sessionId === sessionId);
-  //   if (session) break;
-  // }
-
-  // if (!session) {
-  //   throw new BadRequest('Session Id does not refer to a valid session.');
-  // }
-
-  // if (session.state !== SessionStatus.LOBBY) {
-  //   throw new BadRequest('Session is not in LOBBY state.');
-  // }
-
+  const database = getData();
+  // Find the session that matches the sessionId
+  let session: Session | undefined;
+  for (const quiz of database.quizzes) {
+    session = quiz.sessions?.find(s => s.sessionId === sessionId);
+    if (session) {
+      break;
+    }
+  }
+  if (!session) {
+    throw new BadRequest('Session Id does not refer to a valid session.');
+  } else if (session.state !== SessionStatus.LOBBY) {
+    throw new BadRequest('Session is not in LOBBY state.');
+  }
   // // Check if the name is unique
-  // if (name) {
-  //   const allPlayers = database.quizzes.flatMap(quiz => quiz.sessions?.flatMap(session => session.players) || []);
-  //   const existingPlayer = allPlayers.find(player => player.name === name);
-  //   if (existingPlayer) {
-  //     throw new BadRequest('Name of user entered is not unique.');
-  //   }
-  // } else {
-  //   // Generate a random name if none is provided
-  //   name = generateRandomName();
+  if (name !== '') {
+    const allPlayers = session.players;
+    const existingPlayer = allPlayers.find(player => player.name === name);
+    if (existingPlayer) {
+      throw new BadRequest('Name of user entered is not unique.');
+    }
+  } else if (name === '') {
+    const name = generateRandomString();
+    console.log('Generated Name:', name);
+  }
+
+  // // Generate a random name if none is provided
+  //   if (/^[a-z]{5}\d{3}$/.test(name)) {
+  //       console.log('Name matches the pattern:', name);
+  //   } else {
+  //       console.log('Name does not match the pattern:', name);
   // }
 
-  // // Logic to generate a new player ID
-  // const allPlayers = database.quizzes.flatMap(quiz => quiz.sessions?.flatMap(session => session.players) || []);
-  // const newPlayerId = allPlayers.length > 0
-  //   ? Math.max(...allPlayers.map(p => p.playerId)) + 1
-  //   : 1;
+  // Logic to generate a new player ID
+  const newPlayerId = parseInt(playerUid.seq());
+  // Add the new player to the session
+  const newPlayer = { playerId: newPlayerId, name: name, score: 0 };
+  session.players.push(newPlayer);
 
-  // // Add the new player to the session
-  // const newPlayer = { playerId: newPlayerId, name, score: 0 };
-  // session.players.push(newPlayer);
-
-  // // Save the updated data back to the datastore
-  // setData(database);
-
-  // return { playerId: newPlayerId };
-  return { playerId: 5566 };
+  // Save the updated data back to the datastore
+  setData(database);
+  return { playerId: newPlayerId };
 }
 
 export function adminQuizSessionStart(quizId: number, token: string, autoStartNum: number) {

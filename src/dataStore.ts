@@ -9,7 +9,7 @@ export const dataStore: Data = {
   quizzes: [],
   trash: []
 };
-// export const sessionIdToTimerObject: SessionIdToTimerObject = {};
+
 export const sessionIdToTimerMap = new Map<number, ReturnType<typeof setTimeout>>();
 
 // YOU SHOULD MODIFY THIS OBJECT ABOVE ONLY

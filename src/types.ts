@@ -87,8 +87,6 @@ export type Data = {
     trash: Quiz[]
 }
 
-// export type SessionIdToTimerObject = Record<number, ReturnType<typeof setTimeout>>
-
 export type QuestionIdObject = {
     questionId: number
 }

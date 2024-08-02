@@ -1,6 +1,5 @@
 import {
   setData, getData,
-  // sessionIdToTimerObject
   sessionIdToTimerMap
 } from './dataStore';
 import { ClearResult } from './types';
@@ -18,13 +17,6 @@ export function clear (): ClearResult {
     clearTimeout(timer);
   }
   sessionIdToTimerMap.clear();
-
-  // if (sessionIdToTimerObject) {
-  //   for (const [sessionId, timer] of Object.entries(sessionIdToTimerObject)) {
-  //     clearTimeout(timer);
-  //     delete sessionIdToTimerObject[Number(sessionId)];
-  //   }
-  // }
   setData(store);
   return {};
 }

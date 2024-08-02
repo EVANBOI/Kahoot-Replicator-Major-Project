@@ -1,6 +1,5 @@
 import {
   getData, setData,
-  // sessionIdToTimerObject
   sessionIdToTimerMap
 } from './dataStore';
 import { BadRequest, Unauthorised, Forbidden } from './error';

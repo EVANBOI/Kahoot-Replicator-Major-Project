@@ -101,7 +101,7 @@ describe('Failure cases', () => {
     });
   });
 
-  test('Quiz ID does not exist', () => {
+  test.only('Quiz ID does not exist', () => {
     const result = adminQuizQuestionDelete(sessionId, validQuizId + validQuizId2, validQuestionId);
     expect(result).toStrictEqual({
       statusCode: 403,

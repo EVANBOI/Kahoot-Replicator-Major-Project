@@ -536,8 +536,7 @@ app.delete('/v2/admin/quiz/:quizid/question/:questionid', (req: Request, res: Re
   const questionId = parseInt(req.params.questionid);
 
   try {
-    adminQuizQuestionDelete(token, quizId, questionId);
-    res.status(StatusCodes.OK).json({});
+    return res.json(adminQuizQuestionDelete(token, quizId, questionId));
   } catch (e) {
     if (e instanceof Unauthorised) {
       return res.status(StatusCodes.UNAUTHORIZED).json({ error: e.message });

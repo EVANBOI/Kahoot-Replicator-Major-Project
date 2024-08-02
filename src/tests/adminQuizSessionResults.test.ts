@@ -1,11 +1,11 @@
 import {
-  ERROR400, 
-  ERROR401, 
-  ERROR403, 
-  VALID_USER_REGISTER_INPUTS_1, 
-  VALID_USER_REGISTER_INPUTS_2, 
-  VALID_QUIZ_CREATE_INPUTS_1, 
-  validQuestion1V2, 
+  ERROR400,
+  ERROR401,
+  ERROR403,
+  VALID_USER_REGISTER_INPUTS_1,
+  VALID_USER_REGISTER_INPUTS_2,
+  VALID_QUIZ_CREATE_INPUTS_1,
+  validQuestion1V2,
   validQuestion3V2
 } from '../testConstants';
 import sleepSync from 'slync';
@@ -23,7 +23,7 @@ import {
 } from '../wrappers';
 
 import { QuestionBody } from '../types';
-import { SessionAction, SessionStatus } from '../session';
+import { SessionAction } from '../session';
 
 let token1: string;
 let sessionId1: number;
@@ -82,7 +82,7 @@ describe('Get /v1/admin/quiz/{quizid}/session/{sessionid}/results', () => {
       const questions: QuestionBody[] = adminQuizInfoV2(token1, quizId1).jsonBody.questions;
       const correctAnswerId1 = questions[0].answers.find(answer => answer.correct).answerId;
       const correctAnswerId2 = questions[1].answers.find(answer => answer.correct).answerId;
-      
+
       adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
       adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
       playerQuestionAnswer(playerId1, 1, [correctAnswerId1]);

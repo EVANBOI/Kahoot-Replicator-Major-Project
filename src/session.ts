@@ -32,7 +32,6 @@ export enum SessionStatus {
   END
 }
 import ShortUniqueId from 'short-unique-id';
-import { StatusCodes } from 'http-status-codes';
 const sessionUid = new ShortUniqueId({ dictionary: 'number' });
 
 export enum SessionAction {

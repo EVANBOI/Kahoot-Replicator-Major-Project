@@ -192,7 +192,6 @@ app.get('/v1/admin/user/details', (req: Request, res: Response) => {
 
 app.get('/v2/admin/user/details', (req: Request, res: Response) => {
   const token = req.headers.token as string;
-
   try {
     const userDetails = adminUserDetails(token);
     res.json(userDetails);

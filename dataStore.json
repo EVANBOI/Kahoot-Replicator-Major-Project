@@ -1,36 +1,5 @@
 {
-  "users": [
-    {
-      "userId": 1,
-      "tokens": [],
-      "email": "admin1@ad.unsw.edu.au",
-      "password": "70ec6906ae260bcc42ebcd7691f75d3b30bc00a2541f382f2c1a469bd33d231b",
-      "name": "JJ ZZ",
-      "numSuccessfulLogins": 1,
-      "numFailedPasswordsSinceLastLogin": 0,
-      "passwordUsedThisYear": []
-    },
-    {
-      "userId": 2,
-      "tokens": [],
-      "email": "admin2@ad.unsw.edu.au",
-      "password": "1750a1a9efdcd001f666b3466ef6228f458c77038d792ff97e8689ed8d3f43c3",
-      "name": "JJ ZZ",
-      "numSuccessfulLogins": 1,
-      "numFailedPasswordsSinceLastLogin": 0,
-      "passwordUsedThisYear": []
-    },
-    {
-      "userId": 3,
-      "tokens": [],
-      "email": "admin3@ad.unsw.edu.au",
-      "password": "1750a1a9efdcd001f666b3466ef6228f458c77038d792ff97e8689ed8d3f43c3",
-      "name": "JJ ZZ",
-      "numSuccessfulLogins": 1,
-      "numFailedPasswordsSinceLastLogin": 0,
-      "passwordUsedThisYear": []
-    }
-  ],
+  "users": [],
   "quizzes": [],
   "trash": []
 }

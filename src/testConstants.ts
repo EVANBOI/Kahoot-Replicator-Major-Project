@@ -152,3 +152,15 @@ export const validQuestion3V2: QuestionBody = {
   ],
   thumbnailUrl: 'http://google.com/some/image/path.jpg'
 };
+
+export const validQuestionV2FAST: QuestionBody = {
+  questionId: expect.any(Number),
+  question: 'Valid question 1?',
+  duration: 0.001,
+  points: 2,
+  answers: [
+    { answerId: expect.any(Number), colour: expect.any(String), answer: 'A', correct: true },
+    { answerId: expect.any(Number), colour: expect.any(String), answer: 'B', correct: false }
+  ],
+  thumbnailUrl: 'http://google.com/some/image/path.jpg'
+};

@@ -1,7 +1,6 @@
 import { ERROR400 } from '../testConstants';
 import { adminAuthRegister, adminAuthLogin } from '../wrappers';
 import { clear } from '../wrappers';
-import { ok } from '../helpers';
 
 const SUCCESSFULLOGIN = {
   statusCode: 200,
@@ -32,12 +31,12 @@ describe('200 Success Cases', () => {
   });
 
   test('Correctly returns two sessionId', () => {
-    const Id1 = ok(adminAuthRegister(
+    const Id1 = adminAuthRegister(
       'evan.xiong@unsw.edu.au',
-      'abcde12345', 'Evan', 'Xiong'));
-    const Id2 = ok(adminAuthRegister(
+      'abcde12345', 'Evan', 'Xiong').jsonBody.token;
+    const Id2 = adminAuthRegister(
       'jessie.zhang@unsw.edu.au',
-      'qwerty67890', 'Jessie', 'Zhang'));
+      'qwerty67890', 'Jessie', 'Zhang').jsonBody.token;
     expect(adminAuthLogin('evan.xiong@unsw.edu.au', 'abcde12345')).toStrictEqual(SUCCESSFULLOGIN);
     expect(adminAuthLogin('jessie.zhang@unsw.edu.au', 'qwerty67890')).toStrictEqual(SUCCESSFULLOGIN);
     expect(Id1).not.toStrictEqual(expect(Id2));

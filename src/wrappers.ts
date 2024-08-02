@@ -1,6 +1,7 @@
 import request, { HttpVerb } from 'sync-request';
 import { port, url } from '../src/config.json';
 import { QuestionBody, PositionWithTokenObj, PositionObj, MessageObject, Data } from './types';
+import { SessionAction } from './session';
 
 const SERVER_URL = `${url}:${port}`;
 const DEPLOYED_URL = 'https://1531-24t2-t09a-aero.vercel.app'
@@ -315,7 +316,7 @@ export const adminQuizTransferV2 = (
   quizId: number,
   userEmail: string
 ) => {
-  return requestHelper('POST', `/v1/admin/quiz/${quizId}/transfer`, { userEmail }, token);
+  return requestHelper('POST', `/v2/admin/quiz/${quizId}/transfer`, { userEmail }, token);
 };
 
 export const adminQuizQuestionDuplicate = (
@@ -338,8 +339,16 @@ export const adminQuizRestore = (token: string, quizid: number) => {
   return requestHelper('POST', `/v1/admin/quiz/${quizid}/restore`, { token });
 };
 
+export const adminQuizRestoreV2 = (token: string, quizid: number) => {
+  return requestHelper('POST', `/v2/admin/quiz/${quizid}/restore`, { }, token);
+};
+
 export const adminQuizQuestionDelete = (token: string, quizId: number, questionId: number) => {
   return requestHelper('DELETE', `/v1/admin/quiz/${quizId}/question/${questionId}`, { token });
+};
+
+export const adminQuizQuestionDeleteV2 = (token: string, quizId: number, questionId: number) => {
+  return requestHelper('DELETE', `/v2/admin/quiz/${quizId}/question/${questionId}`, { }, token);
 };
 
 export const adminQuizQuestionMove = (
@@ -400,7 +409,7 @@ export const adminQuizSessionUpdate = (
   quizid: number,
   sessionid: number,
   token: string,
-  action: string
+  action: SessionAction
 ) => {
   return requestHelper('PUT', `/v1/admin/quiz/${quizid}/session/${sessionid}`, { action }, token);
 };
@@ -414,7 +423,7 @@ export const playerStatus = (
 export const playerChatlog = (
   playerid: number
 ) => {
-  return requestHelper('GET', `v1/player/${playerid}/chat`, {});
+  return requestHelper('GET', `/v1/player/${playerid}/chat`, {});
 };
 
 export const adminQuizSessionStart = (

@@ -1,6 +1,7 @@
+import { SessionAction } from '../session';
 import {
   ERROR401, ERROR403, VALID_USER_REGISTER_INPUTS_1, VALID_QUIZ_CREATE_INPUTS_1,
-  validQuestion1V2, VALID_USER_REGISTER_INPUTS_2, VALID_QUIZ_CREATE_INPUTS_2
+  validQuestion1V2, VALID_USER_REGISTER_INPUTS_2
 } from '../testConstants';
 import {
   clear,
@@ -14,7 +15,7 @@ import {
 
 let token1: string;
 let sessionId1: number, sessionId2: number;
-let quizId1: number, quizId2: number;
+let quizId1: number;
 
 beforeEach(() => {
   clear();
@@ -30,7 +31,6 @@ beforeEach(() => {
     VALID_QUIZ_CREATE_INPUTS_1.DESCRIPTION
   ).jsonBody.quizId;
   adminCreateQuizQuestionV2(quizId1, token1, validQuestion1V2);
-  sessionId1 = adminQuizSessionStart(quizId1, token1, 5).jsonBody.sessionId;
 });
 
 describe('GET /v1/admin/quiz/{quizid}/sessions', () => {
@@ -54,62 +54,56 @@ describe('GET /v1/admin/quiz/{quizid}/sessions', () => {
       expect(adminQuizSessionView(token2, quizId1)).toStrictEqual(ERROR403);
     });
   });
-
   describe('success cases', () => {
+    test('Successfully view session with no sessions existing', () => {
+      expect(adminQuizSessionView(token1, quizId1).jsonBody).toStrictEqual({
+        activeSessions: [],
+        inactiveSessions: []
+      });
+    });
     test('Successfully view session with only 1 active session existing', () => {
-      // all adminQuizSessionUpdate should change the third parameter to new one,
-      // when the actuall implementation is done.
-      adminQuizSessionUpdate(quizId1, sessionId1, token1, 'GO_TO_FINAL_RESULTS');
+      sessionId1 = adminQuizSessionStart(quizId1, token1, 5).jsonBody.sessionId;
+      adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_FINAL_RESULTS);
       expect(adminQuizSessionView(token1, quizId1).jsonBody).toStrictEqual({
         activeSessions: [sessionId1],
         inactiveSessions: []
-      });
-    });
-    test.failing('Successfully view session with only 1 inactive session existing', () => {
-      adminQuizSessionUpdate(quizId1, sessionId1, token1, 'END');
-      expect(adminQuizSessionView(token1, quizId1).jsonBody).toStrictEqual({
-        activeSessions: [],
-        inactiveSessions: [sessionId1]
-      });
-    });
-    test.failing('Successfully view session with no sessions existing', () => {
-      // there already exists a session from the beforeEach
-      quizId2 = adminQuizCreateV2(
-        token1,
-        VALID_QUIZ_CREATE_INPUTS_2.NAME,
-        VALID_QUIZ_CREATE_INPUTS_2.DESCRIPTION
-      ).jsonBody.quizId;
-      adminCreateQuizQuestionV2(quizId2, token1, validQuestion1V2);
-      expect(adminQuizSessionView(token1, quizId1).jsonBody).toStrictEqual({
-        activeSessions: [],
-        inactiveSessions: []
-      });
-    });
-    test.failing('Successfully view session with both active and inactive sessions existing', () => {
-      sessionId2 = adminQuizSessionStart(quizId1, token1, 5).jsonBody.sessionId;
-      adminQuizSessionUpdate(quizId1, sessionId1, token1, 'GO_TO_FINAL_RESULTS');
-      adminQuizSessionUpdate(quizId1, sessionId2, token1, 'END');
-      expect(adminQuizSessionView(token1, quizId1).jsonBody).toStrictEqual({
-        activeSessions: [sessionId1],
-        inactiveSessions: [sessionId2]
       });
     });
     test('Successfully view session with multiple active sessions existing', () => {
+      sessionId1 = adminQuizSessionStart(quizId1, token1, 5).jsonBody.sessionId;
       sessionId2 = adminQuizSessionStart(quizId1, token1, 5).jsonBody.sessionId;
-      adminQuizSessionUpdate(quizId1, sessionId1, token1, 'GO_TO_FINAL_RESULTS');
-      adminQuizSessionUpdate(quizId1, sessionId2, token1, 'GO_TO_FINAL_RESULTS');
+      adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_FINAL_RESULTS);
+      adminQuizSessionUpdate(quizId1, sessionId2, token1, SessionAction.GO_TO_FINAL_RESULTS);
       expect(adminQuizSessionView(token1, quizId1).jsonBody).toStrictEqual({
         activeSessions: [sessionId1, sessionId2],
         inactiveSessions: []
       });
     });
-    test.failing('Successfully view session with multiple inactive sessions existing', () => {
+    test('Successfully view session with only 1 inactive session existing', () => {
+      sessionId1 = adminQuizSessionStart(quizId1, token1, 5).jsonBody.sessionId;
+      adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.END);
+      expect(adminQuizSessionView(token1, quizId1).jsonBody).toStrictEqual({
+        activeSessions: [],
+        inactiveSessions: [sessionId1]
+      });
+    });
+    test('Successfully view session with multiple inactive sessions existing', () => {
+      sessionId1 = adminQuizSessionStart(quizId1, token1, 5).jsonBody.sessionId;
       sessionId2 = adminQuizSessionStart(quizId1, token1, 5).jsonBody.sessionId;
-      adminQuizSessionUpdate(quizId1, sessionId1, token1, 'END');
-      adminQuizSessionUpdate(quizId1, sessionId2, token1, 'END');
+      adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.END);
+      adminQuizSessionUpdate(quizId1, sessionId2, token1, SessionAction.END);
       expect(adminQuizSessionView(token1, quizId1).jsonBody).toStrictEqual({
         activeSessions: [],
         inactiveSessions: [sessionId1, sessionId2]
+      });
+    });
+    test('Successfully view session with both active and inactive sessions existing', () => {
+      sessionId1 = adminQuizSessionStart(quizId1, token1, 5).jsonBody.sessionId;
+      sessionId2 = adminQuizSessionStart(quizId1, token1, 5).jsonBody.sessionId;
+      adminQuizSessionUpdate(quizId1, sessionId2, token1, SessionAction.END);
+      expect(adminQuizSessionView(token1, quizId1).jsonBody).toStrictEqual({
+        activeSessions: [sessionId1],
+        inactiveSessions: [sessionId2]
       });
     });
   });

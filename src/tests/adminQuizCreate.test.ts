@@ -2,7 +2,6 @@ import { ERROR401, ERROR400 } from '../testConstants';
 import { adminAuthRegister } from '../wrappers';
 import { adminQuizCreateV2 } from '../wrappers';
 import { clear } from '../wrappers';
-import { ok } from '../helpers';
 
 const QUIZCREATED = {
   statusCode: 200,
@@ -74,12 +73,11 @@ describe('When registering an user', () => {
   });
 
   test('Sucessfully give two quizIds', () => {
-    const { jsonBody } = ok(
-      adminAuthRegister(
-        'zhihao.cao@unsw.edu.au',
-        'qwerty67890',
-        'Zhihao',
-        'Cao'));
+    const { jsonBody } = adminAuthRegister(
+      'zhihao.cao@unsw.edu.au',
+      'qwerty67890',
+      'Zhihao',
+      'Cao');
     const sessionId2 = jsonBody?.token;
     expect(adminQuizCreateV2(sessionId, 'Quiz 1', ' ')).toStrictEqual(QUIZCREATED);
     expect(adminQuizCreateV2(sessionId2, 'Quiz 2', 'Linked Lists')).toStrictEqual(QUIZCREATED);

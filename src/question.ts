@@ -20,6 +20,7 @@ import {
 
 import ShortUniqueId from 'short-unique-id';
 import { Unauthorised, BadRequest, Forbidden } from './error';
+import { SessionStatus } from './session';
 const answerUid = new ShortUniqueId({ dictionary: 'number' });
 const questionUid = new ShortUniqueId({ dictionary: 'number' });
 
@@ -61,8 +62,9 @@ export function adminCreateQuizQuestion(
     throw new Forbidden('User is not an owner of quiz');
   }
   const totalDuration = quiz.duration + questionBody.duration;
-  if (typeof validQuestion(questionBody, totalDuration) === 'object') {
-    return validQuestion(questionBody, totalDuration) as ErrorMessage;
+  const isValidQuestion = validQuestion(questionBody, totalDuration);
+  if (typeof isValidQuestion === 'string') {
+    throw new BadRequest(isValidQuestion as string);
   }
   const validExtensions = /\.(jpg|jpeg|png)$/i;
   const validProtocol = /^https?:\/\//;
@@ -119,9 +121,8 @@ export function adminQuizQuestionDuplicate(
   }
 
   if (!quiz.questions) {
-    quiz.questions = [];
+    throw new BadRequest('Question ID does not refer to a valid question within this quiz.');
   }
-
   const question = quiz.questions.find(q => q.questionId === questionId);
   if (!question) {
     throw new BadRequest('Question ID does not refer to a valid question within this quiz.');
@@ -143,7 +144,7 @@ export function adminQuizQuestionDuplicate(
 }
 
 /**
- * Update questions for quizzes
+ * Update the relevant details of a particular question within a quiz.
  * Each answer is assigned a random colour code.
  *
  * @param {number} quizId - unique id of a quiz
@@ -158,7 +159,7 @@ export function adminQuizQuestionUpdate(
   quizId: number,
   questionId: number,
   questionBody: QuestionBody,
-  token: string
+  v2?: boolean
 ): UserUpdateResult | ErrorMessage {
   const database = getData();
   const quiz = findQuizWithId(database, quizId);
@@ -172,10 +173,23 @@ export function adminQuizQuestionUpdate(
   }
 
   const totalDuration = quiz.duration + questionBody.duration - question.duration;
-  if (typeof validQuestion(questionBody, totalDuration) === 'object') {
-    return validQuestion(questionBody, totalDuration) as ErrorMessage;
+  const isValidQuestion = validQuestion(questionBody, totalDuration);
+  if (typeof isValidQuestion === 'string') {
+    throw new BadRequest(isValidQuestion as string);
   }
-
+  const validExtensions = /\.(jpg|jpeg|png)$/i;
+  const validProtocol = /^https?:\/\//;
+  if (v2 === true) {
+    if (questionBody.thumbnailUrl === '') {
+      throw new BadRequest('Thumbnail url is an empty string');
+    } else if (!validExtensions.test(questionBody.thumbnailUrl)) {
+      throw new BadRequest('Not valid file type for thumbnail');
+    } else if (!validProtocol.test(questionBody.thumbnailUrl)) {
+      throw new BadRequest('Invalid https protocol');
+    } else {
+      question.thumbnailUrl = questionBody.thumbnailUrl;
+    }
+  }
   question.question = questionBody.question;
   question.duration = questionBody.duration;
   question.points = questionBody.points;
@@ -231,7 +245,7 @@ export function adminQuizQuestionMove(
  * @returns {} An empty object
  * @returns {ErrorMessage} An error message
  */
-export function adminQuizQuestionDelete(token: string, quizId: number, questionId: number): QuizQuestionDeleteResult {
+export function adminQuizQuestionDelete(token: string, quizId: number, questionId: number, v2?: true): QuizQuestionDeleteResult {
   const database = getData();
   const user = findUserBySessionId(database, token);
 
@@ -253,6 +267,11 @@ export function adminQuizQuestionDelete(token: string, quizId: number, questionI
     throw new BadRequest(`Question ID '${questionId}' does not refer to a valid question within quiz '${quizId}'.`);
   }
 
+  if (v2 === true) {
+    if (quiz.sessions.some(s => s.state !== SessionStatus.END)) {
+      throw new BadRequest('At least one session has not ended yet');
+    }
+  }
   // Delete the question
   quiz.questions.splice(questionIndex, 1);
   quiz.timeLastEdited = Date.now();

@@ -4,12 +4,26 @@
       "userId": 1,
       "tokens": [
         {
-          "token": "314090"
+          "token": "635472"
         }
       ],
-      "email": "admin@email.com",
-      "password": "0b14d501a594442a01c6859541bcb3e8164d183d32937b851835442f69d5c94e",
-      "name": "Idk Idk",
+      "email": "admin1@gmail.com",
+      "password": "f42857add00a1047e650c6c4d0f909bfface390fe00310026b07bc77027dcf4e",
+      "name": "JJone ZZ",
+      "numSuccessfulLogins": 1,
+      "numFailedPasswordsSinceLastLogin": 0,
+      "passwordUsedThisYear": []
+    },
+    {
+      "userId": 2,
+      "tokens": [
+        {
+          "token": "510172"
+        }
+      ],
+      "email": "admin2@gmail.com",
+      "password": "f42857add00a1047e650c6c4d0f909bfface390fe00310026b07bc77027dcf4e",
+      "name": "JJone ZZ",
       "numSuccessfulLogins": 1,
       "numFailedPasswordsSinceLastLogin": 0,
       "passwordUsedThisYear": []
@@ -18,11 +32,35 @@
   "quizzes": [
     {
       "creatorId": 1,
-      "quizId": 72,
-      "name": "New Quiz Name",
-      "timeCreated": 1722573432,
-      "timeLastEdited": 1722573432,
-      "description": "This is a description.",
+      "quizId": 14,
+      "name": "Quiz 1",
+      "timeCreated": 1722573842,
+      "timeLastEdited": 1722573842,
+      "description": "changed quiz 1",
+      "numQuestions": 0,
+      "questions": [],
+      "duration": 0,
+      "sessions": []
+    },
+    {
+      "creatorId": 1,
+      "quizId": 24,
+      "name": "Quiz 2",
+      "timeCreated": 1722573842,
+      "timeLastEdited": 1722573842,
+      "description": "this is second original description",
+      "numQuestions": 0,
+      "questions": [],
+      "duration": 0,
+      "sessions": []
+    },
+    {
+      "creatorId": 2,
+      "quizId": 54,
+      "name": "Quiz 3",
+      "timeCreated": 1722573842,
+      "timeLastEdited": 1722573842,
+      "description": "changed quiz 3",
       "numQuestions": 0,
       "questions": [],
       "duration": 0,

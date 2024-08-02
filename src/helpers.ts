@@ -222,8 +222,7 @@ export function playerDetailedResultsInitialisation(session: Session) {
     playersCorrectList: [],
     averageAnswerTime: 0,
     percentCorrect: 0,
-  }))
-  
+  }));
 
   // initialise the questionResultsByPlayer
   session.results.questionResultsByPlayer = [];
@@ -264,7 +263,6 @@ export function updateResults (session: Session) {
   session.results.questionResults[questionIndex].averageAnswerTime = totalAnswerTime / numAnsweredPlayer;
   session.results.questionResults[questionIndex].percentCorrect = session.results.questionResults[questionIndex].playersCorrectList.length / session.players.length * 100;
 
-  
   // sort the rank of the player
   session.results.usersRankedByScore.sort((a, b) => b.score - a.score);
 }

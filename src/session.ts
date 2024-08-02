@@ -1,4 +1,7 @@
-import { getData, setData } from './dataStore';
+import {
+  getData, setData,
+  sessionIdToTimerMap
+} from './dataStore';
 import { BadRequest, Unauthorised, Forbidden } from './error';
 import { findUserBySessionId, findQuizWithId, convertSessionResultsToCSV } from './helpers';
 import * as path from 'path';
@@ -16,6 +19,9 @@ import {
   // MessageInfo,
   // Player
 } from './types';
+
+const DELAY = 3;
+
 export enum SessionStatus {
   LOBBY,
   QUESTION_COUNTDOWN,
@@ -27,6 +33,14 @@ export enum SessionStatus {
 }
 import ShortUniqueId from 'short-unique-id';
 const sessionUid = new ShortUniqueId({ dictionary: 'number' });
+
+export enum SessionAction {
+  NEXT_QUESTION,
+  SKIP_COUNTDOWN,
+  GO_TO_ANSWER,
+  GO_TO_FINAL_RESULTS,
+  END
+}
 
 /**
  * Retrieves active and inactive session ids (sorted in ascending order) for a quiz
@@ -129,10 +143,200 @@ export function playerQuestionResult (playerId: number, questionposition: number
 export function adminQuizSessionUpdate(
   quizId: number,
   sessionId: number,
-  token: string,
-  action: string): EmptyObject | Error {
+  action: SessionAction): EmptyObject | Error {
+  const database = getData();
+  const quiz = database.quizzes.find(q => q.quizId === quizId);
+  const session = quiz.sessions.find(s => s.sessionId === sessionId);
+
+  if (!quiz) {
+    throw new BadRequest('Quiz Id does not refer to a valid quiz');
+  }
+
+  if (!Array.isArray(quiz.sessions)) {
+    throw new BadRequest('Quiz does not contain a valid sessions array');
+  }
+
+  if (!session) {
+    throw new BadRequest('Session Id does not refer to a valid session within this quiz');
+  } else if (
+    action !== SessionAction.NEXT_QUESTION &&
+    action !== SessionAction.SKIP_COUNTDOWN &&
+    action !== SessionAction.GO_TO_ANSWER &&
+    action !== SessionAction.GO_TO_FINAL_RESULTS &&
+    action !== SessionAction.END
+  ) {
+    throw new BadRequest('Action provided is not a valid enum action');
+  }
+
+  const questionIndex = session.atQuestion;
+  let question = session.quizCopy.questions[questionIndex - 1];
+  if (session.state === SessionStatus.LOBBY) {
+    if (action === SessionAction.NEXT_QUESTION) {
+      session.state = SessionStatus.QUESTION_COUNTDOWN;
+      const timer = setTimeout(() => {
+        try {
+          turnQuestionOpen(sessionId, quizId);
+          sessionIdToTimerMap.delete(sessionId);
+          console.log(`Succesffully deleted session with id ${sessionId} after ${DELAY} seconds`);
+        } catch {
+          console.log(`Failed to delete session with id ${sessionId} after ${DELAY} seconds`);
+        }
+      }, DELAY * 1000);
+      sessionIdToTimerMap.set(sessionId, timer);
+    } else if (action === SessionAction.END) {
+      session.state = SessionStatus.END;
+    } else {
+      throw new BadRequest(`Action enum cannot be applied in the ${session.state}`);
+    }
+  } else if (session.state === SessionStatus.QUESTION_COUNTDOWN) {
+    if (action === SessionAction.END) {
+      const timer = sessionIdToTimerMap.get(sessionId);
+      if (timer === undefined) {
+        throw new Error(`There is no scheduled removal for the session with ID: ${sessionId}`);
+      }
+      clearTimeout(timer);
+      sessionIdToTimerMap.delete(sessionId);
+      session.state = SessionStatus.END;
+    } else if (action === SessionAction.SKIP_COUNTDOWN) {
+      session.atQuestion++;
+      question = session.quizCopy.questions[session.atQuestion - 1];
+      const timer = sessionIdToTimerMap.get(sessionId);
+      if (timer === undefined) {
+        throw new Error(`There is no scheduled removal for the session with ID: ${sessionId}`);
+      }
+      clearTimeout(timer);
+      sessionIdToTimerMap.delete(sessionId);
+      session.state = SessionStatus.QUESTION_OPEN;
+      const newTimer = setTimeout(() => {
+        try {
+          turnQuestionClose(sessionId, quizId);
+          sessionIdToTimerMap.delete(sessionId);
+          console.log(`Succesfully turned skipped countdown with id ${sessionId} after ${question.duration} seconds`);
+        } catch {
+          console.log(`Failed to skip countdown with id ${sessionId} after ${question.duration} seconds`);
+        }
+      }, question.duration * 1000);
+      sessionIdToTimerMap.set(sessionId, newTimer);
+    } else {
+      throw new BadRequest(`Action enum cannot be applied in the ${session.state}`);
+    }
+  } else if (session.state === SessionStatus.QUESTION_OPEN) {
+    if (action === SessionAction.END) {
+      const timer = sessionIdToTimerMap.get(sessionId);
+      if (timer === undefined) {
+        throw new Error(`There is no scheduled removal for the session with ID: ${sessionId}`);
+      }
+      clearTimeout(timer);
+      sessionIdToTimerMap.delete(sessionId);
+      session.state = SessionStatus.END;
+    } else if (action === SessionAction.GO_TO_ANSWER) {
+      const timer = sessionIdToTimerMap.get(sessionId);
+      if (timer === undefined) {
+        throw new Error(`There is no scheduled removal for the session with ID: ${sessionId}`);
+      }
+      clearTimeout(timer);
+      sessionIdToTimerMap.delete(sessionId);
+      session.state = SessionStatus.ANSWER_SHOW;
+    } else {
+      throw new BadRequest(`Action enum cannot be applied in the ${session.state}`);
+    }
+  } else if (session.state === SessionStatus.QUESTION_CLOSE) {
+    if (action === SessionAction.END) {
+      session.state = SessionStatus.END;
+    } else if (action === SessionAction.NEXT_QUESTION) {
+      session.state = SessionStatus.QUESTION_COUNTDOWN;
+      const timer = setTimeout(() => {
+        try {
+          turnQuestionOpen(sessionId, quizId);
+          sessionIdToTimerMap.delete(sessionId);
+          console.log(`Succesffully deleted session with id ${sessionId} after ${DELAY} seconds`);
+        } catch {
+          console.log(`Failed to delete session with id ${sessionId} after ${DELAY} seconds`);
+        }
+      }, DELAY * 1000);
+      sessionIdToTimerMap.set(sessionId, timer);
+      const newTimer = setTimeout(() => {
+        try {
+          turnQuestionClose(sessionId, quizId);
+          sessionIdToTimerMap.delete(sessionId);
+          console.log(`Succesfully turned skipped countdown with id ${sessionId} after ${question.duration} seconds`);
+        } catch {
+          console.log(`Failed to skip countdown with id ${sessionId} after ${question.duration} seconds`);
+        }
+      }, question.duration * 1000);
+      sessionIdToTimerMap.set(sessionId, newTimer);
+    } else if (action === SessionAction.GO_TO_ANSWER) {
+      session.state = SessionStatus.ANSWER_SHOW;
+    } else if (action === SessionAction.GO_TO_FINAL_RESULTS) {
+      session.state = SessionStatus.FINAL_RESULTS;
+    } else {
+      throw new BadRequest(`Action enum cannot be applied in the ${session.state}`);
+    }
+  } else if (session.state === SessionStatus.ANSWER_SHOW) {
+    if (action === SessionAction.END) {
+      session.state = SessionStatus.END;
+    } else if (action === SessionAction.NEXT_QUESTION) {
+      session.state = SessionStatus.QUESTION_COUNTDOWN;
+      const timer = setTimeout(() => {
+        try {
+          turnQuestionOpen(sessionId, quizId);
+          sessionIdToTimerMap.delete(sessionId);
+          console.log(`Succesffully deleted session with id ${sessionId} after ${DELAY} seconds`);
+        } catch {
+          console.log(`Failed to delete session with id ${sessionId} after ${DELAY} seconds`);
+        }
+      }, DELAY * 1000);
+      sessionIdToTimerMap.set(sessionId, timer);
+
+      const newTimer = setTimeout(() => {
+        try {
+          turnQuestionClose(sessionId, quizId);
+          sessionIdToTimerMap.delete(sessionId);
+          console.log(`Succesfully turned skipped countdown with id ${sessionId} after ${question.duration} seconds`);
+        } catch {
+          console.log(`Failed to skip countdown with id ${sessionId} after ${question.duration} seconds`);
+        }
+      }, question.duration * 1000);
+      sessionIdToTimerMap.set(sessionId, newTimer);
+    } else if (action === SessionAction.GO_TO_FINAL_RESULTS) {
+      session.state = SessionStatus.FINAL_RESULTS;
+    } else {
+      throw new BadRequest(`Action enum cannot be applied in the ${session.state}`);
+    }
+  } else if (session.state === SessionStatus.FINAL_RESULTS) {
+    if (action === SessionAction.END) {
+      session.state = SessionStatus.END;
+    } else {
+      throw new BadRequest(`Action enum cannot be applied in the ${session.state}`);
+    }
+  } else if (session.state === SessionStatus.END) {
+    throw new BadRequest(`Action enum cannot be applied in the ${session.state}`);
+  }
+  setData(database);
   return {};
 }
+
+export const turnQuestionClose = (sessionId: number, quizId: number) => {
+  const database = getData();
+  const quiz = findQuizWithId(database, quizId);
+  console.log('thing', quiz);
+  const session = quiz.sessions.find(s => s.sessionId === sessionId);
+  if (session) {
+    session.state = SessionStatus.QUESTION_CLOSE;
+    setData(database);
+  }
+};
+
+export const turnQuestionOpen = (sessionId: number, quizId: number) => {
+  const database = getData();
+  const quiz = findQuizWithId(database, quizId);
+  const session = quiz.sessions.find(s => s.sessionId === sessionId);
+  if (session) {
+    session.atQuestion++;
+    session.state = SessionStatus.QUESTION_OPEN;
+    setData(database);
+  }
+};
 
 /**
  * Gives the status of a particular quiz session
@@ -153,15 +357,15 @@ export function adminQuizSessionStatus (quizId: number, sessionId: number): GetS
     atQuestion: sessionValid.atQuestion,
     players: sessionValid.players,
     metadata: {
-      quizId: quiz.quizId,
-      name: quiz.name,
-      timeCreated: quiz.timeCreated,
-      timeLastEdited: quiz.timeLastEdited,
-      description: quiz.description,
-      numQuestions: quiz.numQuestions,
-      questions: quiz.questions,
-      duration: quiz.duration,
-      thumbnailUrl: quiz.thumbnailUrl
+      quizId: sessionValid.quizCopy.quizId,
+      name: sessionValid.quizCopy.name,
+      timeCreated: sessionValid.quizCopy.timeCreated,
+      timeLastEdited: sessionValid.quizCopy.timeLastEdited,
+      description: sessionValid.quizCopy.description,
+      numQuestions: sessionValid.quizCopy.numQuestions,
+      questions: sessionValid.quizCopy.questions,
+      duration: sessionValid.quizCopy.duration,
+      thumbnailUrl: sessionValid.quizCopy.thumbnailUrl
     }
   };
 }

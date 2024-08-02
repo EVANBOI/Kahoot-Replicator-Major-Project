@@ -1,4 +1,5 @@
-import { SessionStatus } from './session';
+import { SessionStatus } from "./session";
+
 
 // Types for errors
 export type ErrorMessage = {

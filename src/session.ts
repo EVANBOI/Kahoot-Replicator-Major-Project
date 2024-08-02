@@ -32,6 +32,7 @@ export enum SessionStatus {
   END
 }
 import ShortUniqueId from 'short-unique-id';
+import { StatusCodes } from 'http-status-codes';
 const sessionUid = new ShortUniqueId({ dictionary: 'number' });
 
 export enum SessionAction {
@@ -537,8 +538,8 @@ export function adminQuizSessionResults(quizId: number, sessionId: number, token
     throw new BadRequest('Session ID does not exist');
   }
 
-  if (typeof session.results !== 'object') {
-    throw new BadRequest('Session results are not in the correct format');
+  if (session.state !== SessionStatus.FINAL_RESULTS) {
+    throw new BadRequest('Session is not in FINAL_RESULT stage');
   }
 
   return {

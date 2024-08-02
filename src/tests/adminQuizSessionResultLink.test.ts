@@ -39,16 +39,16 @@ beforeEach(() => {
 
 describe('GET /v1/admin/quiz/{quizid}/session/{sessionid}/results/csv', () => {
   describe('error cases', () => {
-    test.skip('Error 401: token is empty', () => {
+    test('Error 401: token is empty', () => {
       expect(adminQuizSessionResultLink(quizId1, sessionId1, '')).toStrictEqual(ERROR401);
     });
-    test.skip('Error 401: token is invalid', () => {
+    test('Error 401: token is invalid', () => {
       expect(adminQuizSessionResultLink(quizId1, sessionId1, token1 + 1)).toStrictEqual(ERROR401);
     });
-    test.skip('Error 403: quiz does not exist', () => {
+    test('Error 403: quiz does not exist', () => {
       expect(adminQuizSessionResultLink(quizId1 + 1, sessionId1, token1)).toStrictEqual(ERROR403);
     });
-    test.skip('Error 403: user is not owner of quiz', () => {
+    test('Error 403: user is not owner of quiz', () => {
       const token2 = adminAuthRegister(
         VALID_USER_REGISTER_INPUTS_2.EMAIL,
         VALID_USER_REGISTER_INPUTS_2.PASSWORD,
@@ -57,22 +57,28 @@ describe('GET /v1/admin/quiz/{quizid}/session/{sessionid}/results/csv', () => {
       ).jsonBody.token;
       expect(adminQuizSessionResultLink(quizId1, sessionId1, token2)).toStrictEqual(ERROR403);
     });
-    test.skip('Error 400: session Id does not refer to a valid session within this quiz', () => {
+    test('Error 400: session Id does not refer to a valid session within this quiz', () => {
       expect(adminQuizSessionResultLink(quizId1, sessionId1 + 1, token1)).toStrictEqual(ERROR400);
     });
-    test.skip('Error 400: session is not in FINAL_RESULTS state', () => {
-      adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
+    test('Error 400: session is not in FINAL_RESULTS state', () => {
+      // the session state should be lobby
       expect(adminQuizSessionResultLink(quizId1, sessionId1, token1)).toStrictEqual(ERROR400);
     });
   });
   describe('success cases', () => {
-    test.skip('Successfully return URL with CSV file', () => {
+    test('Successfully return URL with CSV file', () => {
+      adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
+      adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
+      adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_ANSWER);
       adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_FINAL_RESULTS);
-      const result = adminQuizSessionResultLink(quizId1, sessionId1, token1).jsonBody;
-      expect(result).toMatch(/https:/);
-      expect(result).toMatch(/.csv/);
+      const result = adminQuizSessionResultLink(quizId1, sessionId1, token1).jsonBody.url;
+      const regex = /^http.*\.csv$/;
+      expect(result).toMatch(regex);
     });
-    test.skip('The final result is transfered to CSV sucessfully', () => {
+    test('The final result is transfered to CSV sucessfully', () => {
+      adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
+      adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
+      adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_ANSWER);
       adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_FINAL_RESULTS);
       const url = adminQuizSessionResultLink(quizId1, sessionId1, token1).jsonBody.url;
       const csvData = getCsvData(url);

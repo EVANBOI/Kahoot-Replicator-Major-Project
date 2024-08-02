@@ -3,7 +3,10 @@ import {
   sessionIdToTimerMap
 } from './dataStore';
 import { BadRequest, Unauthorised, Forbidden } from './error';
-import { findUserBySessionId, findQuizWithId, convertSessionResultsToCSV, generateRandomString } from './helpers';
+import {
+  findUserBySessionId, findQuizWithId, convertSessionResultsToCSV,
+  generateRandomString, playerDetailedResultsInitialisation
+} from './helpers';
 import * as path from 'path';
 import * as fs from 'fs';
 import {
@@ -21,7 +24,6 @@ import {
 } from './types';
 
 const DELAY = 3;
-
 export enum SessionStatus {
   LOBBY,
   QUESTION_COUNTDOWN,
@@ -84,13 +86,17 @@ export function adminQuizSessionResultLink (quizId: number, sessionId: number, h
   if (session.state !== SessionStatus.FINAL_RESULTS) {
     throw new BadRequest('Session is not in FINAL_RESULTS state');
   }
-
   const csvString = convertSessionResultsToCSV(session.results);
-  const filePath = path.join(__dirname, 'public', `${sessionId}results.csv`);
+
+  const dirPath = path.join(__dirname, 'csvresults');
+  if (!fs.existsSync(dirPath)) {
+    fs.mkdirSync(dirPath);
+  }
+  const filePath = path.join(__dirname, 'csvresults', `${sessionId}results.csv`);
   fs.writeFileSync(filePath, csvString);
 
   return {
-    url: `http://${host}/public/${sessionId}results.csv`
+    url: `http://${host}/csvresults/${sessionId}results.csv`
   };
 }
 /**
@@ -109,8 +115,9 @@ export function playerQuestionResult (playerId: number, questionposition: number
       session.players.find(player => player.playerId === playerId)
     );
     if (currentSession) {
+      // should be changed to currentQuiz = currentSession.quiz after sessionStart is implemented
       currentQuiz = quiz;
-      break; // Exit the loop once the player and thus the session has been found
+      break;
     }
   }
 
@@ -173,6 +180,8 @@ export function adminQuizSessionUpdate(
   let question = session.quizCopy.questions[questionIndex - 1];
   if (session.state === SessionStatus.LOBBY) {
     if (action === SessionAction.NEXT_QUESTION) {
+      playerDetailedResultsInitialisation(session);
+      console.log('LOBBY to QUESTION_COUNTDOWN');
       session.state = SessionStatus.QUESTION_COUNTDOWN;
       const timer = setTimeout(() => {
         try {
@@ -185,6 +194,7 @@ export function adminQuizSessionUpdate(
       }, DELAY * 1000);
       sessionIdToTimerMap.set(sessionId, timer);
     } else if (action === SessionAction.END) {
+      playerDetailedResultsInitialisation(session);
       session.state = SessionStatus.END;
     } else {
       throw new BadRequest(`Action enum cannot be applied in the ${session.state}`);
@@ -199,6 +209,7 @@ export function adminQuizSessionUpdate(
       sessionIdToTimerMap.delete(sessionId);
       session.state = SessionStatus.END;
     } else if (action === SessionAction.SKIP_COUNTDOWN) {
+      console.log('QUESTION_COUNTDOWN to QUESTION_OPEN');
       session.atQuestion++;
       question = session.quizCopy.questions[session.atQuestion - 1];
       const timer = sessionIdToTimerMap.get(sessionId);
@@ -245,6 +256,7 @@ export function adminQuizSessionUpdate(
     if (action === SessionAction.END) {
       session.state = SessionStatus.END;
     } else if (action === SessionAction.NEXT_QUESTION) {
+      console.log('QUESTION_CLOSE to QUESTION_COUNTDOWN');
       session.state = SessionStatus.QUESTION_COUNTDOWN;
       const timer = setTimeout(() => {
         try {
@@ -269,6 +281,7 @@ export function adminQuizSessionUpdate(
     } else if (action === SessionAction.GO_TO_ANSWER) {
       session.state = SessionStatus.ANSWER_SHOW;
     } else if (action === SessionAction.GO_TO_FINAL_RESULTS) {
+      console.log('QUESTION_CLOSE to FINAL_RESULTS');
       session.state = SessionStatus.FINAL_RESULTS;
     } else {
       throw new BadRequest(`Action enum cannot be applied in the ${session.state}`);
@@ -318,6 +331,7 @@ export function adminQuizSessionUpdate(
 }
 
 export const turnQuestionClose = (sessionId: number, quizId: number) => {
+  console.log('QUESTION_CLOSED!');
   const database = getData();
   const quiz = findQuizWithId(database, quizId);
   const session = quiz.sessions.find(s => s.sessionId === sessionId);
@@ -328,6 +342,7 @@ export const turnQuestionClose = (sessionId: number, quizId: number) => {
 };
 
 export const turnQuestionOpen = (sessionId: number, quizId: number) => {
+  console.log('QUESTION_OPEN!');
   const database = getData();
   const quiz = findQuizWithId(database, quizId);
   const session = quiz.sessions.find(s => s.sessionId === sessionId);

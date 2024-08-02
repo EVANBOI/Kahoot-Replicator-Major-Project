@@ -828,7 +828,7 @@ app.get('/v1/admin/quiz/:quizid/sessions', (req: Request, res: Response) => {
 
 app.get('/v1/admin/quiz/:quizid/session/:sessionid/results/csv', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
-  const sessionId = parseInt(req.query.sessionid as string);
+  const sessionId = parseInt(req.params.sessionid as string);
   const token = req.headers.token as string;
   try {
     tokenCheck(token);
@@ -853,7 +853,7 @@ app.get('/v1/admin/quiz/:quizid/session/:sessionid/results/csv', (req: Request, 
   }
 });
 
-app.use('/public', express.static(path.join(__dirname, 'public')));
+app.use('/csvresults', express.static(path.join(__dirname, 'csvresults')));
 
 app.get('/v1/player/:playerid/question/:questionposition/results', (req: Request, res: Response) => {
   const playerId = parseInt(req.query.playerid as string);

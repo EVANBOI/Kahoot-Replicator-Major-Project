@@ -214,8 +214,6 @@ app.delete('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
       return res.status(StatusCodes.UNAUTHORIZED).json({ error: e.message });
     } else if (e instanceof Forbidden) {
       return res.status(StatusCodes.FORBIDDEN).json({ error: e.message });
-    } else if (e instanceof BadRequest) {
-      return res.status(StatusCodes.BAD_REQUEST).json({ error: e.message });
     }
   }
 });

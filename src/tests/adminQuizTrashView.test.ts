@@ -3,6 +3,7 @@ import {
   adminAuthRegister,
   adminQuizCreateV2,
   adminQuizRemove,
+  adminQuizTrashView,
   adminQuizTrashViewV2,
   clear
 } from '../wrappers';
@@ -29,7 +30,30 @@ beforeEach(() => {
   adminQuizRemove(sessionId, quizId);
 });
 
-describe('Invalid Trash View', () => {
+// v1 route tests
+describe('unsuccesful test for v1', () => {
+  test('Token is invalid', () => {
+    expect(adminQuizTrashView(sessionId + 1)).toStrictEqual(ERROR401);
+  });
+});
+describe('successful test for v1', () => {
+  test('Viewing a quiz in the trash', () => {
+    expect(adminQuizTrashView(sessionId)).toStrictEqual({
+      statusCode: 200,
+      jsonBody: {
+        quizzes: [
+          {
+            quizId: quizId,
+            name: 'Quiz 1'
+          }
+        ]
+      }
+    });
+  });
+});
+
+// v2 route tests
+describe('Invalid Trash View for v2', () => {
   test('Token is invalid', () => {
     expect(adminQuizTrashViewV2(sessionId + 1)).toStrictEqual(ERROR401);
   });

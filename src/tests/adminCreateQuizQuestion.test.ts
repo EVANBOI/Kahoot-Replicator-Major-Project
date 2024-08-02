@@ -1,3 +1,4 @@
+import { Colours } from '../helpers';
 import {
   validQuestion1,
   validQuestion2,
@@ -42,7 +43,7 @@ beforeEach(() => {
   quizId1 = body3?.quizId;
 });
 
-describe('Unsuccesful Tests', () => {
+describe('Unsuccesful Tests for v1', () => {
   describe('Expected error code is 401', () => {
     test('Empty sessionId', () => {
       const result = adminCreateQuizQuestion(quizId1, '', validQuestion1);
@@ -236,7 +237,7 @@ describe('Unsuccesful Tests', () => {
   });
 });
 
-describe('Succesful Tests', () => {
+describe('Succesful Tests for v1', () => {
   test('Check return type', () => {
     const result = adminCreateQuizQuestion(quizId1, sessionId1, validQuestion1);
     expect(result).toStrictEqual(SUCCESSFUL);
@@ -254,6 +255,17 @@ describe('Succesful Tests', () => {
       questions: [validQuestion1],
       duration: expect.any(Number)
     });
+  });
+
+  test('Check created questions has correct answers', () => {
+    adminCreateQuizQuestion(quizId1, sessionId1, validQuestion1);
+    const quiz = adminQuizInfo(sessionId1, quizId1).jsonBody;
+    const colours = Object.values(Colours);
+    for (const answer of quiz.questions[0].answers) {
+      expect(colours).toContain(answer.colour);
+      expect(answer.answerId).toEqual(expect.any(Number));
+      expect(['A', 'B']).toContain(answer.answer);
+    }
   });
   test('Check that description time was updated successfully', () => {
     adminCreateQuizQuestion(quizId1, sessionId1, validQuestion1);
@@ -359,7 +371,27 @@ describe('Succesful Tests', () => {
 
 //= ===========================================================================//
 // V2 route tests
-describe('v2 unsuccessful tests: thumbnail url', () => {
+describe('v2 unsuccessful tests', () => {
+  describe('Expected error code is 401', () => {
+    test('Empty sessionId', () => {
+      const result = adminCreateQuizQuestionV2(quizId1, '', validQuestion1);
+      expect(result).toStrictEqual(ERROR401);
+    });
+    test('Invalid sessionId', () => {
+      const result = adminCreateQuizQuestionV2(quizId1, '-00000', validQuestion1);
+      expect(result).toStrictEqual(ERROR401);
+    });
+  });
+  describe('Expected error code is 403', () => {
+    test('User is not an owner of quiz', () => {
+      const result = adminCreateQuizQuestionV2(quizId1, sessionId2, validQuestion1);
+      expect(result).toStrictEqual(ERROR403);
+    });
+    test('Quiz does not exist', () => {
+      const result = adminCreateQuizQuestionV2(quizId1 - 911, sessionId1, validQuestion1);
+      expect(result).toStrictEqual(ERROR403);
+    });
+  });
   test('url is an empty string', () => {
     const result = adminCreateQuizQuestionV2(
       quizId1,

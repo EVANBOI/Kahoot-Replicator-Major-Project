@@ -1,3 +1,4 @@
+import { Colours } from '../helpers';
 import {
   validQuestion1V2,
   ERROR401,
@@ -5,12 +6,14 @@ import {
   ERROR400,
   validQuestion2V2,
   validQuestion3V2,
+  validQuestion1
 } from '../testConstants';
 import {
   adminCreateQuizQuestionV2,
   clear,
   adminAuthRegister,
   adminQuizCreateV2,
+  adminQuizQuestionUpdate,
   adminQuizQuestionUpdateV2,
   adminQuizInfoV2,
 } from '../wrappers';
@@ -56,7 +59,60 @@ beforeEach(() => {
   questionId1 = body4?.questionId;
 });
 
-describe('Unsuccessful Updates: 401 errors', () => {
+// v1 route tests
+describe('Error cases for v1', () => {
+  describe('Unsuccessful Updates: 401 errors', () => {
+    test('Token is invalid', () => {
+      expect(adminQuizQuestionUpdate(
+        quizId1,
+        questionId1,
+        validQuestion1,
+        sessionId1 + 1)).toStrictEqual(ERROR401);
+    });
+
+    test('Token is empty', () => {
+      expect(adminQuizQuestionUpdate(
+        quizId1,
+        questionId1,
+        validQuestion1,
+        ' ')).toStrictEqual(ERROR401);
+    });
+  });
+
+  describe('Unsuccessful Updates: 403 errors', () => {
+    test('User is not an owner of the quiz', () => {
+      expect(adminQuizQuestionUpdate(
+        quizId1,
+        questionId1,
+        validQuestion1,
+        sessionId2)).toStrictEqual(ERROR403);
+    });
+  });
+
+  describe('Unsuccessful Updates: 400 errors', () => {
+    test('Question Id is not valid', () => {
+      expect(adminQuizQuestionUpdate(
+        quizId1,
+        questionId1 + 1,
+        validQuestion1,
+        sessionId1)).toStrictEqual(ERROR400);
+    });
+  });
+});
+
+describe('Successful Updates for v1', () => {
+  test('Returns Correct Type', () => {
+    const result = adminQuizQuestionUpdate(
+      quizId1,
+      questionId1,
+      validQuestion1,
+      sessionId1);
+    expect(result).toStrictEqual(UPDATED);
+  });
+});
+
+// v2 route tests
+describe('Unsuccessful Updates for v2: 401 errors', () => {
   test('Token is invalid', () => {
     expect(adminQuizQuestionUpdateV2(
       quizId1,
@@ -74,7 +130,7 @@ describe('Unsuccessful Updates: 401 errors', () => {
   });
 });
 
-describe('Unsuccessful Updates: 403 errors', () => {
+describe('Unsuccessful Update for v2: 403 errors', () => {
   test('User is not an owner of the quiz', () => {
     expect(adminQuizQuestionUpdateV2(
       quizId1,
@@ -92,7 +148,7 @@ describe('Unsuccessful Updates: 403 errors', () => {
   });
 });
 
-describe('Unsuccessful Updates: 400 errors', () => {
+describe('Unsuccessful Updates for v2: 400 errors', () => {
   test('Question Id is not valid', () => {
     expect(adminQuizQuestionUpdateV2(
       quizId1,
@@ -309,9 +365,99 @@ describe('Unsuccessful Updates: 400 errors', () => {
       sessionId1);
     expect(result).toStrictEqual(ERROR400);
   });
+
+  test('url is an empty string', () => {
+    const result = adminQuizQuestionUpdateV2(
+      quizId1,
+      questionId1,
+      {
+        questionId: expect.any(Number),
+        question: 'Valid question 1?',
+        duration: 3,
+        points: 2,
+        answers: [
+          {
+            answerId: expect.any(Number),
+            colour: expect.any(String),
+            answer: 'A',
+            correct: true
+          },
+          {
+            answerId: expect.any(Number),
+            colour: expect.any(String),
+            answer: 'B',
+            correct: false
+          }
+        ],
+        thumbnailUrl: ''
+      },
+      sessionId1
+    );
+    expect(result).toStrictEqual(ERROR400);
+  });
+
+  test('url is invalid file type', () => {
+    const result = adminQuizQuestionUpdateV2(
+      quizId1,
+      questionId1,
+      {
+        questionId: expect.any(Number),
+        question: 'Valid question 1?',
+        duration: 3,
+        points: 2,
+        answers: [
+          {
+            answerId: expect.any(Number),
+            colour: expect.any(String),
+            answer: 'A',
+            correct: true
+          },
+          {
+            answerId: expect.any(Number),
+            colour: expect.any(String),
+            answer: 'B',
+            correct: false
+          }
+        ],
+        thumbnailUrl: 'http://google.com/some/image/path.jpe'
+      },
+      sessionId1
+    );
+    expect(result).toStrictEqual(ERROR400);
+  });
+
+  test('url does not begin with http or https', () => {
+    const result = adminQuizQuestionUpdateV2(
+      quizId1,
+      questionId1,
+      {
+        questionId: expect.any(Number),
+        question: 'Valid question 1?',
+        duration: 3,
+        points: 2,
+        answers: [
+          {
+            answerId: expect.any(Number),
+            colour: expect.any(String),
+            answer: 'A',
+            correct: true
+          },
+          {
+            answerId: expect.any(Number),
+            colour: expect.any(String),
+            answer: 'B',
+            correct: false
+          }
+        ],
+        thumbnailUrl: 'htteep://google.com/some/image/path.jpg'
+      },
+      sessionId1
+    );
+    expect(result).toStrictEqual(ERROR400);
+  });
 });
 
-describe('Successful Updates', () => {
+describe('Successful Updates for v2', () => {
   test('Returns Correct Type', () => {
     const result = adminQuizQuestionUpdateV2(
       quizId1,
@@ -334,6 +480,17 @@ describe('Successful Updates', () => {
       numQuestions: expect.any(Number),
       questions: [validQuestion1V2]
     });
+  });
+
+  test('Check updated question has correct answers', () => {
+    adminCreateQuizQuestionV2(quizId1, sessionId1, validQuestion1V2);
+    const quiz = adminQuizInfoV2(sessionId1, quizId1).jsonBody;
+    const colours = Object.values(Colours);
+    for (const answer of quiz.questions[0].answers) {
+      expect(colours).toContain(answer.colour);
+      expect(answer.answerId).toEqual(expect.any(Number));
+      expect(['A', 'B']).toContain(answer.answer);
+    }
   });
 
   test('Successfully updated the timeLastEdited key', () => {

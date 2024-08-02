@@ -87,11 +87,13 @@ describe('Get /v1/admin/quiz/{quizid}/session/{sessionid}/results', () => {
       adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
       playerQuestionAnswer(playerId1, 1, [correctAnswerId1]);
       playerQuestionAnswer(playerId2, 1, [correctAnswerId1]);
-      sleepSync(3 * 1000);
+      sleepSync(validQuestion1V2.duration * 1000);
       adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
       adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
       playerQuestionAnswer(playerId1, 2, [correctAnswerId2]);
       playerQuestionAnswer(playerId2, 2, [correctAnswerId2]);
+      sleepSync(validQuestion3V2.duration * 1000);
+      adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_FINAL_RESULTS);
       const res = adminQuizSessionResults(quizId1, sessionId1, token1);
       expect(res.statusCode).toBe(200);
       expect(res.jsonBody).toStrictEqual({

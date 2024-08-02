@@ -5,7 +5,7 @@ import {
 import { BadRequest, Unauthorised, Forbidden } from './error';
 import {
   findUserBySessionId, findQuizWithId, convertSessionResultsToCSV,
-  generateRandomString, playerDetailedResultsInitialisation, updateResults
+  generateRandomString, playerDetailedResultsInitialisation, updateResults, recordOpenTime
 } from './helpers';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -187,6 +187,7 @@ export function adminQuizSessionUpdate(
         try {
           turnQuestionOpen(sessionId, quizId);
           sessionIdToTimerMap.delete(sessionId);
+          
           console.log(`Succesffully deleted session with id ${sessionId} after ${DELAY} seconds`);
         } catch {
           console.log(`Failed to delete session with id ${sessionId} after ${DELAY} seconds`);
@@ -211,6 +212,7 @@ export function adminQuizSessionUpdate(
     } else if (action === SessionAction.SKIP_COUNTDOWN) {
       console.log('QUESTION_COUNTDOWN to QUESTION_OPEN');
       session.atQuestion++;
+      recordOpenTime(session);
       question = session.quizCopy.questions[session.atQuestion - 1];
       const timer = sessionIdToTimerMap.get(sessionId);
       if (timer === undefined) {
@@ -351,6 +353,7 @@ export const turnQuestionOpen = (sessionId: number, quizId: number) => {
   const session = quiz.sessions.find(s => s.sessionId === sessionId);
   if (session) {
     session.atQuestion++;
+    recordOpenTime(session);
     session.state = SessionStatus.QUESTION_OPEN;
     setData(database);
   }

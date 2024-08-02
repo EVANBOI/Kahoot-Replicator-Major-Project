@@ -238,6 +238,10 @@ export function playerDetailedResultsInitialisation(session: Session) {
       }))
     })
   );
+
+  // initialise the questionStartTime
+  const length = session.quizCopy.questions.length;
+  session.results.questionStartTime = Array.from({ length }, () => 0);
 }
 
 // this function will update the usersRankedByScore and questionResults when the question
@@ -254,7 +258,8 @@ export function updateResults (session: Session) {
     }
     // if the player answered the question, update the total time and player answered
     if (player.questionResults[questionIndex].timeToAnswer !== -1) {
-      totalAnswerTime += player.questionResults[questionIndex].timeToAnswer;
+      const actualUsedTime = (player.questionResults[questionIndex].timeToAnswer - session.results.questionStartTime[questionIndex]) / 1000;
+      totalAnswerTime += actualUsedTime
       numAnsweredPlayer++;
     }
   });
@@ -265,4 +270,9 @@ export function updateResults (session: Session) {
 
   // sort the rank of the player
   session.results.usersRankedByScore.sort((a, b) => b.score - a.score);
+}
+
+// record the actuall time when the question is open
+export function recordOpenTime(session: Session) {
+  session.results.questionStartTime[session.atQuestion - 1] = Math.floor(Date.now() / 1000);
 }

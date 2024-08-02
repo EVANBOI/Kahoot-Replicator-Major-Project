@@ -14,6 +14,8 @@ import {
   adminQuizInfoV2
 } from '../wrappers';
 
+import { SessionAction } from '../session'; 
+
 import { QuestionBody } from '../types';
 
 let token1: string;
@@ -78,7 +80,7 @@ describe('Get /v1/admin/quiz/{quizid}/session/{sessionid}/results', () => {
       playerQuestionAnswer(playerId2, 1, [correctAnswerId1]);
       playerQuestionAnswer(playerId1, 2, [correctAnswerId2]);
       playerQuestionAnswer(playerId2, 2, [correctAnswerId2]);
-      adminQuizSessionUpdate(quizId1, sessionId1, token1, 'GO_TO_RESULTS');
+      adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
 
       const res = adminQuizSessionResults(quizId1, sessionId1, token1);
       expect(res.statusCode).toBe(200);

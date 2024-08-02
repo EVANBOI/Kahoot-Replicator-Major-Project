@@ -66,13 +66,13 @@ describe('GET /v1/admin/quiz/{quizid}/session/{sessionid}/results/csv', () => {
     });
   });
   describe('success cases', () => {
-    test.skip.failing('Successfully return URL with CSV file', () => {
+    test.skip('Successfully return URL with CSV file', () => {
       adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_FINAL_RESULTS);
       const result = adminQuizSessionResultLink(quizId1, sessionId1, token1).jsonBody;
       expect(result).toMatch(/https:/);
       expect(result).toMatch(/.csv/);
     });
-    test.skip.failing('The final result is transfered to CSV sucessfully', () => {
+    test.skip('The final result is transfered to CSV sucessfully', () => {
       adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_FINAL_RESULTS);
       const url = adminQuizSessionResultLink(quizId1, sessionId1, token1).jsonBody.url;
       const csvData = getCsvData(url);

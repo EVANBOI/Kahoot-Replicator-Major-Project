@@ -4,7 +4,7 @@
       "userId": 1,
       "tokens": [
         {
-          "token": "452823"
+          "token": "444427"
         }
       ],
       "email": "admin1@ad.unsw.edu.au",
@@ -18,7 +18,7 @@
       "userId": 2,
       "tokens": [
         {
-          "token": "327237"
+          "token": "518160"
         }
       ],
       "email": "admin2@ad.unsw.edu.au",
@@ -32,28 +32,28 @@
   "quizzes": [
     {
       "creatorId": 1,
-      "quizId": 162,
+      "quizId": 14,
       "name": "Quiz 1",
-      "timeCreated": 1722575931,
-      "timeLastEdited": 1722575931,
+      "timeCreated": 1722576292,
+      "timeLastEdited": 1722576292,
       "description": "Description",
       "numQuestions": 2,
       "questions": [
         {
-          "questionId": 429,
+          "questionId": 51,
           "question": "Valid question 2?",
           "duration": 150,
           "points": 2,
           "answers": [
             {
-              "answerId": 804,
-              "colour": "yellow",
+              "answerId": 3,
+              "colour": "brown",
               "answer": "Amb",
               "correct": false
             },
             {
-              "answerId": 904,
-              "colour": "purple",
+              "answerId": 23,
+              "colour": "red",
               "answer": "Bsgd",
               "correct": true
             }
@@ -61,25 +61,25 @@
           "thumbnailUrl": "http://google.com/some/image/path.jpg"
         },
         {
-          "questionId": 679,
+          "questionId": 91,
           "question": "Valid question 3?",
           "duration": 5,
           "points": 2,
           "answers": [
             {
-              "answerId": 154,
-              "colour": "brown",
+              "answerId": 43,
+              "colour": "yellow",
               "answer": "Amb",
               "correct": false
             },
             {
-              "answerId": 354,
-              "colour": "purple",
+              "answerId": 83,
+              "colour": "green",
               "answer": "Bsgd",
               "correct": true
             },
             {
-              "answerId": 254,
+              "answerId": 13,
               "colour": "purple",
               "answer": "Clsj",
               "correct": false

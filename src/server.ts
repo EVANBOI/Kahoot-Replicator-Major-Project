@@ -430,7 +430,6 @@ app.put('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Respo
   const quizId = parseInt(req.params.quizid);
   const questionId = parseInt(req.params.questionid);
   const { token, questionBody } = req.body;
-  console.log(`Hi ${token}`);
   try {
     tokenCheck(token);
   } catch (error) {
@@ -442,7 +441,7 @@ app.put('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Respo
     return res.status(403).json({ error: error.message });
   }
   try {
-    res.json(adminQuizQuestionUpdate(quizId, questionId, questionBody, token));
+    res.json(adminQuizQuestionUpdate(quizId, questionId, questionBody));
   } catch (error) {
     return res.status(400).json({ error: error.message });
   }
@@ -468,7 +467,7 @@ app.put('/v2/admin/quiz/:quizid/question/:questionid', (req: Request, res: Respo
     }
   }
   try {
-    res.json(adminQuizQuestionUpdate(quizId, questionId, questionBody, token));
+    res.json(adminQuizQuestionUpdate(quizId, questionId, questionBody, true));
   } catch (e) {
     if (e instanceof BadRequest) {
       return res.status(StatusCodes.BAD_REQUEST).json({ error: e.message });

@@ -6,6 +6,7 @@ import {
   ERROR400,
   validQuestion2V2,
   validQuestion3V2,
+  validQuestion1
 } from '../testConstants';
 import {
   adminCreateQuizQuestionV2,
@@ -65,7 +66,7 @@ describe('Error cases for v1', () => {
       expect(adminQuizQuestionUpdate(
         quizId1,
         questionId1,
-        validQuestion1V2,
+        validQuestion1,
         sessionId1 + 1)).toStrictEqual(ERROR401);
     });
   
@@ -73,7 +74,7 @@ describe('Error cases for v1', () => {
       expect(adminQuizQuestionUpdate(
         quizId1,
         questionId1,
-        validQuestion1V2,
+        validQuestion1,
         ' ')).toStrictEqual(ERROR401);
     });
   });
@@ -83,7 +84,7 @@ describe('Error cases for v1', () => {
       expect(adminQuizQuestionUpdate(
         quizId1,
         questionId1,
-        validQuestion1V2,
+        validQuestion1,
         sessionId2)).toStrictEqual(ERROR403);
     });
   });
@@ -93,7 +94,7 @@ describe('Error cases for v1', () => {
       expect(adminQuizQuestionUpdate(
         quizId1,
         questionId1 + 1,
-        validQuestion1V2,
+        validQuestion1,
         sessionId1)).toStrictEqual(ERROR400);
     });
   });
@@ -104,7 +105,7 @@ describe('Successful Updates for v1', () => {
     const result = adminQuizQuestionUpdate(
       quizId1,
       questionId1,
-      validQuestion1V2,
+      validQuestion1,
       sessionId1);
     expect(result).toStrictEqual(UPDATED);
   });

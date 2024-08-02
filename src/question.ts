@@ -158,7 +158,7 @@ export function adminQuizQuestionUpdate(
   quizId: number,
   questionId: number,
   questionBody: QuestionBody,
-  token: string
+  v2?: boolean
 ): UserUpdateResult | ErrorMessage {
   const database = getData();
   const quiz = findQuizWithId(database, quizId);
@@ -176,7 +176,19 @@ export function adminQuizQuestionUpdate(
   if (typeof isValidQuestion === 'string') {
     throw new BadRequest(isValidQuestion as string);
   }
-
+  const validExtensions = /\.(jpg|jpeg|png)$/i;
+  const validProtocol = /^https?:\/\//;
+  if (v2 === true) {
+    if (questionBody.thumbnailUrl === '') {
+      throw new BadRequest('Thumbnail url is an empty string');
+    } else if (!validExtensions.test(questionBody.thumbnailUrl)) {
+      throw new BadRequest('Not valid file type for thumbnail');
+    } else if (!validProtocol.test(questionBody.thumbnailUrl)) {
+      throw new BadRequest('Invalid https protocol');
+    } else {
+      question.thumbnailUrl = questionBody.thumbnailUrl;
+    }
+  }
   question.question = questionBody.question;
   question.duration = questionBody.duration;
   question.points = questionBody.points;

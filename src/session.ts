@@ -1,4 +1,6 @@
-import { getData, setData, sessionIdToTimerObject } from './dataStore';
+import { getData, setData, 
+  // sessionIdToTimerObject 
+  sessionIdToTimerMap } from './dataStore';
 import { BadRequest, Unauthorised, Forbidden } from './error';
 import { findUserBySessionId, findQuizWithId, convertSessionResultsToCSV } from './helpers';
 import * as path from 'path';
@@ -153,7 +155,7 @@ export function adminQuizSessionUpdate(
     throw new BadRequest('Quiz does not contain a valid sessions array');
   }
 
-  console.log('Session:', session);
+  // console.log('Session:', session);
   if (!session) {
     throw new BadRequest('Session Id does not refer to a valid session within this quiz');
   } else if (
@@ -172,9 +174,15 @@ export function adminQuizSessionUpdate(
     if (action === SessionAction.NEXT_QUESTION) {
       session.state = SessionStatus.QUESTION_COUNTDOWN;
       const timer = setTimeout(() => {
-        turnQuestionOpen(sessionId, quizId);
+        try {
+          turnQuestionOpen(sessionId, quizId);
+          sessionIdToTimerMap.delete(sessionId);
+          console.log(`Succesffully deleted timer with id ${sessionId} after ${DELAY} seconds`);
+        } catch {
+          console.log(`Failed to delete announcement with id ${sessionId} after ${DELAY} seconds`);
+        }
       }, DELAY * 1000);
-      sessionIdToTimerObject[sessionId] = timer;
+      sessionIdToTimerMap.set(sessionId, timer);
     } else if (action === SessionAction.END) {
       session.state = SessionStatus.END;
     } else {
@@ -186,24 +194,43 @@ export function adminQuizSessionUpdate(
     } else if (action === SessionAction.SKIP_COUNTDOWN) {
       session.atQuestion++;
       question = session.quizCopy.questions[session.atQuestion - 1];
-      clearTimeout(sessionIdToTimerObject[sessionId]);
-      delete sessionIdToTimerObject[sessionId];
+
+      const timer = sessionIdToTimerMap.get(sessionId);
+      if (timer === undefined) {
+        throw new Error(`There is no scheduled removal for the announcement with ID: ${sessionId}`);
+      }
+      clearTimeout(timer);
+      sessionIdToTimerMap.delete(sessionId);
       session.state = SessionStatus.QUESTION_OPEN;
-      const timer = setTimeout(() => {
-        turnQuestionClose(sessionId, quizId);
+      const newTimer = setTimeout(() => {
+        try {
+          turnQuestionClose(sessionId, quizId);
+          sessionIdToTimerMap.delete(sessionId);
+          console.log(`Succesffully turned skipped countdown with id ${sessionId} after ${question.duration} seconds`);
+        } catch {
+          console.log(`Failed to skip countdown with id ${sessionId} after ${question.duration} seconds`);
+        }
       }, question.duration * 1000);
-      sessionIdToTimerObject[sessionId] = timer;
+      sessionIdToTimerMap.set(sessionId, newTimer);
     } else {
       throw new BadRequest(`Action enum cannot be applied in the ${session.state}`);
     }
   } else if (session.state === SessionStatus.QUESTION_OPEN) {
     if (action === SessionAction.END) {
-      clearTimeout(sessionIdToTimerObject[sessionId]);
-      delete sessionIdToTimerObject[sessionId];
+      const timer = sessionIdToTimerMap.get(sessionId);
+      if (timer === undefined) {
+        throw new Error(`There is no scheduled removal for the announcement with ID: ${sessionId}`);
+      }
+      clearTimeout(timer);
+      sessionIdToTimerMap.delete(sessionId);
       session.state = SessionStatus.END;
     } else if (action === SessionAction.GO_TO_ANSWER) {
-      clearTimeout(sessionIdToTimerObject[sessionId]);
-      delete sessionIdToTimerObject[sessionId];
+      const timer = sessionIdToTimerMap.get(sessionId);
+      if (timer === undefined) {
+        throw new Error(`There is no scheduled removal for the announcement with ID: ${sessionId}`);
+      }
+      clearTimeout(timer);
+      sessionIdToTimerMap.delete(sessionId);
       session.state = SessionStatus.ANSWER_SHOW;
     } else {
       throw new BadRequest(`Action enum cannot be applied in the ${session.state}`);

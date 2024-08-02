@@ -15,7 +15,6 @@ import {
   QuestionBody,
   PlayerStatusResult,
   PlayerChatlogResult,
-  PlayerQuestionAnswerResult,
   SessionResults,
   Quiz,
   Session,
@@ -187,7 +186,7 @@ export function adminQuizSessionUpdate(
         try {
           turnQuestionOpen(sessionId, quizId);
           sessionIdToTimerMap.delete(sessionId);
-          
+
           console.log(`Succesffully deleted session with id ${sessionId} after ${DELAY} seconds`);
         } catch {
           console.log(`Failed to delete session with id ${sessionId} after ${DELAY} seconds`);
@@ -567,12 +566,12 @@ export function playerQuestionAnswer(
       session.players.find(player => player.playerId === playerId)
     );
     if (currentSession) {
-      break; 
+      break;
     }
   }
 
   if (!currentSession) {
-    throw new BadRequest('player id does not exist'); 
+    throw new BadRequest('player id does not exist');
   } else if (currentSession.state !== SessionStatus.QUESTION_OPEN) {
     throw new BadRequest('session is not question open state');
   } else if (currentSession.atQuestion !== questionPosition) {
@@ -591,27 +590,27 @@ export function playerQuestionAnswer(
   if (new Set(answerIds).size !== answerIds.length) {
     throw new BadRequest('there are duplicate answer ids');
   } else if (answerIds.length < 1) {
-    throw new BadRequest('less than 1 answerId was submitted'); 
+    throw new BadRequest('less than 1 answerId was submitted');
   }
 
   const correctAnswerIds = currentSession.quizCopy.questions
-  .flatMap(question => 
-    question.answers
-      .filter(answer => answer.correct)
-      .map(answer => answer.answerId)
-  );
+    .flatMap(question =>
+      question.answers
+        .filter(answer => answer.correct)
+        .map(answer => answer.answerId)
+    );
   const submittedCorrectAnswers = answerIds.filter(a => correctAnswerIds.includes(a));
-  const player = currentSession.players.find(p => p.playerId === playerId)
+  const player = currentSession.players.find(p => p.playerId === playerId);
   if (submittedCorrectAnswers) {
     player.score += question.points;
   }
-  let results = currentSession.results.questionResultsByPlayer.find(p => p.playerId === playerId);
+  const results = currentSession.results.questionResultsByPlayer.find(p => p.playerId === playerId);
   results.questionResults[questionPosition - 1] = {
     questionId: question.questionId,
     score: question.points,
     rank: 1,
-    timeToAnswer:  Math.floor(Date.now() / 1000)
-  }
+    timeToAnswer: Math.floor(Date.now() / 1000)
+  };
   setData(database);
   return {};
 }

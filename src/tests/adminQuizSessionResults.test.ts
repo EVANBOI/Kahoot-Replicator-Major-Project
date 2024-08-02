@@ -14,9 +14,9 @@ import {
   adminQuizInfoV2
 } from '../wrappers';
 
-import { SessionAction } from '../session'; 
+import { SessionAction } from '../session';
 
-import { QuestionBody, QuizInfoResult } from '../types';
+import { QuizInfoResult } from '../types';
 
 let token1: string;
 let sessionId1: number;
@@ -76,9 +76,9 @@ describe('Get /v1/admin/quiz/{quizid}/session/{sessionid}/results', () => {
     test('Successfully get session results', () => {
       const quizInfo = adminQuizInfoV2(token1, quizId1).jsonBody as QuizInfoResult;
       validAnswerIdsQ1 = quizInfo.questions
-          .find(question => question.questionId === questionId1).answers.map(answer => answer.answerId);
+        .find(question => question.questionId === questionId1).answers.map(answer => answer.answerId);
       validAnswerIdsQ2 = quizInfo.questions
-          .find(question => question.questionId === questionId2).answers.map(answer => answer.answerId);
+        .find(question => question.questionId === questionId2).answers.map(answer => answer.answerId);
       adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
       adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
       playerQuestionAnswer(playerId1, 1, validAnswerIdsQ1);

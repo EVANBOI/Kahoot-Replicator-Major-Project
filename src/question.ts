@@ -20,6 +20,7 @@ import {
 
 import ShortUniqueId from 'short-unique-id';
 import { Unauthorised, BadRequest, Forbidden } from './error';
+import { SessionStatus } from './session';
 const answerUid = new ShortUniqueId({ dictionary: 'number' });
 const questionUid = new ShortUniqueId({ dictionary: 'number' });
 
@@ -244,7 +245,7 @@ export function adminQuizQuestionMove(
  * @returns {} An empty object
  * @returns {ErrorMessage} An error message
  */
-export function adminQuizQuestionDelete(token: string, quizId: number, questionId: number): QuizQuestionDeleteResult {
+export function adminQuizQuestionDelete(token: string, quizId: number, questionId: number, v2?: true): QuizQuestionDeleteResult {
   const database = getData();
   const user = findUserBySessionId(database, token);
 
@@ -264,8 +265,13 @@ export function adminQuizQuestionDelete(token: string, quizId: number, questionI
   const questionIndex = quiz.questions.findIndex(question => question.questionId === questionId);
   if (questionIndex === -1) {
     throw new BadRequest(`Question ID '${questionId}' does not refer to a valid question within quiz '${quizId}'.`);
-  }
+  } 
 
+  if (v2 === true) {
+    if (quiz.sessions.some(s => s.state !== SessionStatus.END)) {
+      throw new BadRequest('At least one session has not ended yet');
+    }
+  }
   // Delete the question
   quiz.questions.splice(questionIndex, 1);
   quiz.timeLastEdited = Date.now();

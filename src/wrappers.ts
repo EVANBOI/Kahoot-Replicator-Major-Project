@@ -331,6 +331,10 @@ export const adminQuizQuestionDelete = (token: string, quizId: number, questionI
   return requestHelper('DELETE', `/v1/admin/quiz/${quizId}/question/${questionId}`, { token });
 };
 
+export const adminQuizQuestionDeleteV2 = (token: string, quizId: number, questionId: number) => {
+  return requestHelper('DELETE', `/v2/admin/quiz/${quizId}/question/${questionId}`, { }, token);
+};
+
 export const adminQuizQuestionMove = (
   quizid: number,
   questionid: number,

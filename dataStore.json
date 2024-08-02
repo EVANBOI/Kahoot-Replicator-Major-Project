@@ -4,12 +4,12 @@
       "userId": 1,
       "tokens": [
         {
-          "token": "444427"
+          "token": "153811"
         }
       ],
-      "email": "admin1@ad.unsw.edu.au",
-      "password": "0ec89f726bd307bbc7eb3f20c3d60b337280eb45af5fee7e3315d667a137d69a",
-      "name": "First Last",
+      "email": "admin@email.com",
+      "password": "0b14d501a594442a01c6859541bcb3e8164d183d32937b851835442f69d5c94e",
+      "name": "Idk Idk",
       "numSuccessfulLogins": 1,
       "numFailedPasswordsSinceLastLogin": 0,
       "passwordUsedThisYear": []
@@ -18,12 +18,12 @@
       "userId": 2,
       "tokens": [
         {
-          "token": "518160"
+          "token": "040548"
         }
       ],
-      "email": "admin2@ad.unsw.edu.au",
-      "password": "b4d5a2103d739d4dd5fcc42f585cd381bf93534b09479c13c228a49be63853cf",
-      "name": "First Last",
+      "email": "admin2@email.com",
+      "password": "0b14d501a594442a01c6859541bcb3e8164d183d32937b851835442f69d5c94e",
+      "name": "Idka Idka",
       "numSuccessfulLogins": 1,
       "numFailedPasswordsSinceLastLogin": 0,
       "passwordUsedThisYear": []
@@ -32,63 +32,93 @@
   "quizzes": [
     {
       "creatorId": 1,
-      "quizId": 14,
-      "name": "Quiz 1",
-      "timeCreated": 1722576292,
-      "timeLastEdited": 1722576292,
-      "description": "Description",
-      "numQuestions": 2,
+      "quizId": 5,
+      "name": "dummyquiz",
+      "timeCreated": 1722581664,
+      "timeLastEdited": 1722581664,
+      "description": "This is a dummy quiz for testing",
+      "numQuestions": 1,
       "questions": [
         {
-          "questionId": 51,
-          "question": "Valid question 2?",
-          "duration": 150,
-          "points": 2,
+          "question": "Who is the Monarch of England?",
+          "duration": 4,
+          "points": 5,
           "answers": [
             {
-              "answerId": 3,
-              "colour": "brown",
-              "answer": "Amb",
-              "correct": false
+              "answer": "Prince Charles",
+              "correct": true,
+              "answerId": 14,
+              "colour": "blue"
             },
             {
-              "answerId": 23,
-              "colour": "red",
-              "answer": "Bsgd",
-              "correct": true
+              "answer": "Prince William",
+              "correct": false,
+              "answerId": 54,
+              "colour": "blue"
             }
           ],
-          "thumbnailUrl": "http://google.com/some/image/path.jpg"
-        },
-        {
-          "questionId": 91,
-          "question": "Valid question 3?",
-          "duration": 5,
-          "points": 2,
-          "answers": [
-            {
-              "answerId": 43,
-              "colour": "yellow",
-              "answer": "Amb",
-              "correct": false
-            },
-            {
-              "answerId": 83,
-              "colour": "green",
-              "answer": "Bsgd",
-              "correct": true
-            },
-            {
-              "answerId": 13,
-              "colour": "purple",
-              "answer": "Clsj",
-              "correct": false
-            }
-          ],
-          "thumbnailUrl": "http://google.com/some/image/path.jpg"
+          "questionId": 9
         }
       ],
-      "duration": 155,
+      "duration": 4,
+      "sessions": [
+        {
+          "sessionId": 4,
+          "atQuestion": 0,
+          "players": [],
+          "state": 0,
+          "messages": [],
+          "results": {
+            "usersRankedByScore": [],
+            "questionResults": []
+          },
+          "autoStartNum": 3,
+          "quizCopy": {
+            "creatorId": 1,
+            "quizId": 5,
+            "name": "dummyquiz",
+            "timeCreated": 1722581664,
+            "timeLastEdited": 1722581664,
+            "description": "This is a dummy quiz for testing",
+            "numQuestions": 1,
+            "questions": [
+              {
+                "question": "Who is the Monarch of England?",
+                "duration": 4,
+                "points": 5,
+                "answers": [
+                  {
+                    "answer": "Prince Charles",
+                    "correct": true,
+                    "answerId": 14,
+                    "colour": "blue"
+                  },
+                  {
+                    "answer": "Prince William",
+                    "correct": false,
+                    "answerId": 54,
+                    "colour": "blue"
+                  }
+                ],
+                "questionId": 9
+              }
+            ],
+            "duration": 4,
+            "sessions": []
+          }
+        }
+      ]
+    },
+    {
+      "creatorId": 2,
+      "quizId": 45,
+      "name": "dummyquiz2",
+      "timeCreated": 1722581664,
+      "timeLastEdited": 1722581664,
+      "description": "This is a dummy quiz for testing",
+      "numQuestions": 0,
+      "questions": [],
+      "duration": 0,
       "sessions": []
     }
   ],

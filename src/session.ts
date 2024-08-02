@@ -5,7 +5,7 @@ import {
 import { BadRequest, Unauthorised, Forbidden } from './error';
 import {
   findUserBySessionId, findQuizWithId, convertSessionResultsToCSV,
-  generateRandomString, playerDetailedResultsInitialisation
+  generateRandomString, playerDetailedResultsInitialisation, updateResults, recordOpenTime
 } from './helpers';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -187,6 +187,7 @@ export function adminQuizSessionUpdate(
         try {
           turnQuestionOpen(sessionId, quizId);
           sessionIdToTimerMap.delete(sessionId);
+          
           console.log(`Succesffully deleted session with id ${sessionId} after ${DELAY} seconds`);
         } catch {
           console.log(`Failed to delete session with id ${sessionId} after ${DELAY} seconds`);
@@ -211,6 +212,7 @@ export function adminQuizSessionUpdate(
     } else if (action === SessionAction.SKIP_COUNTDOWN) {
       console.log('QUESTION_COUNTDOWN to QUESTION_OPEN');
       session.atQuestion++;
+      recordOpenTime(session);
       question = session.quizCopy.questions[session.atQuestion - 1];
       const timer = sessionIdToTimerMap.get(sessionId);
       if (timer === undefined) {
@@ -241,6 +243,7 @@ export function adminQuizSessionUpdate(
       clearTimeout(timer);
       sessionIdToTimerMap.delete(sessionId);
       session.state = SessionStatus.END;
+      updateResults(session);
     } else if (action === SessionAction.GO_TO_ANSWER) {
       const timer = sessionIdToTimerMap.get(sessionId);
       if (timer === undefined) {
@@ -249,13 +252,16 @@ export function adminQuizSessionUpdate(
       clearTimeout(timer);
       sessionIdToTimerMap.delete(sessionId);
       session.state = SessionStatus.ANSWER_SHOW;
+      updateResults(session);
     } else {
       throw new BadRequest(`Action enum cannot be applied in the ${session.state}`);
     }
   } else if (session.state === SessionStatus.QUESTION_CLOSE) {
     if (action === SessionAction.END) {
+      updateResults(session);
       session.state = SessionStatus.END;
     } else if (action === SessionAction.NEXT_QUESTION) {
+      updateResults(session);
       console.log('QUESTION_CLOSE to QUESTION_COUNTDOWN');
       session.state = SessionStatus.QUESTION_COUNTDOWN;
       const timer = setTimeout(() => {
@@ -279,8 +285,10 @@ export function adminQuizSessionUpdate(
       }, question.duration * 1000);
       sessionIdToTimerMap.set(sessionId, newTimer);
     } else if (action === SessionAction.GO_TO_ANSWER) {
+      updateResults(session);
       session.state = SessionStatus.ANSWER_SHOW;
     } else if (action === SessionAction.GO_TO_FINAL_RESULTS) {
+      updateResults(session);
       console.log('QUESTION_CLOSE to FINAL_RESULTS');
       session.state = SessionStatus.FINAL_RESULTS;
     } else {
@@ -348,6 +356,7 @@ export const turnQuestionOpen = (sessionId: number, quizId: number) => {
   const session = quiz.sessions.find(s => s.sessionId === sessionId);
   if (session) {
     session.atQuestion++;
+    recordOpenTime(session);
     session.state = SessionStatus.QUESTION_OPEN;
     setData(database);
   }
@@ -549,7 +558,61 @@ export function playerQuestionAnswer(
   playerId: number,
   questionPosition: number,
   answerIds: number[]
-): PlayerQuestionAnswerResult {
+): EmptyObject {
+  const database = getData();
+  let currentSession: Session | undefined;
+
+  for (const quiz of database.quizzes) {
+    currentSession = quiz.sessions?.find(session =>
+      session.players.find(player => player.playerId === playerId)
+    );
+    if (currentSession) {
+      break; 
+    }
+  }
+
+  if (!currentSession) {
+    throw new BadRequest('player id does not exist'); 
+  } else if (currentSession.state !== SessionStatus.QUESTION_OPEN) {
+    throw new BadRequest('session is not question open state');
+  } else if (currentSession.atQuestion !== questionPosition) {
+    throw new BadRequest('session is not at this question position');
+  }
+  const question = currentSession.quizCopy.questions[questionPosition - 1];
+  if (!question) {
+    throw new BadRequest('question position is not valid');
+  }
+  const validAnswerIds = question.answers.map(answer => answer.answerId);
+  for (const answerId of answerIds) {
+    if (!validAnswerIds.includes(answerId)) {
+      throw new BadRequest('invalid answer id');
+    }
+  }
+  if (new Set(answerIds).size !== answerIds.length) {
+    throw new BadRequest('there are duplicate answer ids');
+  } else if (answerIds.length < 1) {
+    throw new BadRequest('less than 1 answerId was submitted'); 
+  }
+
+  const correctAnswerIds = currentSession.quizCopy.questions
+  .flatMap(question => 
+    question.answers
+      .filter(answer => answer.correct)
+      .map(answer => answer.answerId)
+  );
+  const submittedCorrectAnswers = answerIds.filter(a => correctAnswerIds.includes(a));
+  const player = currentSession.players.find(p => p.playerId === playerId)
+  if (submittedCorrectAnswers) {
+    player.score += question.points;
+  }
+  let results = currentSession.results.questionResultsByPlayer.find(p => p.playerId === playerId);
+  results.questionResults[questionPosition - 1] = {
+    questionId: question.questionId,
+    score: question.points,
+    rank: 1,
+    timeToAnswer:  Math.floor(Date.now() / 1000)
+  }
+  setData(database);
   return {};
 }
 
@@ -559,28 +622,36 @@ export function playerQuestionAnswer(
  * @param {number} sessionId - The ID of the session.
  * @param {string} token - The token of the user.
  * @returns {SessionResults} - The final results of the session.
- * @returns {ErrorMessage} - An error message.
  */
-export function adminQuizSessionResults(
-  quizId: number,
-  sessionId: number,
-  token: string
-): SessionResults {
+export function adminQuizSessionResults(quizId: number, sessionId: number, token: string): SessionResults {
+  const database = getData();
+
+  const user = findUserBySessionId(database, token);
+  if (!user) {
+    throw new Unauthorised('Invalid token provided');
+  }
+
+  const quiz = findQuizWithId(database, quizId);
+  if (!quiz) {
+    throw new Forbidden('Quiz does not exist');
+  }
+
+  if (quiz.creatorId !== user.userId) {
+    throw new Forbidden('User is not the owner of the quiz');
+  }
+
+  const session = quiz.sessions?.find(s => s.sessionId === sessionId);
+  if (!session) {
+    throw new BadRequest('Session ID does not exist');
+  }
+
+  if (typeof session.results !== 'object') {
+    throw new BadRequest('Session results are not in the correct format');
+  }
+
   return {
-    usersRankedByScore: [
-      {
-        name: 'Hayden',
-        score: 45,
-      },
-    ],
-    questionResults: [
-      {
-        questionId: 5546,
-        playersCorrectList: ['Hayden'],
-        averageAnswerTime: 45,
-        percentCorrect: 54,
-      },
-    ],
+    usersRankedByScore: session.results.usersRankedByScore,
+    questionResults: session.results.questionResults
   };
 }
 

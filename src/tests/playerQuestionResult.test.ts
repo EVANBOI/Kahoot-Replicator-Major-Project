@@ -11,19 +11,20 @@ import {
   adminCreateQuizQuestionV2,
   playerJoin,
   playerQuestionResult,
-  adminQuizSessionStatus,
-  adminQuizInfo,
+  adminQuizInfoV2,
   playerQuestionAnswer
 } from '../wrappers';
 
-import { QuestionBody } from '../types';
+import { QuestionBody, QuizInfoResult } from '../types';
 import { SessionAction } from '../session';
 
 let token1: string;
 let sessionId1: number;
 let quizId1: number;
 let questionId1: number;
+let questionId2: number;
 let playerId1: number;
+let validAnswerIds: number[];
 
 beforeEach(() => {
   clear();
@@ -39,34 +40,39 @@ beforeEach(() => {
     VALID_QUIZ_CREATE_INPUTS_1.DESCRIPTION
   ).jsonBody.quizId;
   questionId1 = adminCreateQuizQuestionV2(quizId1, token1, validQuestion1V2).jsonBody.questionId;
-  adminCreateQuizQuestionV2(quizId1, token1, validQuestion2V2);
+  questionId2 = adminCreateQuizQuestionV2(quizId1, token1, validQuestion2V2).jsonBody.questionId;
   sessionId1 = adminQuizSessionStart(quizId1, token1, 5).jsonBody.sessionId;
   playerId1 = playerJoin(sessionId1, 'Hayden').jsonBody.playerId;
 });
 
 describe('Get /v1/player/{playerid}/question/{questionposition}/results', () => {
   describe('error cases', () => {
-    test.skip('Error 400: player ID does not exist', () => {
-      // failling cuz of adminQuizSessionUpdate
-      adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_ANSWER);
+    test('Error 400: player ID does not exist', () => {
       expect(playerQuestionResult(playerId1 + 1, 1)).toStrictEqual(ERROR400);
     });
-    test.skip('Error 400: question position is not valid for the session this player is in', () => {
-      adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_ANSWER);
+    test('Error 400: question position is not valid for the session this player is in', () => {
       expect(playerQuestionResult(playerId1, 3)).toStrictEqual(ERROR400);
     });
-    test.skip('Error 400: Session is not in ANSWER_SHOW state', () => {
+    test('Error 400: Session is not in ANSWER_SHOW state', () => {
       expect(playerQuestionResult(playerId1, 1)).toStrictEqual(ERROR400);
     });
-    test.skip('Error 400: session is not currently on this question', () => {
-      expect(adminQuizSessionStatus(questionId1, sessionId1, token1).jsonBody.atQuestion).toStrictEqual(1);
-      expect(playerQuestionResult(playerId1, 2)).toStrictEqual(ERROR400);
+    test('Error 400: session is not currently on this question', () => {
+      adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
+      adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
+      adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_ANSWER);
+      adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
+      adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
+      adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_ANSWER);
+      expect(playerQuestionResult(playerId1, 1)).toStrictEqual(ERROR400);
     });
   });
   describe('success cases', () => {
-    test.skip('no one submit the answer', () => {
+    test('no one submit the answer', () => {
+        adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
+      adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
       adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_ANSWER);
-      expect(playerQuestionResult(playerId1, 1)).toStrictEqual({
+      const res = playerQuestionResult(playerId1, 1);
+      expect(res).toStrictEqual({
         statusCode: 200,
         jsonBody: {
           questionId: questionId1,
@@ -76,15 +82,17 @@ describe('Get /v1/player/{playerid}/question/{questionposition}/results', () => 
         }
       });
     });
-    test.skip('Hayden submited correct, Yuchao submited wrong', () => {
-      const questions: QuestionBody[] = adminQuizInfo(token1, quizId1).jsonBody.questions;
-      const correctAnswerId = questions[0].answers.find(answer => answer.correct).answerId;
-      const wrongAnswerId = questions[0].answers.find(answer => !answer.correct).answerId;
-      const playerId2 = playerJoin(sessionId1, 'Yuchao').jsonBody.playerId;
-      playerQuestionAnswer(playerId1, 1, [correctAnswerId]);
-      playerQuestionAnswer(playerId2, 1, [wrongAnswerId]);
-
+    test('Hayden submited correct, Yuchao submited wrong', () => {
+        const playerId2 = playerJoin(sessionId1, 'Yuchao').jsonBody.playerId;
+        adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
+        adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
+        const quizInfo = adminQuizInfoV2(token1, quizId1).jsonBody as QuizInfoResult;
+        validAnswerIds = quizInfo.questions
+            .find(question => question.questionId === questionId1).answers.map(answer => answer.answerId);
+      playerQuestionAnswer(playerId1, 1, validAnswerIds);
+      playerQuestionAnswer(playerId2, 1, [0]);
       adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_ANSWER);
+
       expect(playerQuestionResult(playerId1, 1)).toStrictEqual({
         statusCode: 200,
         jsonBody: {
@@ -97,14 +105,17 @@ describe('Get /v1/player/{playerid}/question/{questionposition}/results', () => 
         }
       });
     });
-    test.skip('both of them submited correct', () => {
-      const questions: QuestionBody[] = adminQuizInfo(token1, quizId1).jsonBody.questions;
-      const correctAnswerId = questions[0].answers.find(answer => answer.correct).answerId;
-      const playerId2 = playerJoin(sessionId1, 'Yuchao').jsonBody.playerId;
-      playerQuestionAnswer(playerId1, 1, [correctAnswerId]);
-      playerQuestionAnswer(playerId2, 1, [correctAnswerId]);
-
+    test('both of them submited correct', () => {
+        const playerId2 = playerJoin(sessionId1, 'Yuchao').jsonBody.playerId;
+        adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
+        adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
+        const quizInfo = adminQuizInfoV2(token1, quizId1).jsonBody as QuizInfoResult;
+        validAnswerIds = quizInfo.questions
+            .find(question => question.questionId === questionId1).answers.map(answer => answer.answerId);
+      playerQuestionAnswer(playerId1, 1, validAnswerIds);
+      playerQuestionAnswer(playerId2, 1, validAnswerIds);
       adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_ANSWER);
+
       expect(playerQuestionResult(playerId1, 1)).toStrictEqual({
         statusCode: 200,
         jsonBody: {
@@ -118,14 +129,18 @@ describe('Get /v1/player/{playerid}/question/{questionposition}/results', () => 
         }
       });
     });
-    test.skip('both of them submited wrong', () => {
-      const questions: QuestionBody[] = adminQuizInfo(token1, quizId1).jsonBody.questions;
-      const wrongAnswerId = questions[0].answers.find(answer => !answer.correct).answerId;
-      const playerId2 = playerJoin(sessionId1, 'Yuchao').jsonBody.playerId;
-      playerQuestionAnswer(playerId1, 1, [wrongAnswerId]);
-      playerQuestionAnswer(playerId2, 1, [wrongAnswerId]);
-
+    test('both of them submited wrong', () => {
+        const playerId2 = playerJoin(sessionId1, 'Yuchao').jsonBody.playerId;
+        adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
+        adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
+        const quizInfo = adminQuizInfoV2(token1, quizId1).jsonBody as QuizInfoResult;
+        validAnswerIds = quizInfo.questions
+            .find(question => question.questionId === questionId1).answers.map(answer => answer.answerId);
+        const wrongId = [3214212];
+      playerQuestionAnswer(playerId1, 1, wrongId);
+      playerQuestionAnswer(playerId2, 1, wrongId);
       adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_ANSWER);
+
       expect(playerQuestionResult(playerId1, 1)).toStrictEqual({
         statusCode: 200,
         jsonBody: {

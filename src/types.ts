@@ -276,4 +276,5 @@ export type SessionResults = {
             timeToAnswer: number;
         }[];
     }[];
+    questionStartTime?: number[];
   };

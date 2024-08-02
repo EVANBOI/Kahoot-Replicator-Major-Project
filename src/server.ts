@@ -754,8 +754,8 @@ app.get('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Respons
 });
 
 app.get('/v1/player/:playerid/question/:questionposition', (req: Request, res: Response) => {
-  const playerId = parseInt(req.query.playerid as string);
-  const questionPosition = parseInt(req.query.questionposition as string);
+  const playerId = parseInt(req.params.playerid as string);
+  const questionPosition = parseInt(req.params.questionposition as string);
   try {
     return res.json(playerQuestionInfo(playerId, questionPosition));
   } catch (error) {
@@ -912,22 +912,6 @@ app.put('/v1/player/:playerid/question/:questionposition/answer', (req: Request,
       return res.status(400).json({ error: error.message });
     }
   }
-});
-
-app.put('/v1/admin/quiz/:quizid:/thumbnail', (req: Request, res: Response) => {
-  const playerId = parseInt(req.params.playerid);
-  const token = req.headers.token as string;
-  const { imgUrl } = req.body;
-  const result = adminQuizThumbnailUpdate(playerId, token, imgUrl);
-  return res.json(result);
-});
-
-app.put('/v1/admin/quiz/:quizid/session/:sessionid/results', (req: Request, res: Response) => {
-  const quizId = parseInt(req.params.quizid as string);
-  const sessionId = parseInt(req.params.sessionid as string);
-  const token = req.headers.token as string;
-  const result = adminQuizSessionResults(quizId, sessionId, token);
-  return res.json(result);
 });
 
 // v2 functions

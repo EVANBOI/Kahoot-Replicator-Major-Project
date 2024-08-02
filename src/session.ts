@@ -665,21 +665,7 @@ export function adminQuizSessionResults(quizId: number, sessionId: number, token
 
 export function adminQuizThumbnailUpdate(quizId: number, token: string, imgUrl: string): EmptyObject {
   const database = getData();
-  const user = findUserBySessionId(database, token);
-
-  if (!user) {
-    throw new Unauthorised('Token is invalid');
-  }
-
   const quiz = findQuizWithId(database, quizId);
-
-  if (!quiz) {
-    throw new BadRequest('Quiz not found');
-  }
-
-  if (quiz.creatorId !== user.userId) {
-    throw new Forbidden('User is not the owner of the quiz');
-  }
 
   const validImageUrlPattern = /^https?:\/\/.+\.(jpg|jpeg|png)$/i;
   if (!validImageUrlPattern.test(imgUrl)) {

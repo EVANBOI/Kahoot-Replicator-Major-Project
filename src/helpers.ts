@@ -1,14 +1,10 @@
 import { getData } from './dataStore';
 import { Forbidden, BadRequest, Unauthorised } from './error';
-import { Data, ErrorMessage, QuestionBody, User, SessionResults, Session } from './types';
+import { Data, QuestionBody, User, SessionResults, Session } from './types';
 import crypto from 'crypto';
 
 export function getHashOf(password: string) {
   return crypto.createHash('sha256').update(password).digest('hex');
-}
-
-export function findUserWithId(authUserId: number) {
-  return getData().users.find(user => user.userId === authUserId);
 }
 
 export function findQuizWithId(database: Data, quizId: number) {
@@ -30,10 +26,6 @@ export function tokenCheck(token: string) {
   if (!isValidToken) {
     throw new Unauthorised('Invalid token provided');
   }
-}
-
-export function ok<T>(item: T | { statusCode: number, error: string }): T {
-  return item as T;
 }
 
 export enum Colours {
@@ -60,56 +52,50 @@ export function findUserBySessionId(database: Data, sessionIdToFind: string): Us
 
 export function findQuestionInQuizId(database: Data, quizId: number, questionId: number): QuestionBody | undefined {
   const quiz = findQuizWithId(database, quizId);
-  return quiz?.questions.find(question => question.questionId === questionId);
+  return quiz.questions.find(question => question.questionId === questionId);
 }
 
 export function findQuestionIndex(database: Data, quizId: number, questionId: number): number {
   const quiz = findQuizWithId(database, quizId);
-  return quiz?.questions.findIndex(question => question.questionId === questionId) as number;
+  return quiz.questions.findIndex(question => question.questionId === questionId) as number;
 }
 
-export function validAnswers(questionBody: QuestionBody): boolean | ErrorMessage {
+export function validQuestion(
+  questionBody: QuestionBody,
+  totalDuration: number
+): boolean | string {
+  if (questionBody.question.length > 50) {
+    return 'Question string is greater than 50 characters';
+  } else if (questionBody.question.length < 5) {
+    return 'Question string is less than 5 characters';
+  } else if (questionBody.answers.length < 2) {
+    return 'There are less than 2 answers';
+  } else if (questionBody.answers.length > 6) {
+    return 'There are more than 6 answers';
+  } else if (questionBody.duration <= 0) {
+    return 'Duration is non positive';
+  } else if (totalDuration > 180) {
+    return 'Total duration is more than 3 min';
+  } else if (questionBody.points < 1) {
+    return 'Point is less than 1';
+  } else if (questionBody.points > 10) {
+    return 'Point is greater than 10';
+  }
   const existingAnswer: string[] = [];
   for (const ans of questionBody.answers) {
     if (ans.answer.length < 1) {
-      throw new BadRequest('An answer is less than 1 character long');
+      return 'An answer is less than 1 character long';
     } else if (ans.answer.length > 30) {
-      throw new BadRequest('An answer is more than 30 character long');
+      return 'An answer is more than 30 character long';
     } else if (existingAnswer.find(current => current === ans.answer)) {
-      throw new BadRequest('There are duplicate answers');
+      return 'There are duplicate answers';
     } else {
       existingAnswer.push(ans.answer);
     }
   }
   const correctExists = questionBody.answers.some(ans => ans.correct === true);
   if (!correctExists) {
-    throw new BadRequest('There are no correct answers');
-  }
-  return true;
-}
-
-export function validQuestion(
-  questionBody: QuestionBody,
-  totalDuration: number
-): boolean | ErrorMessage {
-  if (questionBody.question.length > 50) {
-    throw new BadRequest('Question string is greater than 50 characters');
-  } else if (questionBody.question.length < 5) {
-    throw new BadRequest('Question string is less than 5 characters');
-  } else if (questionBody.answers.length < 2) {
-    throw new BadRequest('There are less than 2 answers');
-  } else if (questionBody.answers.length > 6) {
-    throw new BadRequest('There are more than 6 answers');
-  } else if (questionBody.duration <= 0) {
-    throw new BadRequest('Duration is non positive');
-  } else if (totalDuration > 180) {
-    throw new BadRequest('Total duration is more than 3 min');
-  } else if (questionBody.points < 1) {
-    throw new BadRequest('Point is less than 1');
-  } else if (questionBody.points > 10) {
-    throw new BadRequest('Point is greater than 10');
-  } else if (typeof validAnswers(questionBody) === 'object') {
-    return validAnswers(questionBody) as ErrorMessage;
+    return 'There are no correct answers';
   }
   return true;
 }

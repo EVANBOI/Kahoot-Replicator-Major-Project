@@ -192,7 +192,6 @@ app.get('/v1/admin/user/details', (req: Request, res: Response) => {
 
 app.get('/v2/admin/user/details', (req: Request, res: Response) => {
   const token = req.headers.token as string;
-
   try {
     const userDetails = adminUserDetails(token);
     res.json(userDetails);
@@ -214,12 +213,9 @@ app.delete('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
       return res.status(StatusCodes.UNAUTHORIZED).json({ error: e.message });
     } else if (e instanceof Forbidden) {
       return res.status(StatusCodes.FORBIDDEN).json({ error: e.message });
-    } else if (e instanceof BadRequest) {
-      return res.status(StatusCodes.BAD_REQUEST).json({ error: e.message });
     }
   }
 });
-
 app.delete('/v2/admin/quiz/:quizid', (req: Request, res: Response) => {
   const token = req.headers.token as string;
   const quizId = parseInt(req.params.quizid);
@@ -433,7 +429,6 @@ app.put('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Respo
   const quizId = parseInt(req.params.quizid);
   const questionId = parseInt(req.params.questionid);
   const { token, questionBody } = req.body;
-  console.log(`Hi ${token}`);
   try {
     tokenCheck(token);
   } catch (error) {
@@ -445,7 +440,7 @@ app.put('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Respo
     return res.status(403).json({ error: error.message });
   }
   try {
-    res.json(adminQuizQuestionUpdate(quizId, questionId, questionBody, token));
+    res.json(adminQuizQuestionUpdate(quizId, questionId, questionBody));
   } catch (error) {
     return res.status(400).json({ error: error.message });
   }
@@ -471,7 +466,7 @@ app.put('/v2/admin/quiz/:quizid/question/:questionid', (req: Request, res: Respo
     }
   }
   try {
-    res.json(adminQuizQuestionUpdate(quizId, questionId, questionBody, token));
+    res.json(adminQuizQuestionUpdate(quizId, questionId, questionBody, true));
   } catch (e) {
     if (e instanceof BadRequest) {
       return res.status(StatusCodes.BAD_REQUEST).json({ error: e.message });
@@ -536,8 +531,7 @@ app.delete('/v2/admin/quiz/:quizid/question/:questionid', (req: Request, res: Re
   const questionId = parseInt(req.params.questionid);
 
   try {
-    adminQuizQuestionDelete(token, quizId, questionId);
-    res.status(StatusCodes.OK).json({});
+    return res.json(adminQuizQuestionDelete(token, quizId, questionId, true));
   } catch (e) {
     if (e instanceof Unauthorised) {
       return res.status(StatusCodes.UNAUTHORIZED).json({ error: e.message });
@@ -615,8 +609,7 @@ app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
     return res.status(403).json({ error: error.message });
   }
   try {
-    const result = adminQuizTransfer(token, quizId, userEmail);
-    return res.json(result);
+    res.json(adminQuizTransfer(token, quizId, userEmail));
   } catch (error) {
     return res.status(400).json({ error: error.message });
   }
@@ -637,8 +630,7 @@ app.post('/v2/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
     return res.status(403).json({ error: error.message });
   }
   try {
-    const result = adminQuizTransfer(token, quizId, userEmail, true);
-    return res.json(result);
+    res.json(adminQuizTransfer(token, quizId, userEmail, true));
   } catch (error) {
     return res.status(400).json({ error: error.message });
   }
@@ -649,23 +641,13 @@ app.post('/v1/admin/quiz/:quizid/question/:questionid/duplicate', (req: Request,
   const quizId = parseInt(req.params.quizid);
   const questionId = parseInt(req.params.questionid);
   try {
-    tokenCheck(token);
+    return res.json(adminQuizQuestionDuplicate(token, quizId, questionId));
   } catch (error) {
     if (error instanceof Unauthorised) {
       return res.status(StatusCodes.UNAUTHORIZED).json({ error: error.message });
-    }
-  }
-  try {
-    quizExistCheck(quizId, token);
-  } catch (error) {
-    if (error instanceof Forbidden) {
+    } else if (error instanceof Forbidden) {
       return res.status(StatusCodes.FORBIDDEN).json({ error: error.message });
-    }
-  }
-  try {
-    return res.json(adminQuizQuestionDuplicate(token, quizId, questionId));
-  } catch (error) {
-    if (error instanceof BadRequest) {
+    } else if (error instanceof BadRequest) {
       return res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
     }
   }
@@ -676,23 +658,13 @@ app.post('/v2/admin/quiz/:quizid/question/:questionid/duplicate', (req: Request,
   const quizId = parseInt(req.params.quizid);
   const questionId = parseInt(req.params.questionid);
   try {
-    tokenCheck(token);
+    return res.json(adminQuizQuestionDuplicate(token, quizId, questionId));
   } catch (error) {
     if (error instanceof Unauthorised) {
       return res.status(StatusCodes.UNAUTHORIZED).json({ error: error.message });
-    }
-  }
-  try {
-    quizExistCheck(quizId, token);
-  } catch (error) {
-    if (error instanceof Forbidden) {
+    } else if (error instanceof Forbidden) {
       return res.status(StatusCodes.FORBIDDEN).json({ error: error.message });
-    }
-  }
-  try {
-    return res.json(adminQuizQuestionDuplicate(token, quizId, questionId));
-  } catch (error) {
-    if (error instanceof BadRequest) {
+    } else if (error instanceof BadRequest) {
       return res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
     }
   }

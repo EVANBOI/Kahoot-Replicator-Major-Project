@@ -192,9 +192,6 @@ export function adminUserPasswordUpdate(
   const dataBase: Data = getData();
   const user = findUserBySessionId(dataBase, sessionId);
 
-  if (!user) {
-    throw new Unauthorised('sessionId is not valid.');
-  }
   if (user.password !== getHashOf(oldPassword)) {
     throw new BadRequest('Old Password is not the correct old password');
   }

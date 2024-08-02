@@ -4,38 +4,53 @@
       "userId": 1,
       "tokens": [
         {
-          "token": "156264"
+          "token": "472047"
         }
       ],
-      "email": "evan.xiong@unsw.edu.au",
-      "password": "5ab391a1758373cb2bd34ffbfda3398214dcd4b0ea0c9075c0965514f2e0cee5",
-      "name": "Evan Xiong",
+      "email": "admin@email.com",
+      "password": "0b14d501a594442a01c6859541bcb3e8164d183d32937b851835442f69d5c94e",
+      "name": "Idk Idk",
+      "numSuccessfulLogins": 1,
+      "numFailedPasswordsSinceLastLogin": 0,
+      "passwordUsedThisYear": []
+    },
+    {
+      "userId": 2,
+      "tokens": [
+        {
+          "token": "450033"
+        }
+      ],
+      "email": "admin2@email.com",
+      "password": "0b14d501a594442a01c6859541bcb3e8164d183d32937b851835442f69d5c94e",
+      "name": "Idka Idka",
       "numSuccessfulLogins": 1,
       "numFailedPasswordsSinceLastLogin": 0,
       "passwordUsedThisYear": []
     }
   ],
-  "quizzes": [],
-  "trash": [
+  "quizzes": [
     {
-      "creatorId": 1,
-      "quizId": 94,
-      "name": "Quiz 1",
-      "timeCreated": 1722574140,
-      "timeLastEdited": 1722574140,
-      "description": "Pointers",
+      "creatorId": 2,
+      "quizId": 1,
+      "name": "dummyquiz2",
+      "timeCreated": 1722574601,
+      "timeLastEdited": 1722574601,
+      "description": "This is a dummy quiz for testing",
       "numQuestions": 0,
       "questions": [],
       "duration": 0,
       "sessions": []
-    },
+    }
+  ],
+  "trash": [
     {
       "creatorId": 1,
-      "quizId": 4,
-      "name": "Quiz 2",
-      "timeCreated": 1722574140,
-      "timeLastEdited": 1722574140,
-      "description": "Linked Lists",
+      "quizId": 31,
+      "name": "dummyquiz",
+      "timeCreated": 1722574601,
+      "timeLastEdited": 1722574601,
+      "description": "This is a dummy quiz for testing",
       "numQuestions": 0,
       "questions": [],
       "duration": 0,

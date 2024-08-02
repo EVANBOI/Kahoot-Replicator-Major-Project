@@ -320,7 +320,6 @@ export function adminQuizSessionUpdate(
 export const turnQuestionClose = (sessionId: number, quizId: number) => {
   const database = getData();
   const quiz = findQuizWithId(database, quizId);
-  console.log('thing', quiz);
   const session = quiz.sessions.find(s => s.sessionId === sessionId);
   if (session) {
     session.state = SessionStatus.QUESTION_CLOSE;
@@ -379,10 +378,26 @@ export function adminQuizSessionStatus (quizId: number, sessionId: number): GetS
  */
 
 export function playerStatus(playerId: number): PlayerStatusResult | Error {
+  console.log(playerId);
+  const database = getData();
+  let currentSession: Session | undefined;
+  let currentQuiz: Quiz | undefined;
+  for (const quiz of database.quizzes) {
+    currentSession = quiz.sessions?.find(session =>
+      session.players.find(player => player.playerId === playerId)
+    );
+    if (currentSession) {
+      currentQuiz = quiz;
+      break;
+    }
+  }
+  if (!currentSession) {
+    throw new BadRequest(`Player ${playerId} does not exist`);
+  }
   return {
-    state: 'LOBBY',
-    numQuestions: 1,
-    atQuestion: 1
+    state: currentSession.state,
+    numQuestions: currentQuiz.numQuestions,
+    atQuestion: currentSession.atQuestion
   };
 }
 

@@ -896,14 +896,20 @@ app.post('/v1/player/join', (req: Request, res: Response) => {
 app.get('/v1/player/:playerid/results', (req: Request, res: Response) => {
   const playerId = parseInt(req.query.playerid as string);
   const result = playerResults(playerId);
+
   return res.json(result);
 });
 
 // Evan's function
 app.get('/v1/player/:playerid', (req: Request, res: Response) => {
-  const playerId = parseInt(req.query.playerid as string);
-  const result = playerStatus(playerId);
-  return res.json(result);
+  const playerId = parseInt(req.params.playerid as string);
+  try {
+    return res.json(playerStatus(playerId));
+  } catch (error) {
+    if (error instanceof BadRequest) {
+      return res.status(400).json({ error: error.message });
+    }
+  }
 });
 
 // Evan's function

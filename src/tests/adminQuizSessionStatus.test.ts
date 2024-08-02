@@ -1,3 +1,4 @@
+import { SessionStatus } from '../session';
 import { ERROR400, ERROR401, ERROR403, validQuestion1V2 } from '../testConstants';
 import {
   clear,
@@ -46,7 +47,7 @@ describe('Unsuccessful cases', () => {
     expect(res).toStrictEqual(ERROR403);
   });
 
-  test.skip('Error 400: sessionId does not refer to valid session within this quiz', () => {
+  test('Error 400: sessionId does not refer to valid session within this quiz', () => {
     const quizId2 = adminQuizCreate(token2, 'Quiz 2', '2nd description').jsonBody.quizId;
     const sessionId2 = adminQuizSessionStart(quizId2, token2, 5).jsonBody.sessionId;
     const res = adminQuizSessionStatus(quizId1, sessionId2, token1);
@@ -55,10 +56,10 @@ describe('Unsuccessful cases', () => {
 });
 
 describe('Successful cases', () => {
-  test.failing('Successfully view session status with only 1 session existing', () => {
+  test('Successfully view session status with only 1 session existing', () => {
     const res = adminQuizSessionStatus(quizId1, sessionId1, token1);
-    expect(res).toStrictEqual({
-      state: 'LOBBY',
+    expect(res.jsonBody).toStrictEqual({
+      state: SessionStatus.LOBBY,
       atQuestion: 0,
       players: [],
       metadata: {
@@ -93,11 +94,11 @@ describe('Successful cases', () => {
       }
     });
   });
-  test.failing('Successfully view session status with multiple sessionse existing', () => {
+  test('Successfully view session status with multiple sessionse existing', () => {
     const sessionId2 = adminQuizSessionStart(quizId1, token1, 5).jsonBody.sessionId;
     const res = adminQuizSessionStatus(quizId1, sessionId2, token1);
-    expect(res).toStrictEqual({
-      state: 'LOBBY',
+    expect(res.jsonBody).toStrictEqual({
+      state: SessionStatus.LOBBY,
       atQuestion: 0,
       players: [],
       metadata: {
@@ -138,8 +139,8 @@ describe('Successful cases', () => {
     playerJoin(sessionId1, 'Abbb');
     playerJoin(sessionId1, 'cdeerr4');
     const res = adminQuizSessionStatus(quizId1, sessionId1, token1);
-    expect(res).toStrictEqual({
-      state: 'LOBBY',
+    expect(res.jsonBody).toStrictEqual({
+      state: SessionStatus.LOBBY,
       atQuestion: 0,
       players: [
         'AAAA',

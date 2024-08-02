@@ -371,7 +371,27 @@ describe('Succesful Tests', () => {
 
 //= ===========================================================================//
 // V2 route tests
-describe('v2 unsuccessful tests: thumbnail url', () => {
+describe('v2 unsuccessful tests', () => {
+  describe('Expected error code is 401', () => {
+    test('Empty sessionId', () => {
+      const result = adminCreateQuizQuestionV2(quizId1, '', validQuestion1);
+      expect(result).toStrictEqual(ERROR401);
+    });
+    test('Invalid sessionId', () => {
+      const result = adminCreateQuizQuestionV2(quizId1, '-00000', validQuestion1);
+      expect(result).toStrictEqual(ERROR401);
+    });
+  });
+  describe('Expected error code is 403', () => {
+    test('User is not an owner of quiz', () => {
+      const result = adminCreateQuizQuestionV2(quizId1, sessionId2, validQuestion1);
+      expect(result).toStrictEqual(ERROR403);
+    });
+    test('Quiz does not exist', () => {
+      const result = adminCreateQuizQuestionV2(quizId1 - 911, sessionId1, validQuestion1);
+      expect(result).toStrictEqual(ERROR403);
+    });
+  });
   test('url is an empty string', () => {
     const result = adminCreateQuizQuestionV2(
       quizId1,

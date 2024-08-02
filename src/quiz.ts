@@ -114,7 +114,7 @@ export function adminQuizRemove (token: string, quizId: number, v2?: boolean): Q
     throw new Forbidden(`Quiz with ID ${quizId} is not owned by ${user.userId} (actual owner: ${quiz.creatorId})`);
   }
   if (v2 === true) {
-    if (quiz.sessions.some(s => s.state === SessionStatus.END) === true) {
+    if (quiz.sessions.some(s => s.state !== SessionStatus.END)) {
       throw new BadRequest('At least one session has not ended yet');
     }
   }

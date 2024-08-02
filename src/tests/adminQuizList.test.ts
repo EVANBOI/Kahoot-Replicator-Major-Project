@@ -1,22 +1,45 @@
-import { adminAuthRegister, adminQuizList, clear, adminQuizCreate } from '../wrappers';
+import { adminAuthRegister, adminQuizList, clear, adminQuizCreate, adminQuizListV2 } from '../wrappers';
 import { ERROR401 } from '../testConstants';
 
 beforeEach(() => {
   clear();
 });
 
-test('Session id is not valid', () => {
-  expect(adminQuizList('-10')).toStrictEqual(ERROR401);
+// v1 route tests
+describe('Success case for v1 ', () => {
+  test('Succesful view empty list', () => {
+    let sessionId1: string;
+    const { jsonBody } = adminAuthRegister('admin@unsw.edu.au', 'Password1', 'JJ', 'HH');
+    sessionId1 = jsonBody?.token;
+    expect(adminQuizList(sessionId1)).toStrictEqual({
+      statusCode: 200,
+      jsonBody: { quizzes: [] }
+    });
+  });
+})
+
+describe('Failure case for v1 ', () => {
+  test('Invalid session id', () => {
+    let sessionId1: string;
+    const { jsonBody } = adminAuthRegister('admin@unsw.edu.au', 'Password1', 'JJ', 'HH');
+    sessionId1 = jsonBody?.token;
+    expect(adminQuizList(sessionId1 + '3434')).toStrictEqual(ERROR401);
+  });
+})
+
+// v2 route tests
+test('Session id is not valid for v2', () => {
+  expect(adminQuizListV2('-10')).toStrictEqual(ERROR401);
 });
 
-describe('Valid session id with only no quizzes', () => {
+describe('Valid session id with only no quizzes for v2', () => {
   let sessionId: string;
   beforeEach(() => {
     const { jsonBody } = adminAuthRegister('admin@unsw.edu.au', 'Password1', 'JJ', 'HH');
     sessionId = jsonBody?.token;
   });
   test('There is only one user in database', () => {
-    expect(adminQuizList(sessionId)).toStrictEqual({
+    expect(adminQuizListV2(sessionId)).toStrictEqual({
       statusCode: 200,
       jsonBody: { quizzes: [] }
     });
@@ -25,14 +48,14 @@ describe('Valid session id with only no quizzes', () => {
   test('There are multiple users in database', () => {
     adminAuthRegister('admin2@unsw.edu.au', 'Password1', 'JJz', 'HHz');
     adminAuthRegister('admin3@unsw.edu.au', 'Password1', 'JJf', 'HHf');
-    expect(adminQuizList(sessionId)).toStrictEqual({
+    expect(adminQuizListV2(sessionId)).toStrictEqual({
       statusCode: 200,
       jsonBody: { quizzes: [] }
     });
   });
 });
 
-describe('Valid user with only one quiz', () => {
+describe('Valid user with only one quiz for v2', () => {
   let sessionId1: string;
   let quiz1Id: number;
   beforeEach(() => {
@@ -44,7 +67,7 @@ describe('Valid user with only one quiz', () => {
   });
 
   test('There is only one user in database', () => {
-    expect(adminQuizList(sessionId1)).toStrictEqual({
+    expect(adminQuizListV2(sessionId1)).toStrictEqual({
       statusCode: 200,
       jsonBody: {
         quizzes: [
@@ -60,7 +83,7 @@ describe('Valid user with only one quiz', () => {
   test('There are multiple users in database', () => {
     adminAuthRegister('admin2@unsw.edu.au', 'Password1', 'JJz', 'HHz');
     adminAuthRegister('admin3@unsw.edu.au', 'Password1', 'JJf', 'HHf');
-    expect(adminQuizList(sessionId1)).toStrictEqual({
+    expect(adminQuizListV2(sessionId1)).toStrictEqual({
       statusCode: 200,
       jsonBody: {
         quizzes: [
@@ -74,7 +97,7 @@ describe('Valid user with only one quiz', () => {
   });
 });
 
-describe('Valid user with multiple quizzes', () => {
+describe('Valid user with multiple quizzes for v2', () => {
   let sessionId1: string;
   let quiz1Id: number, quiz2Id: number, quiz3Id:number;
   beforeEach(() => {
@@ -91,7 +114,7 @@ describe('Valid user with multiple quizzes', () => {
     quiz3Id = Quiz3?.quizId;
   });
   test('There is only one user in database', () => {
-    expect(adminQuizList(sessionId1)).toStrictEqual({
+    expect(adminQuizListV2(sessionId1)).toStrictEqual({
       statusCode: 200,
       jsonBody: {
         quizzes: [
@@ -115,7 +138,7 @@ describe('Valid user with multiple quizzes', () => {
   test('There are multiple users in database', () => {
     adminAuthRegister('admin2@unsw.edu.au', 'Password1', 'JJz', 'HHz');
     adminAuthRegister('admin3@unsw.edu.au', 'Password1', 'JJf', 'HHf');
-    expect(adminQuizList(sessionId1)).toStrictEqual({
+    expect(adminQuizListV2(sessionId1)).toStrictEqual({
       statusCode: 200,
       jsonBody: {
         quizzes: [

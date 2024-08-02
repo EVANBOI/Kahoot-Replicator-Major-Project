@@ -1,6 +1,6 @@
 import { getData } from './dataStore';
 import { Forbidden, BadRequest, Unauthorised } from './error';
-import { Data, ErrorMessage, QuestionBody, User, SessionResults, Session } from './types';
+import { Data, QuestionBody, User, SessionResults, Session } from './types';
 import crypto from 'crypto';
 
 export function getHashOf(password: string) {

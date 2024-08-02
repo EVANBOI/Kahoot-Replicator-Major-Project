@@ -365,6 +365,96 @@ describe('Unsuccessful Updates for v2: 400 errors', () => {
       sessionId1);
     expect(result).toStrictEqual(ERROR400);
   });
+
+  test('url is an empty string', () => {
+    const result = adminQuizQuestionUpdateV2(
+      quizId1,
+      questionId1,
+      {
+        questionId: expect.any(Number),
+        question: 'Valid question 1?',
+        duration: 3,
+        points: 2,
+        answers: [
+          {
+            answerId: expect.any(Number),
+            colour: expect.any(String),
+            answer: 'A',
+            correct: true
+          },
+          {
+            answerId: expect.any(Number),
+            colour: expect.any(String),
+            answer: 'B',
+            correct: false
+          }
+        ],
+        thumbnailUrl: ''
+      },
+      sessionId1
+    );
+    expect(result).toStrictEqual(ERROR400);
+  });
+
+  test('url is invalid file type', () => {
+    const result = adminQuizQuestionUpdateV2(
+      quizId1,
+      questionId1,
+      {
+        questionId: expect.any(Number),
+        question: 'Valid question 1?',
+        duration: 3,
+        points: 2,
+        answers: [
+          {
+            answerId: expect.any(Number),
+            colour: expect.any(String),
+            answer: 'A',
+            correct: true
+          },
+          {
+            answerId: expect.any(Number),
+            colour: expect.any(String),
+            answer: 'B',
+            correct: false
+          }
+        ],
+        thumbnailUrl: 'http://google.com/some/image/path.jpe'
+      },
+      sessionId1
+    );
+    expect(result).toStrictEqual(ERROR400);
+  });
+
+  test('url does not begin with http or https', () => {
+    const result = adminQuizQuestionUpdateV2(
+      quizId1,
+      questionId1,
+      {
+        questionId: expect.any(Number),
+        question: 'Valid question 1?',
+        duration: 3,
+        points: 2,
+        answers: [
+          {
+            answerId: expect.any(Number),
+            colour: expect.any(String),
+            answer: 'A',
+            correct: true
+          },
+          {
+            answerId: expect.any(Number),
+            colour: expect.any(String),
+            answer: 'B',
+            correct: false
+          }
+        ],
+        thumbnailUrl: 'htteep://google.com/some/image/path.jpg'
+      },
+      sessionId1
+    );
+    expect(result).toStrictEqual(ERROR400);
+  });
 });
 
 describe('Successful Updates for v2', () => {

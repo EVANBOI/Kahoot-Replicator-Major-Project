@@ -245,7 +245,7 @@ export function updateResults (session: Session) {
     // if the player answered the question, update the total time and player answered
     if (player.questionResults[questionIndex].timeToAnswer !== -1) {
       const actualUsedTime = (player.questionResults[questionIndex].timeToAnswer - session.results.questionStartTime[questionIndex]) / 1000;
-      totalAnswerTime += actualUsedTime
+      totalAnswerTime += actualUsedTime;
       numAnsweredPlayer++;
     }
   });
@@ -269,8 +269,7 @@ export function updateResults (session: Session) {
   });
   session.results.questionResultsByPlayer.forEach((player, index) => {
     player.questionResults[questionIndex].rank = index + 1;
-  })
-
+  });
 }
 
 // record the actuall time when the question is open

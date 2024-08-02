@@ -4,7 +4,7 @@
       "userId": 1,
       "tokens": [
         {
-          "token": "892468"
+          "token": "549665"
         }
       ],
       "email": "admin1@gmail.com",
@@ -18,28 +18,28 @@
   "quizzes": [
     {
       "creatorId": 1,
-      "quizId": 59,
+      "quizId": 3123,
       "name": "Quiz 1",
-      "timeCreated": 1722595825,
-      "timeLastEdited": 1722595825,
+      "timeCreated": 1722601188,
+      "timeLastEdited": 1722601188,
       "description": "1st description",
       "numQuestions": 2,
       "questions": [
         {
-          "questionId": 78,
+          "questionId": 715,
           "question": "Valid question 1?",
           "duration": 3,
           "points": 2,
           "answers": [
             {
-              "answerId": 24,
-              "colour": "red",
+              "answerId": 430,
+              "colour": "purple",
               "answer": "A",
               "correct": true
             },
             {
-              "answerId": 624,
-              "colour": "brown",
+              "answerId": 7430,
+              "colour": "blue",
               "answer": "B",
               "correct": false
             }
@@ -77,17 +77,24 @@
       "duration": 8,
       "sessions": [
         {
-          "sessionId": 16,
-          "atQuestion": 3,
+          "sessionId": 196,
+          "atQuestion": 0,
           "players": [
             {
-              "playerId": 99,
-              "name": "erwr",
+              "playerId": 671,
+              "name": "Yooiuiudsf",
               "score": 0
             }
           ],
-          "state": 3,
-          "messages": [],
+          "state": 0,
+          "messages": [
+            {
+              "messageBody": "message 1",
+              "playerId": 671,
+              "playerName": "Yooiuiudsf",
+              "timeSent": 1722601188
+            }
+          ],
           "results": {
             "usersRankedByScore": [
               {
@@ -138,54 +145,21 @@
           "autoStartNum": 5,
           "quizCopy": {
             "creatorId": 1,
-            "quizId": 59,
+            "quizId": 3123,
             "name": "Quiz 1",
-            "timeCreated": 1722595825,
-            "timeLastEdited": 1722595825,
+            "timeCreated": 1722601188,
+            "timeLastEdited": 1722601188,
             "description": "1st description",
             "numQuestions": 2,
             "questions": [
               {
-                "questionId": 78,
+                "questionId": 715,
                 "question": "Valid question 1?",
                 "duration": 3,
                 "points": 2,
                 "answers": [
                   {
-                    "answerId": 24,
-                    "colour": "red",
-                    "answer": "A",
-                    "correct": true
-                  },
-                  {
-                    "answerId": 624,
-                    "colour": "brown",
-                    "answer": "B",
-                    "correct": false
-                  }
-                ],
-                "thumbnailUrl": "http://google.com/some/image/path.jpg"
-              },
-              {
-                "questionId": 48,
-                "question": "Valid question 3?",
-                "duration": 5,
-                "points": 2,
-                "answers": [
-                  {
-                    "answerId": 524,
-                    "colour": "brown",
-                    "answer": "Amb",
-                    "correct": false
-                  },
-                  {
-                    "answerId": 734,
-                    "colour": "purple",
-                    "answer": "Bsgd",
-                    "correct": true
-                  },
-                  {
-                    "answerId": 434,
+                    "answerId": 430,
                     "colour": "purple",
                     "answer": "Clsj",
                     "correct": false
@@ -279,8 +253,8 @@
                     "correct": true
                   },
                   {
-                    "answerId": 624,
-                    "colour": "brown",
+                    "answerId": 7430,
+                    "colour": "blue",
                     "answer": "B",
                     "correct": false
                   }

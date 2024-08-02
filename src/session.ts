@@ -15,7 +15,6 @@ import {
   QuestionBody,
   PlayerStatusResult,
   PlayerChatlogResult,
-  PlayerQuestionAnswerResult,
   SessionResults,
   Quiz,
   Session,
@@ -187,7 +186,7 @@ export function adminQuizSessionUpdate(
         try {
           turnQuestionOpen(sessionId, quizId);
           sessionIdToTimerMap.delete(sessionId);
-          
+
           console.log(`Succesffully deleted session with id ${sessionId} after ${DELAY} seconds`);
         } catch {
           console.log(`Failed to delete session with id ${sessionId} after ${DELAY} seconds`);
@@ -567,12 +566,12 @@ export function playerQuestionAnswer(
       session.players.find(player => player.playerId === playerId)
     );
     if (currentSession) {
-      break; 
+      break;
     }
   }
 
   if (!currentSession) {
-    throw new BadRequest('player id does not exist'); 
+    throw new BadRequest('player id does not exist');
   } else if (currentSession.state !== SessionStatus.QUESTION_OPEN) {
     throw new BadRequest('session is not question open state');
   } else if (currentSession.atQuestion !== questionPosition) {
@@ -591,27 +590,27 @@ export function playerQuestionAnswer(
   if (new Set(answerIds).size !== answerIds.length) {
     throw new BadRequest('there are duplicate answer ids');
   } else if (answerIds.length < 1) {
-    throw new BadRequest('less than 1 answerId was submitted'); 
+    throw new BadRequest('less than 1 answerId was submitted');
   }
 
   const correctAnswerIds = currentSession.quizCopy.questions
-  .flatMap(question => 
-    question.answers
-      .filter(answer => answer.correct)
-      .map(answer => answer.answerId)
-  );
+    .flatMap(question =>
+      question.answers
+        .filter(answer => answer.correct)
+        .map(answer => answer.answerId)
+    );
   const submittedCorrectAnswers = answerIds.filter(a => correctAnswerIds.includes(a));
-  const player = currentSession.players.find(p => p.playerId === playerId)
+  const player = currentSession.players.find(p => p.playerId === playerId);
   if (submittedCorrectAnswers) {
     player.score += question.points;
   }
-  let results = currentSession.results.questionResultsByPlayer.find(p => p.playerId === playerId);
+  const results = currentSession.results.questionResultsByPlayer.find(p => p.playerId === playerId);
   results.questionResults[questionPosition - 1] = {
     questionId: question.questionId,
     score: question.points,
     rank: 1,
-    timeToAnswer:  Math.floor(Date.now() / 1000)
-  }
+    timeToAnswer: Math.floor(Date.now() / 1000)
+  };
   setData(database);
   return {};
 }
@@ -693,35 +692,62 @@ export function adminQuizThumbnailUpdate(quizId: number, token: string, imgUrl: 
   return {};
 }
 
-export function playerResults(
-  playerId: number
-): SessionResults {
-  // const database = getData();
+export function playerResults(playerId: number): SessionResults {
+  const database = getData();
+  let currentSession: Session | undefined;
 
-  // // Check if the player ID is valid
-  // if (!playerId) {
-  //   throw new BadRequest('Player ID does not exist.');
-  // }
+  // Find the quiz and session for the given player
+  for (const quiz of database.quizzes) {
+    currentSession = quiz.sessions?.find(session =>
+      session.players.find(player => player.playerId === playerId)
+    );
+    if (currentSession) {
+      break; // Exit the loop once the player and session are found
+    }
+  }
+  if (!currentSession) {
+    throw new BadRequest('Player does not exist in any session');
+  }
 
-  // // Check if the session is in FINAL_RESULTS state
+  if (currentSession.state !== SessionStatus.FINAL_RESULTS) {
+    throw new BadRequest('Session is not in FINAL_RESULTS state');
+  }
 
-  // if ( !== SessionStatus.FINAL_RESULTS) {
-  //   throw new BadRequest('Session is not in FINAL_RESULTS state.');
+  // if (typeof currentSession.results !== 'object' || !Array.isArray(currentSession.results.questionResults)) {
+  //   throw new BadRequest('Session results are not in the correct format');
   // }
 
   // Fetch and return player results
+  // Prepare the data
+  const usersRankedByScore = currentSession.players
+    .map(player => ({
+      name: player.name,
+      score: player.score,
+    }))
+    .sort((a, b) => b.score - a.score);
+
+  const questionResults = currentSession.results.questionResults.map(question => ({
+    questionId: question.questionId,
+    playersCorrectList: question.playersCorrectList.sort(), // Sort names in ascending order
+    averageAnswerTime: question.averageAnswerTime || 0, // Default to 0 if undefined
+    percentCorrect: question.percentCorrect || 0, // Default to 0 if undefined
+  }));
+
+  // Optionally include questionResultsByPlayer if it exists
+  // const questionResultsByPlayer = currentSession.results.questionResultsByPlayer?.map(playerResults => ({
+  //   playerName: playerResults.playerName,
+  //   playerId: playerResults.playerId,
+  //   questionResults: playerResults.questionResults.map(questionResult => ({
+  //     questionId: questionResult.questionId,
+  //     score: questionResult.score,
+  //     rank: questionResult.rank,
+  //     timeToAnswer: questionResult.timeToAnswer,
+  //   })),
+  // }));
+
   return {
-    usersRankedByScore: [
-      { name: 'Hayden', score: 45 } // Replace with actual player results logic
-    ],
-    questionResults: [
-      {
-        questionId: 5546, // Replace with actual question ID logic
-        playersCorrectList: ['Hayden'], // Replace with actual list of players who got the answer right
-        averageAnswerTime: 45, // Replace with actual average answer time
-        percentCorrect: 54 // Replace with actual percentage of correct answers
-      }
-    ]
+    usersRankedByScore,
+    questionResults,
   };
 }
 

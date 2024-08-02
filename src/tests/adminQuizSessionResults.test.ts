@@ -8,7 +8,6 @@ import {
   validQuestion1V2,
   validQuestion3V2
 } from '../testConstants';
-import sleepSync from 'slync';
 import {
   clear,
   adminAuthRegister,
@@ -22,8 +21,9 @@ import {
   adminQuizInfoV2
 } from '../wrappers';
 
-import { QuestionBody } from '../types';
 import { SessionAction } from '../session';
+
+import { QuizInfoResult } from '../types';
 
 let token1: string;
 let sessionId1: number;
@@ -80,22 +80,25 @@ describe('Get /v1/admin/quiz/{quizid}/session/{sessionid}/results', () => {
   });
 
   describe('success cases', () => {
-    test.skip('Successfully get session results', () => {
-      const questions: QuestionBody[] = adminQuizInfoV2(token1, quizId1).jsonBody.questions;
-      const correctAnswerId1 = questions[0].answers.find(answer => answer.correct).answerId;
-      const correctAnswerId2 = questions[1].answers.find(answer => answer.correct).answerId;
+    test('Successfully get session results', () => {
+      const quizInfo = adminQuizInfoV2(token1, quizId1).jsonBody as QuizInfoResult;
+      validAnswerIdsQ1 = quizInfo.questions
+        .find(question => question.questionId === questionId1).answers.map(answer => answer.answerId);
+      validAnswerIdsQ2 = quizInfo.questions
+        .find(question => question.questionId === questionId2).answers.map(answer => answer.answerId);
+      adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
+      adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
+      playerQuestionAnswer(playerId1, 1, validAnswerIdsQ1);
+      playerQuestionAnswer(playerId2, 1, validAnswerIdsQ1);
+      adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_ANSWER);
 
       adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
       adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
-      playerQuestionAnswer(playerId1, 1, [correctAnswerId1]);
-      playerQuestionAnswer(playerId2, 1, [correctAnswerId1]);
-      sleepSync(validQuestion1V2.duration * 1000);
-      adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.NEXT_QUESTION);
-      adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.SKIP_COUNTDOWN);
-      playerQuestionAnswer(playerId1, 2, [correctAnswerId2]);
-      playerQuestionAnswer(playerId2, 2, [correctAnswerId2]);
-      sleepSync(validQuestion3V2.duration * 1000);
+      playerQuestionAnswer(playerId1, 2, validAnswerIdsQ2);
+      playerQuestionAnswer(playerId2, 2, validAnswerIdsQ2);
+      adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_ANSWER);
       adminQuizSessionUpdate(quizId1, sessionId1, token1, SessionAction.GO_TO_FINAL_RESULTS);
+
       const res = adminQuizSessionResults(quizId1, sessionId1, token1);
       expect(res.statusCode).toBe(200);
       expect(res.jsonBody).toStrictEqual({

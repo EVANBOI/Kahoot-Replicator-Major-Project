@@ -57,7 +57,6 @@ describe('Unsuccessful user details retrieval tests', () => {
   })
 })
 
-
 // V2 route tests
 describe('Successful user details retrieval tests for v2 version', () => {
   test('Valid sessionId returns user details', () => {

@@ -143,7 +143,7 @@ export function adminQuizQuestionDuplicate(
 }
 
 /**
- * Update questions for quizzes
+ * Update the relevant details of a particular question within a quiz.
  * Each answer is assigned a random colour code.
  *
  * @param {number} quizId - unique id of a quiz

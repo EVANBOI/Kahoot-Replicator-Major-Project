@@ -1,4 +1,7 @@
-import { Data } from './types';
+import {
+  Data,
+  // SessionIdToTimerObject
+} from './types';
 import fs from 'fs';
 // YOU SHOULD MODIFY THIS OBJECT BELOW ONLY
 export const dataStore: Data = {
@@ -6,6 +9,8 @@ export const dataStore: Data = {
   quizzes: [],
   trash: []
 };
+
+export const sessionIdToTimerMap = new Map<number, ReturnType<typeof setTimeout>>();
 
 // YOU SHOULD MODIFY THIS OBJECT ABOVE ONLY
 
@@ -38,6 +43,6 @@ export function getData(): Data {
 
 // Use set(newData) to pass in the entire data object, with modifications made
 export function setData(newData: Data) {
-  const data = JSON.stringify(newData);
+  const data = JSON.stringify(newData, null, 2);
   fs.writeFileSync(filePath, data, { flag: 'w' });
 }

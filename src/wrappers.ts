@@ -1,6 +1,7 @@
 import request, { HttpVerb } from 'sync-request-curl';
 import { port, url } from '../src/config.json';
 import { QuestionBody, PositionWithTokenObj, PositionObj, MessageObject } from './types';
+import { SessionAction } from './session';
 
 const SERVER_URL = `${url}:${port}`;
 
@@ -384,7 +385,7 @@ export const adminQuizSessionUpdate = (
   quizid: number,
   sessionid: number,
   token: string,
-  action: string
+  action: SessionAction
 ) => {
   return requestHelper('PUT', `/v1/admin/quiz/${quizid}/session/${sessionid}`, { action }, token);
 };

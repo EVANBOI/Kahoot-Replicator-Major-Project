@@ -143,7 +143,7 @@ export const validQuestion2V2: QuestionBody = {
 export const validQuestion3V2: QuestionBody = {
   questionId: expect.any(Number),
   question: 'Valid question 3?',
-  duration: 5,
+  duration: 2,
   points: 2,
   answers: [
     { answerId: expect.any(Number), colour: expect.any(String), answer: 'Amb', correct: false },

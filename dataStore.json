@@ -1,5 +1,127 @@
 {
-  "users": [],
-  "quizzes": [],
+  "users": [
+    {
+      "userId": 1,
+      "tokens": [
+        {
+          "token": "504130"
+        }
+      ],
+      "email": "admin@email.com",
+      "password": "0b14d501a594442a01c6859541bcb3e8164d183d32937b851835442f69d5c94e",
+      "name": "Idk Idk",
+      "numSuccessfulLogins": 1,
+      "numFailedPasswordsSinceLastLogin": 0,
+      "passwordUsedThisYear": []
+    },
+    {
+      "userId": 2,
+      "tokens": [
+        {
+          "token": "862386"
+        }
+      ],
+      "email": "user@email.com",
+      "password": "0b14d501a594442a01c6859541bcb3e8164d183d32937b851835442f69d5c94e",
+      "name": "Idk Idk",
+      "numSuccessfulLogins": 1,
+      "numFailedPasswordsSinceLastLogin": 0,
+      "passwordUsedThisYear": []
+    }
+  ],
+  "quizzes": [
+    {
+      "creatorId": 1,
+      "quizId": 8,
+      "name": "ValidQuizName",
+      "timeCreated": 1722572424,
+      "timeLastEdited": 1722572424,
+      "description": "ValidDescription",
+      "numQuestions": 1,
+      "questions": [
+        {
+          "questionId": 7,
+          "question": "Valid question 1?",
+          "duration": 3,
+          "points": 2,
+          "answers": [
+            {
+              "answerId": 25,
+              "colour": "purple",
+              "answer": "A",
+              "correct": true
+            },
+            {
+              "answerId": 75,
+              "colour": "orange",
+              "answer": "B",
+              "correct": false
+            }
+          ],
+          "thumbnailUrl": "http://google.com/some/image/path.jpg"
+        }
+      ],
+      "duration": 3,
+      "sessions": [
+        {
+          "sessionId": 8,
+          "atQuestion": 1,
+          "players": [
+            {
+              "playerId": 1,
+              "name": "Player1",
+              "score": 0
+            },
+            {
+              "playerId": 31,
+              "name": "Player2",
+              "score": 0
+            }
+          ],
+          "state": 2,
+          "messages": [],
+          "results": {
+            "usersRankedByScore": [],
+            "questionResults": []
+          },
+          "autoStartNum": 5,
+          "quizCopy": {
+            "creatorId": 1,
+            "quizId": 8,
+            "name": "ValidQuizName",
+            "timeCreated": 1722572424,
+            "timeLastEdited": 1722572424,
+            "description": "ValidDescription",
+            "numQuestions": 1,
+            "questions": [
+              {
+                "questionId": 7,
+                "question": "Valid question 1?",
+                "duration": 3,
+                "points": 2,
+                "answers": [
+                  {
+                    "answerId": 25,
+                    "colour": "purple",
+                    "answer": "A",
+                    "correct": true
+                  },
+                  {
+                    "answerId": 75,
+                    "colour": "orange",
+                    "answer": "B",
+                    "correct": false
+                  }
+                ],
+                "thumbnailUrl": "http://google.com/some/image/path.jpg"
+              }
+            ],
+            "duration": 3,
+            "sessions": []
+          }
+        }
+      ]
+    }
+  ],
   "trash": []
 }

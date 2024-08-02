@@ -520,8 +520,54 @@ export function playerQuestionAnswer(
   playerId: number,
   questionPosition: number,
   answerIds: number[]
-): PlayerQuestionAnswerResult {
-  return {};
+): { statusCode: number, jsonBody?: object } {
+  const database = getData();
+  let currentSession: Session | undefined;
+
+  for (const quiz of database.quizzes) {
+    currentSession = quiz.sessions?.find(session =>
+      session.players.find(player => player.playerId === playerId)
+    );
+    if (currentSession) {
+      break; 
+    }
+  }
+
+  if (!currentSession) {
+    return { statusCode: 400 }; 
+  }
+
+  if (currentSession.state !== SessionStatus.QUESTION_OPEN) {
+    return { statusCode: 400 }; 
+  }
+
+  if (currentSession.atQuestion !== questionPosition) {
+    return { statusCode: 400 }; 
+  }
+
+  const question = currentSession.quizCopy.questions[questionPosition - 1];
+  if (!question) {
+    return { statusCode: 400 }; 
+  }
+
+  const validAnswerIds = question.answers.map(answer => answer.answerId);
+  for (const answerId of answerIds) {
+    if (!validAnswerIds.includes(answerId)) {
+      return { statusCode: 400 }; 
+    }
+  }
+
+  if (new Set(answerIds).size !== answerIds.length) {
+    return { statusCode: 400 }; 
+  }
+
+  if (answerIds.length < 1) {
+    return { statusCode: 400 }; 
+  }
+
+  setData(database);
+
+  return { statusCode: 200, jsonBody: {} };
 }
 
 /**

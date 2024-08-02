@@ -924,7 +924,7 @@ app.put('/v1/player/:playerid/question/:questionposition/answer', (req: Request,
   const questionPosition = parseInt(req.params.questionposition);
   const { answerIds } = req.body;
   const result = playerQuestionAnswer(playerId, questionPosition, answerIds);
-  return res.json(result);
+  return res.status(result.statusCode).json(result.jsonBody || {});
 });
 
 app.put('/v1/admin/quiz/:quizid:/thumbnail', (req: Request, res: Response) => {

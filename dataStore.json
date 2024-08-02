@@ -4,7 +4,7 @@
       "userId": 1,
       "tokens": [
         {
-          "token": "153811"
+          "token": "818476"
         }
       ],
       "email": "admin@email.com",
@@ -13,112 +13,60 @@
       "numSuccessfulLogins": 1,
       "numFailedPasswordsSinceLastLogin": 0,
       "passwordUsedThisYear": []
-    },
-    {
-      "userId": 2,
-      "tokens": [
-        {
-          "token": "040548"
-        }
-      ],
-      "email": "admin2@email.com",
-      "password": "0b14d501a594442a01c6859541bcb3e8164d183d32937b851835442f69d5c94e",
-      "name": "Idka Idka",
-      "numSuccessfulLogins": 1,
-      "numFailedPasswordsSinceLastLogin": 0,
-      "passwordUsedThisYear": []
     }
   ],
   "quizzes": [
     {
       "creatorId": 1,
-      "quizId": 5,
-      "name": "dummyquiz",
-      "timeCreated": 1722581664,
-      "timeLastEdited": 1722581664,
-      "description": "This is a dummy quiz for testing",
+      "quizId": 21,
+      "name": "ValidQuizName",
+      "timeCreated": 1722582097,
+      "timeLastEdited": 1722582097,
+      "description": "ValidDescription",
       "numQuestions": 1,
       "questions": [
         {
-          "question": "Who is the Monarch of England?",
-          "duration": 4,
-          "points": 5,
+          "questionId": 51,
+          "question": "Valid question 1?",
+          "duration": 3,
+          "points": 2,
           "answers": [
             {
-              "answer": "Prince Charles",
-              "correct": true,
-              "answerId": 14,
-              "colour": "blue"
+              "answerId": 496,
+              "colour": "brown",
+              "answer": "A",
+              "correct": true
             },
             {
-              "answer": "Prince William",
-              "correct": false,
-              "answerId": 54,
-              "colour": "blue"
+              "answerId": 696,
+              "colour": "blue",
+              "answer": "B",
+              "correct": false
             }
-          ],
-          "questionId": 9
+          ]
+        },
+        {
+          "questionId": 41,
+          "question": "Valid question 1?",
+          "duration": 3,
+          "points": 2,
+          "answers": [
+            {
+              "answerId": 496,
+              "colour": "brown",
+              "answer": "A",
+              "correct": true
+            },
+            {
+              "answerId": 696,
+              "colour": "blue",
+              "answer": "B",
+              "correct": false
+            }
+          ]
         }
       ],
-      "duration": 4,
-      "sessions": [
-        {
-          "sessionId": 4,
-          "atQuestion": 0,
-          "players": [],
-          "state": 0,
-          "messages": [],
-          "results": {
-            "usersRankedByScore": [],
-            "questionResults": []
-          },
-          "autoStartNum": 3,
-          "quizCopy": {
-            "creatorId": 1,
-            "quizId": 5,
-            "name": "dummyquiz",
-            "timeCreated": 1722581664,
-            "timeLastEdited": 1722581664,
-            "description": "This is a dummy quiz for testing",
-            "numQuestions": 1,
-            "questions": [
-              {
-                "question": "Who is the Monarch of England?",
-                "duration": 4,
-                "points": 5,
-                "answers": [
-                  {
-                    "answer": "Prince Charles",
-                    "correct": true,
-                    "answerId": 14,
-                    "colour": "blue"
-                  },
-                  {
-                    "answer": "Prince William",
-                    "correct": false,
-                    "answerId": 54,
-                    "colour": "blue"
-                  }
-                ],
-                "questionId": 9
-              }
-            ],
-            "duration": 4,
-            "sessions": []
-          }
-        }
-      ]
-    },
-    {
-      "creatorId": 2,
-      "quizId": 45,
-      "name": "dummyquiz2",
-      "timeCreated": 1722581664,
-      "timeLastEdited": 1722581664,
-      "description": "This is a dummy quiz for testing",
-      "numQuestions": 0,
-      "questions": [],
-      "duration": 0,
+      "duration": 3,
       "sessions": []
     }
   ],

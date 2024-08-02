@@ -1,6 +1,7 @@
-import { Data, 
+import {
+  Data,
   // SessionIdToTimerObject
-   } from './types';
+} from './types';
 import fs from 'fs';
 // YOU SHOULD MODIFY THIS OBJECT BELOW ONLY
 export const dataStore: Data = {

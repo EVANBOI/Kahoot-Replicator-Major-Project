@@ -1,6 +1,8 @@
-import { setData, getData, 
-  // sessionIdToTimerObject 
-  sessionIdToTimerMap } from './dataStore';
+import {
+  setData, getData,
+  // sessionIdToTimerObject
+  sessionIdToTimerMap
+} from './dataStore';
 import { ClearResult } from './types';
 /**
  * Reset the state of the application back to the start.

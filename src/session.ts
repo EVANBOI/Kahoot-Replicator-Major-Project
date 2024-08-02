@@ -1,6 +1,8 @@
-import { getData, setData, 
-  // sessionIdToTimerObject 
-  sessionIdToTimerMap } from './dataStore';
+import {
+  getData, setData,
+  // sessionIdToTimerObject
+  sessionIdToTimerMap
+} from './dataStore';
 import { BadRequest, Unauthorised, Forbidden } from './error';
 import { findUserBySessionId, findQuizWithId, convertSessionResultsToCSV } from './helpers';
 import * as path from 'path';
@@ -143,9 +145,9 @@ export function adminQuizSessionUpdate(
   quizId: number,
   sessionId: number,
   action: SessionAction): EmptyObject | Error {
-    const database = getData();
-    const quiz = database.quizzes.find(q => q.quizId === quizId);
-    const session = quiz.sessions.find(s => s.sessionId === sessionId);
+  const database = getData();
+  const quiz = database.quizzes.find(q => q.quizId === quizId);
+  const session = quiz.sessions.find(s => s.sessionId === sessionId);
 
   if (!quiz) {
     throw new BadRequest('Quiz Id does not refer to a valid quiz');
@@ -155,7 +157,6 @@ export function adminQuizSessionUpdate(
     throw new BadRequest('Quiz does not contain a valid sessions array');
   }
 
-  // console.log('Session:', session);
   if (!session) {
     throw new BadRequest('Session Id does not refer to a valid session within this quiz');
   } else if (
@@ -197,7 +198,6 @@ export function adminQuizSessionUpdate(
       clearTimeout(timer);
       sessionIdToTimerMap.delete(sessionId);
       session.state = SessionStatus.END;
-
     } else if (action === SessionAction.SKIP_COUNTDOWN) {
       session.atQuestion++;
       question = session.quizCopy.questions[session.atQuestion - 1];
@@ -320,7 +320,7 @@ export function adminQuizSessionUpdate(
 export const turnQuestionClose = (sessionId: number, quizId: number) => {
   const database = getData();
   const quiz = findQuizWithId(database, quizId);
-  console.log('thing', quiz)
+  console.log('thing', quiz);
   const session = quiz.sessions.find(s => s.sessionId === sessionId);
   if (session) {
     session.state = SessionStatus.QUESTION_CLOSE;

@@ -18,8 +18,6 @@ import {
   SessionResults,
   Quiz,
   Session,
-  // MessageInfo,
-  // Player
 } from './types';
 
 const DELAY = 3;
@@ -153,12 +151,8 @@ export function adminQuizSessionUpdate(
   action: SessionAction): EmptyObject | Error {
   const database = getData();
   const quiz = database.quizzes.find(q => q.quizId === quizId);
+
   const session = quiz.sessions.find(s => s.sessionId === sessionId);
-
-  if (!quiz) {
-    throw new BadRequest('Quiz Id does not refer to a valid quiz');
-  }
-
   if (!Array.isArray(quiz.sessions)) {
     throw new BadRequest('Quiz does not contain a valid sessions array');
   }
@@ -253,6 +247,7 @@ export function adminQuizSessionUpdate(
       session.state = SessionStatus.ANSWER_SHOW;
       updateResults(session);
     } else {
+      console.log('this is throwing error');
       throw new BadRequest(`Action enum cannot be applied in the ${session.state}`);
     }
   } else if (session.state === SessionStatus.QUESTION_CLOSE) {
@@ -574,13 +569,12 @@ export function playerQuestionAnswer(
     throw new BadRequest('player id does not exist');
   } else if (currentSession.state !== SessionStatus.QUESTION_OPEN) {
     throw new BadRequest('session is not question open state');
+  } else if (questionPosition > currentSession.quizCopy.questions.length) {
+    throw new BadRequest('question position is not valid');
   } else if (currentSession.atQuestion !== questionPosition) {
     throw new BadRequest('session is not at this question position');
   }
   const question = currentSession.quizCopy.questions[questionPosition - 1];
-  if (!question) {
-    throw new BadRequest('question position is not valid');
-  }
   const validAnswerIds = question.answers.map(answer => answer.answerId);
   for (const answerId of answerIds) {
     if (!validAnswerIds.includes(answerId)) {

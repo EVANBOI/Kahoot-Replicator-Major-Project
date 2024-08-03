@@ -7,7 +7,7 @@ import {
   playerJoin,
   playerQuestionAnswer,
   adminQuizSessionUpdate,
-  adminQuizInfoV2
+  adminQuizInfoV2,
 } from '../wrappers';
 
 import { VALID_USER_REGISTER_INPUTS_1, VALID_QUIZ_CREATE_INPUTS_1, validQuestion1V2 } from '../testConstants';
@@ -48,14 +48,15 @@ beforeEach(() => {
 
 describe('Error cases', () => {
   test('Error 400: player ID does not exist', () => {
-    adminQuizSessionUpdate(quizId, sessionId, token, SessionAction.SKIP_COUNTDOWN);
+    adminQuizSessionUpdate(quizId, sessionId, token, SessionAction.NEXT_QUESTION);
     const res = playerQuestionAnswer(playerId + 1, 1, validAnswerIds);
     expect(res.statusCode).toBe(400);
   });
 
   test('Error 400: question position is not valid', () => {
+    adminQuizSessionUpdate(quizId, sessionId, token, SessionAction.NEXT_QUESTION);
     adminQuizSessionUpdate(quizId, sessionId, token, SessionAction.SKIP_COUNTDOWN);
-    const res = playerQuestionAnswer(playerId, 2, validAnswerIds);
+    const res = playerQuestionAnswer(playerId, 5, validAnswerIds);
     expect(res.statusCode).toBe(400);
   });
 
@@ -73,18 +74,22 @@ describe('Error cases', () => {
 
   test('Error 400: answer IDs are not valid for this particular question', () => {
     adminQuizSessionUpdate(quizId, sessionId, token, SessionAction.NEXT_QUESTION);
+    adminQuizSessionUpdate(quizId, sessionId, token, SessionAction.SKIP_COUNTDOWN);
     const res = playerQuestionAnswer(playerId, 1, [999]);
     expect(res.statusCode).toBe(400);
   });
 
   test('Error 400: there are duplicate answer IDs provided', () => {
     adminQuizSessionUpdate(quizId, sessionId, token, SessionAction.NEXT_QUESTION);
-    const res = playerQuestionAnswer(playerId, 1, [validQuestion1V2.answers[0].answerId, validQuestion1V2.answers[0].answerId]);
+    adminQuizSessionUpdate(quizId, sessionId, token, SessionAction.SKIP_COUNTDOWN);
+    const info = adminQuizInfoV2(token, quizId).jsonBody;
+    const res = playerQuestionAnswer(playerId, 1, [info.questions[0].answers[0].answerId, info.questions[0].answers[0].answerId]);
     expect(res.statusCode).toBe(400);
   });
 
   test('Error 400: less than 1 answer ID was submitted', () => {
     adminQuizSessionUpdate(quizId, sessionId, token, SessionAction.NEXT_QUESTION);
+    adminQuizSessionUpdate(quizId, sessionId, token, SessionAction.SKIP_COUNTDOWN);
     const res = playerQuestionAnswer(playerId, 1, []);
     expect(res.statusCode).toBe(400);
   });

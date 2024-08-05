@@ -3,8 +3,6 @@ import {
   // SessionIdToTimerObject
 } from './types';
 import fs from 'fs';
-
-import { requestHelper } from './wrappers';
 // YOU SHOULD MODIFY THIS OBJECT BELOW ONLY
 export const dataStore: Data = {
   users: [],
@@ -35,19 +33,16 @@ Example usage
 const filePath = 'dataStore.json';
 
 export function getData(): Data {
-  try {
-    const res = requestHelper('GET', '/data', {});
-    return res.jsonBody.data as Data;
-  } catch (e) {
-    return {
-      users: [],
-      quizzes: [],
-      trash: []
-    };
+  if (!fs.existsSync(filePath)) {
+    fs.writeFileSync(filePath, JSON.stringify({}), { flag: 'w' });
   }
+  const json = fs.readFileSync(filePath, { flag: 'r' });
+  const data = JSON.parse(json.toString());
+  return data;
 }
 
 // Use set(newData) to pass in the entire data object, with modifications made
-export const setData = (newData: Data) => {
-  requestHelper('PUT', '/data', { data: newData });
-};
+export function setData(newData: Data) {
+  const data = JSON.stringify(newData, null, 2);
+  fs.writeFileSync(filePath, data, { flag: 'w' });
+}

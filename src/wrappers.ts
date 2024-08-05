@@ -37,7 +37,7 @@ interface RequestHelperReturnType {
  * This is because if you export/import YOUR_FILE.test.ts to ANOTHER.test.ts,
  * the tests in YOUR_FILE.test.ts will run twice!
  */
-export const requestHelper = (
+const requestHelper = (
   method: HttpVerb,
   path: string,
   payload: object = {},

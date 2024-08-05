@@ -66,10 +66,10 @@ import { createClient } from '@vercel/kv';
 
 // Replace this with your KV_REST_API_URL
 // E.g. https://large-poodle-44208.kv.vercel-storage.com
-const KV_REST_API_URL="https://united-foal-53125.upstash.io";
+const KV_REST_API_URL="https://decent-amoeba-45923.upstash.io";
 // Replace this with your KV_REST_API_TOKEN
 // E.g. AaywASQgOWE4MTVkN2UtODZh...
-const KV_REST_API_TOKEN="Ac-FAAIjcDE0MjI5MTc5M2M0ZGM0NWIzOTUyMmQ4NTg5MWRhNzI5NXAxMA";
+const KV_REST_API_TOKEN="AbNjAAIncDFhNzE2M2ZlZTlhNGU0Y2EyYTNkMjBkNjYxMjlhZDdlMXAxNDU5MjM";
 
 const database = createClient({
   url: KV_REST_API_URL,
@@ -97,13 +97,13 @@ const HOST: string = process.env.IP || '127.0.0.1';
 // ====================================================================
 
 app.get('/data', async (req: Request, res: Response) => {
-  const data = await database.hgetall("data");
+  const data = await database.hgetall("data:names");
   res.status(200).json(data);
 });
 
 app.put('/data', async (req: Request, res: Response) => {
   const { data } = req.body;
-  await database.hset("data", { data });
+  await database.hset("data:names", { data });
   return res.status(200).json({});
 });
 

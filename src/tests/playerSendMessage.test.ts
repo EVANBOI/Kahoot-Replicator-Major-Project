@@ -50,7 +50,7 @@ describe('Successful tests', () => {
     expect(res.jsonBody).toStrictEqual(SUCCESS);
   });
 
-  test.only('Check 1 message is sent succesfully', () => {
+  test('Check 1 message is sent succesfully', () => {
     playerSendMessage(playerId1, { messageBody: 'message 1' });
     expect(playerChatlog(playerId1).jsonBody).toStrictEqual({
       messages: [
@@ -64,10 +64,10 @@ describe('Successful tests', () => {
     });
   });
 
-  test.failing('Check multiple messages are sent succesfully', () => {
+  test('Check multiple messages are sent succesfully', () => {
     playerSendMessage(playerId1, { messageBody: 'message 1' });
     playerSendMessage(playerId1, { messageBody: 'message 2' });
-    expect(playerChatlog(playerId1)).toStrictEqual({
+    expect(playerChatlog(playerId1).jsonBody).toStrictEqual({
       messages: [
         {
           messageBody: 'message 1',

@@ -197,6 +197,20 @@ export function generateRandomString() {
 // this function will initialise detailed result for each player after the
 // seession move out of the lobby state
 export function playerDetailedResultsInitialisation(session: Session) {
+  // initialise the usersRankedByScore and questionResults
+  session.results.usersRankedByScore = session.players.map(player => ({
+    name: player.name,
+    score: 0
+  }));
+
+  session.results.questionResults = session.quizCopy.questions.map(question => ({
+    questionId: question.questionId,
+    playersCorrectList: [],
+    averageAnswerTime: 0,
+    percentCorrect: 0,
+  }));
+
+  // initialise the questionResultsByPlayer
   session.results.questionResultsByPlayer = [];
   session.players.forEach(player =>
     session.results.questionResultsByPlayer.push({
@@ -210,4 +224,55 @@ export function playerDetailedResultsInitialisation(session: Session) {
       }))
     })
   );
+
+  // initialise the questionStartTime
+  const length = session.quizCopy.questions.length;
+  session.results.questionStartTime = Array.from({ length }, () => 0);
+}
+
+// this function will update the usersRankedByScore and questionResults when the question
+// closed or state is Answer show
+export function updateResults (session: Session) {
+  const questionIndex = session.atQuestion - 1;
+  let totalAnswerTime = 0;
+  let numAnsweredPlayer = 0;
+  session.results.questionResultsByPlayer.forEach(player => {
+    // update the score of the player and correct list
+    if (player.questionResults[questionIndex].score !== 0) {
+      session.results.usersRankedByScore.find(user => user.name === player.playerName).score += player.questionResults[questionIndex].score;
+      session.results.questionResults[questionIndex].playersCorrectList.push(player.playerName);
+    }
+    // if the player answered the question, update the total time and player answered
+    if (player.questionResults[questionIndex].timeToAnswer !== -1) {
+      const actualUsedTime = (player.questionResults[questionIndex].timeToAnswer - session.results.questionStartTime[questionIndex]) / 1000;
+      totalAnswerTime += actualUsedTime;
+      numAnsweredPlayer++;
+    }
+  });
+
+  // update the average time and percent correct and percentCorrect
+  if (totalAnswerTime === 0) {
+    session.results.questionResults[questionIndex].averageAnswerTime = 0;
+  } else {
+    session.results.questionResults[questionIndex].averageAnswerTime = totalAnswerTime / numAnsweredPlayer;
+  }
+  session.results.questionResults[questionIndex].percentCorrect = session.results.questionResults[questionIndex].playersCorrectList.length / session.players.length * 100;
+
+  // sort the rank of the player
+  session.results.usersRankedByScore.sort((a, b) => b.score - a.score);
+
+  // for each player, sort the rank of the question
+  session.results.questionResultsByPlayer.sort((a, b) => {
+    const aScore = b.questionResults[questionIndex].score;
+    const bScore = a.questionResults[questionIndex].score;
+    return aScore - bScore;
+  });
+  session.results.questionResultsByPlayer.forEach((player, index) => {
+    player.questionResults[questionIndex].rank = index + 1;
+  });
+}
+
+// record the actuall time when the question is open
+export function recordOpenTime(session: Session) {
+  session.results.questionStartTime[session.atQuestion - 1] = Math.floor(Date.now() / 1000);
 }

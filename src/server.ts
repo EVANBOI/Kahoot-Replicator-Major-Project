@@ -97,7 +97,7 @@ const HOST: string = process.env.IP || '127.0.0.1';
 // ====================================================================
 
 app.get('/data', async (req: Request, res: Response) => {
-  const data = await database.hgetall("data:names");
+  const data = await database.hgetall("data");
   res.status(200).json(data);
 });
 

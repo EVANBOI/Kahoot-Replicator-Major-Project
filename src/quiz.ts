@@ -1,4 +1,4 @@
-import { getData, setData } from './dataStore';
+import { getData, setData } from './wrappers';
 import { Unauthorised, BadRequest, Forbidden } from './error';
 
 import {

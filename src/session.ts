@@ -1,7 +1,7 @@
 import {
   getData, setData,
-  sessionIdToTimerMap
-} from './dataStore';
+} from './wrappers';
+import { sessionIdToTimerMap } from './dataStore'; 
 import { BadRequest, Unauthorised, Forbidden } from './error';
 import {
   findUserBySessionId, findQuizWithId, convertSessionResultsToCSV,

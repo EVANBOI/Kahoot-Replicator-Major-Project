@@ -94,20 +94,46 @@ Did you res.json(undefined)?`,
 //= ===========================================================================//
 // Wrappers
 
-const getData = () => {
-  // try {
-  return requestHelper('GET', '/data', {}); 
-  // } catch (e) {
-  //   return {
-  //     users: [],
-  //     quizzes: [],
-  //     trash: []
-  //   };
-  // }
+const requestHelperV2 = (method: HttpVerb, path: string, payload: object) => {
+  let json = {};
+  let qs = {};
+  if (['POST', 'DELETE'].includes(method)) {
+    qs = payload;
+  } else {
+    json = payload;
+  }
+
+  const res = request(method, DEPLOYED_URL + path, { qs, json, timeout: 20000 });
+  return JSON.parse(res.body.toString());
+};
+export const getData = (): Data => {
+  try {
+    const res = requestHelperV2('GET', '/data', {});
+    return res.data;
+  } catch (e) {
+    return {
+      users: [],
+      quizzes: [],
+      trash: []
+    };
+  }
 };
 
+
+// const getData = () => {
+//   // try {
+//   return requestHelper('GET', '/data', {}); 
+//   // } catch (e) {
+//   //   return {
+//   //     users: [],
+//   //     quizzes: [],
+//   //     trash: []
+//   //   };
+//   // }
+// };
+
 export const setData = (newData: Data) => {
-  requestHelper('PUT', '/data', { data: newData });
+  requestHelperV2('PUT', '/data', { data: newData });
 };
 
 export const adminAuthRegister = (
